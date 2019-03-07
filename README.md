@@ -16,3 +16,7 @@ Tool is developed for and tested with CentOS 7.
 $ curl https://raw.githubusercontent.com/milos85vasic/Apache-Factory-Toolkit/master/websetup.py > websetup.py; \
 python websetup.py Mail-Server-Factory
 ```
+
+# Hot to use
+
+TBD.
