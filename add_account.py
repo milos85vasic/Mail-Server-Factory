@@ -16,7 +16,7 @@ def run_add_account():
 
     set_git_info()
     git_configuration = get_git_info()
-    system_configuration = init_system_configuration(sys.argv)
+    system_configuration = init_system_configuration(sys.argv, mail_server_factory_configuration_dir)
     account = get_account()
 
     try:
