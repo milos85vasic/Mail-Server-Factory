@@ -10,10 +10,10 @@ def user_home():
 
 
 def run_factory():
-    dovecot_configuration = "./configure --prefix=" + user_home() + "/" + dovecot + " --with-sql --with-mysql " + \
-                            "--with-shadow --with-pam --with-nss --with-gssapi --with-vpopmail"
+    # TODO: --with-mysql --with-shadow --with-pam --with-nss --with-gssapi --with-vpopmail --with-sql
+    dovecot_configuration = "./configure --prefix=" + user_home() + "/" + dovecot
 
-    postfix_configuration = "./configure --prefix=" + user_home() + "/" + postfix + " "  # <- TODO.
+    postfix_configuration = "./configure --prefix=" + user_home() + "/" + postfix  # + " " <- TODO.
 
     steps = [
         run_as_su(
