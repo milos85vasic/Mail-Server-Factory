@@ -1,5 +1,5 @@
 import sys
-import pwd
+from pwd import *
 from Toolkit.system_configuration import *
 from configuration import *
 from Toolkit.git_info import *
@@ -20,7 +20,7 @@ def run_add_account():
     account = get_account()
 
     try:
-        pwd.getpwnam(account)
+        getpwnam(account)
         print("Account already exists: " + account)
     except KeyError:
         steps = [
