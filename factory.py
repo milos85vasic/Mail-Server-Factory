@@ -43,7 +43,9 @@ def run_factory():
                     "libicu-devel",
                     "gcc-c++",
                     "libmcrypt-devel",
-                    "libwebp-devel"
+                    "libwebp-devel",
+                    "pam.i686",
+                    "pam-devel.i686"
                 ),
                 add_to_group(account, mail_server_factory_group),
 
