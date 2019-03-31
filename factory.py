@@ -10,6 +10,9 @@ def user_home():
 
 
 def run_factory():
+    dovecot_configuration = "./configure --prefix=" + user_home() + "/" + dovecot + " --with-sql --with-mysql " \
+                                                                                    "--with-shadow --with-pam --with-nss --with-sia --with-bsdauth --with-ldap --with-gssapi --with-vpopmail"
+
     steps = [
         run_as_su(
             concatenate(
@@ -40,9 +43,18 @@ def run_factory():
                     "libwebp-devel"
                 ),
                 add_to_group(account, mail_server_factory_group),
+
+                # TODO: Re-check content dir need.
                 mkdir(content_dir_path(user_home())),
                 chown(account, content_dir_path(user_home())),
                 chgrp(account, content_dir_path(user_home())),
+
+                mkdir(dovecot_dir_path(user_home())),
+                chown(account, dovecot_dir_path(user_home())),
+                chgrp(account, dovecot_dir_path(user_home())),
+                mkdir(postfix_dir_path(user_home())),
+                chown(account, postfix_dir_path(user_home())),
+                chgrp(account, postfix_dir_path(user_home())),
                 run_as_user(
                     account,
                     concatenate(
