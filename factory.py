@@ -14,7 +14,7 @@ def run_factory():
                             "--with-shadow --with-pam --with-nss --with-sia --with-bsdauth --with-ldap" + \
                             " --with-gssapi --with-vpopmail"
 
-    postfix_configuration = "./configure --prefix=" + user_home() + "/" + postfix + " "
+    postfix_configuration = "./configure --prefix=" + user_home() + "/" + postfix + " "  # <- TODO.
 
     steps = [
         run_as_su(
