@@ -16,7 +16,7 @@ def run_add_account():
 
     set_git_info()
     git_configuration = get_git_info()
-    system_configuration = init_system_configuration(sys.argv, mail_server_factory_configuration_dir)
+    init_system_configuration(sys.argv, mail_server_factory_configuration_dir)
     account = get_account()
 
     try:
@@ -48,19 +48,13 @@ def run_add_account():
                     # python(starter_init_script),
                     cd("~")
                 )
+            ),
+            run_as_user(
+                account,
+                concatenate(
+                    python(factory_script)
+                )
             )
-            # TODO:
-            #  ,
-            # run_as_user(
-            #     account,
-            #     concatenate(
-            #         python(factory_script)
-            #     )
-            # ),
-            # run_as_user(
-            #     get_main_proxy(account),
-            #     python("Toolkit/" + main_proxy_script, account)
-            # )
         ]
 
         run(steps)
