@@ -7,6 +7,9 @@ postfix = "Postfix"
 dovecot_archive = "dovecot-2.3.4.1.tar.gz"
 postfix_archive = "postfix-3.4.0.tar.gz"
 
+dovecot_extracted_dir = dovecot_archive.replace(".tar.gz", "")
+postfix_extracted_dir = postfix_archive.replace(".tar.gz", "")
+
 dovecot_source = "https://www.dovecot.org/releases/2.3/" + dovecot_archive
 postfix_source = "http://mirror.lhsolutions.nl/postfix-release/official/" + postfix_archive
 
