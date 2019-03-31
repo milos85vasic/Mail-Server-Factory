@@ -62,6 +62,14 @@ def run_factory():
                     account,
                     concatenate(
                         cd("~"),
+                        cd(dovecot),
+                        wget(dovecot_source, destination=(dovecot_dir_path(user_home()))),
+                        extract(dovecot_archive, destination=(dovecot_dir_path(user_home()))),
+                        cd(dovecot_dir_path(user_home())),
+                        dovecot_configuration,
+                        "make",
+                        "make install",
+                        cd("~")  # ,
 
                         # TODO:
                         # mkdir(apache_home),
