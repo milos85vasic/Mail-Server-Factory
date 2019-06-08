@@ -80,7 +80,7 @@ def run_factory():
                         extract(postfix_archive, destination=(user_home())),
                         cd(postfix_extracted_dir),
                         # postfix_configuration,
-                        "make",
+                        "make",  # FIXME: No <db.h> include file found. Install the appropriate db*-devel package first.
                         # "make install",
 
                         cd("~"),
