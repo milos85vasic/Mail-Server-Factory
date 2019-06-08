@@ -79,9 +79,9 @@ def run_factory():
                         wget(postfix_source, destination=(user_home())),
                         extract(postfix_archive, destination=(user_home())),
                         cd(postfix_extracted_dir),
-                        postfix_configuration,
+                        # postfix_configuration,
                         "make",
-                        "make install",
+                        # "make install",
 
                         cd("~"),
                         rm(postfix_archive),
