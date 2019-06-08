@@ -64,15 +64,28 @@ def run_factory():
                     account,
                     concatenate(
                         cd("~"),
+
                         wget(dovecot_source, destination=(user_home())),
                         extract(dovecot_archive, destination=(user_home())),
                         cd(dovecot_extracted_dir),
                         dovecot_configuration,
                         "make",
                         "make install",
+
                         cd("~"),
                         rm(dovecot_archive),
-                        rm(dovecot_extracted_dir)
+                        rm(dovecot_extracted_dir),
+
+                        wget(postfix_source, destination=(user_home())),
+                        extract(postfix_archive, destination=(user_home())),
+                        cd(postfix_extracted_dir),
+                        postfix_configuration,
+                        "make",
+                        "make install",
+
+                        cd("~"),
+                        rm(postfix_archive),
+                        rm(postfix_extracted_dir),
 
                         # TODO:
                         # mkdir(apache_home),
