@@ -15,6 +15,7 @@ def run_factory():
 
     postfix_configuration = "./configure --prefix=" + user_home() + "/" + postfix  # + " " <- TODO.
 
+    temp_python = "temp-python"
     steps = [
         run_as_su(
             concatenate(
@@ -45,8 +46,11 @@ def run_factory():
                     "libwebp-devel",
                     "pam.i686",
                     "pam-devel.i686",
-                    "pam-devel"
+                    "pam-devel",
+                    "python36"
                 ),
+                venv_init_version(2, temp_python),
+                venv_activate_name(temp_python),
                 add_to_group(account, mail_server_factory_group),
 
                 # TODO: Re-check content dir need.
@@ -125,6 +129,8 @@ def run_factory():
                 #         python(distribution_script)
                 #     )
                 # )
+
+                venv_deactivate()
             )
         )
     ]
