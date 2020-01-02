@@ -43,6 +43,7 @@ def run_add_account():
                     "pam-devel",
                     "python36"
                 ),
+                # FIXME @ Centos8: 'bash: virtualenv: command not found'
                 venv_init_version(2, temp_python),
                 venv_activate_name(temp_python)
             )
