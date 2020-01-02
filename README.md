@@ -1,10 +1,10 @@
 # Mail Server Factory
 
-Instantiate, configure mail server and distribute configuration. 
+Instantiate, configure mail server and distribute configuration.
 
 # Compatibility
 
-Tool is developed for and tested with CentOS 7.
+Tool is developed for and tested with CentOS 8.
 
 # Specifications
 
