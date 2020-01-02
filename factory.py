@@ -15,42 +15,9 @@ def run_factory():
 
     postfix_configuration = "./configure --prefix=" + user_home() + "/" + postfix  # + " " <- TODO.
 
-    temp_python = "temp-python"
     steps = [
         run_as_su(
             concatenate(
-                "yum localinstall -y --nogpgcheck " + rpm_fusion_free + " " + rpm_fusion_non_free,
-                get_yum_group("Development Tools"),
-                get_yum(  # TODO: Remove unused dependencies.
-                    "epel-release",
-                    "openssl-devel",
-                    "gcc",
-                    "make",
-                    "cmake",
-                    "automake",
-                    "libtool",
-                    "wget",
-                    "git",
-                    "libxml2",
-                    "libxml2-devel",
-                    "ncurses-devel",
-                    "lynx",
-                    "links",
-                    "autoconf",
-                    "re2c",
-                    "bzip2-devel",
-                    "libcurl-devel",
-                    "libicu-devel",
-                    "gcc-c++",
-                    "libmcrypt-devel",
-                    "libwebp-devel",
-                    "pam.i686",
-                    "pam-devel.i686",
-                    "pam-devel",
-                    "python36"
-                ),
-                venv_init_version(2, temp_python),
-                venv_activate_name(temp_python),
                 add_to_group(account, mail_server_factory_group),
 
                 # TODO: Re-check content dir need.

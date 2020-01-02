@@ -1,14 +1,51 @@
 import sys
 from pwd import *
+from Toolkit.commands import *
 from Toolkit.system_configuration import *
 from configuration import *
 from Toolkit.git_info import *
 
 
 def run_add_account():
+
+    temp_python = "temp-python"
     steps = [
         run_as_su(
-            add_group(mail_server_factory_group)
+            concatenate(
+                add_group(mail_server_factory_group),
+                "yum localinstall -y --nogpgcheck " + rpm_fusion_free + " " + rpm_fusion_non_free,
+                get_yum_group("Development Tools"),
+                get_yum(  # TODO: Remove unused dependencies.
+                    "epel-release",
+                    "openssl-devel",
+                    "gcc",
+                    "make",
+                    "cmake",
+                    "automake",
+                    "libtool",
+                    "wget",
+                    "git",
+                    "libxml2",
+                    "libxml2-devel",
+                    "ncurses-devel",
+                    "lynx",
+                    "links",
+                    "autoconf",
+                    "re2c",
+                    "bzip2-devel",
+                    "libcurl-devel",
+                    "libicu-devel",
+                    "gcc-c++",
+                    "libmcrypt-devel",
+                    "libwebp-devel",
+                    "pam.i686",
+                    "pam-devel.i686",
+                    "pam-devel",
+                    "python36"
+                ),
+                venv_init_version(2, temp_python),
+                venv_activate_name(temp_python)
+            )
         )
     ]
 
