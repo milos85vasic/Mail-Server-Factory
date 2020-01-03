@@ -8,10 +8,9 @@ from Toolkit.git_info import *
 
 def run_add_account():
 
-    python_version = 2
-    virtualenv = "virtualenv"
+    python_version = 3
     temp_python = "python_local"
-    python_dnf_package = "python2"  # TODO (MSF-1): = "python36"
+    python_dnf_package = "python36"
     steps = [
         run_as_su(
             concatenate(
