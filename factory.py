@@ -1,4 +1,4 @@
-from additional_configuration import *
+from .additional_configuration import *
 from Toolkit.commands import *
 
 import getpass
