@@ -1,6 +1,5 @@
 import getpass
-
-from configuration import *
+from . configuration import *
 from Toolkit.commands import *
 
 
