@@ -94,7 +94,6 @@ def run_add_account():
             run_as_user(
                 account,
                 concatenate(
-                    pip_version(virtualenv, python_version),
                     venv_init_version(python_version, temp_python),
                     venv_activate_name(temp_python),
                     python(factory_script),
