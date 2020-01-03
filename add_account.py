@@ -10,7 +10,7 @@ def run_add_account():
 
     python_version = 2
     virtualenv = "virtualenv"
-    temp_python = "temp-python"
+    temp_python = "python_local"
     python_dnf_package = "python2"  # TODO (MSF-1): = "python36"
     steps = [
         run_as_su(
