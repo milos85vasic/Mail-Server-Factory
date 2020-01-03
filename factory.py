@@ -1,11 +1,9 @@
-from additional_configuration import *
+from configuration import *
 from Toolkit.commands import *
 
 import getpass
 
-
 account = getpass.getuser()
-
 
 def user_home():
     return get_home_directory_path(account)
@@ -108,4 +106,5 @@ def run_factory():
 
 
 if __name__ == '__main__':
-    run_factory()
+    # run_factory()
+    print("OK: ", dovecot_source)
