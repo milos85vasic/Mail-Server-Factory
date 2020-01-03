@@ -1,7 +1,7 @@
-import getpass
-
 from additional_configuration import *
 from Toolkit.commands import *
+
+import getpass
 
 
 account = getpass.getuser()
