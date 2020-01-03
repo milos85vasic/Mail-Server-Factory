@@ -8,6 +8,7 @@ from Toolkit.git_info import *
 
 def run_add_account():
 
+    virtualenv = "virtualenv"
     temp_python = "temp-python"
     steps = [
         run_as_su(
@@ -41,9 +42,11 @@ def run_add_account():
                     "pam.i686",
                     "pam-devel.i686",
                     "pam-devel",
-                    "python36"
+                    "python36",
+                    "python3-pip"
                 ),
-                # FIXME @ Centos8: 'bash: virtualenv: command not found'
+                pip_upgrade(),
+                pip(virtualenv),
                 venv_init_version(2, temp_python),
                 venv_activate_name(temp_python)
             )
