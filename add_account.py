@@ -91,8 +91,8 @@ def run_add_account():
             run_as_user(
                 account,
                 concatenate(
-                    venv_init_version(python_version, temp_python),
-                    venv_activate_name(temp_python),
+                    venv_init_version(python_version, get_home_directory_path(account) + "/" + temp_python),
+                    venv_activate_name(get_home_directory_path(account) + "/" + temp_python),
                     python(factory_script),
                     venv_deactivate()
                 )
