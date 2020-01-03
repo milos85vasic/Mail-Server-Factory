@@ -8,8 +8,10 @@ from Toolkit.git_info import *
 
 def run_add_account():
 
+    python_version = 2
     virtualenv = "virtualenv"
     temp_python = "temp-python"
+    python_dnf_package = "python2"  # TODO (MSF-1): = "python36"
     steps = [
         run_as_su(
             concatenate(
@@ -42,12 +44,12 @@ def run_add_account():
                     "pam.i686",
                     "pam-devel.i686",
                     "pam-devel",
-                    "python36",
-                    "python3-pip"
+                    python_dnf_package,
+                    "python" + str(python_version) + "-pip"
                 ),
-                pip_upgrade(),
-                pip(virtualenv),
-                venv_init_version(2, temp_python),
+                pip_upgrade_version(python_version),
+                pip_version(virtualenv, python_version),
+                venv_init_version(python_version, temp_python),
                 venv_activate_name(temp_python)
             )
         )
