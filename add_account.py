@@ -42,10 +42,8 @@ def run_add_account():
                     "pam-devel.i686",
                     "pam-devel",
                     python_dnf_package,
-                    "python" + str(python_version) + "-pip"
-                ),
-                pip_upgrade_version(python_version),
-                pip_version(virtualenv, python_version)
+                    "python" + str(python_version) + "-virtualenv"
+                )
             )
         )
     ]
