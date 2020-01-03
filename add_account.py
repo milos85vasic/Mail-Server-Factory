@@ -92,7 +92,8 @@ def run_add_account():
                 concatenate(
                     venv_init_version(python_version, temp_python),
                     venv_activate_name(temp_python),
-                    python(factory_script)
+                    python(factory_script),
+                    venv_deactivate()
                 )
             )
         ]
