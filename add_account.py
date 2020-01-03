@@ -45,9 +45,7 @@ def run_add_account():
                     "python" + str(python_version) + "-pip"
                 ),
                 pip_upgrade_version(python_version),
-                pip_version(virtualenv, python_version),
-                venv_init_version(python_version, temp_python),
-                venv_activate_name(temp_python)
+                pip_version(virtualenv, python_version)
             )
         )
     ]
@@ -92,6 +90,8 @@ def run_add_account():
             run_as_user(
                 account,
                 concatenate(
+                    venv_init_version(python_version, temp_python),
+                    venv_activate_name(temp_python),
                     python(factory_script)
                 )
             )
