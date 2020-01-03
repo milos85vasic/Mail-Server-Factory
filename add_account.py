@@ -64,7 +64,7 @@ def run_add_account():
         steps = [
             run_as_su(
                 concatenate(
-                    cd("~"),
+                    home(),
                     add_user(account),
                     passwd(account),
                     add_to_group(account, mail_server_factory_group),
@@ -75,16 +75,16 @@ def run_add_account():
                     git_clone_to_recursive(git_configuration[key_repository], here),
                     git_checkout(git_configuration[key_branch]),
                     git_submodule_checkout_each(),
-                    cd(".."),  # TODO: Refactor into 'back' variable.
+                    back(),
                     chown(account, get_home_directory_path(account)),
                     chgrp(account, get_home_directory_path(account)),
                     chmod(get_home_directory_path(account), "750"),
-                    cd("~"),
+                    home(),
                     cd(mail_server_factory),
 
                     # TODO:
                     # python(starter_init_script),
-                    cd("~")
+                    home()
                 )
             ),
             run_as_user(

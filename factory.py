@@ -34,7 +34,7 @@ def run_factory():
                 run_as_user(
                     account,
                     concatenate(
-                        cd("~"),
+                        home(),
 
                         wget(dovecot_source, destination=(user_home())),
                         extract(dovecot_archive, destination=(user_home())),
@@ -43,7 +43,7 @@ def run_factory():
                         "make",
                         "make install",
 
-                        cd("~"),
+                        home(),
                         rm(dovecot_archive),
                         rm(dovecot_extracted_dir),
 
@@ -54,7 +54,7 @@ def run_factory():
                         "make",  # FIXME: No <db.h> include file found. Install the appropriate db*-devel package first.
                         # "make install",
 
-                        cd("~"),
+                        home(),
                         rm(postfix_archive),
                         rm(postfix_extracted_dir),
 
