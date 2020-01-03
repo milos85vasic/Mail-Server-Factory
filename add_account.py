@@ -3,7 +3,7 @@ from pwd import *
 
 from Toolkit.commands import *
 from Toolkit.system_configuration import *
-from configuration import *
+from Toolkit.configuration import *
 from Toolkit.git_info import *
 
 
