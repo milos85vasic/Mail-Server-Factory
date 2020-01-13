@@ -16,9 +16,9 @@ def run_add_account():
         run_as_su(
             concatenate(
                 add_group(mail_server_factory_group),
-                "yum localinstall -y --nogpgcheck " + rpm_fusion_free + " " + rpm_fusion_non_free,
-                get_yum_group("Development Tools"),
-                get_yum(  # TODO: Remove unused dependencies.
+                get_package_inallation_cmd() + " localinstall -y --nogpgcheck " + rpm_fusion_free + " " + rpm_fusion_non_free,
+                install_package_group("Development Tools"),
+                install_package(  # TODO: Remove unused dependencies.
                     "epel-release",
                     "openssl-devel",
                     "gcc",
