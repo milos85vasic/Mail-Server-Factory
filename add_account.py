@@ -73,7 +73,8 @@ def run_add_account():
         mail_server_factory_configuration_dir, 
         mail_server_factory_group
     )
-    account = get_account()
+    account_data = get_account()
+    account = account_data[key_account]
 
     try:
         getpwnam(account)
