@@ -7,8 +7,24 @@ from Toolkit.configuration import *
 from Toolkit.git_info import *
 
 
-def run_add_account():
+def get_rep_fusion_link(free=True):
+    os_name = get_os_name()
+    if os_centos_8 == os_name:
+        if free:
+            return rpm_fusion_free_8
+        else:
+            return rpm_fusion_non_free_8
+    if free:
+        return rpm_fusion_free_7
+    else:
+        return rpm_fusion_non_free_7
 
+
+def install_rpm_fusion():
+    return get_package_inallation_cmd() + " localinstall -y --nogpgcheck " + get_rep_fusion_link() + " " + get_rep_fusion_link(free=False)
+
+
+def run_add_account():
     python_version = 3
     temp_python = "python_local"
     python_dnf_package = "python36"
@@ -16,8 +32,8 @@ def run_add_account():
         run_as_su(
             concatenate(
                 add_group(mail_server_factory_group),
-                get_package_inallation_cmd() + " localinstall -y --nogpgcheck " + rpm_fusion_free + " " + rpm_fusion_non_free,
-                install_package_group("Development Tools"),
+                install_rpm_fusion(),
+                install_package_group(dnf_package_group_development),
                 install_package(  # TODO: Remove unused dependencies.
                     "epel-release",
                     "openssl-devel",
