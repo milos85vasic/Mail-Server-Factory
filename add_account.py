@@ -114,6 +114,8 @@ def run_add_account():
             run_as_user(
                 account,
                 concatenate(
+                    cd(get_home_directory_path(account)),
+                    cd(mail_server_factory),
                     python(factory_script)
                 )
             )
