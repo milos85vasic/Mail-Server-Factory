@@ -76,6 +76,8 @@ def run_add_account():
     account_data = get_account()
     account = account_data[key_account]
 
+    add_user_cmd = add_user(account)
+    passwd_cmd = passwd(account)
     try:
         getpwnam(account)
         print("Account already exists: " + account)
@@ -84,8 +86,8 @@ def run_add_account():
             run_as_su(
                 concatenate(
                     home(),
-                    add_user(account),
-                    passwd(account),
+                    add_user_cmd,
+                    passwd_cmd,
                     add_to_group(account, mail_server_factory_group),
                     chgrp(mail_server_factory_group, mail_server_factory_configuration_dir),
                     cd(get_home_directory_path(account)),
