@@ -25,9 +25,7 @@ def install_rpm_fusion():
 
 
 def run_add_account():
-    python_version = 3
-    temp_python = "python_local"
-    python_dnf_package = "python36"
+    python_installation_package = get_python_installation_package()
     steps = [
         run_as_su(
             concatenate(
@@ -57,8 +55,7 @@ def run_add_account():
                     "pam.i686",
                     "pam-devel.i686",
                     "pam-devel",
-                    python_dnf_package,
-                    "python" + str(python_version) + "-virtualenv"
+                    python_installation_package
                 )
             )
         )
@@ -117,10 +114,7 @@ def run_add_account():
             run_as_user(
                 account,
                 concatenate(
-                    venv_init_version(python_version, get_home_directory_path(account) + "/" + temp_python),
-                    venv_activate_name(get_home_directory_path(account) + "/" + temp_python),
-                    python(factory_script),
-                    venv_deactivate()
+                    python(factory_script)
                 )
             )
         ]
