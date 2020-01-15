@@ -74,10 +74,16 @@ def run_add_account():
         mail_server_factory_group
     )
     account_data = get_account()
+    password = ""
     account = account_data[key_account]
+    if key_password in account_data:
+        password = account_data[key_password]
 
     add_user_cmd = add_user(account)
     passwd_cmd = passwd(account)
+    if password:
+        add_user_cmd = add_user_with_password(account, password)
+        passwd_cmd = ""
     try:
         getpwnam(account)
         print("Account already exists: " + account)
