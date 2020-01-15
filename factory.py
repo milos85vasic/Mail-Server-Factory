@@ -106,5 +106,4 @@ def run_factory():
 
 
 if __name__ == '__main__':
-    # run_factory()
-    print("OK: ", dovecot_source)
+    run_factory()
