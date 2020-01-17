@@ -126,7 +126,7 @@ def run_add_account():
                     chmod(get_home_directory_path(account), "750"),
                     home(),
                     cd(mail_server_factory),
-                    factory_cmd,
+                    factory_cmd,  # FIXME: Does not start.
 
                     # TODO:
                     # python(starter_init_script),
