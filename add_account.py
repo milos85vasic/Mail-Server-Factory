@@ -79,7 +79,7 @@ def run_add_account():
 
     steps = [
         run_as_user_with_password(
-            account, passwd, "echo 'X X X X X X X X X X X X X X'"
+            account, passwd, "echo Milos"
         )
     ]
 
