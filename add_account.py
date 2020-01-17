@@ -81,10 +81,31 @@ def run_add_account():
     if password:
         add_user_cmd = add_user_with_password(account, password)
         passwd_cmd = ""
+    
     try:
         getpwnam(account)
         print("Account already exists: " + account)
     except KeyError:
+        if password:
+            factory_cmd = run_as_user_with_password(
+                account,
+                password,
+                concatenate(
+                    cd(get_home_directory_path(account)),
+                    cd(mail_server_factory),
+                    python(factory_script)
+                )
+            )
+        else:
+            factory_cmd = run_as_user(
+                account,
+                concatenate(
+                    cd(get_home_directory_path(account)),
+                    cd(mail_server_factory),
+                    python(factory_script)
+                )
+            )
+
         steps = [
             run_as_su(
                 concatenate(
@@ -105,6 +126,7 @@ def run_add_account():
                     chmod(get_home_directory_path(account), "750"),
                     home(),
                     cd(mail_server_factory),
+                    factory_cmd,
 
                     # TODO:
                     # python(starter_init_script),
@@ -112,30 +134,6 @@ def run_add_account():
                 )
             )
         ]
-
-        if password:
-            steps.append(
-                run_as_user_with_password(
-                    account,
-                    password,
-                    concatenate(
-                        cd(get_home_directory_path(account)),
-                        cd(mail_server_factory),
-                        python(factory_script)
-                    )
-                )
-            )
-        else:
-            steps.append(
-                run_as_user(
-                    account,
-                    concatenate(
-                        cd(get_home_directory_path(account)),
-                        cd(mail_server_factory),
-                        python(factory_script)
-                    )
-                )
-            )
 
         run(steps)
 
