@@ -114,7 +114,7 @@ def run_add_account():
         ]
 
         if password:
-            steps.extend(
+            steps.append(
                 run_as_user_with_password(
                     account,
                     password,
@@ -126,7 +126,7 @@ def run_add_account():
                 )
             )
         else:
-            steps.extend(
+            steps.append(
                 run_as_user(
                     account,
                     concatenate(
