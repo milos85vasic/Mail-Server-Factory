@@ -79,7 +79,7 @@ def run_add_account():
 
     steps = [
         concatenate(
-            cd(get_home_directory_path(account)),
+            cd("/root"),
             cd("Toolkit"),
             run_as_user_with_password(
                 account, passwd, "echo Milos"
