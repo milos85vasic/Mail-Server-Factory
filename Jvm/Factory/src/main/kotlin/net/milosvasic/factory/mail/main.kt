@@ -16,9 +16,10 @@ fun main(args: Array<String>) {
         val configurationFile = File(configurationFileName)
         if (configurationFile.exists()) {
 
+
         } else {
 
-            fail(ERROR.FILE_DOES_NOT_EXIST, configurationFileName)
+            fail(ERROR.FILE_DOES_NOT_EXIST, configurationFile.absolutePath)
         }
     }
 }

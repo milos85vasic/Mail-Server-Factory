@@ -1,8 +1,9 @@
 #!/bin/sh
 
-echo "Copying mocks."
-rm -rf Factory/build/libs/mocks
-mkdir Factory/build/libs/mocks
-cp Factory/mocks/* Factory/build/libs/mocks
-echo "Mocks copying complete."
-ls -lF Factory/build/libs/mocks
+MOCKS="Mocks"
+MAIL_SERVER_FACTORY="Mail-Server-Factory"
+
+rm -rf "~/$MAIL_SERVER_FACTORY"
+mkdir "~/$MAIL_SERVER_FACTORY"
+mkdir "~/$MAIL_SERVER_FACTORY/$MOCKS"
+cp Factory/mocks/* "~/$MAIL_SERVER_FACTORY/$MOCKS"
