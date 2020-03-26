@@ -27,11 +27,14 @@ dependencies {
 }
 
 task copyMocks {
-    println("Copyinng mock data.")
+    println("Copying mock data.")
+    String mocks = "mocks"
+    String appName = "Mail-Server-Factory"
     String[] cmds = [
-            "rm -rf ./build/libs/mocks",
-            "mkdir ./build/libs/mocks",
-            "cp ./mocks/*.json ./build/libs/mocks"
+            "rm -rf ~/$appName",
+            "mkdir ~/$appName",
+            "mkdir ~/$appName/${mocks.capitalize()}",
+            "cp ./$mocks/*.json ~/$appName/${mocks.capitalize()}"
     ]
     for (String cmd : cmds) {
         if (Runtime.getRuntime().exec(cmd).waitFor(5, TimeUnit.SECONDS)) {
