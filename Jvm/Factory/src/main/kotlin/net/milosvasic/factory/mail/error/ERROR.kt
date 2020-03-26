@@ -6,5 +6,6 @@ enum class ERROR(
 ) {
 
     EMPTY_DATA(1, "No input data provided"),
-    FILE_DOES_NOT_EXIST(2, "File does not exist")
+    FILE_DOES_NOT_EXIST(2, "File does not exist"),
+    FATAL_EXCEPTION(3, "Fatal exception")
 }
