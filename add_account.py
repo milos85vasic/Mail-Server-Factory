@@ -25,9 +25,7 @@ def install_rpm_fusion():
 
 
 def run_add_account():
-    python_version = 3
-    temp_python = "python_local"
-    python_dnf_package = "python36"
+    python_installation_package = get_python_installation_package()
     steps = [
         run_as_su(
             concatenate(
@@ -57,8 +55,7 @@ def run_add_account():
                     "pam.i686",
                     "pam-devel.i686",
                     "pam-devel",
-                    python_dnf_package,
-                    "python" + str(python_version) + "-virtualenv"
+                    python_installation_package
                 )
             )
         )
@@ -74,18 +71,47 @@ def run_add_account():
         mail_server_factory_group
     )
     account_data = get_account()
+    password = ""
     account = account_data[key_account]
+    if key_password in account_data:
+        password = account_data[key_password]
 
+    add_user_cmd = add_user(account)
+    passwd_cmd = passwd(account)
+    if password:
+        add_user_cmd = add_user_with_password(account, password)
+        passwd_cmd = ""
+    
     try:
         getpwnam(account)
         print("Account already exists: " + account)
     except KeyError:
+        if password:
+            factory_cmd = run_as_user_with_password(
+                account,
+                password,
+                concatenate(
+                    cd(get_home_directory_path(account)),
+                    cd(mail_server_factory),
+                    python(factory_script)
+                )
+            )
+        else:
+            factory_cmd = run_as_user(
+                account,
+                concatenate(
+                    cd(get_home_directory_path(account)),
+                    cd(mail_server_factory),
+                    python(factory_script)
+                )
+            )
+
         steps = [
             run_as_su(
                 concatenate(
                     home(),
-                    add_user(account),
-                    passwd(account),
+                    add_user_cmd,
+                    passwd_cmd,
                     add_to_group(account, mail_server_factory_group),
                     chgrp(mail_server_factory_group, mail_server_factory_configuration_dir),
                     cd(get_home_directory_path(account)),
@@ -100,19 +126,11 @@ def run_add_account():
                     chmod(get_home_directory_path(account), "750"),
                     home(),
                     cd(mail_server_factory),
+                    factory_cmd,  # FIXME: Does not start.
 
                     # TODO:
                     # python(starter_init_script),
                     home()
-                )
-            ),
-            run_as_user(
-                account,
-                concatenate(
-                    venv_init_version(python_version, get_home_directory_path(account) + "/" + temp_python),
-                    venv_activate_name(get_home_directory_path(account) + "/" + temp_python),
-                    python(factory_script),
-                    venv_deactivate()
                 )
             )
         ]
