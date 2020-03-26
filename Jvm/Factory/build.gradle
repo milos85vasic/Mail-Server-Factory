@@ -1,3 +1,5 @@
+import java.util.concurrent.TimeUnit
+
 buildscript {
     repositories {
         google()
@@ -23,3 +25,19 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
 }
+
+task copyMocks {
+    println("Copyinng mock data.")
+    String[] cmds = [
+            "rm -rf ./build/libs/mocks",
+            "mkdir ./build/libs/mocks",
+            "cp ./mocks/*.json ./build/libs/mocks"
+    ]
+    for (String cmd : cmds) {
+        if (Runtime.getRuntime().exec(cmd).waitFor(5, TimeUnit.SECONDS)) {
+            println("Executed: $cmd")
+        }
+    }
+}
+
+build.finalizedBy(copyMocks)
