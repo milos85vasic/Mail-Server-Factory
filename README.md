@@ -13,8 +13,7 @@ Tool is developed for and tested with CentOS 8.
 
 # Web setup
 ```
-$ curl https://raw.githubusercontent.com/milos85vasic/Apache-Factory-Toolkit/master/websetup.py > websetup.py; \
-python websetup.py Mail-Server-Factory
+$ Tbd.
 ```
 
 # Hot to use
