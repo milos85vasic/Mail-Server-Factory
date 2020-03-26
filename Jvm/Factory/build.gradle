@@ -8,12 +8,14 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
 apply plugin: 'kotlin'
+apply plugin: 'java'
+apply plugin: 'application'
 
 repositories {
     google()
@@ -23,8 +25,21 @@ repositories {
 
 dependencies {
 
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
 }
+
+mainClassName = "net.milosvasic.factory.mail.Launcher"
+
+jar {
+    manifest {
+        attributes "Main-Class": "net.milosvasic.factory.mail.Launcher"
+    }
+
+    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+}
+
+sourceSets.main.java.srcDirs += 'src/main/kotlin'
 
 task copyMocks {
     try {
