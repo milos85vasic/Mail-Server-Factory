@@ -26,6 +26,7 @@ fun main(args: Array<String>) {
             val gson = Gson()
             try {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
+                log.v(configuration.name)
 
             } catch (e: JsonSyntaxException) {
                 fail(e)
