@@ -5,5 +5,9 @@
       "name": "Red-Elf mail sender",
       "type": "Postfix"
     }
-  ]
+  ],
+  "remote": {
+    "port": 7022,
+    "username": "root"
+  }
 }
