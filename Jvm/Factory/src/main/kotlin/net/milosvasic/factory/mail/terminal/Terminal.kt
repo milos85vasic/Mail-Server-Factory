@@ -16,7 +16,8 @@ class Terminal :
     private val subscribers = mutableSetOf<OperationResultListener>()
 
     override fun execute(what: Command) {
-
+        val commands = what.toExecute
+        val process = runtime.exec(commands)
 
     }
 
