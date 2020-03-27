@@ -1,8 +1,8 @@
 package net.milosvasic.factory.mail.configuration
 
-import net.milosvasic.factory.mail.service.Service
+import net.milosvasic.factory.mail.service.Definition
 
 data class Configuration(
     val name: String,
-    val services: List<Service>
+    val services: List<Definition>
 )
