@@ -4,6 +4,31 @@ import net.milosvasic.factory.mail.error.ERROR
 import java.lang.StringBuilder
 import kotlin.system.exitProcess
 
+import net.milosvasic.logger.SimpleLogger
+import net.milosvasic.logger.ConsoleLogger
+import net.milosvasic.logger.CompositeLogger
+
+val compositeLogger = CompositeLogger()
+
+val log = object : Logger {
+
+    private val tag = BuildInfo.NAME
+
+    override fun v(message: String) = compositeLogger.v(tag, message)
+
+    override fun d(message: String) = compositeLogger.d(tag, message)
+
+    override fun c(message: String) = compositeLogger.c(tag, message)
+
+    override fun n(message: String) = compositeLogger.n(tag, message)
+
+    override fun i(message: String) = compositeLogger.i(tag, message)
+
+    override fun w(message: String) = compositeLogger.w(tag, message)
+
+    override fun e(message: String) = compositeLogger.e(tag, message)
+}
+
 fun fail(error: ERROR) {
 
     System.err.println(error.message)
@@ -12,7 +37,7 @@ fun fail(error: ERROR) {
 
 fun fail(error: ERROR, with: String) {
 
-    System.err.println("${error.message}: $with")
+    log.e("${error.message}: $with")
     exitProcess(error.code)
 }
 
@@ -31,9 +56,4 @@ fun fail(e: Exception) {
     e.message?.let {
         fail(ERROR.FATAL_EXCEPTION, it)
     }
-}
-
-fun initLogger() {
-
-
 }
