@@ -7,6 +7,11 @@ import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.processor.ServiceProcessor
+import net.milosvasic.factory.mail.remote.operation.OperationResult
+import net.milosvasic.factory.mail.remote.operation.OperationResultListener
+import net.milosvasic.factory.mail.remote.operation.TestOperation
+import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.remote.ssh.SSHRemote
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
@@ -29,10 +34,34 @@ fun main(args: Array<String>) {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
                 log.v(configuration.name)
 
-                val processor = ServiceProcessor(configuration.remote)
-                configuration.services.forEach {
-                    processor.process(it)
+                val ssh = SSH(configuration.remote)
+                val processor = ServiceProcessor(ssh)
+
+                val listener = object : OperationResultListener {
+                    override fun onOperationPerformed(result: OperationResult) {
+                        when (result.operation) {
+                            is TestOperation -> {
+                                if (result.success) {
+
+                                    log.v("Connected to: ${configuration.remote}")
+                                    configuration.services.forEach {
+                                        processor.process(it)
+                                    }
+                                } else {
+
+                                    log.e("Could not connect to: ${configuration.remote}")
+                                }
+                            }
+                            else -> {
+                                log.e("Unexpected operation has been performed: ${result.operation}")
+                            }
+                        }
+                        ssh.unsubscribe(this)
+                    }
                 }
+
+                ssh.subscribe(listener)
+                ssh.test()
             } catch (e: JsonSyntaxException) {
                 fail(e)
             }
