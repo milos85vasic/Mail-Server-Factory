@@ -9,8 +9,7 @@ import net.milosvasic.factory.mail.remote.operation.OperationResultListener
 class Terminal :
     Execution<Command>,
     Subscription<OperationResultListener>,
-    Notifying<OperationResult>
-{
+    Notifying<OperationResult> {
 
     private val runtime = Runtime.getRuntime()
     private val subscribers = mutableSetOf<OperationResultListener>()
@@ -30,8 +29,10 @@ class Terminal :
     }
 
     override fun notify(data: OperationResult) {
-        subscribers.forEach {
-            it.onOperationPerformed(data)
+        val iterator = subscribers.iterator()
+        while (iterator.hasNext()) {
+            val listener = iterator.next()
+            listener.onOperationPerformed(data)
         }
     }
 }

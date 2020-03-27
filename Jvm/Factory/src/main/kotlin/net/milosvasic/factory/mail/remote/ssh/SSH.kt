@@ -30,8 +30,10 @@ class SSH(private val remote: SSHRemote) :
     }
 
     override fun notify(data: OperationResult) {
-        subscribers.forEach {
-            it.onOperationPerformed(data)
+        val iterator = subscribers.iterator()
+        while (iterator.hasNext()) {
+            val listener = iterator.next()
+            listener.onOperationPerformed(data)
         }
     }
 }
