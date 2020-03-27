@@ -17,7 +17,7 @@ class SSH(private val remote: SSHRemote) :
 
     override fun test() {
 
-
+        // TODO: Send command to terminal and notify with result.
         notify(OperationResult(TestOperation(), false))
     }
 

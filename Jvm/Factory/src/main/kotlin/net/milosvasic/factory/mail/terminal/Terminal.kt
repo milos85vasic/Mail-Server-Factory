@@ -17,7 +17,7 @@ class Terminal :
     override fun execute(what: Command) {
         val commands = what.toExecute
         val process = runtime.exec(commands)
-
+        // TODO: Execute process and trigger callbacks.
     }
 
     override fun subscribe(what: OperationResultListener) {
