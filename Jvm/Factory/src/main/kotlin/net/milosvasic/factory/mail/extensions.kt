@@ -32,3 +32,8 @@ fun fail(e: Exception) {
         fail(ERROR.FATAL_EXCEPTION, it)
     }
 }
+
+fun initLogger() {
+
+
+}

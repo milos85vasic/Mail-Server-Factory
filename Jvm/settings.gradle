@@ -1,1 +1,1 @@
-include ':Factory', ':Logger'
+include ':Factory', ':Logger:Logger'
