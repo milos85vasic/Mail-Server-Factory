@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
+import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
@@ -27,7 +28,10 @@ fun main(args: Array<String>) {
             try {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
                 log.v(configuration.name)
-
+                val processor = ServiceProcessor()
+                configuration.services.forEach {
+                    processor.process(it)
+                }
             } catch (e: JsonSyntaxException) {
                 fail(e)
             }

@@ -2,7 +2,7 @@
   "name": "Mail server configuration",
   "services": [
     {
-      "name": "Postfix",
+      "name": "Red-Elf mail sender",
       "type": "Postfix"
     }
   ]
