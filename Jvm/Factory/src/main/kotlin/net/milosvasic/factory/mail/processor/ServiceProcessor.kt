@@ -2,8 +2,9 @@ package net.milosvasic.factory.mail.processor
 
 import net.milosvasic.factory.mail.service.Definition
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.remote.ssh.SSHRemote
 
-class ServiceProcessor : Processor<Definition> {
+class ServiceProcessor(val remote: SSHRemote) : Processor<Definition> {
 
     override fun process(what: Definition) {
 

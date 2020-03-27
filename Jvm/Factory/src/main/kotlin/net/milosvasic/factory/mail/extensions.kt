@@ -1,11 +1,10 @@
 package net.milosvasic.factory.mail
 
+import net.milosvasic.factory.mail.common.Logger
 import net.milosvasic.factory.mail.error.ERROR
 import java.lang.StringBuilder
 import kotlin.system.exitProcess
 
-import net.milosvasic.logger.SimpleLogger
-import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.CompositeLogger
 
 val compositeLogger = CompositeLogger()

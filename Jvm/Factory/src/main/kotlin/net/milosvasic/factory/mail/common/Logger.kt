@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail
+package net.milosvasic.factory.mail.common
 
 interface Logger {
 

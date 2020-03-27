@@ -28,7 +28,8 @@ fun main(args: Array<String>) {
             try {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
                 log.v(configuration.name)
-                val processor = ServiceProcessor()
+
+                val processor = ServiceProcessor(configuration.remote)
                 configuration.services.forEach {
                     processor.process(it)
                 }
