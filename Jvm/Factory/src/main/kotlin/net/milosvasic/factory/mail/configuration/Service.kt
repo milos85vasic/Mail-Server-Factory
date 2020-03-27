@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.configuration
 
-data class Configuration(
+data class Service(
     val name: String,
-    val services: List<Service>
+    val type: String
 )

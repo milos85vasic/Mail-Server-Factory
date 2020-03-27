@@ -1,3 +1,9 @@
 {
-
+  "name": "Mail server configuration",
+  "services": [
+    {
+      "name": "Postfix",
+      "type": "Postfix"
+    }
+  ]
 }
