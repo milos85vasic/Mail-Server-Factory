@@ -30,14 +30,18 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.6"
 }
 
-mainClassName = "net.milosvasic.factory.mail.Launcher"
+application {
+    mainClassName = "net.milosvasic.factory.mail.Launcher"
+}
 
 jar {
     manifest {
-        attributes "Main-Class": "net.milosvasic.factory.mail.Launcher"
+        attributes "Main-Class": application.mainClassName
     }
 
-    from { configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
 }
 
 sourceSets.main.java.srcDirs += 'src/main/kotlin'
