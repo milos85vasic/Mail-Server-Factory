@@ -16,6 +16,18 @@ class SSH(remote: SSHRemote) :
     private val terminal = Terminal()
     private val subscribers = mutableSetOf<OperationResultListener>()
 
+    private val listener = object : OperationResultListener {
+
+        override fun onOperationPerformed(result: OperationResult) {
+
+            notify(result)
+        }
+    }
+
+    init {
+        terminal.subscribe(listener)
+    }
+
     override fun test() {
         terminal.execute(TestOperation())
     }

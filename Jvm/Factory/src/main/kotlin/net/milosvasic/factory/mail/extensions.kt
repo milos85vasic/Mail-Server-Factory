@@ -1,30 +1,13 @@
 package net.milosvasic.factory.mail
 
-import net.milosvasic.factory.mail.common.Execution
 import net.milosvasic.factory.mail.common.Logger
 import net.milosvasic.factory.mail.error.ERROR
-import net.milosvasic.factory.mail.execution.TaskExecutor
 import java.lang.StringBuilder
 import kotlin.system.exitProcess
 
 import net.milosvasic.logger.CompositeLogger
-import java.util.concurrent.atomic.AtomicBoolean
 
-val busy = AtomicBoolean()
 val compositeLogger = CompositeLogger()
-val centralExecutor = TaskExecutor.instantiate(1)
-
-val executor = object : Execution<Runnable> {
-
-    @Synchronized
-    override fun execute(what: Runnable) {
-        centralExecutor.execute {
-            busy.set(true)
-            what.run()
-            busy.set(false)
-        }
-    }
-}
 
 val log = object : Logger {
 

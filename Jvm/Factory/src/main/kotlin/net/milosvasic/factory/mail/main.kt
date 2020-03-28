@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
+import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.remote.operation.OperationResult
 import net.milosvasic.factory.mail.remote.operation.OperationResultListener
@@ -58,6 +59,7 @@ fun main(args: Array<String>) {
                             }
                         }
                         ssh.unsubscribe(this)
+                        finish()
                     }
                 }
 
@@ -71,16 +73,14 @@ fun main(args: Array<String>) {
             fail(ERROR.FILE_DOES_NOT_EXIST, configurationFile.absolutePath)
         }
     }
+}
 
-    while (busy.get()) {
-        Thread.yield()
-    }
-    log.i("END")
+private fun finish() {
+    log.i("FINISHED")
     exitProcess(0)
 }
 
-fun initLogging() {
-
+private fun initLogging() {
     val console = ConsoleLogger()
     val filesystem = FilesystemLogger(File("."))
     compositeLogger.addLoggers(console, filesystem)

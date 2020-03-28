@@ -9,6 +9,5 @@ class ServiceProcessor(val connection: Connection<*>) : Processor<Definition> {
     override fun process(what: Definition) {
 
         log.d("Processing ${what.getType().type.toLowerCase()} service: ${what.name}")
-
     }
 }
