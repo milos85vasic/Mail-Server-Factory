@@ -6,7 +6,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
-import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.remote.operation.OperationResult
 import net.milosvasic.factory.mail.remote.operation.OperationResultListener
@@ -20,7 +19,7 @@ import kotlin.system.exitProcess
 fun main(args: Array<String>) {
 
     initLogging()
-    log.i("START")
+    log.i("STARTED")
     if (args.isEmpty()) {
 
         fail(ERROR.EMPTY_DATA)
