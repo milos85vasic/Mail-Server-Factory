@@ -7,7 +7,6 @@ import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.remote.operation.OperationResult
 import net.milosvasic.factory.mail.remote.operation.OperationResultListener
-import java.io.BufferedInputStream
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
