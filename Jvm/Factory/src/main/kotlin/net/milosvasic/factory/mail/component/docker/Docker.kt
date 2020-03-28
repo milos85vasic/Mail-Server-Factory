@@ -13,6 +13,7 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
 
     override fun install() {
 
+        // TODO: To be implemented.
         notify(OperationResult(Install(componentId), false))
     }
 
