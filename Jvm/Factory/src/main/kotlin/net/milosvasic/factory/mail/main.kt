@@ -7,9 +7,9 @@ import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.processor.ServiceProcessor
-import net.milosvasic.factory.mail.remote.operation.OperationResult
-import net.milosvasic.factory.mail.remote.operation.OperationResultListener
-import net.milosvasic.factory.mail.remote.operation.TestOperation
+import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.operation.TestOperation
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger

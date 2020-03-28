@@ -1,35 +1,27 @@
-package net.milosvasic.factory.mail.remote.ssh
+package net.milosvasic.factory.mail.docker
 
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
-import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.containing.ContainerSystem
+import net.milosvasic.factory.mail.operation.Install
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.operation.TestOperation
-import net.milosvasic.factory.mail.terminal.Terminal
+import net.milosvasic.factory.mail.operation.Uninstall
+import net.milosvasic.factory.mail.remote.ssh.SSH
 
-class SSH(private val remote: SSHRemote) :
-    Connection<SSHRemote>(remote),
-    Subscription<OperationResultListener>,
-    Notifying<OperationResult> {
+class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint), Subscription<OperationResultListener>, Notifying<OperationResult> {
 
-    private val terminal = Terminal()
     private val subscribers = mutableSetOf<OperationResultListener>()
 
-    private val listener = object : OperationResultListener {
+    override fun install() {
 
-        override fun onOperationPerformed(result: OperationResult) {
-
-            notify(result)
-        }
+        notify(OperationResult(Install(), false))
     }
 
-    init {
-        terminal.subscribe(listener)
-    }
+    override fun uninstall() {
 
-    override fun test() {
-        terminal.execute(TestOperation(remote))
+        // TODO: To be implemented.
+        notify(OperationResult(Uninstall(), false))
     }
 
     override fun subscribe(what: OperationResultListener) {
