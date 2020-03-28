@@ -25,7 +25,7 @@ class Terminal :
     override fun execute(what: Command) {
         val action = Runnable {
             try {
-                log.v("Command: ${what.toExecute}")
+                log.v(">>> ${what.toExecute}")
                 val process = runtime.exec(what.toExecute)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
@@ -74,7 +74,7 @@ class Terminal :
     private fun readToLog(reader: BufferedReader) {
         var s = reader.readLine()
         while (s != null) {
-            log.v(s)
+            log.v("<<< $s")
             s = reader.readLine()
         }
     }

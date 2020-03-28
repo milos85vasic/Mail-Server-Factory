@@ -9,8 +9,9 @@ import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.operation.TestOperation
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.remote.ssh.SSHCommand
+import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
@@ -37,25 +38,33 @@ fun main(args: Array<String>) {
 
                 val ssh = SSH(configuration.remote)
                 val processor = ServiceProcessor(ssh)
+                val testCommand = Commands.echo("Hello")
 
                 val listener = object : OperationResultListener {
                     override fun onOperationPerformed(result: OperationResult) {
                         when (result.operation) {
-                            is TestOperation -> {
-                                if (result.success) {
+                            is SSHCommand -> {
+                                if (result.operation.command == testCommand) {
+                                    if (result.success) {
 
-                                    log.v("Connected to: ${configuration.remote}")
-                                    configuration.services.forEach {
-                                        processor.process(it)
+                                        log.v("Connected to: ${configuration.remote}")
+                                        configuration.services.forEach {
+                                            processor.process(it)
+                                        }
+                                        finish()
+                                    } else {
+
+                                        log.e("Could not connect to: ${configuration.remote}")
+                                        fail(ERROR.INITIALIZATION_FAILURE)
                                     }
-                                    finish()
                                 } else {
 
-                                    log.e("Could not connect to: ${configuration.remote}")
+                                    log.e("Unexpected command has been performed: ${result.operation.command}")
                                     fail(ERROR.INITIALIZATION_FAILURE)
                                 }
                             }
                             else -> {
+
                                 log.e("Unexpected operation has been performed: ${result.operation}")
                                 fail(ERROR.INITIALIZATION_FAILURE)
                             }
@@ -64,7 +73,7 @@ fun main(args: Array<String>) {
                 }
 
                 ssh.subscribe(listener)
-                ssh.test()
+                ssh.execute(testCommand)
             } catch (e: JsonSyntaxException) {
                 fail(e)
             }

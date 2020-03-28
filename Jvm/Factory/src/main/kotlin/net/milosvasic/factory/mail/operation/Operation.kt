@@ -1,4 +1,3 @@
 package net.milosvasic.factory.mail.operation
 
-abstract class Operation {
-}
+abstract class Operation
