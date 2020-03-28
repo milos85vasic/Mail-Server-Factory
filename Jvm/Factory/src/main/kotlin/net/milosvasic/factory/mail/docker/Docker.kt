@@ -9,7 +9,10 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.operation.Uninstall
 import net.milosvasic.factory.mail.remote.ssh.SSH
 
-class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint), Subscription<OperationResultListener>, Notifying<OperationResult> {
+class Docker(private val entryPoint: SSH) :
+    ContainerSystem(entryPoint),
+    Subscription<OperationResultListener>,
+    Notifying<OperationResult> {
 
     private val subscribers = mutableSetOf<OperationResultListener>()
 
