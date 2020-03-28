@@ -30,7 +30,18 @@ class Terminal :
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
                 readToLog(stdIn)
                 readToLog(stdErr)
-                val success = process.exitValue() == 0
+                val noExitValue = -1
+                var exitValue = noExitValue
+                while (exitValue == noExitValue) {
+                    try {
+                        exitValue = process.exitValue()
+                    } catch (e: IllegalThreadStateException) {
+                        e.message?.let {
+                            log.w(it)
+                        }
+                    }
+                }
+                val success = exitValue == 0
                 val result = OperationResult(what, success)
                 notify(result)
             } catch (e: Exception) {
