@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.component
 
-interface Component {
+abstract class Component {
 
-    val componentId: Int
+    val componentId = ComponentManager.subscribe(this::class)
 }

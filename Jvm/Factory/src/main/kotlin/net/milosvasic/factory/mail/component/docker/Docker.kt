@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.docker
+package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
@@ -14,11 +14,6 @@ class Docker(private val entryPoint: SSH) :
     ContainerSystem(entryPoint),
     Subscription<OperationResultListener>,
     Notifying<OperationResult> {
-
-    private val id = ComponentManager.subscribe(this::class)
-
-    override val componentId: Int
-        get() = id
 
     private val subscribers = mutableSetOf<OperationResultListener>()
 
