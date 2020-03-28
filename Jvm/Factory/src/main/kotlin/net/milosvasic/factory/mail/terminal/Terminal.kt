@@ -9,6 +9,7 @@ import net.milosvasic.factory.mail.remote.operation.OperationResult
 import net.milosvasic.factory.mail.remote.operation.OperationResultListener
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.lang.Exception
 
 class Terminal :
     Execution<Command>,
@@ -21,15 +22,21 @@ class Terminal :
 
     override fun execute(what: Command) {
         executor.execute {
-            val commands = what.toExecute
-            val process = runtime.exec(commands)
-            val stdIn = BufferedReader(InputStreamReader(process.inputStream))
-            val stdErr = BufferedReader(InputStreamReader(process.errorStream))
-            readToLog(stdIn)
-            readToLog(stdErr)
-            val success = process.exitValue() == 0
-            val result = OperationResult(what, success)
-            notify(result)
+            try {
+                val process = runtime.exec(what.toExecute)
+                val stdIn = BufferedReader(InputStreamReader(process.inputStream))
+                val stdErr = BufferedReader(InputStreamReader(process.errorStream))
+                readToLog(stdIn)
+                readToLog(stdErr)
+                val success = process.exitValue() == 0
+                val result = OperationResult(what, success)
+                notify(result)
+            } catch (e: Exception) {
+
+                e.message?.let { log.e(it) }
+                val result = OperationResult(what, false)
+                notify(result)
+            }
         }
     }
 
