@@ -1,3 +1,5 @@
 package net.milosvasic.factory.mail.remote
 
-abstract class Remote
+import net.milosvasic.factory.mail.localhost
+
+abstract class Remote(val host: String = localhost)

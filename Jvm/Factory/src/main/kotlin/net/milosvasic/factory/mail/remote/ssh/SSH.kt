@@ -8,7 +8,7 @@ import net.milosvasic.factory.mail.remote.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.operation.TestOperation
 import net.milosvasic.factory.mail.terminal.Terminal
 
-class SSH(remote: SSHRemote) :
+class SSH(private val remote: SSHRemote) :
     Connection<SSHRemote>(remote),
     Subscription<OperationResultListener>,
     Notifying<OperationResult> {
@@ -29,7 +29,7 @@ class SSH(remote: SSHRemote) :
     }
 
     override fun test() {
-        terminal.execute(TestOperation())
+        terminal.execute(TestOperation(remote))
     }
 
     override fun subscribe(what: OperationResultListener) {
