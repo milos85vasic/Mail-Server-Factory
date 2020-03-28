@@ -5,13 +5,8 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 open class Yum(private val entryPoint: SSH) : PackageManager(entryPoint) {
 
     override val installCommand: String
-        get() = TODO("Not yet implemented")
+        get() = "yum install -y"
 
-    override fun install(packages: List<String>) {
-        super.install(packages)
-    }
-
-    override fun groupInstall(what: String) {
-        TODO("Not yet implemented")
-    }
+    override val groupInstallCommand: String
+        get() = "yum groupinstall -y"
 }

@@ -6,11 +6,13 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 abstract class PackageManager(private val entryPoint: SSH) : Component() {
 
     abstract val installCommand: String
+    abstract val groupInstallCommand: String
 
     open fun install(packages: List<String>) {
 
-        // TODO: Continue.
     }
 
-    abstract fun groupInstall(what: String)
+    open fun groupInstall(what: String) {
+
+    }
 }
