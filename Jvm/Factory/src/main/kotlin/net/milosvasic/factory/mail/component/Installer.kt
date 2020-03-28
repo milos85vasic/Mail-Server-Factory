@@ -6,11 +6,7 @@ import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
-class Installer(private val installations: List<Installation>) :
-    Component(),
-    Installation,
-    Subscription<OperationResultListener>,
-    Notifying<OperationResult> {
+class Installer(private val installations: List<Installation>) : SystemComponent() {
 
     private val subscribers = mutableSetOf<OperationResultListener>()
 
