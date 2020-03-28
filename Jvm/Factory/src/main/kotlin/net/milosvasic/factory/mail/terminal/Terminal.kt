@@ -27,6 +27,9 @@ class Terminal :
             val stdErr = BufferedReader(InputStreamReader(process.errorStream))
             readToLog(stdIn)
             readToLog(stdErr)
+            val success = process.exitValue() == 0
+            val result = OperationResult(what, success)
+            notify(result)
         }
     }
 
