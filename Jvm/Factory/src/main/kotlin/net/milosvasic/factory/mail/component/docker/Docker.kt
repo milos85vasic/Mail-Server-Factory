@@ -11,6 +11,16 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
 
     private val subscribers = mutableSetOf<OperationResultListener>()
 
+    private val listener = object : OperationResultListener {
+        override fun onOperationPerformed(result: OperationResult) {
+            notify(result)
+        }
+    }
+
+    init {
+        entryPoint.subscribe(listener)
+    }
+
     override fun install() {
 
         // TODO: To be implemented.
@@ -37,5 +47,9 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
             val listener = iterator.next()
             listener.onOperationPerformed(data)
         }
+    }
+
+    override fun shutdown() {
+        entryPoint.unsubscribe(listener)
     }
 }
