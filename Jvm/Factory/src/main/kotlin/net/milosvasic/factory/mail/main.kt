@@ -11,14 +11,15 @@ import net.milosvasic.factory.mail.remote.operation.OperationResult
 import net.milosvasic.factory.mail.remote.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.operation.TestOperation
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHRemote
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
+import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
 
     initLogging()
+    log.i("START")
     if (args.isEmpty()) {
 
         fail(ERROR.EMPTY_DATA)
@@ -70,6 +71,12 @@ fun main(args: Array<String>) {
             fail(ERROR.FILE_DOES_NOT_EXIST, configurationFile.absolutePath)
         }
     }
+
+    while (busy.get()) {
+        Thread.yield()
+    }
+    log.i("END")
+    exitProcess(0)
 }
 
 fun initLogging() {

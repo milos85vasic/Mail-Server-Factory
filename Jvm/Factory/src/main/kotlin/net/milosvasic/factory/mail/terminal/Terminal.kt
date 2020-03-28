@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.common.Execution
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.execution.TaskExecutor
+import net.milosvasic.factory.mail.executor
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.remote.operation.OperationResult
 import net.milosvasic.factory.mail.remote.operation.OperationResultListener
@@ -18,10 +19,10 @@ class Terminal :
 
     private val runtime = Runtime.getRuntime()
     private val subscribers = mutableSetOf<OperationResultListener>()
-    private val executor = TaskExecutor.instantiate(1)
 
+    @Synchronized
     override fun execute(what: Command) {
-        executor.execute {
+        val action = Runnable {
             try {
                 val process = runtime.exec(what.toExecute)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
@@ -38,6 +39,7 @@ class Terminal :
                 notify(result)
             }
         }
+        executor.execute(action)
     }
 
     override fun subscribe(what: OperationResultListener) {
