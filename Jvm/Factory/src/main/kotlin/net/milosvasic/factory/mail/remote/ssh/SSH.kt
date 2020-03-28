@@ -6,19 +6,18 @@ import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.operation.OperationResult
 import net.milosvasic.factory.mail.remote.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.operation.TestOperation
+import net.milosvasic.factory.mail.terminal.Terminal
 
 class SSH(private val remote: SSHRemote) :
     Connection<SSHRemote>(remote),
     Subscription<OperationResultListener>,
-    Notifying<OperationResult>
-{
+    Notifying<OperationResult> {
 
+    private val terminal = Terminal()
     private val subscribers = mutableSetOf<OperationResultListener>()
 
     override fun test() {
-
-        // TODO: Send command to terminal and notify with result.
-        notify(OperationResult(TestOperation(), false))
+        terminal.execute(TestOperation())
     }
 
     override fun subscribe(what: OperationResultListener) {
