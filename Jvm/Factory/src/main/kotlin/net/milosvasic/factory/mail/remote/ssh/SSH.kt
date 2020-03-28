@@ -8,7 +8,7 @@ import net.milosvasic.factory.mail.remote.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.operation.TestOperation
 import net.milosvasic.factory.mail.terminal.Terminal
 
-class SSH(private val remote: SSHRemote) :
+class SSH(remote: SSHRemote) :
     Connection<SSHRemote>(remote),
     Subscription<OperationResultListener>,
     Notifying<OperationResult> {
