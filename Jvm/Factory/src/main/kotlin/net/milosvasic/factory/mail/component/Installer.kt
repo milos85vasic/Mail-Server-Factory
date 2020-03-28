@@ -1,25 +1,30 @@
 package net.milosvasic.factory.mail.component
 
-import net.milosvasic.factory.mail.common.Installation
-import net.milosvasic.factory.mail.common.Notifying
-import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
-class Installer(private val installations: List<Installation>) : SystemComponent() {
+class Installer(private val installations: List<SystemComponent>) : SystemComponent() {
 
     private val subscribers = mutableSetOf<OperationResultListener>()
 
-    override fun install() {
+    private val listener = object : OperationResultListener {
+        override fun onOperationPerformed(result: OperationResult) {
 
+
+            notify(result)
+        }
+    }
+
+    override fun install() {
         installations.forEach {
+            it.subscribe(listener)
             it.install()
         }
     }
 
     override fun uninstall() {
-
         installations.forEach {
+            it.subscribe(listener)
             it.uninstall()
         }
     }
