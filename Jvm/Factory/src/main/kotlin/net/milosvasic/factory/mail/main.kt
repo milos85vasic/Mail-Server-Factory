@@ -49,17 +49,18 @@ fun main(args: Array<String>) {
                                     configuration.services.forEach {
                                         processor.process(it)
                                     }
+                                    finish()
                                 } else {
 
                                     log.e("Could not connect to: ${configuration.remote}")
+                                    fail(ERROR.INITIALIZATION_FAILURE)
                                 }
                             }
                             else -> {
                                 log.e("Unexpected operation has been performed: ${result.operation}")
+                                fail(ERROR.INITIALIZATION_FAILURE)
                             }
                         }
-                        ssh.unsubscribe(this)
-                        finish()
                     }
                 }
 
