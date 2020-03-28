@@ -1,9 +1,15 @@
-package net.milosvasic.factory.mail.component
+package net.milosvasic.factory.mail.component.packageManagement
 
+import net.milosvasic.factory.mail.component.Shutdown
+import net.milosvasic.factory.mail.component.SystemComponent
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
-class Installer(private val installations: List<SystemComponent>) : SystemComponent() {
+class InstallableCollection(
+    private val packages: List<String>,
+    private val groups: List<String>,
+    private val manager: PackageManager
+) : SystemComponent(), Shutdown {
 
     private val subscribers = mutableSetOf<OperationResultListener>()
 
@@ -15,17 +21,21 @@ class Installer(private val installations: List<SystemComponent>) : SystemCompon
         }
     }
 
+    init {
+        manager.subscribe(listener)
+    }
+
     override fun install() {
-        installations.forEach {
-            it.subscribe(listener)
-            it.install()
+        manager.install(packages)
+        groups.forEach {
+            manager.groupInstall(it)
         }
     }
 
     override fun uninstall() {
-        installations.forEach {
-            it.subscribe(listener)
-            it.uninstall()
+        manager.uninstall(packages)
+        groups.forEach {
+            manager.groupUninstall(it)
         }
     }
 
@@ -43,5 +53,9 @@ class Installer(private val installations: List<SystemComponent>) : SystemCompon
             val listener = iterator.next()
             listener.onOperationPerformed(data)
         }
+    }
+
+    override fun shutdown() {
+        manager.unsubscribe(listener)
     }
 }

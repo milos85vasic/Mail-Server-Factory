@@ -15,7 +15,9 @@ abstract class PackageManager(private val entryPoint: SSH) :
     Shutdown {
 
     protected abstract val installCommand: String
+    protected abstract val uninstallCommand: String
     protected abstract val groupInstallCommand: String
+    protected abstract val groupUninstallCommand: String
 
     private val subscribers = mutableSetOf<OperationResultListener>()
 
@@ -37,8 +39,21 @@ abstract class PackageManager(private val entryPoint: SSH) :
         entryPoint.execute(cmd)
     }
 
+    open fun uninstall(packages: List<String>) {
+        var cmd = uninstallCommand
+        packages.forEach {
+            cmd += " $it"
+        }
+        entryPoint.execute(cmd)
+    }
+
     open fun groupInstall(what: String) {
-        val cmd = groupInstallCommand
+        val cmd = "$groupInstallCommand $what"
+        entryPoint.execute(cmd)
+    }
+
+    open fun groupUninstall(what: String) {
+        val cmd = "$groupUninstallCommand $what"
         entryPoint.execute(cmd)
     }
 
