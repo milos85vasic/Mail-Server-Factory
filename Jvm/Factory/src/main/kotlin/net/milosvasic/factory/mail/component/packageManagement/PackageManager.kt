@@ -9,10 +9,14 @@ abstract class PackageManager(private val entryPoint: SSH) : Component() {
     abstract val groupInstallCommand: String
 
     open fun install(packages: List<String>) {
-
+        var cmd = installCommand
+        packages.forEach {
+            cmd += " $it"
+        }
     }
 
     open fun groupInstall(what: String) {
+        val cmd = groupInstallCommand
 
     }
 }
