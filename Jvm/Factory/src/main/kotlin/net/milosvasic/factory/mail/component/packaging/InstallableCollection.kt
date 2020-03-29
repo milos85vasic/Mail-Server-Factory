@@ -29,18 +29,16 @@ class InstallableCollection(
 
     @Synchronized
     override fun install() {
+        // TODO: Handle exception
         manager.install(packages)
-        groups.forEach {
-            manager.groupInstall(it)
-        }
+        manager.groupInstall(groups)
     }
 
     @Synchronized
     override fun uninstall() {
+        // TODO: Handle exception
         manager.uninstall(packages)
-        groups.forEach {
-            manager.groupUninstall(it)
-        }
+        manager.groupUninstall(groups)
     }
 
     override fun subscribe(what: OperationResultListener) {
