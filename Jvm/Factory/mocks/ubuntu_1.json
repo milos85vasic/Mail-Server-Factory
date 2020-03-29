@@ -1,0 +1,14 @@
+{
+  "name": "Mail server configuration",
+  "services": [
+    {
+      "name": "Red-Elf mail sender",
+      "type": "Postfix"
+    }
+  ],
+  "remote": {
+    "port": 22,
+    "username": "root",
+    "host": "192.168.100.102"
+  }
+}

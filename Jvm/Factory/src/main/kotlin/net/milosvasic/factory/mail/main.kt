@@ -53,19 +53,6 @@ fun main(args: Array<String>) {
                 val listener = object : OperationResultListener {
                     override fun onOperationPerformed(result: OperationResult) {
                         when (result.operation) {
-                            is Command -> {
-                                when (result.operation.toExecute) {
-                                    pingCommand.toExecute -> {
-                                        if (result.success) {
-                                            ssh.execute(testCommand)
-                                        } else {
-
-                                            log.e("Host is unreachable: $host")
-                                            fail(ERROR.INITIALIZATION_FAILURE)
-                                        }
-                                    }
-                                }
-                            }
                             is SSHCommand -> {
                                 when (result.operation.command) {
                                     testCommand -> {
@@ -95,6 +82,19 @@ fun main(args: Array<String>) {
                                     }
                                 }
                             }
+                            is Command -> {
+                                when (result.operation.toExecute) {
+                                    pingCommand.toExecute -> {
+                                        if (result.success) {
+                                            ssh.execute(testCommand)
+                                        } else {
+
+                                            log.e("Host is unreachable: $host")
+                                            fail(ERROR.INITIALIZATION_FAILURE)
+                                        }
+                                    }
+                                }
+                            }
                             is PackageManagerOperation -> {
 
                                 dnf.shutdown()
@@ -113,7 +113,6 @@ fun main(args: Array<String>) {
                 }
 
                 ssh.subscribe(listener)
-                terminal.subscribe(listener)
                 terminal.execute(pingCommand)
             } catch (e: JsonSyntaxException) {
                 fail(e)

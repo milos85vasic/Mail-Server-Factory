@@ -10,7 +10,7 @@ object Commands {
         return "ssh -p $port $user@$host $command"
     }
 
-    fun ping(host: String): String {
-        return "ping $host -t5"
+    fun ping(host: String, timeoutInSeconds: Int = 3): String {
+        return "ping $host -t$timeoutInSeconds"
     }
 }
