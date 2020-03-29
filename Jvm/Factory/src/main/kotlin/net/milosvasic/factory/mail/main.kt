@@ -66,7 +66,7 @@ fun main(args: Array<String>) {
                                 } else {
 
                                     log.e("Unexpected command has been performed: ${result.operation.command}")
-                                    fail(ERROR.INITIALIZATION_FAILURE)
+                                    // fail(ERROR.INITIALIZATION_FAILURE)
                                 }
                             }
                             is PackageManagerOperation -> {

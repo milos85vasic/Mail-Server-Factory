@@ -13,6 +13,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
 abstract class PackageManager(private val entryPoint: SSH) :
     Component(),
@@ -26,6 +27,7 @@ abstract class PackageManager(private val entryPoint: SSH) :
     protected abstract val groupUninstallCommand: String
 
     private val busy = Busy()
+    private var command = ""
     private var iterator: Iterator<InstallationItem>? = null
     private var operationType = PackageManagerOperationType.UNKNOWN
     private val subscribers = mutableSetOf<OperationResultListener>()
@@ -33,11 +35,14 @@ abstract class PackageManager(private val entryPoint: SSH) :
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
             when (result.operation) {
-                is PackageManagerOperation -> {
-                    if (result.success) {
-                        tryNext()
-                    } else {
-                        unBusy(false)
+                is SSHCommand -> {
+                    val cmd = result.operation.command
+                    if (command == cmd) {
+                        if (result.success) {
+                            tryNext()
+                        } else {
+                            unBusy(false)
+                        }
                     }
                 }
             }
@@ -143,23 +148,23 @@ abstract class PackageManager(private val entryPoint: SSH) :
     }
 
     private fun installPackage(item: Package) {
-        val cmd = "$installCommand ${item.value}"
-        entryPoint.execute(cmd)
+        command = "$installCommand ${item.value}"
+        entryPoint.execute(command)
     }
 
     private fun uninstallPackage(item: Package) {
-        val cmd = "$uninstallCommand ${item.value}"
-        entryPoint.execute(cmd)
+        command = "$uninstallCommand ${item.value}"
+        entryPoint.execute(command)
     }
 
     private fun installGroup(item: Group) {
-        val cmd = "$groupInstallCommand ${item.value}"
-        entryPoint.execute(cmd)
+        command = "$groupInstallCommand ${item.value}"
+        entryPoint.execute(command)
     }
 
     private fun uninstallGroup(item: Group) {
-        val cmd = "$groupUninstallCommand ${item.value}"
-        entryPoint.execute(cmd)
+        command = "$groupUninstallCommand ${item.value}"
+        entryPoint.execute(command)
     }
 
     @Throws(BusyException::class)
@@ -174,6 +179,7 @@ abstract class PackageManager(private val entryPoint: SSH) :
         val operation = PackageManagerOperation(operationType)
         val result = OperationResult(operation, success)
         notify(result)
+        command = ""
         iterator = null
         operationType = PackageManagerOperationType.UNKNOWN
         busy.setBusy(false)
