@@ -79,10 +79,10 @@ class Terminal :
         while (s != null) {
             log.v("<<< $s")
             if (obtainCommandOutput) {
-                builder.append(s)
+                builder.append(s).append("\n")
             }
             s = reader.readLine()
         }
-        return builder.toString()
+        return builder.toString().trim()
     }
 }

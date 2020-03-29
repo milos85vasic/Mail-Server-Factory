@@ -58,7 +58,7 @@ fun main(args: Array<String>) {
                                 when (result.operation.command) {
                                     hostInfoCommand -> {
                                         if (result.success) {
-                                            log.v("Host information obtained: TO BE IMPLEMENTED !!!") // <--- TODO
+                                            log.e("Host information obtained: ${result.data}") // <--- TODO
 
                                             // ============== Dnf tryout
 
