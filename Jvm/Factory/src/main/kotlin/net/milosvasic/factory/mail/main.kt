@@ -55,7 +55,7 @@ fun main(args: Array<String>) {
                                         // ============== Dnf tryout
 
                                         dnf.subscribe(this)
-                                        dnf.install(listOf(Package("git")))
+                                        dnf.install(listOf(Package("git"), Package("leafpad")))
 
                                         // ============== Dnf tryout === E N D
                                     } else {
