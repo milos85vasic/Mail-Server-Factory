@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.component.Component
 import net.milosvasic.factory.mail.component.Shutdown
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
+import net.milosvasic.factory.mail.component.packaging.item.MultiplePackages
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -58,6 +59,16 @@ abstract class PackageManager(private val entryPoint: SSH) :
     open fun install(packages: List<Package>) {
         busy()
         iterator = packages.iterator()
+        operationType = PackageManagerOperationType.PACKAGE_INSTALL
+        tryNext()
+    }
+
+    @Synchronized
+    @Throws(BusyException::class)
+    open fun install(packages: MultiplePackages) {
+        busy()
+        val list = listOf(Package(packages.value))
+        iterator = list.iterator()
         operationType = PackageManagerOperationType.PACKAGE_INSTALL
         tryNext()
     }

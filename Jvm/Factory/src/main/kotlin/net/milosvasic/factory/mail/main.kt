@@ -6,7 +6,9 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.mail.component.packaging.Dnf
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
+import net.milosvasic.factory.mail.component.packaging.item.MultiplePackages
 import net.milosvasic.factory.mail.component.packaging.item.Package
+import net.milosvasic.factory.mail.component.packaging.item.PackagesWrapper
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.processor.ServiceProcessor
@@ -55,7 +57,12 @@ fun main(args: Array<String>) {
                                         // ============== Dnf tryout
 
                                         dnf.subscribe(this)
-                                        dnf.install(listOf(Package("git"), Package("leafpad")))
+                                        dnf.install(
+                                            listOf(
+                                                MultiplePackages(PackagesWrapper("git", "cmake")),
+                                                Package("sqlite")
+                                            )
+                                        )
 
                                         // ============== Dnf tryout === E N D
                                     } else {
