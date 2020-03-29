@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.common
+package net.milosvasic.factory.mail.common.busy
 
 import java.util.concurrent.atomic.AtomicBoolean
 

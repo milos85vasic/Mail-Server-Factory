@@ -1,7 +1,9 @@
 package net.milosvasic.factory.mail.component.packageManagement
 
+import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
+import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.Component
 import net.milosvasic.factory.mail.component.Shutdown
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -19,10 +21,13 @@ abstract class PackageManager(private val entryPoint: SSH) :
     protected abstract val groupInstallCommand: String
     protected abstract val groupUninstallCommand: String
 
+    private val busy = Busy()
     private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
+
+            // TODO:
             notify(result)
         }
     }
@@ -31,7 +36,10 @@ abstract class PackageManager(private val entryPoint: SSH) :
         entryPoint.subscribe(listener)
     }
 
+    @Synchronized
+    @Throws(BusyException::class)
     open fun install(packages: List<InstallablePackage>) {
+        busy()
         var cmd = installCommand
         packages.forEach {
             cmd += " ${it.value}"
@@ -39,7 +47,10 @@ abstract class PackageManager(private val entryPoint: SSH) :
         entryPoint.execute(cmd)
     }
 
+    @Synchronized
+    @Throws(BusyException::class)
     open fun uninstall(packages: List<InstallablePackage>) {
+        busy()
         var cmd = uninstallCommand
         packages.forEach {
             cmd += " ${it.value}"
@@ -47,12 +58,18 @@ abstract class PackageManager(private val entryPoint: SSH) :
         entryPoint.execute(cmd)
     }
 
+    @Synchronized
+    @Throws(BusyException::class)
     open fun groupInstall(what: InstallableGroup) {
+        busy()
         val cmd = "$groupInstallCommand ${what.name}"
         entryPoint.execute(cmd)
     }
 
+    @Synchronized
+    @Throws(BusyException::class)
     open fun groupUninstall(what: InstallablePackage) {
+        busy()
         val cmd = "$groupUninstallCommand ${what.value}"
         entryPoint.execute(cmd)
     }
@@ -75,5 +92,13 @@ abstract class PackageManager(private val entryPoint: SSH) :
 
     override fun shutdown() {
         entryPoint.unsubscribe(listener)
+    }
+
+    @Throws(BusyException::class)
+    private fun busy() {
+        if (busy.isBusy()) {
+            throw BusyException()
+        }
+        busy.setBusy(true)
     }
 }
