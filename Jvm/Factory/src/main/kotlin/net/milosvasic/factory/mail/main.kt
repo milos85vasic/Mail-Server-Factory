@@ -4,6 +4,9 @@ package net.milosvasic.factory.mail
 
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
+import net.milosvasic.factory.mail.component.packaging.Dnf
+import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
+import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.processor.ServiceProcessor
@@ -46,12 +49,15 @@ fun main(args: Array<String>) {
                             is SSHCommand -> {
                                 if (result.operation.command == testCommand) {
                                     if (result.success) {
-
                                         log.v("Connected to: ${configuration.remote}")
-                                        configuration.services.forEach {
-                                            processor.process(it)
-                                        }
-                                        finish()
+
+                                        // ============== Dnf tryout
+
+                                        val dnf = Dnf(ssh)
+                                        dnf.subscribe(this)
+                                        dnf.install(listOf(Package("git")))
+
+                                        // ============== Dnf tryout === E N D
                                     } else {
 
                                         log.e("Could not connect to: ${configuration.remote}")
@@ -62,6 +68,13 @@ fun main(args: Array<String>) {
                                     log.e("Unexpected command has been performed: ${result.operation.command}")
                                     fail(ERROR.INITIALIZATION_FAILURE)
                                 }
+                            }
+                            is PackageManagerOperation -> {
+
+                                configuration.services.forEach {
+                                    processor.process(it)
+                                }
+                                finish()
                             }
                             else -> {
 
