@@ -40,9 +40,6 @@ abstract class PackageManager(private val entryPoint: SSH) :
                         unBusy(false)
                     }
                 }
-                else -> {
-                    log.e("Unexpected operation result: $result")
-                }
             }
         }
     }
