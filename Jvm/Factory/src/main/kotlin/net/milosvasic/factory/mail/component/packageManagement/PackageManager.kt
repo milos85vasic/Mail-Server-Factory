@@ -31,29 +31,29 @@ abstract class PackageManager(private val entryPoint: SSH) :
         entryPoint.subscribe(listener)
     }
 
-    open fun install(packages: List<String>) {
+    open fun install(packages: List<InstallablePackage>) {
         var cmd = installCommand
         packages.forEach {
-            cmd += " $it"
+            cmd += " ${it.value}"
         }
         entryPoint.execute(cmd)
     }
 
-    open fun uninstall(packages: List<String>) {
+    open fun uninstall(packages: List<InstallablePackage>) {
         var cmd = uninstallCommand
         packages.forEach {
-            cmd += " $it"
+            cmd += " ${it.value}"
         }
         entryPoint.execute(cmd)
     }
 
-    open fun groupInstall(what: String) {
-        val cmd = "$groupInstallCommand $what"
+    open fun groupInstall(what: InstallableGroup) {
+        val cmd = "$groupInstallCommand ${what.name}"
         entryPoint.execute(cmd)
     }
 
-    open fun groupUninstall(what: String) {
-        val cmd = "$groupUninstallCommand $what"
+    open fun groupUninstall(what: InstallablePackage) {
+        val cmd = "$groupUninstallCommand ${what.value}"
         entryPoint.execute(cmd)
     }
 

@@ -6,8 +6,8 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
 class InstallableCollection(
-    private val packages: List<String>,
-    private val groups: List<String>,
+    private val packages: List<InstallablePackage>,
+    private val groups: List<InstallableGroup>,
     private val manager: PackageManager
 ) : SystemComponent(), Shutdown {
 
@@ -25,6 +25,7 @@ class InstallableCollection(
         manager.subscribe(listener)
     }
 
+    @Synchronized
     override fun install() {
         manager.install(packages)
         groups.forEach {
@@ -32,6 +33,7 @@ class InstallableCollection(
         }
     }
 
+    @Synchronized
     override fun uninstall() {
         manager.uninstall(packages)
         groups.forEach {
