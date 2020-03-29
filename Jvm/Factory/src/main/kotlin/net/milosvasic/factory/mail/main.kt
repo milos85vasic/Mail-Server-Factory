@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.PackagesWrapper
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
+import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -41,35 +42,56 @@ fun main(args: Array<String>) {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
                 log.v(configuration.name)
 
+                val host = configuration.remote.host
                 val ssh = SSH(configuration.remote)
+                val terminal = ssh.terminal
                 val dnf = Dnf(ssh) // TODO: Remove when not needed anymore - after tryout.
                 val processor = ServiceProcessor(ssh)
+                val pingCommand = Command(Commands.ping(host))
                 val testCommand = Commands.echo("Hello")
 
                 val listener = object : OperationResultListener {
                     override fun onOperationPerformed(result: OperationResult) {
                         when (result.operation) {
+                            is Command -> {
+                                when (result.operation.toExecute) {
+                                    pingCommand.toExecute -> {
+                                        if (result.success) {
+                                            ssh.execute(testCommand)
+                                        } else {
+
+                                            log.e("Host is unreachable: $host")
+                                            fail(ERROR.INITIALIZATION_FAILURE)
+                                        }
+                                    }
+                                }
+                            }
                             is SSHCommand -> {
-                                if (result.operation.command == testCommand) {
-                                    if (result.success) {
-                                        log.v("Connected to: ${configuration.remote}")
+                                when (result.operation.command) {
+                                    testCommand -> {
+                                        if (result.success) {
+                                            log.v("Connected to: ${configuration.remote}")
 
-                                        // ============== Dnf tryout
+                                            // ============== Dnf tryout
 
-                                        dnf.subscribe(this)
-                                        val packed = PackagesWrapper("git", "cmake")
-                                        dnf.install(
-                                            listOf(
-                                                MultiplePackages(packed),
-                                                Package("sqlite")
+                                            dnf.subscribe(this)
+                                            val packed = PackagesWrapper("git", "cmake")
+                                            dnf.install(
+                                                listOf(
+                                                    MultiplePackages(packed),
+                                                    Package("sqlite")
+                                                )
                                             )
-                                        )
 
-                                        // ============== Dnf tryout === E N D
-                                    } else {
+                                            // ============== Dnf tryout === E N D
+                                        } else {
 
-                                        log.e("Could not connect to: ${configuration.remote}")
-                                        fail(ERROR.INITIALIZATION_FAILURE)
+                                            log.e("Could not connect to: ${configuration.remote}")
+                                            fail(ERROR.INITIALIZATION_FAILURE)
+                                        }
+                                    }
+                                    else -> {
+
                                     }
                                 }
                             }
@@ -91,7 +113,8 @@ fun main(args: Array<String>) {
                 }
 
                 ssh.subscribe(listener)
-                ssh.execute(testCommand)
+                terminal.subscribe(listener)
+                terminal.execute(pingCommand)
             } catch (e: JsonSyntaxException) {
                 fail(e)
             }

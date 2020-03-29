@@ -14,7 +14,7 @@ class SSH(private val remote: SSHRemote) :
     Subscription<OperationResultListener>,
     Notifying<OperationResult> {
 
-    private val terminal = Terminal()
+    val terminal = Terminal()
     private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
