@@ -2,12 +2,14 @@ package net.milosvasic.factory.mail.component.packageManagement
 
 import net.milosvasic.factory.mail.component.Shutdown
 import net.milosvasic.factory.mail.component.SystemComponent
+import net.milosvasic.factory.mail.component.packageManagement.item.Group
+import net.milosvasic.factory.mail.component.packageManagement.item.Package
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
 class InstallableCollection(
-    private val packages: List<InstallablePackage>,
-    private val groups: List<InstallableGroup>,
+    private val packages: List<Package>,
+    private val groups: List<Group>,
     private val manager: PackageManager
 ) : SystemComponent(), Shutdown {
 

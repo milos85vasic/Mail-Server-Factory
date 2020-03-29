@@ -6,6 +6,8 @@ import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.Component
 import net.milosvasic.factory.mail.component.Shutdown
+import net.milosvasic.factory.mail.component.packageManagement.item.Group
+import net.milosvasic.factory.mail.component.packageManagement.item.Package
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
@@ -22,6 +24,7 @@ abstract class PackageManager(private val entryPoint: SSH) :
     protected abstract val groupUninstallCommand: String
 
     private val busy = Busy()
+    private var iterator: Iterator<Package>? = null
     private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
@@ -38,7 +41,7 @@ abstract class PackageManager(private val entryPoint: SSH) :
 
     @Synchronized
     @Throws(BusyException::class)
-    open fun install(packages: List<InstallablePackage>) {
+    open fun install(packages: List<Package>) {
         busy()
         var cmd = installCommand
         packages.forEach {
@@ -49,7 +52,7 @@ abstract class PackageManager(private val entryPoint: SSH) :
 
     @Synchronized
     @Throws(BusyException::class)
-    open fun uninstall(packages: List<InstallablePackage>) {
+    open fun uninstall(packages: List<Package>) {
         busy()
         var cmd = uninstallCommand
         packages.forEach {
@@ -60,15 +63,15 @@ abstract class PackageManager(private val entryPoint: SSH) :
 
     @Synchronized
     @Throws(BusyException::class)
-    open fun groupInstall(what: InstallableGroup) {
+    open fun groupInstall(what: Group) {
         busy()
-        val cmd = "$groupInstallCommand ${what.name}"
+        val cmd = "$groupInstallCommand ${what.value}"
         entryPoint.execute(cmd)
     }
 
     @Synchronized
     @Throws(BusyException::class)
-    open fun groupUninstall(what: InstallablePackage) {
+    open fun groupUninstall(what: Group) {
         busy()
         val cmd = "$groupUninstallCommand ${what.value}"
         entryPoint.execute(cmd)
