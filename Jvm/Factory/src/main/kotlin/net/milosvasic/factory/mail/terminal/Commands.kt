@@ -13,4 +13,6 @@ object Commands {
     fun ping(host: String, timeoutInSeconds: Int = 3): String {
         return "ping $host -t$timeoutInSeconds"
     }
+
+    fun getHostInfo(): String = "hostnamectl"
 }

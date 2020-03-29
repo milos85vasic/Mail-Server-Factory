@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.lang.Exception
+import java.lang.StringBuilder
 
 class Terminal :
     Execution<Command>,
@@ -29,8 +30,9 @@ class Terminal :
                 val process = runtime.exec(what.toExecute)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
-                readToLog(stdIn)
-                readToLog(stdErr)
+                val obtainCommandOutput = what.obtainCommandOutput
+                val inData = readToLog(stdIn, obtainCommandOutput)
+                val errData = readToLog(stdErr, obtainCommandOutput)
                 val noExitValue = -1
                 var exitValue = noExitValue
                 while (exitValue == noExitValue) {
@@ -43,7 +45,7 @@ class Terminal :
                     }
                 }
                 val success = exitValue == 0
-                val result = OperationResult(what, success)
+                val result = OperationResult(what, success, inData + errData)
                 notify(result)
             } catch (e: Exception) {
 
@@ -71,11 +73,16 @@ class Terminal :
         }
     }
 
-    private fun readToLog(reader: BufferedReader) {
+    private fun readToLog(reader: BufferedReader, obtainCommandOutput: Boolean = false): String {
+        val builder = StringBuilder()
         var s = reader.readLine()
         while (s != null) {
             log.v("<<< $s")
+            if (obtainCommandOutput) {
+                builder.append(s)
+            }
             s = reader.readLine()
         }
+        return builder.toString()
     }
 }

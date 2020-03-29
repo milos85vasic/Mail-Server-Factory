@@ -31,6 +31,10 @@ class SSH(private val remote: SSHRemote) :
         terminal.execute(SSHCommand(remote, data))
     }
 
+    fun execute(data: String, obtainCommandOutput: Boolean) {
+        terminal.execute(SSHCommand(remote, data, obtainCommandOutput))
+    }
+
     override fun subscribe(what: OperationResultListener) {
         subscribers.add(what)
     }

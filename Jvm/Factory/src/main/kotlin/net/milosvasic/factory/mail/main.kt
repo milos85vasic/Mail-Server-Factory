@@ -49,15 +49,16 @@ fun main(args: Array<String>) {
                 val processor = ServiceProcessor(ssh)
                 val pingCommand = Command(Commands.ping(host))
                 val testCommand = Commands.echo("Hello")
+                val hostInfoCommand = Commands.getHostInfo()
 
                 val listener = object : OperationResultListener {
                     override fun onOperationPerformed(result: OperationResult) {
                         when (result.operation) {
                             is SSHCommand -> {
                                 when (result.operation.command) {
-                                    testCommand -> {
+                                    hostInfoCommand -> {
                                         if (result.success) {
-                                            log.v("Connected to: ${configuration.remote}")
+                                            log.v("Host information obtained: TO BE IMPLEMENTED !!!") // <--- TODO
 
                                             // ============== Dnf tryout
 
@@ -71,6 +72,16 @@ fun main(args: Array<String>) {
                                             )
 
                                             // ============== Dnf tryout === E N D
+                                        } else {
+
+                                            log.e("Could not connect to: ${configuration.remote}")
+                                            fail(ERROR.INITIALIZATION_FAILURE)
+                                        }
+                                    }
+                                    testCommand -> {
+                                        if (result.success) {
+                                            log.v("Connected to: ${configuration.remote}")
+                                            ssh.execute(hostInfoCommand, true)
                                         } else {
 
                                             log.e("Could not connect to: ${configuration.remote}")

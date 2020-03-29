@@ -3,9 +3,10 @@ package net.milosvasic.factory.mail.remote.ssh
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.terminal.Commands
 
-class SSHCommand(
+open class SSHCommand(
     remote: SSHRemote,
-    val command: String
+    val command: String,
+    obtainCommandOutput: Boolean = false
 ) : Command(
 
     Commands.ssh(
@@ -13,5 +14,6 @@ class SSHCommand(
         command,
         remote.port,
         remote.host
-    )
+    ),
+    obtainCommandOutput
 )
