@@ -27,7 +27,7 @@ abstract class PackageManager(private val entryPoint: SSH) :
 
     private val busy = Busy()
     private var iterator: Iterator<InstallationItem>? = null
-    private var operationType: PackageManagerOperationType? = null
+    private var operationType = PackageManagerOperationType.UNKNOWN
     private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
@@ -87,34 +87,39 @@ abstract class PackageManager(private val entryPoint: SSH) :
         tryNext()
     }
 
+    @Throws(IllegalStateException::class)
     private fun tryNext() {
+        if (iterator == null) {
+            unBusy(false)
+            return
+        }
+        if (operationType == PackageManagerOperationType.UNKNOWN) {
+            unBusy(false)
+            return
+        }
         iterator?.let {
-            operationType?.let { type ->
-                if (it.hasNext()) {
-                    when (val item = it.next()) {
-                        is Package -> {
-                            if (type == PackageManagerOperationType.PACKAGE_INSTALL) {
-                                installPackage(item)
-                            } else {
-                                uninstallPackage(item)
-                            }
-                        }
-                        is Group -> {
-                            if (type == PackageManagerOperationType.GROUP_INSTALL) {
-                                installGroup(item)
-                            } else {
-                                uninstallGroup(item)
-                            }
-                        }
-                        else -> {
-                            log.e("Install: unknown installation type: $item")
+            if (it.hasNext()) {
+                when (val item = it.next()) {
+                    is Package -> {
+                        if (operationType == PackageManagerOperationType.PACKAGE_INSTALL) {
+                            installPackage(item)
+                        } else {
+                            uninstallPackage(item)
                         }
                     }
-                } else {
-                    operationType?.let {
-                        unBusy(true)
+                    is Group -> {
+                        if (operationType == PackageManagerOperationType.GROUP_INSTALL) {
+                            installGroup(item)
+                        } else {
+                            uninstallGroup(item)
+                        }
+                    }
+                    else -> {
+                        log.e("Install: unknown installation type: $item")
                     }
                 }
+            } else {
+                unBusy(true)
             }
         }
     }
@@ -168,13 +173,11 @@ abstract class PackageManager(private val entryPoint: SSH) :
     }
 
     private fun unBusy(success: Boolean) {
-        operationType?.let {
-            val operation = PackageManagerOperation(it)
-            val result = OperationResult(operation, success)
-            notify(result)
-            iterator = null
-            operationType = null
-            busy.setBusy(false)
-        }
+        val operation = PackageManagerOperation(operationType)
+        val result = OperationResult(operation, success)
+        notify(result)
+        iterator = null
+        operationType = PackageManagerOperationType.UNKNOWN
+        busy.setBusy(false)
     }
 }
