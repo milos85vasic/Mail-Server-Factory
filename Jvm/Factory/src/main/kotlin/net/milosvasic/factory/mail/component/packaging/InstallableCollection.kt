@@ -1,9 +1,9 @@
-package net.milosvasic.factory.mail.component.packageManagement
+package net.milosvasic.factory.mail.component.packaging
 
 import net.milosvasic.factory.mail.component.Shutdown
 import net.milosvasic.factory.mail.component.SystemComponent
-import net.milosvasic.factory.mail.component.packageManagement.item.Group
-import net.milosvasic.factory.mail.component.packageManagement.item.Package
+import net.milosvasic.factory.mail.component.packaging.item.Group
+import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 

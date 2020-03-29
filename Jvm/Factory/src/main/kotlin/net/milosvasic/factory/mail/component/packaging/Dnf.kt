@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.component.packageManagement
+package net.milosvasic.factory.mail.component.packaging
 
 import net.milosvasic.factory.mail.remote.ssh.SSH
 

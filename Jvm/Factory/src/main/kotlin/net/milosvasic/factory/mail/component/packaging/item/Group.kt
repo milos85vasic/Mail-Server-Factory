@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.component.packageManagement.item
+package net.milosvasic.factory.mail.component.packaging.item
 
 class Group(value: String) : InstallationItem(value, true) {
 
