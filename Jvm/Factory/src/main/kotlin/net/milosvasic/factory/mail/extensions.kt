@@ -7,7 +7,7 @@ import kotlin.system.exitProcess
 
 import net.milosvasic.logger.CompositeLogger
 
-val localhost = "127.0.0.1"
+const val localhost = "127.0.0.1"
 val compositeLogger = CompositeLogger()
 
 val log = object : Logger {

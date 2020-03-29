@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.component.packaging.item
 
-class PackagesWrapper(private vararg val packages: String) {
+class Envelope(private vararg val packages: String) {
 
     fun getValue(): String {
         var value = ""

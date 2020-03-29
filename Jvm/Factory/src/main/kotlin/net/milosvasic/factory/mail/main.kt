@@ -6,9 +6,9 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.mail.component.packaging.Dnf
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
-import net.milosvasic.factory.mail.component.packaging.item.MultiplePackages
+import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.component.packaging.item.Package
-import net.milosvasic.factory.mail.component.packaging.item.PackagesWrapper
+import net.milosvasic.factory.mail.component.packaging.item.Envelope
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.operation.Command
@@ -75,10 +75,10 @@ fun main(args: Array<String>) {
                                             // ============== Dnf tryout
 
                                             dnf.subscribe(this)
-                                            val packed = PackagesWrapper("git", "cmake")
+                                            val packed = Envelope("git", "cmake")
                                             dnf.install(
                                                 listOf(
-                                                    MultiplePackages(packed),
+                                                    Packages(packed),
                                                     Package("sqlite")
                                                 )
                                             )
