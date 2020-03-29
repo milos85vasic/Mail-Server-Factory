@@ -1,8 +1,5 @@
 package net.milosvasic.factory.mail.os
 
-import net.milosvasic.factory.mail.log
-
-
 data class OperatingSystem(
     private var name: String = "System unknown",
     private var type: OSType = OSType.UNKNOWN
