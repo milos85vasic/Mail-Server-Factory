@@ -15,6 +15,7 @@ import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.os.OSType
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
@@ -58,7 +59,14 @@ fun main(args: Array<String>) {
                                 when (result.operation.command) {
                                     hostInfoCommand -> {
                                         if (result.success) {
-                                            log.e("Host information obtained: ${result.data}") // <--- TODO
+                                            val os = ssh.operatingSystem
+                                            os.parseAndSetSystemInfo(result.data)
+                                            if (os.getType() == OSType.UNKNOWN) {
+                                                log.w("Host operating system is unknown")
+                                            } else {
+                                                log.i("Host operating system: ${ssh.operatingSystem.getName()}")
+                                            }
+
 
                                             // ============== Dnf tryout
 
@@ -72,6 +80,7 @@ fun main(args: Array<String>) {
                                             )
 
                                             // ============== Dnf tryout === E N D
+
                                         } else {
 
                                             log.e("Could not connect to: ${configuration.remote}")
