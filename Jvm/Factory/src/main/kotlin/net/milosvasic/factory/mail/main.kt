@@ -57,9 +57,10 @@ fun main(args: Array<String>) {
                                         // ============== Dnf tryout
 
                                         dnf.subscribe(this)
+                                        val packed = PackagesWrapper("git", "cmake")
                                         dnf.install(
                                             listOf(
-                                                MultiplePackages(PackagesWrapper("git", "cmake")),
+                                                MultiplePackages(packed),
                                                 Package("sqlite")
                                             )
                                         )
