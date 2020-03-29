@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.containing.ContainerSystem
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Install
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -50,6 +51,7 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
     }
 
     override fun shutdown() {
+        log.v("Shutting down: $this")
         entryPoint.unsubscribe(listener)
     }
 }

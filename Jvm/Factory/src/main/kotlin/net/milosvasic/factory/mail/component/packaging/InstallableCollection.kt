@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.component.Shutdown
 import net.milosvasic.factory.mail.component.SystemComponent
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -58,6 +59,7 @@ class InstallableCollection(
     }
 
     override fun shutdown() {
+        log.v("Shutting down: $this")
         manager.unsubscribe(listener)
     }
 }

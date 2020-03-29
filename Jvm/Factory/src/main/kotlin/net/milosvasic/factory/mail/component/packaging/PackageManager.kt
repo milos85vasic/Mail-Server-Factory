@@ -141,6 +141,7 @@ abstract class PackageManager(private val entryPoint: SSH) :
     }
 
     override fun shutdown() {
+        log.v("Shutting down: $this")
         entryPoint.unsubscribe(listener)
     }
 

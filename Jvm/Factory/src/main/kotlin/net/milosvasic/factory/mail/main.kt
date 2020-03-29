@@ -40,6 +40,7 @@ fun main(args: Array<String>) {
                 log.v(configuration.name)
 
                 val ssh = SSH(configuration.remote)
+                val dnf = Dnf(ssh) // TODO: Remove when not needed anymore - after tryout.
                 val processor = ServiceProcessor(ssh)
                 val testCommand = Commands.echo("Hello")
 
@@ -53,7 +54,6 @@ fun main(args: Array<String>) {
 
                                         // ============== Dnf tryout
 
-                                        val dnf = Dnf(ssh)
                                         dnf.subscribe(this)
                                         dnf.install(listOf(Package("git")))
 
@@ -71,6 +71,7 @@ fun main(args: Array<String>) {
                             }
                             is PackageManagerOperation -> {
 
+                                dnf.shutdown()
                                 configuration.services.forEach {
                                     processor.process(it)
                                 }
