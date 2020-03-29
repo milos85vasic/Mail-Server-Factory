@@ -63,10 +63,6 @@ fun main(args: Array<String>) {
                                         log.e("Could not connect to: ${configuration.remote}")
                                         fail(ERROR.INITIALIZATION_FAILURE)
                                     }
-                                } else {
-
-                                    log.e("Unexpected command has been performed: ${result.operation.command}")
-                                    // fail(ERROR.INITIALIZATION_FAILURE)
                                 }
                             }
                             is PackageManagerOperation -> {
