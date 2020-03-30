@@ -2,6 +2,9 @@ package net.milosvasic.factory.mail.component.packaging
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.Initialization
+import net.milosvasic.factory.mail.component.packaging.item.Group
+import net.milosvasic.factory.mail.component.packaging.item.Package
+import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
@@ -54,7 +57,35 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
         }
     }
 
-    // TODO: Override super methods and connect with manager.
+    @Throws(IllegalStateException::class)
+    override fun install(packages: List<Package>) {
+        checkNotInitialized()
+        manager?.install(packages)
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun install(packages: Packages) {
+        checkNotInitialized()
+        manager?.install(packages)
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun uninstall(packages: List<Package>) {
+        checkNotInitialized()
+        manager?.uninstall(packages)
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun groupInstall(groups: List<Group>) {
+        checkNotInitialized()
+        manager?.groupInstall(groups)
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun groupUninstall(groups: List<Group>) {
+        checkNotInitialized()
+        manager?.groupUninstall(groups)
+    }
 
     override fun installCommand(): String {
         manager?.let {
@@ -103,6 +134,13 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
     private fun checkInitialized() {
         manager?.let {
             throw IllegalStateException("Package installer has been already initialized.")
+        }
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun checkNotInitialized() {
+        manager?.let {
+            throw IllegalStateException("Package installer has not been initialized.")
         }
     }
 
