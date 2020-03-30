@@ -54,7 +54,7 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
     }
 
     @Throws(IllegalStateException::class)
-    private fun tryNext() {
+    override fun tryNext() {
         manager?.let {
             unBusy(true)
             return
@@ -68,7 +68,7 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
                 item = it.next()
                 item?.let { current ->
                     command = Commands.getApplicationInfo(current.applicationBinaryName)
-                    entryPoint.execute(command, true)
+                    entryPoint.execute(command)
                 }
             } else {
                 unBusy(false)
@@ -158,7 +158,7 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
 
     @Throws(IllegalStateException::class)
     private fun checkNotInitialized() {
-        manager?.let {
+        if (manager == null) {
             throw IllegalStateException("Package installer has not been initialized.")
         }
     }

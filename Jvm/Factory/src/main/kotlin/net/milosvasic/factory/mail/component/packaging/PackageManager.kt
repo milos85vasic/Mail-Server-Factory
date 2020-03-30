@@ -105,7 +105,7 @@ abstract class PackageManager(protected val entryPoint: SSH) :
     }
 
     @Throws(IllegalStateException::class)
-    private fun tryNext() {
+    protected open fun tryNext() {
         if (iterator == null) {
             unBusy(false)
             return

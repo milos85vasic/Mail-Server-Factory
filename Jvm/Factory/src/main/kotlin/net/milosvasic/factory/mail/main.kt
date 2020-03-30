@@ -24,6 +24,7 @@ import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
+import java.lang.IllegalStateException
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -115,15 +116,24 @@ fun main(args: Array<String>) {
                             }
                             is PackageInstallerInitializationOperation -> {
 
+                                // INSTALL ===================================================================
                                 if (result.success) {
-                                    val envelope = Envelope("git", "cmake")
-                                    val packages = Packages(envelope)
-                                    packageInstaller.install(packages)
+
+                                    try {
+                                        val envelope = Envelope("git", "cmake")
+                                        val packages = Packages(envelope)
+                                        packageInstaller.install(packages)
+                                    } catch (e: IllegalStateException) {
+
+                                        fail(e)
+                                    }
                                 } else {
 
                                     log.e("Could not initialize package installer.")
                                     fail(ERROR.INITIALIZATION_FAILURE)
                                 }
+                                // INSTALL =========================================================  END  ==
+
                             }
                             else -> {
 
