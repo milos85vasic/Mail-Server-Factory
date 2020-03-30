@@ -50,7 +50,7 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
         }
     }
 
-    override fun shutdown() {
+    override fun terminate() {
         log.v("Shutting down: $this")
         entryPoint.unsubscribe(listener)
     }

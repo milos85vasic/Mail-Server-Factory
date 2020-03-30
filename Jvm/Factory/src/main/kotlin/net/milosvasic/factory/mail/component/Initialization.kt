@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.component
 
-interface Shutdown {
+interface Initialization {
 
-    fun shutdown()
+    fun initialize()
 }

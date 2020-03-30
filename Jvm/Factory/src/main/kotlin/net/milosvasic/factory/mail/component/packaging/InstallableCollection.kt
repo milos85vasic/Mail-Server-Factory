@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.component.Shutdown
+import net.milosvasic.factory.mail.component.Termination
 import net.milosvasic.factory.mail.component.SystemComponent
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
@@ -12,7 +12,7 @@ class InstallableCollection(
     private val packages: List<Package>,
     private val groups: List<Group>,
     private val manager: PackageManager
-) : SystemComponent(), Shutdown {
+) : SystemComponent(), Termination {
 
     private val subscribers = mutableSetOf<OperationResultListener>()
 
@@ -58,7 +58,7 @@ class InstallableCollection(
         }
     }
 
-    override fun shutdown() {
+    override fun terminate() {
         log.v("Shutting down: $this")
         manager.unsubscribe(listener)
     }

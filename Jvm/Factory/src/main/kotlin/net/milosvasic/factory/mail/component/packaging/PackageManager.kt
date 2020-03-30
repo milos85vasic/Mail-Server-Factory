@@ -5,7 +5,7 @@ import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.Component
-import net.milosvasic.factory.mail.component.Shutdown
+import net.milosvasic.factory.mail.component.Termination
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
 import net.milosvasic.factory.mail.component.packaging.item.Packages
@@ -20,12 +20,12 @@ abstract class PackageManager(private val entryPoint: SSH) :
     Component(),
     Subscription<OperationResultListener>,
     Notifying<OperationResult>,
-    Shutdown {
+    Termination {
 
-    protected abstract val installCommand: String
-    protected abstract val uninstallCommand: String
-    protected abstract val groupInstallCommand: String
-    protected abstract val groupUninstallCommand: String
+    abstract val installCommand: String
+    abstract val uninstallCommand: String
+    abstract val groupInstallCommand: String
+    abstract val groupUninstallCommand: String
 
     private val busy = Busy()
     private var command = ""
@@ -153,7 +153,7 @@ abstract class PackageManager(private val entryPoint: SSH) :
         }
     }
 
-    override fun shutdown() {
+    override fun terminate() {
         log.v("Shutting down: $this")
         entryPoint.unsubscribe(listener)
     }

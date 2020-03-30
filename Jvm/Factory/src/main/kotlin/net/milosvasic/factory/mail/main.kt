@@ -117,7 +117,7 @@ fun main(args: Array<String>) {
                             }
                             is PackageManagerOperation -> {
 
-                                dnf.shutdown()
+                                dnf.terminate()
                                 configuration.services.forEach {
                                     processor.process(it)
                                 }
