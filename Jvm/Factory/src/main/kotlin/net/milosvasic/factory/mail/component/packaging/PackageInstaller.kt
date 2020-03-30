@@ -1,86 +1,102 @@
 package net.milosvasic.factory.mail.component.packaging
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.Initialization
+import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 
 class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initialization {
 
+    private var item: PackageManager? = null
     private var manager: PackageManager? = null
-    private var iterator: Iterator<String>? = null
-    private val supportedInstallers = LinkedHashSet<String>()
+    private var iterator: Iterator<PackageManager>? = null
+    private val supportedInstallers = LinkedHashSet<PackageManager>()
 
     init {
-        supportedInstallers.addAll(listOf("dnf", "yum", "apt-get"))
+        supportedInstallers.addAll(listOf(Dnf(entryPoint), Yum(entryPoint), AptGet(entryPoint)))
     }
 
+    @Synchronized
     override fun initialize() {
         busy()
         iterator = supportedInstallers.iterator()
         tryNext()
     }
 
+    override fun onSuccessResult() {
+        item?.let {
+            manager = it
+        }
+        super.onSuccessResult()
+    }
+
     @Throws(IllegalStateException::class)
     private fun tryNext() {
+        manager?.let {
+            unBusy(true)
+            return
+        }
         if (iterator == null) {
             unBusy(false)
             return
         }
         iterator?.let {
             if (it.hasNext()) {
-                val item = it.next()
-                command = Commands.getApplicationInfo(item)
-                entryPoint.execute(command, true)
+                item = it.next()
+                item?.let { current ->
+                    command = Commands.getApplicationInfo(current.applicationBinaryName)
+                    entryPoint.execute(command, true)
+                }
             } else {
-                unBusy(true)
+                unBusy(false)
             }
         }
     }
 
     // TODO: Override super methods and connect with manager.
 
-    override val installCommand: String
-        get() {
-            manager?.let {
-                return it.installCommand
-            }
-            return ""
+    override fun installCommand(): String {
+        manager?.let {
+            return it.installCommand()
         }
+        return ""
+    }
 
-    override val uninstallCommand: String
-        get() {
-            manager?.let {
-                return it.uninstallCommand
-            }
-            return ""
+    override fun uninstallCommand(): String {
+        manager?.let {
+            return it.uninstallCommand()
         }
+        return ""
+    }
 
-    override val groupInstallCommand: String
-        get() {
-            manager?.let {
-                return it.groupInstallCommand
-            }
-            return ""
+    override fun groupInstallCommand(): String {
+        manager?.let {
+            return it.groupInstallCommand()
         }
+        return ""
+    }
 
-    override val groupUninstallCommand: String
-        get() {
-            manager?.let {
-                return it.groupUninstallCommand
-            }
-            return ""
+    override fun groupUninstallCommand(): String {
+        manager?.let {
+            return it.groupUninstallCommand()
         }
+        return ""
+    }
+
+    override val applicationBinaryName: String
+        get() = String.EMPTY
 
     @Throws(IllegalStateException::class)
-    fun addSupportedInstaller(installer: String) {
+    fun addSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
-        supportedInstallers.add(installer)
+        supportedInstallers.add(packageManager)
     }
 
     @Throws(IllegalStateException::class)
-    private fun removeSupportedInstaller(installer: String) {
+    private fun removeSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
-        supportedInstallers.remove(installer)
+        supportedInstallers.remove(packageManager)
     }
 
     @Throws(IllegalStateException::class)
@@ -88,5 +104,11 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
         manager?.let {
             throw IllegalStateException("Package installer has been already initialized.")
         }
+    }
+
+    override fun notify(success: Boolean) {
+        val operation = PackageInstallerInitializationOperation()
+        val result = OperationResult(operation, success)
+        notify(result)
     }
 }

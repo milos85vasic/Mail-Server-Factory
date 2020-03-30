@@ -23,10 +23,12 @@ abstract class PackageManager(protected val entryPoint: SSH) :
     Notifying<OperationResult>,
     Termination {
 
-    abstract val installCommand: String
-    abstract val uninstallCommand: String
-    abstract val groupInstallCommand: String
-    abstract val groupUninstallCommand: String
+    abstract val applicationBinaryName: String
+
+    open fun installCommand() = "$applicationBinaryName install -y"
+    open fun uninstallCommand() = "$applicationBinaryName remove -y"
+    open fun groupInstallCommand() = "$applicationBinaryName groupinstall -y"
+    open fun groupUninstallCommand() = "$applicationBinaryName groupremove -y"
 
     protected var command = String.EMPTY
 
@@ -42,7 +44,7 @@ abstract class PackageManager(protected val entryPoint: SSH) :
                     val cmd = result.operation.command
                     if (command == cmd) {
                         if (result.success) {
-                            tryNext()
+                            onSuccessResult()
                         } else {
                             unBusy(false)
                         }
@@ -161,22 +163,22 @@ abstract class PackageManager(protected val entryPoint: SSH) :
     }
 
     private fun installPackage(item: Package) {
-        command = "$installCommand ${item.value}"
+        command = "${installCommand()} ${item.value}"
         entryPoint.execute(command)
     }
 
     private fun uninstallPackage(item: Package) {
-        command = "$uninstallCommand ${item.value}"
+        command = "${uninstallCommand()} ${item.value}"
         entryPoint.execute(command)
     }
 
     private fun installGroup(item: Group) {
-        command = "$groupInstallCommand ${item.value}"
+        command = "${groupInstallCommand()} ${item.value}"
         entryPoint.execute(command)
     }
 
     private fun uninstallGroup(item: Group) {
-        command = "$groupUninstallCommand ${item.value}"
+        command = "${groupUninstallCommand()} ${item.value}"
         entryPoint.execute(command)
     }
 
@@ -189,12 +191,20 @@ abstract class PackageManager(protected val entryPoint: SSH) :
     }
 
     protected fun unBusy(success: Boolean) {
-        val operation = PackageManagerOperation(operationType)
-        val result = OperationResult(operation, success)
-        notify(result)
+        notify(success)
         command = String.EMPTY
         iterator = null
         operationType = PackageManagerOperationType.UNKNOWN
         busy.setBusy(false)
+    }
+
+    protected open fun notify(success: Boolean) {
+        val operation = PackageManagerOperation(operationType)
+        val result = OperationResult(operation, success)
+        notify(result)
+    }
+
+    protected open fun onSuccessResult() {
+        tryNext()
     }
 }
