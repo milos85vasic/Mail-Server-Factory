@@ -15,4 +15,6 @@ object Commands {
     }
 
     fun getHostInfo(): String = "hostnamectl"
+
+    fun getApplicationInfo(application: String): String = "which $application"
 }
