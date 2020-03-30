@@ -53,6 +53,7 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
         item?.let {
             manager = it
             manager?.subscribe(installerListener)
+            log.i("${it.applicationBinaryName.capitalize()} package manager is initialized")
         }
         super.onSuccessResult()
     }
