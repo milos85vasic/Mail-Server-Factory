@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.packaging
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
@@ -16,7 +17,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
-abstract class PackageManager(private val entryPoint: SSH) :
+abstract class PackageManager(protected val entryPoint: SSH) :
     Component(),
     Subscription<OperationResultListener>,
     Notifying<OperationResult>,
@@ -27,8 +28,9 @@ abstract class PackageManager(private val entryPoint: SSH) :
     abstract val groupInstallCommand: String
     abstract val groupUninstallCommand: String
 
+    protected var command = String.EMPTY
+
     private val busy = Busy()
-    private var command = ""
     private var iterator: Iterator<InstallationItem>? = null
     private var operationType = PackageManagerOperationType.UNKNOWN
     private val subscribers = mutableSetOf<OperationResultListener>()
@@ -179,18 +181,18 @@ abstract class PackageManager(private val entryPoint: SSH) :
     }
 
     @Throws(BusyException::class)
-    private fun busy() {
+    protected fun busy() {
         if (busy.isBusy()) {
             throw BusyException()
         }
         busy.setBusy(true)
     }
 
-    private fun unBusy(success: Boolean) {
+    protected fun unBusy(success: Boolean) {
         val operation = PackageManagerOperation(operationType)
         val result = OperationResult(operation, success)
         notify(result)
-        command = ""
+        command = String.EMPTY
         iterator = null
         operationType = PackageManagerOperationType.UNKNOWN
         busy.setBusy(false)

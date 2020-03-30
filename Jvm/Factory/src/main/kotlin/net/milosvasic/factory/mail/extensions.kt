@@ -57,3 +57,6 @@ fun fail(e: Exception) {
         fail(ERROR.FATAL_EXCEPTION, it)
     }
 }
+
+val String.Companion.EMPTY: String
+    get() = ""
