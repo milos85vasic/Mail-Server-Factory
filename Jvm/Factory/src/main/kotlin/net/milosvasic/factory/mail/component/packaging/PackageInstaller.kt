@@ -5,7 +5,12 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 
 class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initialization {
 
+    private val supportedInstallers = LinkedHashSet<String>()
     private var manager: PackageManager? = null
+
+    init {
+        supportedInstallers.addAll(listOf("dnf", "yum", "apt-get"))
+    }
 
     override fun initialize() {
 
@@ -42,4 +47,12 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
             }
             return ""
         }
+
+    private fun addSupportedInstaller(installer: String) {
+        supportedInstallers.add(installer)
+    }
+
+    private fun removeSupportedInstaller(installer: String) {
+        supportedInstallers.remove(installer)
+    }
 }
