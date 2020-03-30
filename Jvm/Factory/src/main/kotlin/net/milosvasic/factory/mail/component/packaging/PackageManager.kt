@@ -46,7 +46,7 @@ abstract class PackageManager(protected val entryPoint: SSH) :
                         if (result.success) {
                             onSuccessResult()
                         } else {
-                            unBusy(false)
+                            onFailedResult()
                         }
                     }
                 }
@@ -206,5 +206,9 @@ abstract class PackageManager(protected val entryPoint: SSH) :
 
     protected open fun onSuccessResult() {
         tryNext()
+    }
+
+    protected open fun onFailedResult() {
+        unBusy(false)
     }
 }

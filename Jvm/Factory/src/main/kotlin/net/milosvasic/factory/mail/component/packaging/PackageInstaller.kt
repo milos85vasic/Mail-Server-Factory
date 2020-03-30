@@ -6,7 +6,6 @@ import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 
@@ -21,14 +20,14 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
         supportedInstallers.addAll(listOf(Dnf(entryPoint), Yum(entryPoint), AptGet(entryPoint)))
     }
 
-    private val installerListener = object : OperationResultListener {
-        override fun onOperationPerformed(result: OperationResult) {
-            when (result.operation) {
-
-                // TODO
-            }
-        }
-    }
+//    private val installerListener = object : OperationResultListener {
+//        override fun onOperationPerformed(result: OperationResult) {
+//            when (result.operation) {
+//
+//
+//            }
+//        }
+//    }
 
     @Synchronized
     override fun initialize() {
@@ -38,16 +37,20 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
     }
 
     override fun terminate() {
-        manager?.unsubscribe(installerListener)
+        // manager?.unsubscribe(installerListener)
         super.terminate()
     }
 
     override fun onSuccessResult() {
         item?.let {
             manager = it
-            manager?.subscribe(installerListener)
+            // manager?.subscribe(installerListener)
         }
         super.onSuccessResult()
+    }
+
+    override fun onFailedResult() {
+        tryNext()
     }
 
     @Throws(IllegalStateException::class)

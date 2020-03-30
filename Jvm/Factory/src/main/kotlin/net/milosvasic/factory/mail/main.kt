@@ -5,6 +5,8 @@ package net.milosvasic.factory.mail
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.mail.component.packaging.Dnf
+import net.milosvasic.factory.mail.component.packaging.PackageInstaller
+import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.component.packaging.item.Package
@@ -46,8 +48,8 @@ fun main(args: Array<String>) {
                 val host = configuration.remote.host
                 val ssh = SSH(configuration.remote)
                 val terminal = ssh.terminal
-                val dnf = Dnf(ssh) // TODO: Remove when not needed anymore - after tryout.
                 val processor = ServiceProcessor(ssh)
+                val packageInstaller = PackageInstaller(ssh)
                 val pingCommand = Command(Commands.ping(host))
                 val testCommand = Commands.echo("Hello")
                 val hostInfoCommand = Commands.getHostInfo()
@@ -67,20 +69,8 @@ fun main(args: Array<String>) {
                                                 log.i("Host operating system: ${ssh.operatingSystem.getName()}")
                                             }
 
-
-                                            // ============== Dnf tryout
-
-                                            dnf.subscribe(this)
-                                            val packed = Envelope("git", "cmake")
-                                            dnf.install(
-                                                listOf(
-                                                    Packages(packed),
-                                                    Package("sqlite")
-                                                )
-                                            )
-
-                                            // ============== Dnf tryout === E N D
-
+                                            packageInstaller.subscribe(this)
+                                            packageInstaller.initialize()
                                         } else {
 
                                             log.e("Could not connect to: ${configuration.remote}")
@@ -117,11 +107,23 @@ fun main(args: Array<String>) {
                             }
                             is PackageManagerOperation -> {
 
-                                dnf.terminate()
+                                packageInstaller.terminate()
                                 configuration.services.forEach {
                                     processor.process(it)
                                 }
                                 finish()
+                            }
+                            is PackageInstallerInitializationOperation -> {
+
+                                if (result.success) {
+                                    val envelope = Envelope("git", "cmake")
+                                    val packages = Packages(envelope)
+                                    packageInstaller.install(packages)
+                                } else {
+
+                                    log.e("Could not initialize package installer.")
+                                    fail(ERROR.INITIALIZATION_FAILURE)
+                                }
                             }
                             else -> {
 
