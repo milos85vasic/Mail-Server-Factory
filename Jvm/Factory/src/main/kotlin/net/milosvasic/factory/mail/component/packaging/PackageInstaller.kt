@@ -49,6 +49,11 @@ class PackageInstaller(entryPoint: SSH) :
         tryNext()
     }
 
+    override fun terminate() {
+        detach(manager)
+        super.terminate()
+    }
+
     override fun onSuccessResult() {
         item?.let {
             manager = it
