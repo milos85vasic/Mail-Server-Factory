@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
@@ -31,11 +32,23 @@ class PackageInstaller(entryPoint: SSH) :
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
+            is Command -> {
+                val cmd = result.operation.toExecute
+                if (command.isNotEmpty() && cmd.endsWith(command)) {
+                    if (result.success) {
+
+                        onSuccessResult()
+                    } else {
+
+                        onFailedResult()
+                    }
+                }
+            }
             is PackageManagerOperation -> {
 
                 notify(result)
             }
-            else -> { // FIXME:
+            else -> {
 
                 log.e("Unexpected operation result: $result")
             }
