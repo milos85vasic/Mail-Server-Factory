@@ -1,11 +1,20 @@
-package net.milosvasic.factory.mail.component
+package net.milosvasic.factory.mail.component.installer
 
-import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
+import net.milosvasic.factory.mail.common.Notifying
+import net.milosvasic.factory.mail.common.Subscription
+import net.milosvasic.factory.mail.common.busy.Busy
+import net.milosvasic.factory.mail.component.Component
+import net.milosvasic.factory.mail.component.SystemComponent
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
-class Installer(private val installations: List<SystemComponent>) : SystemComponent() {
+class Installer(private val installations: List<SystemComponent>) :
+    Component(),
+    Installation,
+    Subscription<OperationResultListener>,
+    Notifying<OperationResult> {
 
+    private val busy = Busy()
     private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
@@ -16,14 +25,26 @@ class Installer(private val installations: List<SystemComponent>) : SystemCompon
         }
     }
 
+    override val steps: List<InstallationStep>
+        get() = listOf(
+
+            // TODO: Steps
+        )
+
+    @Synchronized
     override fun install() {
+
+        // TODO
         installations.forEach {
             it.subscribe(listener)
             it.install()
         }
     }
 
+    @Synchronized
     override fun uninstall() {
+
+        // TODO
         installations.forEach {
             it.subscribe(listener)
             it.uninstall()
@@ -44,10 +65,5 @@ class Installer(private val installations: List<SystemComponent>) : SystemCompon
             val listener = iterator.next()
             listener.onOperationPerformed(data)
         }
-    }
-
-    @Throws(UnsupportedOperationException::class)
-    override fun getDependencies(): List<List<InstallationItem>> {
-        throw UnsupportedOperationException("Not supported by installer.")
     }
 }

@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.docker
 
+import net.milosvasic.factory.mail.component.installer.InstallationStep
 import net.milosvasic.factory.mail.component.packaging.item.Envelope
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
@@ -22,6 +23,12 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
             notify(result)
         }
     }
+
+    override val steps: List<InstallationStep>
+        get() = listOf(
+
+            // TODO: To be implemented.
+        )
 
     init {
         entryPoint.subscribe(listener)
