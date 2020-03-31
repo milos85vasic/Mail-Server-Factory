@@ -22,7 +22,7 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
     private val busy = Busy()
     private val subscribers = mutableSetOf<OperationResultListener>()
 
-    protected val listener = object : OperationResultListener {
+    private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
             handleResult(result)
         }

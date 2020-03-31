@@ -35,7 +35,7 @@ class PackageInstaller(entryPoint: SSH) :
 
                 notify(result)
             }
-            else -> {
+            else -> { // FIXME:
 
                 log.e("Unexpected operation result: $result")
             }
