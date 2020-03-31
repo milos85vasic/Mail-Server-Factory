@@ -60,12 +60,12 @@ fun main(args: Array<String>) {
                                 when (result.operation.command) {
                                     hostInfoCommand -> {
                                         if (result.success) {
-                                            val os = ssh.operatingSystem
+                                            val os = ssh.getRemoteOS()
                                             os.parseAndSetSystemInfo(result.data)
                                             if (os.getType() == OSType.UNKNOWN) {
                                                 log.w("Host operating system is unknown")
                                             } else {
-                                                log.i("Host operating system: ${ssh.operatingSystem.getName()}")
+                                                log.i("Host operating system: ${ssh.getRemoteOS().getName()}")
                                             }
 
                                             packageInstaller.subscribe(this)

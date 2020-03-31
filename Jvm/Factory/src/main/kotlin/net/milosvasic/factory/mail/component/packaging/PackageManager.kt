@@ -1,24 +1,20 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.busy.Busy
-import net.milosvasic.factory.mail.common.Notifying
-import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
-import net.milosvasic.factory.mail.component.Component
-import net.milosvasic.factory.mail.component.Termination
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
 import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
-abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
+abstract class PackageManager(entryPoint: Connection) :
+    BusyWorker<InstallationItem>(entryPoint),
+    PackageManagement<InstallationItem>
+{
 
     abstract val applicationBinaryName: String
 
@@ -27,35 +23,26 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
     open fun groupInstallCommand() = "$applicationBinaryName groupinstall -y"
     open fun groupUninstallCommand() = "$applicationBinaryName groupremove -y"
 
-    protected var command = String.EMPTY
-
-    private var iterator: Iterator<InstallationItem>? = null
     private var operationType = PackageManagerOperationType.UNKNOWN
 
-    private val listener = object : OperationResultListener {
-        override fun onOperationPerformed(result: OperationResult) {
-            when (result.operation) {
-                is SSHCommand -> {
-                    val cmd = result.operation.command
-                    if (command == cmd) {
-                        if (result.success) {
-                            onSuccessResult()
-                        } else {
-                            onFailedResult()
-                        }
+    override fun handleResult(result: OperationResult) {
+        when (result.operation) {
+            is SSHCommand -> {
+                val cmd = result.operation.command
+                if (command == cmd) {
+                    if (result.success) {
+                        onSuccessResult()
+                    } else {
+                        onFailedResult()
                     }
                 }
             }
         }
     }
 
-    init {
-        entryPoint.subscribe(listener)
-    }
-
     @Synchronized
     @Throws(BusyException::class)
-    open fun install(packages: List<Package>) {
+    override fun install(packages: List<Package>) {
         busy()
         iterator = packages.iterator()
         operationType = PackageManagerOperationType.PACKAGE_INSTALL
@@ -64,7 +51,7 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
 
     @Synchronized
     @Throws(BusyException::class)
-    open fun install(packages: Packages) {
+    override fun install(packages: Packages) {
         busy()
         val list = listOf(Package(packages.value))
         iterator = list.iterator()
@@ -74,7 +61,7 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
 
     @Synchronized
     @Throws(BusyException::class)
-    open fun uninstall(packages: List<Package>) {
+    override fun uninstall(packages: List<Package>) {
         busy()
         iterator = packages.iterator()
         operationType = PackageManagerOperationType.PACKAGE_UNINSTALL
@@ -83,7 +70,7 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
 
     @Synchronized
     @Throws(BusyException::class)
-    open fun groupInstall(groups: List<Group>) {
+    override fun groupInstall(groups: List<Group>) {
         busy()
         iterator = groups.iterator()
         operationType = PackageManagerOperationType.GROUP_INSTALL
@@ -92,7 +79,7 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
 
     @Synchronized
     @Throws(BusyException::class)
-    open fun groupUninstall(groups: List<Group>) {
+    override fun groupUninstall(groups: List<Group>) {
         busy()
         iterator = groups.iterator()
         operationType = PackageManagerOperationType.GROUP_UNINSTALL
@@ -100,7 +87,7 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
     }
 
     @Throws(IllegalStateException::class)
-    protected open fun tryNext() {
+    override fun tryNext() {
         if (iterator == null) {
             unBusy(false)
             return
@@ -136,11 +123,6 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
         }
     }
 
-    override fun terminate() {
-        log.v("Shutting down: $this")
-        entryPoint.unsubscribe(listener)
-    }
-
     private fun installPackage(item: Package) {
         command = "${installCommand()} ${item.value}"
         entryPoint.execute(command)
@@ -161,33 +143,22 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
         entryPoint.execute(command)
     }
 
-    @Throws(BusyException::class)
-    protected fun busy() {
-        if (busy.isBusy()) {
-            throw BusyException()
-        }
-        busy.setBusy(true)
-    }
-
-    protected fun unBusy(success: Boolean) {
-        notify(success)
-        command = String.EMPTY
-        iterator = null
+    override fun unBusy(success: Boolean) {
+        super.unBusy(success)
         operationType = PackageManagerOperationType.UNKNOWN
-        busy.setBusy(false)
     }
 
-    protected open fun notify(success: Boolean) {
+    override fun notify(success: Boolean) {
         val operation = PackageManagerOperation(operationType)
         val result = OperationResult(operation, success)
         notify(result)
     }
 
-    protected open fun onSuccessResult() {
+    override fun onSuccessResult() {
         tryNext()
     }
 
-    protected open fun onFailedResult() {
+    override  fun onFailedResult() {
         unBusy(false)
     }
 }

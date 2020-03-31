@@ -1,20 +1,20 @@
 package net.milosvasic.factory.mail.remote.ssh
 
 import net.milosvasic.factory.mail.common.Notifying
-import net.milosvasic.factory.mail.common.Subscription
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.os.OperatingSystem
+import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.terminal.Terminal
 
-class SSH(private val remote: SSHRemote) :
-    Connection<SSHRemote>(remote),
-    Subscription<OperationResultListener>,
+class SSH(private val remote: Remote) :
+    Connection,
     Notifying<OperationResult> {
 
     val terminal = Terminal()
+
+    private var operatingSystem = OperatingSystem()
     private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
@@ -27,8 +27,8 @@ class SSH(private val remote: SSHRemote) :
         terminal.subscribe(listener)
     }
 
-    override fun execute(data: String) {
-        terminal.execute(SSHCommand(remote, data))
+    override fun execute(what: String) {
+        terminal.execute(SSHCommand(remote, what))
     }
 
     fun execute(data: String, obtainCommandOutput: Boolean) {
@@ -49,5 +49,13 @@ class SSH(private val remote: SSHRemote) :
             val listener = iterator.next()
             listener.onOperationPerformed(data)
         }
+    }
+
+    override fun getRemote(): Remote {
+        return remote
+    }
+
+    override fun getRemoteOS(): OperatingSystem {
+        return operatingSystem
     }
 }

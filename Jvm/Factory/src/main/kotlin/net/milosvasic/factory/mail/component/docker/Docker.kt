@@ -69,7 +69,7 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
 
     @Throws(IllegalStateException::class)
     override fun getDependencies(): List<List<InstallationItem>> {
-        when (entryPoint.operatingSystem.getType()) {
+        when (entryPoint.getRemoteOS().getType()) {
             OSType.CENTOS -> {
                 return listOf(
 
