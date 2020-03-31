@@ -31,7 +31,6 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
 
     private var iterator: Iterator<InstallationItem>? = null
     private var operationType = PackageManagerOperationType.UNKNOWN
-    private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -134,22 +133,6 @@ abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
             } else {
                 unBusy(true)
             }
-        }
-    }
-
-    override fun subscribe(what: OperationResultListener) {
-        subscribers.add(what)
-    }
-
-    override fun unsubscribe(what: OperationResultListener) {
-        subscribers.remove(what)
-    }
-
-    override fun notify(data: OperationResult) {
-        val iterator = subscribers.iterator()
-        while (iterator.hasNext()) {
-            val listener = iterator.next()
-            listener.onOperationPerformed(data)
         }
     }
 
