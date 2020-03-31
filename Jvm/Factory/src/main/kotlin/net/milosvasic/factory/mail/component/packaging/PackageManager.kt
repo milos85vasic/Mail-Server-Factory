@@ -41,7 +41,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(BusyException::class)
+    @Throws(IllegalStateException::class)
     override fun install(packages: List<Package>) {
         busy()
         iterator = packages.iterator()
@@ -50,7 +50,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(BusyException::class)
+    @Throws(IllegalStateException::class)
     override fun install(packages: Packages) {
         busy()
         val list = listOf(Package(packages.value))
@@ -60,7 +60,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(BusyException::class)
+    @Throws(IllegalStateException::class)
     override fun uninstall(packages: List<Package>) {
         busy()
         iterator = packages.iterator()
@@ -69,7 +69,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(BusyException::class)
+    @Throws(IllegalStateException::class)
     override fun groupInstall(groups: List<Group>) {
         busy()
         iterator = groups.iterator()
@@ -78,7 +78,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(BusyException::class)
+    @Throws(IllegalStateException::class)
     override fun groupUninstall(groups: List<Group>) {
         busy()
         iterator = groups.iterator()

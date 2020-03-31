@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.packaging.item.Group
