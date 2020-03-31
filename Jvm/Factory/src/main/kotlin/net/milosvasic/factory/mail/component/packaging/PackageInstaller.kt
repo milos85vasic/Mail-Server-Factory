@@ -1,63 +1,92 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 
-class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initialization {
+class PackageInstaller(entryPoint: SSH) :
+    BusyWorker<PackageManager>(entryPoint),
+    PackageManagement<PackageManager>,
+    Initialization {
 
     private var item: PackageManager? = null
     private var manager: PackageManager? = null
-    private var iterator: Iterator<PackageManager>? = null
-    private val supportedInstallers = LinkedHashSet<PackageManager>()
+    private val supportedPackageManagers = LinkedHashSet<PackageManager>()
 
     init {
-        supportedInstallers.addAll(listOf(Dnf(entryPoint), Yum(entryPoint), AptGet(entryPoint)))
+        supportedPackageManagers.addAll(
+            listOf(
+                Dnf(entryPoint),
+                Yum(entryPoint),
+                AptGet(entryPoint)
+            )
+        )
     }
 
-    private val installerListener = object : OperationResultListener {
-        override fun onOperationPerformed(result: OperationResult) {
-            when (result.operation) {
-                is PackageManagerOperation -> {
+    override fun handleResult(result: OperationResult) {
+        when (result.operation) {
+            is Command -> {
+                val cmd = result.operation.toExecute
+                if (command.isNotEmpty() && cmd.endsWith(command)) {
 
-                    notify(result)
-                }
-                else -> {
+                    try {
+                        if (result.success) {
+                            onSuccessResult()
+                        } else {
+                            onFailedResult()
+                        }
+                    } catch (e: IllegalStateException) {
 
-                    log.e("Unexpected operation result: $result")
+                        e.message?.let {
+                            log.e(it)
+                        }
+                    }
                 }
+            }
+            is PackageManagerOperation -> {
+                notify(result)
+            }
+            else -> {
+                log.e("Unexpected operation result: $result")
             }
         }
     }
 
     @Synchronized
+    @Throws(IllegalStateException::class)
     override fun initialize() {
+        checkInitialized()
         busy()
-        iterator = supportedInstallers.iterator()
+        iterator = supportedPackageManagers.iterator()
         tryNext()
     }
 
+    @Synchronized
+    @Throws(IllegalStateException::class)
     override fun terminate() {
-        manager?.unsubscribe(installerListener)
+        checkNotInitialized()
+        detach(manager)
         super.terminate()
     }
 
+    @Throws(IllegalStateException::class)
     override fun onSuccessResult() {
         item?.let {
             manager = it
-            manager?.subscribe(installerListener)
+            attach(manager)
             log.i("${it.applicationBinaryName.capitalize()} package manager is initialized")
         }
-        super.onSuccessResult()
+        tryNext()
     }
 
+    @Throws(IllegalStateException::class)
     override fun onFailedResult() {
         tryNext()
     }
@@ -115,66 +144,35 @@ class PackageInstaller(entryPoint: SSH) : PackageManager(entryPoint), Initializa
         manager?.groupUninstall(groups)
     }
 
-    override fun installCommand(): String {
-        manager?.let {
-            return it.installCommand()
-        }
-        return ""
-    }
-
-    override fun uninstallCommand(): String {
-        manager?.let {
-            return it.uninstallCommand()
-        }
-        return ""
-    }
-
-    override fun groupInstallCommand(): String {
-        manager?.let {
-            return it.groupInstallCommand()
-        }
-        return ""
-    }
-
-    override fun groupUninstallCommand(): String {
-        manager?.let {
-            return it.groupUninstallCommand()
-        }
-        return ""
-    }
-
-    override val applicationBinaryName: String
-        get() = String.EMPTY
-
     @Throws(IllegalStateException::class)
     fun addSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
-        supportedInstallers.add(packageManager)
+        supportedPackageManagers.add(packageManager)
     }
 
     @Throws(IllegalStateException::class)
-    private fun removeSupportedPackageManager(packageManager: PackageManager) {
+    fun removeSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
-        supportedInstallers.remove(packageManager)
-    }
-
-    @Throws(IllegalStateException::class)
-    private fun checkInitialized() {
-        manager?.let {
-            throw IllegalStateException("Package installer has been already initialized.")
-        }
-    }
-
-    @Throws(IllegalStateException::class)
-    private fun checkNotInitialized() {
-        if (manager == null) {
-            throw IllegalStateException("Package installer has not been initialized.")
-        }
+        supportedPackageManagers.remove(packageManager)
     }
 
     override fun notify(success: Boolean) {
         val operation = PackageInstallerInitializationOperation()
         val result = OperationResult(operation, success)
         notify(result)
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun checkInitialized() {
+        manager?.let {
+            throw IllegalStateException("Package installer has been already initialized")
+        }
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun checkNotInitialized() {
+        if (manager == null) {
+            throw IllegalStateException("Package installer has not been initialized")
+        }
     }
 }

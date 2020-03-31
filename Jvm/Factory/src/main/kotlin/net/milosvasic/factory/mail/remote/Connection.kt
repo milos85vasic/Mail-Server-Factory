@@ -1,10 +1,11 @@
 package net.milosvasic.factory.mail.remote
 
+import net.milosvasic.factory.mail.common.Executor
 import net.milosvasic.factory.mail.os.OperatingSystem
 
-abstract class Connection<T : Remote>(private val remote: T) {
+interface Connection : Executor<String> {
 
-    var operatingSystem = OperatingSystem()
+    fun getRemote(): Remote
 
-    abstract fun execute(data: String)
+    fun getRemoteOS(): OperatingSystem
 }
