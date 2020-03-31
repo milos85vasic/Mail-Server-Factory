@@ -5,6 +5,7 @@ import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Component
 import net.milosvasic.factory.mail.component.Termination
 import net.milosvasic.factory.mail.component.packaging.item.Group
@@ -17,11 +18,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
-abstract class PackageManager(protected val entryPoint: SSH) :
-    Component(),
-    Subscription<OperationResultListener>,
-    Notifying<OperationResult>,
-    Termination {
+abstract class PackageManager(protected val entryPoint: SSH) : BusyWorker() {
 
     abstract val applicationBinaryName: String
 
@@ -32,7 +29,6 @@ abstract class PackageManager(protected val entryPoint: SSH) :
 
     protected var command = String.EMPTY
 
-    private val busy = Busy()
     private var iterator: Iterator<InstallationItem>? = null
     private var operationType = PackageManagerOperationType.UNKNOWN
     private val subscribers = mutableSetOf<OperationResultListener>()
