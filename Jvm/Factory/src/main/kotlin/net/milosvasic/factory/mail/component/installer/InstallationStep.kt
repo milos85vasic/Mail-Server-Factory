@@ -1,3 +1,5 @@
 package net.milosvasic.factory.mail.component.installer
 
-abstract class InstallationStep
+import net.milosvasic.factory.mail.common.SelfExecution
+
+abstract class InstallationStep : SelfExecution
