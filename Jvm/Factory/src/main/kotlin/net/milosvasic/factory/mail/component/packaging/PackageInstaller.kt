@@ -35,21 +35,18 @@ class PackageInstaller(entryPoint: SSH) :
             is Command -> {
                 val cmd = result.operation.toExecute
                 if (command.isNotEmpty() && cmd.endsWith(command)) {
-                    if (result.success) {
 
+                    if (result.success) {
                         onSuccessResult()
                     } else {
-
                         onFailedResult()
                     }
                 }
             }
             is PackageManagerOperation -> {
-
                 notify(result)
             }
             else -> {
-
                 log.e("Unexpected operation result: $result")
             }
         }
