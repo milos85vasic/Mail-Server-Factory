@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.packaging
 
+import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.packaging.item.Group
@@ -18,10 +19,10 @@ class PackageInstaller(entryPoint: SSH) :
 
     private var item: PackageManager? = null
     private var manager: PackageManager? = null
-    private val supportedInstallers = LinkedHashSet<PackageManager>()
+    private val supportedPackageManagers = LinkedHashSet<PackageManager>()
 
     init {
-        supportedInstallers.addAll(
+        supportedPackageManagers.addAll(
             listOf(
                 Dnf(entryPoint),
                 Yum(entryPoint),
@@ -36,10 +37,17 @@ class PackageInstaller(entryPoint: SSH) :
                 val cmd = result.operation.toExecute
                 if (command.isNotEmpty() && cmd.endsWith(command)) {
 
-                    if (result.success) {
-                        onSuccessResult()
-                    } else {
-                        onFailedResult()
+                    try {
+                        if (result.success) {
+                            onSuccessResult()
+                        } else {
+                            onFailedResult()
+                        }
+                    } catch (e: IllegalStateException) {
+
+                        e.message?.let {
+                            log.e(it)
+                        }
                     }
                 }
             }
@@ -53,17 +61,23 @@ class PackageInstaller(entryPoint: SSH) :
     }
 
     @Synchronized
+    @Throws(IllegalStateException::class)
     override fun initialize() {
+        checkInitialized()
         busy()
-        iterator = supportedInstallers.iterator()
+        iterator = supportedPackageManagers.iterator()
         tryNext()
     }
 
+    @Synchronized
+    @Throws(IllegalStateException::class)
     override fun terminate() {
+        checkNotInitialized()
         detach(manager)
         super.terminate()
     }
 
+    @Throws(IllegalStateException::class)
     override fun onSuccessResult() {
         item?.let {
             manager = it
@@ -73,6 +87,7 @@ class PackageInstaller(entryPoint: SSH) :
         tryNext()
     }
 
+    @Throws(IllegalStateException::class)
     override fun onFailedResult() {
         tryNext()
     }
@@ -133,13 +148,13 @@ class PackageInstaller(entryPoint: SSH) :
     @Throws(IllegalStateException::class)
     fun addSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
-        supportedInstallers.add(packageManager)
+        supportedPackageManagers.add(packageManager)
     }
 
     @Throws(IllegalStateException::class)
     fun removeSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
-        supportedInstallers.remove(packageManager)
+        supportedPackageManagers.remove(packageManager)
     }
 
     override fun notify(success: Boolean) {
@@ -151,14 +166,14 @@ class PackageInstaller(entryPoint: SSH) :
     @Throws(IllegalStateException::class)
     override fun checkInitialized() {
         manager?.let {
-            throw IllegalStateException("Package installer has been already initialized.")
+            throw IllegalStateException("Package installer has been already initialized")
         }
     }
 
     @Throws(IllegalStateException::class)
     override fun checkNotInitialized() {
         if (manager == null) {
-            throw IllegalStateException("Package installer has not been initialized.")
+            throw IllegalStateException("Package installer has not been initialized")
         }
     }
 }
