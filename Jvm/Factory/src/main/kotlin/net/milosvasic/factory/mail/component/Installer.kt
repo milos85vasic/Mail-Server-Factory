@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component
 
+import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -43,5 +44,10 @@ class Installer(private val installations: List<SystemComponent>) : SystemCompon
             val listener = iterator.next()
             listener.onOperationPerformed(data)
         }
+    }
+
+    @Throws(UnsupportedOperationException::class)
+    override fun getDependencies(): List<List<InstallationItem>> {
+        throw UnsupportedOperationException("Not supported by installer.")
     }
 }

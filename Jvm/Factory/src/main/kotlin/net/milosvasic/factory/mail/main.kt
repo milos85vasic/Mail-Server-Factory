@@ -3,28 +3,26 @@
 package net.milosvasic.factory.mail
 
 import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
-import net.milosvasic.factory.mail.component.packaging.Dnf
+import com.google.gson.JsonParseException
+import com.google.gson.stream.MalformedJsonException
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
-import net.milosvasic.factory.mail.component.packaging.item.Packages
-import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Envelope
+import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.operation.Command
-import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.OSType
+import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
-import java.lang.IllegalStateException
 import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
@@ -146,7 +144,7 @@ fun main(args: Array<String>) {
 
                 ssh.subscribe(listener)
                 terminal.execute(pingCommand)
-            } catch (e: JsonSyntaxException) {
+            } catch (e: JsonParseException) {
                 fail(e)
             }
         } else {

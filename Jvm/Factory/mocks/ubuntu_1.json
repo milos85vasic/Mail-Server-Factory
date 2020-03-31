@@ -1,14 +1,20 @@
 {
   "name": "Mail server configuration",
+  "applications": [
+    {
+      "type": "Docker",
+      "name": "My docker"
+    }
+  ],
   "services": [
     {
-      "name": "Red-Elf mail sender",
-      "type": "Postfix"
+      "type": "Postfix",
+      "name": "Red-Elf mail sender"
     }
   ],
   "remote": {
-    "port": 22,
-    "username": "parallels",
+    "port": 7722,
+    "username": "root",
     "host": "192.168.100.102"
   }
 }

@@ -1,11 +1,16 @@
 package net.milosvasic.factory.mail.component.docker
 
+import net.milosvasic.factory.mail.component.packaging.item.Envelope
+import net.milosvasic.factory.mail.component.packaging.item.Group
+import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
+import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.containing.ContainerSystem
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Install
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.operation.Uninstall
+import net.milosvasic.factory.mail.os.OSType
 import net.milosvasic.factory.mail.remote.ssh.SSH
 
 class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
@@ -53,5 +58,35 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
     override fun terminate() {
         log.v("Shutting down: $this")
         entryPoint.unsubscribe(listener)
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun getDependencies(): List<List<InstallationItem>> {
+        when (entryPoint.operatingSystem.getType()) {
+            OSType.CENTOS -> {
+                return listOf(
+
+                    // Initial dependencies:
+                    listOf(
+                        Group("Development Tools"),
+                        Packages(
+                            Envelope(
+                                "yum-utils",
+                                "device-mapper-persistent-data",
+                                "lvm2"
+                            )
+                        )
+                    ),
+
+                    // Docker repository dependencies
+                    listOf(
+                        
+                    )
+                )
+            }
+            else -> {
+                throw IllegalStateException("Can't obtain dependencies for unknown system")
+            }
+        }
     }
 }
