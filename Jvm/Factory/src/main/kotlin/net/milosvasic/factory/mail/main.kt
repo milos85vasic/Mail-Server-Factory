@@ -106,6 +106,7 @@ fun main(args: Array<String>) {
                             }
                             is PackageManagerOperation -> {
 
+                                // TODO: Handle in proper app flow.
                                 packageInstaller.terminate()
                                 configuration.services.forEach {
                                     processor.process(it)
