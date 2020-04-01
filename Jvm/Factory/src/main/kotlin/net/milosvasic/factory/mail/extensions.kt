@@ -52,7 +52,6 @@ fun fail(error: ERROR, vararg with: Any) {
 
 fun fail(e: Exception) {
 
-    e.printStackTrace()
     e.message?.let {
         fail(ERROR.FATAL_EXCEPTION, it)
     }

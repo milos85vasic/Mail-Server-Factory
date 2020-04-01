@@ -42,12 +42,8 @@ fun main(args: Array<String>) {
             val gson = Gson()
             try {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
-                val softwareConfigurationFileName = configuration.softwareConfiguration
-                if (softwareConfigurationFileName == SoftwareConfiguration.DEFAULT) {
+                val softwareConfiguration = SoftwareConfiguration.obtain(configuration.softwareConfiguration)
 
-                } else {
-                    
-                }
                 log.v(configuration.name)
 
                 val host = configuration.remote.host
