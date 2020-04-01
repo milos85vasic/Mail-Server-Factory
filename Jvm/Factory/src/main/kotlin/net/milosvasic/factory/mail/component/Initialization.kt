@@ -4,6 +4,8 @@ interface Initialization {
 
     fun initialize()
 
+    fun isInitialized(): Boolean
+
     @Throws(IllegalStateException::class)
     fun checkInitialized()
 

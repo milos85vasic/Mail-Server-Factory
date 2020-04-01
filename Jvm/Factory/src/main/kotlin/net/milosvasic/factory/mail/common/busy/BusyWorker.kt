@@ -12,9 +12,27 @@ import net.milosvasic.factory.mail.remote.Connection
 
 abstract class BusyWorker<T>(protected val entryPoint: Connection) :
     Component(),
+    BusyDelegation,
     Subscription<OperationResultListener>,
     Notifying<OperationResult>,
     Termination {
+
+    companion object : BusyDelegationParametrized<Busy> {
+
+        @Synchronized
+        @Throws(BusyException::class)
+        override fun busy(what: Busy) {
+            if (what.isBusy()) {
+                throw BusyException()
+            }
+            what.setBusy(true)
+        }
+
+        @Synchronized
+        override fun free(what: Busy) {
+            what.setBusy(false)
+        }
+    }
 
     protected var command = String.EMPTY
     protected var iterator: Iterator<T>? = null
@@ -56,28 +74,28 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
         }
     }
 
+    @Synchronized
     @Throws(BusyException::class)
-    protected fun busy() {
-        if (busy.isBusy()) {
-            throw BusyException()
-        }
-        busy.setBusy(true)
+    override fun busy() {
+        Companion.busy(busy)
     }
 
-    protected open fun unBusy(success: Boolean) {
+    @Synchronized
+    override fun free() {
+        iterator = null
+        Companion.free(busy)
+    }
+
+    @Synchronized
+    protected open fun free(success: Boolean) {
         notify(success)
         command = String.EMPTY
-        unBusy()
+        free()
     }
 
     override fun terminate() {
         log.v("Shutting down: $this")
         entryPoint.unsubscribe(listener)
-    }
-
-    private fun unBusy() {
-        iterator = null
-        busy.setBusy(false)
     }
 
     abstract fun tryNext()

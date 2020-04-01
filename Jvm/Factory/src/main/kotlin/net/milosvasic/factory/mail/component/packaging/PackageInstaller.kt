@@ -94,11 +94,11 @@ class PackageInstaller(entryPoint: SSH) :
     @Throws(IllegalStateException::class)
     override fun tryNext() {
         manager?.let {
-            unBusy(true)
+            free(true)
             return
         }
         if (iterator == null) {
-            unBusy(false)
+            free(false)
             return
         }
         iterator?.let {
@@ -109,7 +109,7 @@ class PackageInstaller(entryPoint: SSH) :
                     entryPoint.execute(command)
                 }
             } else {
-                unBusy(false)
+                free(false)
             }
         }
     }
@@ -162,6 +162,15 @@ class PackageInstaller(entryPoint: SSH) :
         notify(result)
     }
 
+    @Synchronized
+    override fun isInitialized(): Boolean {
+        manager?.let {
+            return true
+        }
+        return false
+    }
+
+    @Synchronized
     @Throws(IllegalStateException::class)
     override fun checkInitialized() {
         manager?.let {
@@ -169,6 +178,7 @@ class PackageInstaller(entryPoint: SSH) :
         }
     }
 
+    @Synchronized
     @Throws(IllegalStateException::class)
     override fun checkNotInitialized() {
         if (manager == null) {

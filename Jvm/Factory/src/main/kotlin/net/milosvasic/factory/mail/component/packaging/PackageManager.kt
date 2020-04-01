@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
@@ -89,11 +88,11 @@ abstract class PackageManager(entryPoint: Connection) :
     @Throws(IllegalStateException::class)
     override fun tryNext() {
         if (iterator == null) {
-            unBusy(false)
+            free(false)
             return
         }
         if (operationType == PackageManagerOperationType.UNKNOWN) {
-            unBusy(false)
+            free(false)
             return
         }
         iterator?.let {
@@ -118,7 +117,7 @@ abstract class PackageManager(entryPoint: Connection) :
                     }
                 }
             } else {
-                unBusy(true)
+                free(true)
             }
         }
     }
@@ -143,8 +142,8 @@ abstract class PackageManager(entryPoint: Connection) :
         entryPoint.execute(command)
     }
 
-    override fun unBusy(success: Boolean) {
-        super.unBusy(success)
+    override fun free(success: Boolean) {
+        super.free(success)
         operationType = PackageManagerOperationType.UNKNOWN
     }
 
@@ -159,6 +158,6 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     override  fun onFailedResult() {
-        unBusy(false)
+        free(false)
     }
 }

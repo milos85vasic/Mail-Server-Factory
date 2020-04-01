@@ -3,6 +3,9 @@ package net.milosvasic.factory.mail.component.installer
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.Busy
+import net.milosvasic.factory.mail.common.busy.BusyDelegation
+import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Component
 import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.Termination
@@ -15,9 +18,10 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 
 class Installer(
     private val configuration: SoftwareConfiguration,
-    private val entryPoint: SSH
+    entryPoint: SSH
 ) :
     Component(),
+    BusyDelegation,
     Installation,
     Subscription<OperationResultListener>,
     Notifying<OperationResult>,
@@ -47,21 +51,41 @@ class Installer(
             // TODO: Steps
         )
 
+    @Synchronized
+    @Throws(IllegalStateException::class)
     override fun initialize() {
-
+        checkInitialized()
+        busy()
+        installer.initialize()
     }
 
+    @Synchronized
+    @Throws(IllegalStateException::class)
     override fun terminate() {
+        checkNotInitialized()
 
     }
 
+    @Synchronized
+    @Throws(IllegalStateException::class)
     override fun checkInitialized() {
-
+        if (isInitialized()) {
+            throw IllegalStateException("Installer has been already initialized")
+        }
     }
 
+    @Synchronized
+    @Throws(IllegalStateException::class)
     override fun checkNotInitialized() {
-
+        if (!isInitialized()) {
+            throw IllegalStateException("Installer has not been initialized")
+        }
     }
+
+    @Synchronized
+    override fun isInitialized() = installer.isInitialized()
+
+
 
     @Synchronized
     override fun install() {
@@ -97,5 +121,16 @@ class Installer(
             val listener = iterator.next()
             listener.onOperationPerformed(data)
         }
+    }
+
+    @Synchronized
+    @Throws(BusyException::class)
+    override fun busy() {
+        BusyWorker.busy(busy)
+    }
+
+    @Synchronized
+    override fun free() {
+        BusyWorker.free(busy)
     }
 }
