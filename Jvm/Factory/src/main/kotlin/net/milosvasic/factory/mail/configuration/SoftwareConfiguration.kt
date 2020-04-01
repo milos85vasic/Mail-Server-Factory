@@ -3,8 +3,8 @@ package net.milosvasic.factory.mail.configuration
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.common.ObtainParametrized
-import net.milosvasic.factory.mail.component.installer.InstallationStep
-import net.milosvasic.factory.mail.component.installer.InstallationStepFactory
+import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.component.installer.step.InstallationStepFactory
 import java.io.File
 
 data class SoftwareConfiguration(
