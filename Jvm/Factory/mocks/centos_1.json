@@ -1,5 +1,11 @@
 {
   "name": "Mail server configuration",
+  "applications": [
+    {
+      "type": "Docker",
+      "name": "My docker"
+    }
+  ],
   "services": [
     {
       "name": "Red-Elf mail sender",
@@ -10,5 +16,6 @@
     "port": 22,
     "user": "root",
     "host": "192.168.100.101"
-  }
+  },
+  "softwareConfiguration": "software_configuration.json"
 }

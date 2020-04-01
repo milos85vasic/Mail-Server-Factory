@@ -75,7 +75,7 @@ class Docker(private val entryPoint: SSH) : ContainerSystem(entryPoint) {
 
                     // Initial dependencies:
                     listOf(
-                        Group("Development Tools"),
+                        Group.DEVELOPMENT,
                         Packages(
                             Envelope(
                                 "yum-utils",

@@ -1,0 +1,14 @@
+{
+  "software": [
+    {
+      "name": "Docker",
+      "installationSteps": [
+        {
+          "os": "Centos",
+          "type": "packageGroup",
+          "value": ""
+        }
+      ]
+    }
+  ]
+}

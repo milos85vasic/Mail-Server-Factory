@@ -1,11 +1,6 @@
 {
   "name": "Mail server configuration",
-  "applications": [
-    {
-      "type": "Docker",
-      "name": "My docker"
-    }
-  ],
+  "applications": [],
   "services": [
     {
       "type": "Postfix",
@@ -16,5 +11,6 @@
     "port": 7722,
     "user": "root",
     "host": "192.168.100.102"
-  }
+  },
+  "softwareConfiguration": "software_configuration.json"
 }
