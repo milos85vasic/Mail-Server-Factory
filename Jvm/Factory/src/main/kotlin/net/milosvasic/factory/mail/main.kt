@@ -7,8 +7,6 @@ import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
-import net.milosvasic.factory.mail.component.packaging.item.Envelope
-import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.error.ERROR
@@ -89,6 +87,7 @@ fun main(args: Array<String>) {
                                     }
                                     else -> {
 
+                                        log.e("Unknown operation result: $result")
                                     }
                                 }
                             }
@@ -105,23 +104,21 @@ fun main(args: Array<String>) {
                                     }
                                 }
                             }
-                            is PackageManagerOperation -> {
-
-                                // TODO: Handle in proper app flow.
-                                installer.terminate()
-                                configuration.services.forEach {
-                                    processor.process(it)
-                                }
-                                finish()
-                            }
                             is InstallerInitializationOperation -> {
 
                                 if (result.success) {
 
-                                    log.v("Installer is initialized.")
+                                    log.i("Installer is ready")
+
+                                    // TODO: Trigger install instead of finishing.
+                                    installer.terminate()
+                                    configuration.services.forEach {
+                                        processor.process(it)
+                                    }
+                                    finish()
                                 } else {
 
-                                    log.e("Could not initialize installer.")
+                                    log.e("Could not initialize installer")
                                     fail(ERROR.INITIALIZATION_FAILURE)
                                 }
                             }
