@@ -19,6 +19,14 @@
           {
             "type": "packages",
             "value": "docker-ce docker-ce-cli containerd.io"
+          },
+          {
+            "type": "command",
+            "value": "systemctl start docker"
+          },
+          {
+            "type": "command",
+            "value": "docker run hello-world"
           }
         ]
       }
