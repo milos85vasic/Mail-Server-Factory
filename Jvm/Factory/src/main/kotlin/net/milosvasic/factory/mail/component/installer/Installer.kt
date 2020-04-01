@@ -15,10 +15,11 @@ import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import java.lang.IllegalArgumentException
 
 class Installer(
     private val configuration: SoftwareConfiguration,
-    entryPoint: SSH
+    private val entryPoint: SSH
 ) :
     Component(),
     BusyDelegation,
@@ -85,8 +86,16 @@ class Installer(
     @Synchronized
     override fun install() {
 
-        val steps = configuration.obtain()
         // TODO: Put to iterator and execute first item.
+        try {
+            val steps = configuration.obtain(entryPoint.getRemoteOS().getType().osName)
+        } catch (e: IllegalArgumentException) {
+
+            // TODO: Fail!
+        } catch (e: IllegalStateException) {
+
+            // TODO: Fail!
+        }
     }
 
     @Synchronized

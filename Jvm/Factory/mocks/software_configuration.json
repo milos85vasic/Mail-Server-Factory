@@ -4,7 +4,7 @@
       "name": "Docker",
       "version": "19.03",
       "installationSteps": {
-        "Centos": [
+        "CentOS": [
           {
             "type": "packageGroup",
             "value": "Development Tools"

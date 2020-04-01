@@ -2,7 +2,6 @@ package net.milosvasic.factory.mail.configuration
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
-import net.milosvasic.factory.mail.common.Obtain
 import net.milosvasic.factory.mail.common.ObtainParametrized
 import net.milosvasic.factory.mail.component.installer.InstallationStep
 import net.milosvasic.factory.mail.log
@@ -14,7 +13,7 @@ data class SoftwareConfiguration(
 
         // TODO: Provide with defaults.
     )
-) : Obtain<List<InstallationStep>> {
+) : ObtainParametrized<String, List<InstallationStep>> {
 
     companion object : ObtainParametrized<String, SoftwareConfiguration> {
 
@@ -24,7 +23,7 @@ data class SoftwareConfiguration(
         override fun obtain(vararg param: String): SoftwareConfiguration {
 
             if (param.size > 1 || param.isEmpty()) {
-                throw IllegalStateException("Expected 1 argument")
+                throw IllegalArgumentException("Expected 1 argument")
             }
             return when (val configurationName = param[0]) {
                 DEFAULT -> {
@@ -50,12 +49,22 @@ data class SoftwareConfiguration(
     }
 
     @Synchronized
-    override fun obtain(): List<InstallationStep> {
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
+    override fun obtain(vararg param: String): List<InstallationStep> {
 
+        if (param.size > 1 || param.isEmpty()) {
+            throw IllegalArgumentException("Expected 1 argument")
+        }
         val installationSteps = mutableListOf<InstallationStep>()
         software.forEach {
+            val os = param[0]
+            val recipe = it.installationSteps[os]
+            if (recipe == null) {
+                throw IllegalStateException("No installation steps for ${it.name} for $os")
+            }
+            recipe.forEach {
 
-            log.v("> > > $it")
+            }
         }
 
         return installationSteps
