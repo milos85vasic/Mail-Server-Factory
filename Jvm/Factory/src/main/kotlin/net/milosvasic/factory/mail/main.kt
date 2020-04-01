@@ -5,8 +5,7 @@ package net.milosvasic.factory.mail
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.component.installer.Installer
-import net.milosvasic.factory.mail.component.packaging.PackageInstaller
-import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
+import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.component.packaging.item.Envelope
 import net.milosvasic.factory.mail.component.packaging.item.Packages
@@ -51,7 +50,6 @@ fun main(args: Array<String>) {
                 val terminal = ssh.terminal
                 val installer = Installer(softwareConfiguration, ssh)
                 val processor = ServiceProcessor(ssh)
-                val packageInstaller = PackageInstaller(ssh)
                 val pingCommand = Command(Commands.ping(host))
                 val testCommand = Commands.echo("Hello")
                 val hostInfoCommand = Commands.getHostInfo()
@@ -71,8 +69,8 @@ fun main(args: Array<String>) {
                                                 log.i("Host operating system: ${ssh.getRemoteOS().getName()}")
                                             }
 
-                                            packageInstaller.subscribe(this)
-                                            packageInstaller.initialize()
+                                            installer.subscribe(this)
+                                            installer.initialize()
                                         } else {
 
                                             log.e("Could not connect to: ${configuration.remote}")
@@ -110,32 +108,22 @@ fun main(args: Array<String>) {
                             is PackageManagerOperation -> {
 
                                 // TODO: Handle in proper app flow.
-                                packageInstaller.terminate()
+                                installer.terminate()
                                 configuration.services.forEach {
                                     processor.process(it)
                                 }
                                 finish()
                             }
-                            is PackageInstallerInitializationOperation -> {
+                            is InstallerInitializationOperation -> {
 
-                                // INSTALL ===================================================================
                                 if (result.success) {
 
-                                    try {
-                                        val envelope = Envelope("git", "cmake")
-                                        val packages = Packages(envelope)
-                                        packageInstaller.install(packages)
-                                    } catch (e: IllegalStateException) {
-
-                                        fail(e)
-                                    }
+                                    log.v("Installer is initialized.")
                                 } else {
 
-                                    log.e("Could not initialize package installer.")
+                                    log.e("Could not initialize installer.")
                                     fail(ERROR.INITIALIZATION_FAILURE)
                                 }
-                                // INSTALL =========================================================  END  ==
-
                             }
                             else -> {
 

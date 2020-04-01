@@ -38,8 +38,9 @@ class Installer(
             when (result.operation) {
                 is PackageInstallerInitializationOperation -> {
 
-                    // TODO: Create new result and send.
-                    notify(result)
+                    val installerInitializationOperation = InstallerInitializationOperation()
+                    val operationResult = OperationResult(installerInitializationOperation, result.success)
+                    notify(operationResult)
                 }
             }
         }
@@ -56,6 +57,7 @@ class Installer(
     override fun initialize() {
         checkInitialized()
         busy()
+        installer.subscribe(listener)
         installer.initialize()
     }
 
@@ -63,7 +65,8 @@ class Installer(
     @Throws(IllegalStateException::class)
     override fun terminate() {
         checkNotInitialized()
-
+        installer.unsubscribe(listener)
+        installer.terminate()
     }
 
     @Synchronized
@@ -84,8 +87,6 @@ class Installer(
 
     @Synchronized
     override fun isInitialized() = installer.isInitialized()
-
-
 
     @Synchronized
     override fun install() {
