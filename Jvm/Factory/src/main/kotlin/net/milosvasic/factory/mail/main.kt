@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
         val configurationFileName = args[0]
         val configurationFile = File(configurationFileName)
         if (configurationFile.exists()) {
-            log.v("Configuration file: $configurationFileName")
+            log.v("Configuration file: ${configurationFile.absolutePath}")
             val configurationJson = configurationFile.readText()
             val gson = Gson()
             try {
