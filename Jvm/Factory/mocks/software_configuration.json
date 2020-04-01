@@ -11,7 +11,7 @@
           },
           {
             "type": "packages",
-            "value": "yum-utils device-mapper-persistent-data lvm2"
+            "value": "yum-utils, device-mapper-persistent-data, lvm2"
           },
           {
             "type": "command",
@@ -19,7 +19,7 @@
           },
           {
             "type": "packages",
-            "value": "docker-ce docker-ce-cli containerd.io"
+            "value": "docker-ce, docker-ce-cli, containerd.io"
           },
           {
             "type": "command",
