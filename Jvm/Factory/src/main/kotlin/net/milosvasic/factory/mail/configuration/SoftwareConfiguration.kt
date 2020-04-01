@@ -3,6 +3,7 @@ package net.milosvasic.factory.mail.configuration
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.common.ObtainParametrized
+import java.io.File
 
 data class SoftwareConfiguration(
     var configuration: String,
@@ -14,7 +15,7 @@ data class SoftwareConfiguration(
 
     companion object : ObtainParametrized<String, SoftwareConfiguration> {
 
-        const val DEFAULT = "default"
+        private const val DEFAULT = "default"
 
         @Throws(IllegalArgumentException::class, JsonParseException::class)
         override fun obtain(vararg param: String): SoftwareConfiguration {
@@ -27,10 +28,19 @@ data class SoftwareConfiguration(
                     SoftwareConfiguration(configurationName)
                 }
                 else -> {
-                    val gson = Gson()
-                    val instance = gson.fromJson(configurationName, SoftwareConfiguration::class.java)
-                    instance.configuration = configurationName
-                    instance
+                    val configurationFile = File(configurationName)
+                    if (configurationFile.exists()) {
+
+                        val json = configurationFile.readText()
+                        val gson = Gson()
+                        val instance = gson.fromJson(json, SoftwareConfiguration::class.java)
+                        instance.configuration = configurationName
+                        instance
+                    } else {
+
+                        val msg = "Software configuration could not be obtained from: ${configurationFile.absolutePath}"
+                        throw IllegalArgumentException(msg)
+                    }
                 }
             }
         }

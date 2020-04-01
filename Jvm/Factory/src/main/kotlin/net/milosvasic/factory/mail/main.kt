@@ -149,6 +149,8 @@ fun main(args: Array<String>) {
                 terminal.execute(pingCommand)
             } catch (e: JsonParseException) {
                 fail(e)
+            } catch (e: IllegalArgumentException) {
+                fail(e)
             }
         } else {
 
