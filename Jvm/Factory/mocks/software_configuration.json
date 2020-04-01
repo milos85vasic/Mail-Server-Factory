@@ -2,6 +2,7 @@
   "software": [
     {
       "name": "Docker",
+      "version": "19.03",
       "installationSteps": {
         "Centos": [
           {

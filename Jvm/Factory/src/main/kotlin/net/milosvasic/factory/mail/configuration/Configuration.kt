@@ -7,5 +7,5 @@ data class Configuration(
     val name: String,
     val services: List<Definition>,
     val remote: Remote,
-    val softwareConfiguration: String
+    val softwareConfiguration: String = "default"
 )

@@ -10,6 +10,7 @@ import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.component.packaging.item.Envelope
 import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.configuration.Configuration
+import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -41,6 +42,12 @@ fun main(args: Array<String>) {
             val gson = Gson()
             try {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
+                val softwareConfigurationFileName = configuration.softwareConfiguration
+                if (softwareConfigurationFileName == SoftwareConfiguration.DEFAULT) {
+
+                } else {
+                    
+                }
                 log.v(configuration.name)
 
                 val host = configuration.remote.host
