@@ -38,7 +38,7 @@ data class SoftwareConfiguration(
                         instance
                     } else {
 
-                        val msg = "Software configuration could not be obtained from: ${configurationFile.absolutePath}"
+                        val msg = "Software configuration file does not exist: ${configurationFile.absolutePath}"
                         throw IllegalArgumentException(msg)
                     }
                 }
