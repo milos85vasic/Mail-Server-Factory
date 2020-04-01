@@ -4,15 +4,20 @@ import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.component.Component
+import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.SystemComponent
+import net.milosvasic.factory.mail.component.Termination
+import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
-class Installer(private val installations: List<SystemComponent>) :
+class Installer(private val configuration: SoftwareConfiguration) :
     Component(),
     Installation,
     Subscription<OperationResultListener>,
-    Notifying<OperationResult> {
+    Notifying<OperationResult>,
+    Initialization,
+    Termination {
 
     private val busy = Busy()
     private val subscribers = mutableSetOf<OperationResultListener>()
@@ -31,24 +36,40 @@ class Installer(private val installations: List<SystemComponent>) :
             // TODO: Steps
         )
 
+    override fun initialize() {
+
+    }
+
+    override fun terminate() {
+
+    }
+
+    override fun checkInitialized() {
+
+    }
+
+    override fun checkNotInitialized() {
+
+    }
+
     @Synchronized
     override fun install() {
 
         // TODO
-        installations.forEach {
-            it.subscribe(listener)
-            it.install()
-        }
+//        installations.forEach {
+//            it.subscribe(listener)
+//            it.install()
+//        }
     }
 
     @Synchronized
     override fun uninstall() {
 
         // TODO
-        installations.forEach {
-            it.subscribe(listener)
-            it.uninstall()
-        }
+//        installations.forEach {
+//            it.subscribe(listener)
+//            it.uninstall()
+//        }
     }
 
     override fun subscribe(what: OperationResultListener) {

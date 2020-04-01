@@ -4,6 +4,7 @@ package net.milosvasic.factory.mail
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
+import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
@@ -43,7 +44,7 @@ fun main(args: Array<String>) {
             try {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
                 val softwareConfiguration = SoftwareConfiguration.obtain(configuration.softwareConfiguration)
-
+                val installer = Installer(softwareConfiguration)
                 log.v(configuration.name)
 
                 val host = configuration.remote.host
