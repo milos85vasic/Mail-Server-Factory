@@ -4,7 +4,6 @@ package net.milosvasic.factory.mail
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
-import com.google.gson.stream.MalformedJsonException
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation

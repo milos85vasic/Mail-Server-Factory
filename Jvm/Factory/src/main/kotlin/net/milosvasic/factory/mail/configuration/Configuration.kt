@@ -6,5 +6,6 @@ import net.milosvasic.factory.mail.service.Definition
 data class Configuration(
     val name: String,
     val services: List<Definition>,
-    val remote: Remote
+    val remote: Remote,
+    val softwareConfiguration: String
 )

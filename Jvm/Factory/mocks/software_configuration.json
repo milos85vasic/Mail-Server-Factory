@@ -2,13 +2,26 @@
   "software": [
     {
       "name": "Docker",
-      "installationSteps": [
-        {
-          "os": "Centos",
-          "type": "packageGroup",
-          "value": ""
-        }
-      ]
+      "installationSteps": {
+        "Centos": [
+          {
+            "type": "packageGroup",
+            "value": "Development Tools"
+          },
+          {
+            "type": "packages",
+            "value": "yum-utils device-mapper-persistent-data lvm2"
+          },
+          {
+            "type": "command",
+            "value": "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+          },
+          {
+            "type": "packages",
+            "value": "docker-ce docker-ce-cli containerd.io"
+          }
+        ]
+      }
     }
   ]
 }
