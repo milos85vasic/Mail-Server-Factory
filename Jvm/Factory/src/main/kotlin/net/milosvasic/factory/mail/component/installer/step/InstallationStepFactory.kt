@@ -31,7 +31,7 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
             }
             InstallationStepType.COMMAND.type -> {
 
-
+                return CommandInstallationStep(definition.value)
             }
         }
         throw IllegalArgumentException("Unknown type: ${definition.type}")
