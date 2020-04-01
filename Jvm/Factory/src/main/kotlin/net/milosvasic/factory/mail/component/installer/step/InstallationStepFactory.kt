@@ -1,7 +1,6 @@
 package net.milosvasic.factory.mail.component.installer.step
 
 import net.milosvasic.factory.mail.common.ObtainParametrized
-import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 
 class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, InstallationStep> {
@@ -9,7 +8,21 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
     @Throws(IllegalArgumentException::class)
     override fun obtain(vararg param: InstallationStepDefinition): InstallationStep {
 
-        // TODO: Implement.
-        throw IllegalArgumentException()
+        if (param.size > 1 || param.isEmpty()) {
+            throw IllegalArgumentException("Expected 1 argument")
+        }
+        val definition = param[0]
+        when (definition.type) {
+            InstallationStepType.PACKAGE_GROUP.type -> {
+
+            }
+            InstallationStepType.PACKAGES.type -> {
+
+            }
+            InstallationStepType.COMMAND.type -> {
+
+            }
+        }
+        throw IllegalArgumentException("Unknown type: ${definition.type}")
     }
 }
