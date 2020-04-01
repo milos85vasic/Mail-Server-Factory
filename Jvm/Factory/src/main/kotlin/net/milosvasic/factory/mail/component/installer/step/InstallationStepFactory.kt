@@ -5,10 +5,10 @@ import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 
-class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, InstallationStep> {
+class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, InstallationStep<*>> {
 
     @Throws(IllegalArgumentException::class)
-    override fun obtain(vararg param: InstallationStepDefinition): InstallationStep {
+    override fun obtain(vararg param: InstallationStepDefinition): InstallationStep<*> {
 
         if (param.size > 1 || param.isEmpty()) {
             throw IllegalArgumentException("Expected 1 argument")
