@@ -2,7 +2,9 @@ package net.milosvasic.factory.mail.configuration
 
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
+import net.milosvasic.factory.mail.common.Obtain
 import net.milosvasic.factory.mail.common.ObtainParametrized
+import net.milosvasic.factory.mail.component.installer.InstallationStep
 import java.io.File
 
 data class SoftwareConfiguration(
@@ -11,7 +13,7 @@ data class SoftwareConfiguration(
 
         // TODO: Provide with defaults.
     )
-) {
+) : Obtain<List<InstallationStep>> {
 
     companion object : ObtainParametrized<String, SoftwareConfiguration> {
 
@@ -44,5 +46,11 @@ data class SoftwareConfiguration(
                 }
             }
         }
+    }
+
+    override fun obtain(): List<InstallationStep> {
+
+        // TODO: Process configuration.
+        return emptyList()
     }
 }

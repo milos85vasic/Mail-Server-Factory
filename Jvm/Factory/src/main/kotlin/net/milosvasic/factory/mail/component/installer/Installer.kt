@@ -47,10 +47,7 @@ class Installer(
     }
 
     override val steps: List<InstallationStep>
-        get() = listOf(
-
-            // TODO: Steps
-        )
+        get() = configuration.obtain()
 
     @Synchronized
     @Throws(IllegalStateException::class)
