@@ -111,6 +111,7 @@ fun main(args: Array<String>) {
                                     log.i("Installer is ready")
 
                                     // TODO: Trigger install instead of finishing.
+                                    installer.install()
                                     installer.terminate()
                                     configuration.services.forEach {
                                         processor.process(it)

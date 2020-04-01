@@ -46,9 +46,6 @@ class Installer(
         }
     }
 
-    override val steps: List<InstallationStep>
-        get() = configuration.obtain()
-
     @Synchronized
     @Throws(IllegalStateException::class)
     override fun initialize() {
@@ -88,11 +85,8 @@ class Installer(
     @Synchronized
     override fun install() {
 
-        // TODO
-//        installations.forEach {
-//            it.subscribe(listener)
-//            it.install()
-//        }
+        val steps = configuration.obtain()
+        // TODO: Put to iterator and execute first item.
     }
 
     @Synchronized

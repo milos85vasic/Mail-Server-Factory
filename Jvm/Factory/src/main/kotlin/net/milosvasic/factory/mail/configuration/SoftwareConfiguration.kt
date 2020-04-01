@@ -5,6 +5,7 @@ import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.common.Obtain
 import net.milosvasic.factory.mail.common.ObtainParametrized
 import net.milosvasic.factory.mail.component.installer.InstallationStep
+import net.milosvasic.factory.mail.log
 import java.io.File
 
 data class SoftwareConfiguration(
@@ -48,9 +49,15 @@ data class SoftwareConfiguration(
         }
     }
 
+    @Synchronized
     override fun obtain(): List<InstallationStep> {
 
-        // TODO: Process configuration.
-        return emptyList()
+        val installationSteps = mutableListOf<InstallationStep>()
+        software.forEach {
+
+            log.v("> > > $it")
+        }
+
+        return installationSteps
     }
 }
