@@ -44,12 +44,12 @@ fun main(args: Array<String>) {
             try {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
                 val softwareConfiguration = SoftwareConfiguration.obtain(configuration.softwareConfiguration)
-                val installer = Installer(softwareConfiguration)
                 log.v(configuration.name)
 
                 val host = configuration.remote.host
                 val ssh = SSH(configuration.remote)
                 val terminal = ssh.terminal
+                val installer = Installer(softwareConfiguration, ssh)
                 val processor = ServiceProcessor(ssh)
                 val packageInstaller = PackageInstaller(ssh)
                 val pingCommand = Command(Commands.ping(host))
