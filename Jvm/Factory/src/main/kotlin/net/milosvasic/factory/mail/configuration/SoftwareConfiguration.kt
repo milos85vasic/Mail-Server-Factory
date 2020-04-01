@@ -13,7 +13,7 @@ data class SoftwareConfiguration(
 
         // TODO: Provide with defaults.
     )
-) : ObtainParametrized<String, List<InstallationStep>> {
+) : ObtainParametrized<String, List<InstallationStep<*>>> {
 
     companion object : ObtainParametrized<String, SoftwareConfiguration> {
 
@@ -50,13 +50,13 @@ data class SoftwareConfiguration(
 
     @Synchronized
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    override fun obtain(vararg param: String): List<InstallationStep> {
+    override fun obtain(vararg param: String): List<InstallationStep<*>> {
 
-        if (param.size > 1 || param.isEmpty()) {
+        if (param.size > 1 || param.isEmpty()) { // TODO: Refactor as we did with busy stuff - delegate...
             throw IllegalArgumentException("Expected 1 argument")
         }
         val factory = InstallationStepFactory()
-        val installationSteps = mutableListOf<InstallationStep>()
+        val installationSteps = mutableListOf<InstallationStep<*>>()
         software.forEach {
             val os = param[0]
             val msg = "No installation steps for ${it.name} for $os"
