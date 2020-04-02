@@ -95,14 +95,6 @@ class Installer(
         throw UnsupportedOperationException("Not implemented yet.")
     }
 
-    override fun subscribe(what: OperationResultListener) {
-        super.subscribe(what)
-    }
-
-    override fun unsubscribe(what: OperationResultListener) {
-        super.unsubscribe(what)
-    }
-
     override fun notify(data: OperationResult) {
         super.notify(data)
     }
@@ -136,6 +128,8 @@ class Installer(
     }
 
     override fun notify(success: Boolean) {
-        TODO("Not yet implemented")
+        val operation = InstallerOperation()
+        val result = OperationResult(operation, success)
+        notify(result)
     }
 }

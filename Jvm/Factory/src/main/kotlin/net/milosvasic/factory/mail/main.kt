@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
+import net.milosvasic.factory.mail.component.installer.InstallerOperation
 import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.error.ERROR
@@ -108,19 +109,22 @@ fun main(args: Array<String>) {
                                 if (result.success) {
 
                                     log.i("Installer is ready")
-
-                                    // TODO: Trigger install instead of finishing.
                                     installer.install()
-                                    installer.terminate()
-                                    configuration.services.forEach {
-                                        processor.process(it)
-                                    }
-                                    finish()
                                 } else {
 
                                     log.e("Could not initialize installer")
                                     fail(ERROR.INITIALIZATION_FAILURE)
                                 }
+                            }
+                            is InstallerOperation -> {
+
+                                installer.terminate()
+
+                                // TODO: Handle services through the flow.
+                                configuration.services.forEach {
+                                    processor.process(it)
+                                }
+                                finish()
                             }
                             else -> {
 
