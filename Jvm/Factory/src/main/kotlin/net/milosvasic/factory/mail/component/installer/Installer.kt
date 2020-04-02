@@ -2,7 +2,9 @@ package net.milosvasic.factory.mail.component.installer
 
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
+import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
@@ -11,6 +13,7 @@ import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.terminal.Commands
 import java.lang.IllegalArgumentException
 
 class Installer(
@@ -21,6 +24,7 @@ class Installer(
     Installation,
     Initialization {
 
+    private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)
 
     private val listener = object : OperationResultListener {
@@ -113,17 +117,44 @@ class Installer(
         super.free(success)
     }
 
+    @Throws(IllegalStateException::class)
     override fun tryNext() {
-        TODO("Not yet implemented")
+
+        if (iterator == null) {
+            free(false)
+            return
+        }
+        iterator?.let {
+            if (it.hasNext()) {
+                item = it.next()
+                item?.let { current ->
+
+                    when (current) {
+                        is CommandInstallationStep -> {
+                            current.execute(entryPoint)
+                        }
+                        is PackageManagerInstallationStep -> {
+                            current.execute(installer)
+                        }
+                        else -> {
+                            throw IllegalStateException("Unsupported installation step: $current")
+                        }
+                    }
+                }
+            } else {
+                free(false)
+            }
+        }
     }
 
     override fun onSuccessResult() {
-        TODO("Not yet implemented")
+
+        tryNext()
     }
 
     override fun onFailedResult() {
 
-
+        free(false)
     }
 
     override fun handleResult(result: OperationResult) {
