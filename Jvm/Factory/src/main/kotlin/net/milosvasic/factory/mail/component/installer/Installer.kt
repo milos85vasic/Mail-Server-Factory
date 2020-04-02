@@ -1,14 +1,8 @@
 package net.milosvasic.factory.mail.component.installer
 
-import net.milosvasic.factory.mail.common.Notifying
-import net.milosvasic.factory.mail.common.Subscription
-import net.milosvasic.factory.mail.common.busy.Busy
-import net.milosvasic.factory.mail.common.busy.BusyDelegation
-import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
-import net.milosvasic.factory.mail.component.Component
 import net.milosvasic.factory.mail.component.Initialization
-import net.milosvasic.factory.mail.component.Termination
+import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
@@ -19,19 +13,13 @@ import java.lang.IllegalArgumentException
 
 class Installer(
     private val configuration: SoftwareConfiguration,
-    private val entryPoint: SSH
+    entryPoint: SSH
 ) :
-    Component(),
-    BusyDelegation,
+    BusyWorker<InstallationStep<*>>(entryPoint),
     Installation,
-    Subscription<OperationResultListener>,
-    Notifying<OperationResult>,
-    Initialization,
-    Termination {
+    Initialization {
 
-    private val busy = Busy()
     private val installer = PackageInstaller(entryPoint)
-    private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -62,6 +50,7 @@ class Installer(
         checkNotInitialized()
         installer.unsubscribe(listener)
         installer.terminate()
+        super.terminate()
     }
 
     @Synchronized
@@ -89,6 +78,7 @@ class Installer(
         // TODO: Put to iterator and execute first item.
         try {
             val steps = configuration.obtain(entryPoint.getRemoteOS().getType().osName)
+
         } catch (e: IllegalArgumentException) {
 
             // TODO: Fail!
@@ -99,39 +89,52 @@ class Installer(
     }
 
     @Synchronized
+    @Throws(UnsupportedOperationException::class)
     override fun uninstall() {
-
-        // TODO
-//        installations.forEach {
-//            it.subscribe(listener)
-//            it.uninstall()
-//        }
+        throw UnsupportedOperationException("Not implemented yet.")
     }
 
     override fun subscribe(what: OperationResultListener) {
-        subscribers.add(what)
+        super.subscribe(what)
     }
 
     override fun unsubscribe(what: OperationResultListener) {
-        subscribers.remove(what)
+        super.unsubscribe(what)
     }
 
     override fun notify(data: OperationResult) {
-        val iterator = subscribers.iterator()
-        while (iterator.hasNext()) {
-            val listener = iterator.next()
-            listener.onOperationPerformed(data)
-        }
+        super.notify(data)
     }
 
-    @Synchronized
-    @Throws(BusyException::class)
     override fun busy() {
-        BusyWorker.busy(busy)
+        super.busy()
     }
 
-    @Synchronized
     override fun free() {
-        BusyWorker.free(busy)
+        super.free()
+    }
+
+    override fun free(success: Boolean) {
+        super.free(success)
+    }
+
+    override fun tryNext() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onSuccessResult() {
+        TODO("Not yet implemented")
+    }
+
+    override fun onFailedResult() {
+        TODO("Not yet implemented")
+    }
+
+    override fun handleResult(result: OperationResult) {
+        TODO("Not yet implemented")
+    }
+
+    override fun notify(success: Boolean) {
+        TODO("Not yet implemented")
     }
 }
