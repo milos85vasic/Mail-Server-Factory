@@ -5,6 +5,7 @@ import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
+import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -120,11 +121,18 @@ class Installer(
     }
 
     override fun onFailedResult() {
-        TODO("Not yet implemented")
+
+
     }
 
     override fun handleResult(result: OperationResult) {
-        TODO("Not yet implemented")
+
+        when(result.operation) {
+            is PackageManagerOperation -> {
+
+
+            }
+        }
     }
 
     override fun notify(success: Boolean) {
