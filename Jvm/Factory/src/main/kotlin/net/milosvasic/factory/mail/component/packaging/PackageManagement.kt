@@ -1,8 +1,6 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.component.packaging.item.Group
-import net.milosvasic.factory.mail.component.packaging.item.Package
-import net.milosvasic.factory.mail.component.packaging.item.Packages
+import net.milosvasic.factory.mail.component.packaging.item.*
 
 interface PackageManagement<T> {
 
@@ -15,6 +13,8 @@ interface PackageManagement<T> {
     fun groupInstall(groups: List<Group>)
 
     fun groupUninstall(groups: List<Group>)
+
+    fun install(vararg items: InstallationItem)
 
     fun notify(success: Boolean)
 }

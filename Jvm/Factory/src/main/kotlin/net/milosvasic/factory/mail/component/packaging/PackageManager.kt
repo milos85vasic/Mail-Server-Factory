@@ -41,6 +41,15 @@ abstract class PackageManager(entryPoint: Connection) :
 
     @Synchronized
     @Throws(IllegalStateException::class)
+    override fun install(vararg items: InstallationItem) {
+        busy()
+        iterator = items.iterator()
+        operationType = PackageManagerOperationType.PACKAGE_INSTALL
+        tryNext()
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class)
     override fun install(packages: List<Package>) {
         busy()
         iterator = packages.iterator()
