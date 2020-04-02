@@ -13,7 +13,6 @@ import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.terminal.Commands
 import java.lang.IllegalArgumentException
 
 class Installer(
@@ -101,22 +100,6 @@ class Installer(
         throw UnsupportedOperationException("Not implemented yet.")
     }
 
-    override fun notify(data: OperationResult) {
-        super.notify(data)
-    }
-
-    override fun busy() {
-        super.busy()
-    }
-
-    override fun free() {
-        super.free()
-    }
-
-    override fun free(success: Boolean) {
-        super.free(success)
-    }
-
     @Throws(IllegalStateException::class)
     override fun tryNext() {
 
@@ -162,9 +145,19 @@ class Installer(
         when(result.operation) {
             is Command -> {
 
+                if (result.success) {
+
+                } else {
+
+                }
             }
             is PackageManagerOperation -> {
 
+                if (result.success) {
+
+                } else {
+
+                }
             }
         }
     }
