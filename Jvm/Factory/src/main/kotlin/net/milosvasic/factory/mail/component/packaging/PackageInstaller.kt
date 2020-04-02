@@ -112,7 +112,7 @@ class PackageInstaller(entryPoint: SSH) :
         }
     }
 
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun install(vararg items: InstallationItem) {
 
         checkNotInitialized()

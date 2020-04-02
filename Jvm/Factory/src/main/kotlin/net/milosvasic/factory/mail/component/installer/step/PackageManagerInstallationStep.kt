@@ -7,7 +7,7 @@ class PackageManagerInstallationStep(private val toInstall: List<InstallationIte
     InstallationStep<PackageInstaller>() {
 
     @Synchronized
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun execute(vararg params: PackageInstaller) {
 
         if (params.size > 1 || params.isEmpty()) {

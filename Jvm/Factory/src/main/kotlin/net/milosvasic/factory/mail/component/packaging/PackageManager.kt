@@ -9,11 +9,11 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
+import kotlin.reflect.KClass
 
 abstract class PackageManager(entryPoint: Connection) :
     BusyWorker<InstallationItem>(entryPoint),
-    PackageManagement<InstallationItem>
-{
+    PackageManagement<InstallationItem> {
 
     abstract val applicationBinaryName: String
 
@@ -40,11 +40,25 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun install(vararg items: InstallationItem) {
+        var clazz: KClass<*>? = null
+        items.forEach {
+            if (clazz == null) {
+                clazz = it::class
+            } else {
+                if (clazz != it::class) {
+                    throw IllegalArgumentException("All members must be of the same type.")
+                }
+            }
+        }
         busy()
         iterator = items.iterator()
-        operationType = PackageManagerOperationType.PACKAGE_INSTALL
+        if (clazz == Group::class) {
+            operationType = PackageManagerOperationType.GROUP_INSTALL
+        } else {
+            operationType = PackageManagerOperationType.PACKAGE_INSTALL
+        }
         tryNext()
     }
 
@@ -166,7 +180,7 @@ abstract class PackageManager(entryPoint: Connection) :
         tryNext()
     }
 
-    override  fun onFailedResult() {
+    override fun onFailedResult() {
         free(false)
     }
 }

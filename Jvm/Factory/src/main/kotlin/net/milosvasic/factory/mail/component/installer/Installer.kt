@@ -9,11 +9,11 @@ import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import java.lang.IllegalArgumentException
 
 class Installer(
     private val configuration: SoftwareConfiguration,
@@ -32,6 +32,7 @@ class Installer(
             when (result.operation) {
                 is PackageInstallerInitializationOperation -> {
 
+                    free()
                     val installerInitializationOperation = InstallerInitializationOperation()
                     val operationResult = OperationResult(installerInitializationOperation, result.success)
                     notify(operationResult)
@@ -100,7 +101,7 @@ class Installer(
         throw UnsupportedOperationException("Not implemented yet.")
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun tryNext() {
 
         if (iterator == null) {
@@ -144,6 +145,7 @@ class Installer(
 
         when(result.operation) {
             is Command -> {
+                log.e("> > > > > > > > 1: $result")
 
                 if (result.success) {
 
@@ -152,11 +154,14 @@ class Installer(
                 }
             }
             is PackageManagerOperation -> {
+                log.e("> > > > > > > > 2: $result")
 
                 if (result.success) {
 
+                    tryNext()
                 } else {
 
+                    free(false)
                 }
             }
         }
