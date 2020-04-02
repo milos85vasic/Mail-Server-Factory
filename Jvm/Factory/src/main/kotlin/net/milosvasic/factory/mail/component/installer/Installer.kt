@@ -7,6 +7,7 @@ import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
+import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
@@ -128,8 +129,10 @@ class Installer(
     override fun handleResult(result: OperationResult) {
 
         when(result.operation) {
-            is PackageManagerOperation -> {
+            is Command -> {
 
+            }
+            is PackageManagerOperation -> {
 
             }
         }
