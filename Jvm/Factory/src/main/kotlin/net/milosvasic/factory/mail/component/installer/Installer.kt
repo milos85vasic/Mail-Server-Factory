@@ -75,16 +75,17 @@ class Installer(
     @Synchronized
     override fun install() {
 
-        // TODO: Put to iterator and execute first item.
         try {
             val steps = configuration.obtain(entryPoint.getRemoteOS().getType().osName)
-
+            busy()
+            iterator = steps.iterator()
+            tryNext()
         } catch (e: IllegalArgumentException) {
 
-            // TODO: Fail!
+            free(false)
         } catch (e: IllegalStateException) {
 
-            // TODO: Fail!
+            free(false)
         }
     }
 
