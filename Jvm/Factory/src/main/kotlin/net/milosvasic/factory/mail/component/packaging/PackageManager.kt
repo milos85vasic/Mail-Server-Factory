@@ -156,12 +156,12 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     private fun installGroup(item: Group) {
-        command = "${groupInstallCommand()} ${item.value}"
+        command = "${groupInstallCommand()} \"${item.value}\""
         entryPoint.execute(command)
     }
 
     private fun uninstallGroup(item: Group) {
-        command = "${groupUninstallCommand()} ${item.value}"
+        command = "${groupUninstallCommand()} \"${item.value}\""
         entryPoint.execute(command)
     }
 

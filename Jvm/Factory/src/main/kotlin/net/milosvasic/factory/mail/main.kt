@@ -85,10 +85,6 @@ fun main(args: Array<String>) {
                                             fail(ERROR.INITIALIZATION_FAILURE)
                                         }
                                     }
-                                    else -> {
-
-                                        log.e("Unknown operation result: $result")
-                                    }
                                 }
                             }
                             is Command -> {

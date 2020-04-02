@@ -10,10 +10,10 @@ import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializ
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
 class Installer(
     private val configuration: SoftwareConfiguration,
@@ -144,7 +144,7 @@ class Installer(
     override fun handleResult(result: OperationResult) {
 
         when(result.operation) {
-            is Command -> {
+            is SSHCommand -> {
                 log.e("> > > > > > > > 1: $result")
 
                 if (result.success) {
