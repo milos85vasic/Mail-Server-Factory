@@ -10,7 +10,6 @@ import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
-import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
@@ -45,6 +44,21 @@ class Installer(
                         tryNext()
                     } else {
 
+                        free(false)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun handleResult(result: OperationResult) {
+        when (result.operation) {
+            is SSHCommand -> {
+
+                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
+                    if (result.success) {
+                        tryNext()
+                    } else {
                         free(false)
                     }
                 }
@@ -131,7 +145,7 @@ class Installer(
                             current.execute(entryPoint)
                         }
                         is PackageManagerInstallationStep -> {
-                            // command = current. TODO
+                            command = String.EMPTY
                             current.execute(installer)
                         }
                         else -> {
@@ -146,29 +160,11 @@ class Installer(
     }
 
     override fun onSuccessResult() {
-
         tryNext()
     }
 
     override fun onFailedResult() {
-
         free(false)
-    }
-
-    override fun handleResult(result: OperationResult) {
-
-        when (result.operation) {
-            is SSHCommand -> {
-
-                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
-                    if (result.success) {
-                        tryNext()
-                    } else {
-                        free(false)
-                    }
-                }
-            }
-        }
     }
 
     override fun notify(success: Boolean) {
