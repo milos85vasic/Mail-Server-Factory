@@ -42,9 +42,7 @@ class PackageInstaller(entryPoint: SSH) :
                         }
                     } catch (e: IllegalStateException) {
 
-                        e.message?.let {
-                            log.e(it)
-                        }
+                        log.e(e)
                     }
                 }
             }

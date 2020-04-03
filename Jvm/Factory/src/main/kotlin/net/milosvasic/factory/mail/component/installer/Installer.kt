@@ -114,15 +114,11 @@ class Installer(
             tryNext()
         } catch (e: IllegalArgumentException) {
 
-            e.message?.let {
-                log.e(it)
-            }
+            log.e(e)
             free(false)
         } catch (e: IllegalStateException) {
 
-            e.message?.let {
-                log.e(it)
-            }
+            log.e(e)
             free(false)
         }
     }

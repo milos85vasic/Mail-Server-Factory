@@ -39,9 +39,7 @@ class Terminal :
                     try {
                         exitValue = process.exitValue()
                     } catch (e: IllegalThreadStateException) {
-                        e.message?.let {
-                            log.w(it)
-                        }
+                        log.w(e)
                     }
                 }
                 val success = exitValue == 0
@@ -49,7 +47,7 @@ class Terminal :
                 notify(result)
             } catch (e: Exception) {
 
-                e.message?.let { log.e(it) }
+                log.e(e)
                 val result = OperationResult(what, false)
                 notify(result)
             }

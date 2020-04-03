@@ -26,7 +26,11 @@ val log = object : Logger {
 
     override fun w(message: String) = compositeLogger.w(tag, message)
 
+    override fun w(exception: Exception) = compositeLogger.w(tag, exception)
+
     override fun e(message: String) = compositeLogger.e(tag, message)
+
+    override fun e(exception: Exception) = compositeLogger.e(tag, exception)
 }
 
 fun fail(error: ERROR) {
@@ -52,8 +56,10 @@ fun fail(error: ERROR, vararg with: Any) {
 
 fun fail(e: Exception) {
 
-    e.message?.let {
-        fail(ERROR.FATAL_EXCEPTION, it)
+    if (e.message == null) {
+        fail(ERROR.FATAL_EXCEPTION, "Error: $e")
+    } else {
+        fail(ERROR.FATAL_EXCEPTION, e.message as String)
     }
 }
 

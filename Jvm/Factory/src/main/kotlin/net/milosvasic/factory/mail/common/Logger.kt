@@ -14,5 +14,9 @@ interface Logger {
 
     fun w(message: String)
 
+    fun w(exception: Exception)
+
     fun e(message: String)
+
+    fun e(exception: Exception)
 }
