@@ -168,7 +168,8 @@ class Installer(
                     }
                 }
             } else {
-                free(false)
+
+                free(true)
             }
         }
     }
