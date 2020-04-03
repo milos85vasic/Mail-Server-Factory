@@ -151,7 +151,6 @@ class Installer(
             if (it.hasNext()) {
                 item = it.next()
                 item?.let { current ->
-
                     when (current) {
                         is CommandInstallationStep -> {
 
@@ -159,6 +158,7 @@ class Installer(
                             current.execute(entryPoint)
                         }
                         is PackageManagerInstallationStep -> {
+
                             command = String.EMPTY
                             current.execute(installer)
                         }
