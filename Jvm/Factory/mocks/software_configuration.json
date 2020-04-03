@@ -6,6 +6,18 @@
       "installationSteps": {
         "CentOS": [
           {
+            "type": "command",
+            "value": "echo 'Installing Docker'"
+          },
+          {
+            "type": "command",
+            "value": "echo 'Installing Docker 1'"
+          },
+          {
+            "type": "command",
+            "value": "echo 'Installing Docker 2'"
+          },
+          {
             "type": "packageGroup",
             "value": "Development Tools"
           },

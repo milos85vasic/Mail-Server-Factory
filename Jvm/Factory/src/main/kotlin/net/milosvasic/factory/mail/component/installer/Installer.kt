@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.installer
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
@@ -156,15 +157,15 @@ class Installer(
 
     override fun handleResult(result: OperationResult) {
 
-        when(result.operation) {
+        when (result.operation) {
             is SSHCommand -> {
-                if (result.operation.toExecute == command && result.success) {
 
-                    log.e("> > > > > > > > 1: $result")
-                    log.e("> > > > > > > > 1b: ${result.operation.toExecute}, $command")
-
-                } else {
-
+                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
+                    if (result.success) {
+                        tryNext()
+                    } else {
+                        free(false)
+                    }
                 }
             }
         }
