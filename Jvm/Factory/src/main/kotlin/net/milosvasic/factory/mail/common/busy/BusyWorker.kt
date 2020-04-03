@@ -89,9 +89,9 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
 
     @Synchronized
     protected open fun free(success: Boolean) {
-        notify(success)
-        command = String.EMPTY
         free()
+        command = String.EMPTY
+        notify(success)
     }
 
     protected fun onFailedResult(e: IllegalStateException) {
