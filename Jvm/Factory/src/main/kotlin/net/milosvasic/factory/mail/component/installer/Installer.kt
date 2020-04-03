@@ -37,6 +37,16 @@ class Installer(
                     val operationResult = OperationResult(installerInitializationOperation, result.success)
                     notify(operationResult)
                 }
+                is PackageManagerOperation -> {
+
+                    if (result.success) {
+
+                        tryNext()
+                    } else {
+
+                        free(false)
+                    }
+                }
             }
         }
     }
@@ -115,6 +125,7 @@ class Installer(
 
                     when (current) {
                         is CommandInstallationStep -> {
+
                             command = current.command
                             current.execute(entryPoint)
                         }
@@ -147,23 +158,13 @@ class Installer(
 
         when(result.operation) {
             is SSHCommand -> {
-                log.e("> > > > > > > > 1: $result")
+                if (result.operation.toExecute == command && result.success) {
 
-                if (result.success) {
+                    log.e("> > > > > > > > 1: $result")
+                    log.e("> > > > > > > > 1b: ${result.operation.toExecute}, $command")
 
                 } else {
 
-                }
-            }
-            is PackageManagerOperation -> {
-                log.e("> > > > > > > > 2: $result")
-
-                if (result.success) {
-
-                    tryNext()
-                } else {
-
-                    free(false)
                 }
             }
         }

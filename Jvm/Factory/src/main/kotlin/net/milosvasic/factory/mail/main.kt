@@ -115,12 +115,18 @@ fun main(args: Array<String>) {
                             is InstallerOperation -> {
 
                                 installer.terminate()
+                                if (result.success) {
 
-                                // TODO: Handle services through the flow.
-                                configuration.services.forEach {
-                                    processor.process(it)
+                                    // TODO: Handle services through the flow.
+                                    configuration.services.forEach {
+                                        processor.process(it)
+                                    }
+                                    finish()
+                                } else {
+
+                                    log.e("Could not perform installation")
+                                    fail(ERROR.INSTALLATION_FAILURE)
                                 }
-                                finish()
                             }
                             else -> {
 
