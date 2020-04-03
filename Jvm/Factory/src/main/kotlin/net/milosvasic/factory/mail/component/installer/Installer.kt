@@ -115,9 +115,11 @@ class Installer(
 
                     when (current) {
                         is CommandInstallationStep -> {
+                            command = current.command
                             current.execute(entryPoint)
                         }
                         is PackageManagerInstallationStep -> {
+                            // command = current. TODO
                             current.execute(installer)
                         }
                         else -> {

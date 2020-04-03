@@ -2,7 +2,7 @@ package net.milosvasic.factory.mail.component.installer.step
 
 import net.milosvasic.factory.mail.remote.Connection
 
-class CommandInstallationStep(private val command: String) : InstallationStep<Connection>() {
+class CommandInstallationStep(val command: String) : InstallationStep<Connection>() {
 
     @Synchronized
     @Throws(IllegalArgumentException::class)
