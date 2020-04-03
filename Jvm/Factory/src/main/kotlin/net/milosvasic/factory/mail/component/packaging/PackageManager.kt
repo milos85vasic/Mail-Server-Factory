@@ -30,7 +30,12 @@ abstract class PackageManager(entryPoint: Connection) :
                 val cmd = result.operation.command
                 if (command == cmd) {
                     if (result.success) {
-                        onSuccessResult()
+
+                        try {
+                            onSuccessResult()
+                        } catch (e: IllegalStateException) {
+                            onFailedResult(e)
+                        }
                     } else {
                         onFailedResult()
                     }
@@ -176,6 +181,7 @@ abstract class PackageManager(entryPoint: Connection) :
         notify(result)
     }
 
+    @Throws(IllegalStateException::class)
     override fun onSuccessResult() {
         tryNext()
     }

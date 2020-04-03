@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.packaging
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.packaging.item.*
@@ -32,7 +33,7 @@ class PackageInstaller(entryPoint: SSH) :
         when (result.operation) {
             is Command -> {
                 val cmd = result.operation.toExecute
-                if (command.isNotEmpty() && cmd.endsWith(command)) {
+                if (command != String.EMPTY && cmd.endsWith(command)) {
 
                     try {
                         if (result.success) {
@@ -42,7 +43,7 @@ class PackageInstaller(entryPoint: SSH) :
                         }
                     } catch (e: IllegalStateException) {
 
-                        log.e(e)
+                        onFailedResult(e)
                     }
                 }
             }
@@ -50,7 +51,14 @@ class PackageInstaller(entryPoint: SSH) :
                 notify(result)
             }
             else -> {
+
                 log.e("Unexpected operation result: $result")
+                try {
+                    onFailedResult()
+                } catch (e: IllegalStateException) {
+
+                    onFailedResult(e)
+                }
             }
         }
     }

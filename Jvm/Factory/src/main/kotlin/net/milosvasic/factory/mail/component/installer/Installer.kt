@@ -58,7 +58,18 @@ class Installer(
 
                 if (command != String.EMPTY && result.operation.command.endsWith(command)) {
                     if (result.success) {
-                        tryNext()
+
+                        try {
+                            tryNext()
+                        } catch (e: IllegalStateException) {
+
+                            log.e(e)
+                            free(false)
+                        } catch (e: IllegalArgumentException) {
+
+                            log.e(e)
+                            free(false)
+                        }
                     } else {
                         free(false)
                     }
@@ -162,6 +173,7 @@ class Installer(
         }
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun onSuccessResult() {
         tryNext()
     }

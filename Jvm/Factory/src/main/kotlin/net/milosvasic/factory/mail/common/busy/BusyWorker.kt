@@ -42,6 +42,7 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
+
             handleResult(result)
         }
     }
@@ -91,6 +92,11 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
         notify(success)
         command = String.EMPTY
         free()
+    }
+
+    protected fun onFailedResult(e: IllegalStateException) {
+        log.e(e)
+        free(false)
     }
 
     override fun terminate() {
