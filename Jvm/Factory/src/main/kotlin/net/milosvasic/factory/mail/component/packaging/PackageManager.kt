@@ -54,10 +54,10 @@ abstract class PackageManager(entryPoint: Connection) :
         }
         busy()
         iterator = items.iterator()
-        if (clazz == Group::class) {
-            operationType = PackageManagerOperationType.GROUP_INSTALL
+        operationType = if (clazz == Group::class) {
+            PackageManagerOperationType.GROUP_INSTALL
         } else {
-            operationType = PackageManagerOperationType.PACKAGE_INSTALL
+            PackageManagerOperationType.PACKAGE_INSTALL
         }
         tryNext()
     }
