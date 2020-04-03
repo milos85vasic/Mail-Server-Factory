@@ -10,6 +10,7 @@ import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
@@ -113,9 +114,15 @@ class Installer(
             tryNext()
         } catch (e: IllegalArgumentException) {
 
+            e.message?.let {
+                log.e(it)
+            }
             free(false)
         } catch (e: IllegalStateException) {
 
+            e.message?.let {
+                log.e(it)
+            }
             free(false)
         }
     }
