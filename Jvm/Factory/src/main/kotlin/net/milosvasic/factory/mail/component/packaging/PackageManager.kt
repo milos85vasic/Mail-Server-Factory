@@ -170,11 +170,6 @@ abstract class PackageManager(entryPoint: Connection) :
         entryPoint.execute(command)
     }
 
-    override fun free(success: Boolean) {
-        super.free(success)
-        operationType = PackageManagerOperationType.UNKNOWN
-    }
-
     override fun notify(success: Boolean) {
         val operation = PackageManagerOperation(operationType)
         val result = OperationResult(operation, success)
