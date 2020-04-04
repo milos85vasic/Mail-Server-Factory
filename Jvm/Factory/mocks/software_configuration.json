@@ -45,7 +45,7 @@
           },
           {
             "type": "command",
-            "value": "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\""
+            "value": "add-apt-repository \"deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\""
           }
         ]
       }
