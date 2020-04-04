@@ -33,15 +33,7 @@
         "Ubuntu": [
           {
             "type": "packages",
-            "value": "apt-transport-https, ca-certificates"
-          },
-          {
-            "type": "command",
-            "value": "export DEBIAN_FRONTEND=noninteractive; apt-get install -y curl"
-          },
-          {
-            "type": "packages",
-            "value": "gnupg-agent, software-properties-common, lsb-core"
+            "value": "apt-transport-https, ca-certificates, curl, gnupg-agent, software-properties-common, lsb-core"
           },
           {
             "type": "command",
