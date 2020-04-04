@@ -46,6 +46,18 @@
           {
             "type": "command",
             "value": "add-apt-repository \"deb https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable\""
+          },
+          {
+            "type": "command",
+            "value": "apt-get update"
+          },
+          {
+            "type": "packages",
+            "value": "docker-ce, docker-ce-cli, containerd.io"
+          },
+          {
+            "type": "command",
+            "value": "docker run hello-world"
           }
         ]
       }
