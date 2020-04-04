@@ -26,7 +26,7 @@ class Terminal :
     override fun execute(what: Command) {
         val action = Runnable {
             try {
-                log.v(">>> ${what.toExecute}")
+                log.d(">>> ${what.toExecute}")
                 val process = runtime.exec(what.toExecute)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
