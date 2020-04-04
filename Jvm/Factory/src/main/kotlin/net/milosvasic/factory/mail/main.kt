@@ -13,6 +13,7 @@ import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.os.Architecture
 import net.milosvasic.factory.mail.os.OSType
 import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.remote.ssh.SSH
@@ -65,6 +66,12 @@ fun main(args: Array<String>) {
                                                 log.w("Host operating system is unknown")
                                             } else {
                                                 log.i("Host operating system: ${ssh.getRemoteOS().getName()}")
+                                            }
+                                            if (os.getArchitecture() == Architecture.UNKNOWN) {
+                                                log.w("Host system architecture is unknown")
+                                            } else {
+                                                val arch = ssh.getRemoteOS().getArchitecture().arch.toUpperCase()
+                                                log.i("Host system architecture: $arch")
                                             }
 
                                             installer.subscribe(this)

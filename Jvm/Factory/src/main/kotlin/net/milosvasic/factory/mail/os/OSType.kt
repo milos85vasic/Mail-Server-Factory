@@ -7,6 +7,5 @@ enum class OSType(val osName: String) {
     DEBIAN("Debian"),
     FEDORA("Fedora"),
     REDHAT("RedHat"),
-    UNKNOWN("Unknown"),
-    GENERIC("Generic Linux distribution")
+    UNKNOWN("Unknown")
 }
