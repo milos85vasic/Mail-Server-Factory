@@ -32,12 +32,16 @@
         ],
         "Ubuntu": [
           {
+            "type": "packages",
+            "value": "apt-transport-https, ca-certificates"
+          },
+          {
             "type": "command",
-            "value": "export DEBIAN_FRONTEND=noninteractive; echo \"Ubuntu frontend is: $DEBIAN_FRONTEND\""
+            "value": "export DEBIAN_FRONTEND=noninteractive; apt-get install -y curl"
           },
           {
             "type": "packages",
-            "value": "apt-transport-https, ca-certificates, curl, gnupg-agent, software-properties-common, lsb-core"
+            "value": "gnupg-agent, software-properties-common, lsb-core"
           },
           {
             "type": "command",
