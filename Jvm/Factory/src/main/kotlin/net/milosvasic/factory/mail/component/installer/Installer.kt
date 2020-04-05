@@ -49,6 +49,13 @@ class Installer(entryPoint: SSH) :
                 }
                 is RebootOperation -> {
 
+                    item?.let { current ->
+                        when (current) {
+                            is Reboot -> {
+                                current.unsubscribe(this)
+                            }
+                        }
+                    }
                     if (result.success) {
                         tryNext()
                     } else {
@@ -182,6 +189,7 @@ class Installer(entryPoint: SSH) :
                         is Reboot -> {
 
                             command = String.EMPTY
+                            current.subscribe(listener)
                             current.execute(entryPoint)
                         }
                         else -> {
