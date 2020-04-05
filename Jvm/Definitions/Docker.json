@@ -56,6 +56,10 @@
             "value": "docker-ce, docker-ce-cli, containerd.io"
           },
           {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
             "type": "command",
             "value": "docker run hello-world"
           }
