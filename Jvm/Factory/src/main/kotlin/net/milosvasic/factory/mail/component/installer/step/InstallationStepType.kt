@@ -7,7 +7,9 @@ enum class InstallationStepType(
     UNKNOWN("unknown"),
     PACKAGE_GROUP("packageGroup"),
     PACKAGES("packages"),
-    COMMAND("command");
+    COMMAND("command"),
+    REBOOT("reboot"),
+    CONDITION("condition");
 
     companion object {
 
