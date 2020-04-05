@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.installer
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
@@ -194,5 +195,21 @@ class Installer(entryPoint: SSH) :
         val operation = InstallerOperation()
         val result = OperationResult(operation, success)
         notify(result)
+    }
+
+    @Synchronized
+    @Throws(BusyException::class)
+    fun setConfiguration(configuration: SoftwareConfiguration) {
+        busy()
+        this.configuration = configuration
+        free()
+    }
+
+    @Synchronized
+    @Throws(BusyException::class)
+    fun clearConfiguration() {
+        busy()
+        configuration = null
+        free()
     }
 }

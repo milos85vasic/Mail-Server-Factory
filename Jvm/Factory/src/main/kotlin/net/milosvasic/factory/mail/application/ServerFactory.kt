@@ -3,6 +3,7 @@ package net.milosvasic.factory.mail.application
 import com.google.gson.Gson
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.common.Application
+import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
@@ -56,6 +57,32 @@ class ServerFactory : Application {
                     val pingCommand = Command(Commands.ping(host))
                     val testCommand = Commands.echo("Hello")
                     val hostInfoCommand = Commands.getHostInfo()
+                    var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
+
+                    fun tryNext() {
+                        softwareConfigurationsIterator?.let {
+
+                            if (it.hasNext()) {
+                                val softwareConfiguration = it.next()
+                                try {
+                                    installer.setConfiguration(softwareConfiguration)
+                                    installer.install()
+                                } catch (e: BusyException) {
+
+                                    fail(e)
+                                }
+                            } else {
+
+                                installer.terminate()
+
+                                // TODO: Continue the flow.
+                                configuration.services.forEach { service ->
+                                    processor.process(service)
+                                }
+                                finish()
+                            }
+                        }
+                    }
 
                     val listener = object : OperationResultListener {
                         override fun onOperationPerformed(result: OperationResult) {
@@ -116,7 +143,8 @@ class ServerFactory : Application {
                                     if (result.success) {
 
                                         log.i("Installer is ready")
-                                        installer.install()
+                                        softwareConfigurationsIterator = softwareConfigurations.iterator()
+                                        tryNext()
                                     } else {
 
                                         log.e("Could not initialize installer")
@@ -125,14 +153,8 @@ class ServerFactory : Application {
                                 }
                                 is InstallerOperation -> {
 
-                                    installer.terminate()
                                     if (result.success) {
-
-                                        // TODO: Handle services through the flow.
-                                        configuration.services.forEach {
-                                            processor.process(it)
-                                        }
-                                        finish()
+                                        tryNext()
                                     } else {
 
                                         log.e("Could not perform installation")
