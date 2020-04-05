@@ -1,7 +1,5 @@
 package net.milosvasic.factory.mail.os
 
-import org.omg.CORBA.UNKNOWN
-
 data class OperatingSystem(
     private var name: String = "System unknown",
     private var type: OSType = OSType.UNKNOWN,

@@ -48,14 +48,6 @@ jar {
 
 sourceSets.main.java.srcDirs += 'src/main/kotlin'
 
-task copyMocks {
-    try {
-        Runtime.getRuntime().exec("$projectDir/copy_mocks.sh").waitFor(5, TimeUnit.SECONDS)
-    } catch (Exception e) {
-        System.err.println("Error: ${e.getMessage()}")
-    }
-}
-
 task cleanupLogs {
     try {
         Runtime.getRuntime().exec("$projectDir/cleanup_logs.sh").waitFor(5, TimeUnit.SECONDS)
@@ -64,4 +56,4 @@ task cleanupLogs {
     }
 }
 
-build.finalizedBy(copyMocks, cleanupLogs)
+build.finalizedBy(cleanupLogs)

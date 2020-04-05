@@ -6,6 +6,4 @@ gradlew
 gradlew.bat
 .gradle
 
-
-Mocks
-Mocks/*
+mocks
