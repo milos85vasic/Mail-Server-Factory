@@ -188,9 +188,16 @@ class Installer(entryPoint: SSH) :
                         }
                         is Reboot -> {
 
-                            command = String.EMPTY
-                            current.subscribe(listener)
-                            current.execute(entryPoint)
+                            if (entryPoint is SSH) {
+                                command = String.EMPTY
+                                current.subscribe(listener)
+                                current.execute(entryPoint)
+                            } else {
+
+                                val clazz = entryPoint::class.simpleName
+                                val msg = "Reboot installation step does not support $clazz connection"
+                                throw IllegalArgumentException(msg)
+                            }
                         }
                         else -> {
                             throw IllegalStateException("Unsupported installation step: $current")

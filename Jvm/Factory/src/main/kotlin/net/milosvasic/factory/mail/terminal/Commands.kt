@@ -18,5 +18,5 @@ object Commands {
 
     fun getApplicationInfo(application: String): String = "which $application"
 
-    fun reboot() = "echo 'reboot'" // TODO: Switch back to real reboot command!
+    fun reboot(rebootIn: Int = 2) = "( sleep $rebootIn ; reboot ) & "
 }
