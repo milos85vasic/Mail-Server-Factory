@@ -26,6 +26,10 @@
             "value": "systemctl start docker"
           },
           {
+            "type": "command",
+            "value": "docker run hello-world"
+          },
+          {
             "type": "reboot",
             "value": "120"
           },

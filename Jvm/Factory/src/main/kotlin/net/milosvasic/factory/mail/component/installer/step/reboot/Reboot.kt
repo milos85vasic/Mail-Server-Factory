@@ -103,6 +103,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) :
     private fun ping() {
 
         pingCount++
+        log.v("Ping no. $pingCount")
         val host = connection?.getRemote()?.host
         if (host == null) {
 
