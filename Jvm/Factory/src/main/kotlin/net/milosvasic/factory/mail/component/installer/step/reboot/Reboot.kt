@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class Reboot(private val timeoutInSeconds: Int = 120) :
         InstallationStep<Connection>(), Subscription<OperationResultListener>, Notifying<OperationResult> {
@@ -18,7 +19,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) :
     private val busy = Busy()
     private val command = Commands.reboot()
     private var connection: Connection? = null
-    private val subscribers = mutableSetOf<OperationResultListener>()
+    private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -34,8 +35,8 @@ class Reboot(private val timeoutInSeconds: Int = 120) :
                         // } else {
 
                             val operation = RebootOperation()
-                            val result = OperationResult(operation, result.success)
-                            notify(result)
+                            val operationResult = OperationResult(operation, false)
+                            notify(operationResult)
                         // }
                     }
                 }

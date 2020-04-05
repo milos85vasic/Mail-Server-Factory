@@ -167,6 +167,7 @@ class PackageInstaller(entryPoint: SSH) :
         supportedPackageManagers.remove(packageManager)
     }
 
+    @Synchronized
     override fun notify(success: Boolean) {
         val operation = PackageInstallerInitializationOperation()
         val result = OperationResult(operation, success)

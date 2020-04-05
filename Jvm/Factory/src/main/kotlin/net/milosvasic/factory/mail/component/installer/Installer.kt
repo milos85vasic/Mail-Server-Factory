@@ -213,6 +213,7 @@ class Installer(entryPoint: SSH) :
         free(false)
     }
 
+    @Synchronized
     override fun notify(success: Boolean) {
         val operation = InstallerOperation()
         val result = OperationResult(operation, success)

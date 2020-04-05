@@ -9,6 +9,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
+import java.util.concurrent.ConcurrentLinkedQueue
 
 abstract class BusyWorker<T>(protected val entryPoint: Connection) :
     Component(),
@@ -38,7 +39,7 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
     protected var iterator: Iterator<T>? = null
 
     private val busy = Busy()
-    private val subscribers = mutableSetOf<OperationResultListener>()
+    private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {

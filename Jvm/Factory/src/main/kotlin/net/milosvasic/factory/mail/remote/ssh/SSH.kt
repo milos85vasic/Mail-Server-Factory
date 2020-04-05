@@ -7,6 +7,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.OperatingSystem
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.terminal.Terminal
+import java.util.concurrent.ConcurrentLinkedQueue
 
 class SSH(private val remote: Remote) :
     Connection,
@@ -15,7 +16,7 @@ class SSH(private val remote: Remote) :
     val terminal = Terminal()
 
     private var operatingSystem = OperatingSystem()
-    private val subscribers = mutableSetOf<OperationResultListener>()
+    private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -43,6 +44,7 @@ class SSH(private val remote: Remote) :
         subscribers.remove(what)
     }
 
+    @Synchronized
     override fun notify(data: OperationResult) {
         val iterator = subscribers.iterator()
         while (iterator.hasNext()) {

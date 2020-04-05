@@ -170,6 +170,7 @@ abstract class PackageManager(entryPoint: Connection) :
         entryPoint.execute(command)
     }
 
+    @Synchronized
     override fun notify(success: Boolean) {
         val operation = PackageManagerOperation(operationType)
         val result = OperationResult(operation, success)
