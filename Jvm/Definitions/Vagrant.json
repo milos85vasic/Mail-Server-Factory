@@ -1,0 +1,38 @@
+{
+  "software": [
+    {
+      "name": "Docker",
+      "version": "19.03",
+      "installationSteps": {
+        "CentOS": [
+          {
+            "type": "command",
+            "value": "echo \"WORK IN PROGRESS 1\""
+          },
+          {
+            "type": "command",
+            "value": "echo \"WORK IN PROGRESS 2\""
+          },
+          {
+            "type": "command",
+            "value": "echo \"WORK IN PROGRESS 3\""
+          }
+        ],
+        "Ubuntu": [
+          {
+            "type": "command",
+            "value": "echo \"WORK IN PROGRESS 1\""
+          },
+          {
+            "type": "command",
+            "value": "echo \"WORK IN PROGRESS 2\""
+          },
+          {
+            "type": "command",
+            "value": "echo \"WORK IN PROGRESS 3\""
+          }
+        ]
+      }
+    }
+  ]
+}
