@@ -1,23 +1,24 @@
 package net.milosvasic.factory.mail.component.installer.step.reboot
 
+import net.milosvasic.factory.mail.common.Notifying
+import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.Busy
-import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
-import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
 
-class Reboot(private val timeoutInSeconds: Int = 120) : InstallationStep<Connection>() {
+class Reboot(private val timeoutInSeconds: Int = 120) :
+        InstallationStep<Connection>(), Subscription<OperationResultListener>, Notifying<OperationResult> {
 
     private val busy = Busy()
     private val command = Commands.reboot()
     private var connection: Connection? = null
+    private val subscribers = mutableSetOf<OperationResultListener>()
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -27,13 +28,15 @@ class Reboot(private val timeoutInSeconds: Int = 120) : InstallationStep<Connect
                     if (result.operation.command.endsWith(command)) {
 
                         connection?.unsubscribe(this)
-                        if (result.success) {
+                        // if (result.success) {
 
                             // TODO: Ping until success.
-                        } else {
+                        // } else {
 
-                            // TODO: Notify on failure.
-                        }
+                            val operation = RebootOperation()
+                            val result = OperationResult(operation, result.success)
+                            notify(result)
+                        // }
                     }
                 }
             }
@@ -56,5 +59,22 @@ class Reboot(private val timeoutInSeconds: Int = 120) : InstallationStep<Connect
         }
         connection?.subscribe(listener)
         connection?.execute(command)
+    }
+
+    override fun subscribe(what: OperationResultListener) {
+        subscribers.add(what)
+    }
+
+    override fun unsubscribe(what: OperationResultListener) {
+        subscribers.remove(what)
+    }
+
+    @Synchronized
+    override fun notify(data: OperationResult) {
+        val iterator = subscribers.iterator()
+        while (iterator.hasNext()) {
+            val listener = iterator.next()
+            listener.onOperationPerformed(data)
+        }
     }
 }

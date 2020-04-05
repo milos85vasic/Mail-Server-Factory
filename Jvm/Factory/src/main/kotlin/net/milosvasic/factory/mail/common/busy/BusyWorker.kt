@@ -67,6 +67,7 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
         subscription?.unsubscribe(listener)
     }
 
+    @Synchronized
     override fun notify(data: OperationResult) {
         val iterator = subscribers.iterator()
         while (iterator.hasNext()) {
