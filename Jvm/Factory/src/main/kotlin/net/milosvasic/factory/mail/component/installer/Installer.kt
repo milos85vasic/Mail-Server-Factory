@@ -16,16 +16,14 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
-class Installer(
-    private val configuration: SoftwareConfiguration,
-    entryPoint: SSH
-) :
-    BusyWorker<InstallationStep<*>>(entryPoint),
-    Installation,
-    Initialization {
+class Installer(entryPoint: SSH) :
+        BusyWorker<InstallationStep<*>>(entryPoint),
+        Installation,
+        Initialization {
 
     private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)
+    private var configuration: SoftwareConfiguration? = null
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -118,19 +116,28 @@ class Installer(
     @Synchronized
     override fun install() {
 
-        try {
-            val steps = configuration.obtain(entryPoint.getRemoteOS().getType().osName)
-            busy()
-            iterator = steps.iterator()
-            tryNext()
-        } catch (e: IllegalArgumentException) {
+        if (configuration == null) {
 
-            log.e(e)
+            log.e("No configuration available. Please set configuration before installation.")
             free(false)
-        } catch (e: IllegalStateException) {
+        } else {
 
-            log.e(e)
-            free(false)
+            configuration?.let {
+                try {
+                    val steps = it.obtain(entryPoint.getRemoteOS().getType().osName)
+                    busy()
+                    iterator = steps.iterator()
+                    tryNext()
+                } catch (e: IllegalArgumentException) {
+
+                    log.e(e)
+                    free(false)
+                } catch (e: IllegalStateException) {
+
+                    log.e(e)
+                    free(false)
+                }
+            }
         }
     }
 

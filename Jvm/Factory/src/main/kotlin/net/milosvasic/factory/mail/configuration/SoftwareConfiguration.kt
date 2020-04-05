@@ -9,15 +9,10 @@ import java.io.File
 
 data class SoftwareConfiguration(
     var configuration: String,
-    val software: List<SoftwareConfigurationItem> = listOf(
-
-        // TODO: Provide with defaults.
-    )
+    val software: List<SoftwareConfigurationItem>
 ) : ObtainParametrized<String, List<InstallationStep<*>>> {
 
     companion object : ObtainParametrized<String, SoftwareConfiguration> {
-
-        private const val DEFAULT = "default"
 
         @Throws(IllegalArgumentException::class, JsonParseException::class)
         override fun obtain(vararg param: String): SoftwareConfiguration {
@@ -25,25 +20,19 @@ data class SoftwareConfiguration(
             if (param.size > 1 || param.isEmpty()) {
                 throw IllegalArgumentException("Expected 1 argument")
             }
-            return when (val configurationName = param[0]) {
-                DEFAULT -> {
-                    SoftwareConfiguration(configurationName)
-                }
-                else -> {
-                    val configurationFile = File(configurationName)
-                    if (configurationFile.exists()) {
+            val configurationName = param[0]
+            val configurationFile = File(configurationName)
+            if (configurationFile.exists()) {
 
-                        val json = configurationFile.readText()
-                        val gson = Gson()
-                        val instance = gson.fromJson(json, SoftwareConfiguration::class.java)
-                        instance.configuration = configurationName
-                        instance
-                    } else {
+                val json = configurationFile.readText()
+                val gson = Gson()
+                val instance = gson.fromJson(json, SoftwareConfiguration::class.java)
+                instance.configuration = configurationName
+                return instance
+            } else {
 
-                        val msg = "Software configuration file does not exist: ${configurationFile.absolutePath}"
-                        throw IllegalArgumentException(msg)
-                    }
-                }
+                val msg = "Software configuration file does not exist: ${configurationFile.absolutePath}"
+                throw IllegalArgumentException(msg)
             }
         }
     }

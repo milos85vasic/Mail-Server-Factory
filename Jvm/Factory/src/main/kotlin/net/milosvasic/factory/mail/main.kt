@@ -41,13 +41,17 @@ fun main(args: Array<String>) {
             val gson = Gson()
             try {
                 val configuration = gson.fromJson(configurationJson, Configuration::class.java)
-                val softwareConfiguration = SoftwareConfiguration.obtain(configuration.softwareConfiguration)
+                val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
+                configuration.software.forEach {
+                    val softwareConfiguration = SoftwareConfiguration.obtain(it)
+                    softwareConfigurations.add(softwareConfiguration)
+                }
                 log.v(configuration.name)
 
                 val host = configuration.remote.host
                 val ssh = SSH(configuration.remote)
                 val terminal = ssh.terminal
-                val installer = Installer(softwareConfiguration, ssh)
+                val installer = Installer(ssh)
                 val processor = ServiceProcessor(ssh)
                 val pingCommand = Command(Commands.ping(host))
                 val testCommand = Commands.echo("Hello")
