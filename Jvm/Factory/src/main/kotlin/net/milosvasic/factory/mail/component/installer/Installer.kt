@@ -7,6 +7,8 @@ import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
+import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
+import net.milosvasic.factory.mail.component.installer.step.reboot.RebootOperation
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
@@ -40,10 +42,16 @@ class Installer(entryPoint: SSH) :
                 is PackageManagerOperation -> {
 
                     if (result.success) {
-
                         tryNext()
                     } else {
+                        free(false)
+                    }
+                }
+                is RebootOperation -> {
 
+                    if (result.success) {
+                        tryNext()
+                    } else {
                         free(false)
                     }
                 }
@@ -92,6 +100,7 @@ class Installer(entryPoint: SSH) :
         checkNotInitialized()
         installer.unsubscribe(listener)
         installer.terminate()
+        clearConfiguration()
         super.terminate()
     }
 
@@ -169,6 +178,11 @@ class Installer(entryPoint: SSH) :
 
                             command = String.EMPTY
                             current.execute(installer)
+                        }
+                        is Reboot -> {
+
+                            command = String.EMPTY
+                            current.execute(entryPoint)
                         }
                         else -> {
                             throw IllegalStateException("Unsupported installation step: $current")

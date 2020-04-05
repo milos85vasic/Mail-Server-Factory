@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.installer.step
 
 import net.milosvasic.factory.mail.common.ObtainParametrized
+import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
@@ -32,6 +33,10 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
             InstallationStepType.COMMAND.type -> {
 
                 return CommandInstallationStep(definition.value)
+            }
+            InstallationStepType.REBOOT.type -> {
+
+                return Reboot(definition.value.toInt())
             }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")
