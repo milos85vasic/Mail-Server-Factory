@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.terminal
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Execution
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
@@ -57,7 +58,7 @@ class Terminal :
 
                 log.e(e)
                 BusyWorker.free(busy)
-                val result = OperationResult(what, false)
+                val result = OperationResult(what, false, String.EMPTY, e)
                 notify(result)
             }
         }

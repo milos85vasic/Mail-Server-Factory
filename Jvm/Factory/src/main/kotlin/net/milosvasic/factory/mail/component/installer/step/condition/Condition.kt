@@ -24,7 +24,7 @@ class Condition(private val command: String) :
                 is SSHCommand -> {
                     if (result.operation.command.endsWith(command)) {
 
-                        finish(result.success)
+                        finish(result.success, result.exception == null)
                     }
                 }
             }
@@ -65,12 +65,11 @@ class Condition(private val command: String) :
         }
     }
 
-    private fun finish(success: Boolean) {
+    private fun finish(success: Boolean, result: Boolean) {
         connection?.unsubscribe(listener)
         connection = null
 
-        // TODO: Obtain success information for the operation!
-        val operation = ConditionOperation(false)
+        val operation = ConditionOperation(result)
         val operationResult = OperationResult(operation, success)
         notify(operationResult)
     }

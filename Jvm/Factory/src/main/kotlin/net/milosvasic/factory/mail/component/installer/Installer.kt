@@ -75,7 +75,7 @@ class Installer(entryPoint: SSH) :
                         }
                     }
                     if (result.success) {
-                        if (result.operation.success) {
+                        if (result.operation.result) {
                             free(true)
                         } else {
                             tryNext()
