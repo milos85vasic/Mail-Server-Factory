@@ -66,7 +66,15 @@ class Installer(entryPoint: SSH) :
                 }
                 is ConditionOperation -> {
 
-                    // TODO: Handle this
+                    if (result.success) {
+                        if (result.operation.success) {
+                            free(true)
+                        } else {
+                            tryNext()
+                        }
+                    } else {
+                        free(false)
+                    }
                 }
             }
         }
