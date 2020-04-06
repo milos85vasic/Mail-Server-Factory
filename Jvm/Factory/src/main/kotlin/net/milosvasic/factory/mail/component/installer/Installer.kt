@@ -66,6 +66,14 @@ class Installer(entryPoint: SSH) :
                 }
                 is ConditionOperation -> {
 
+                    // TODO: Refactor as RebootOperation shares the same code!
+                    item?.let { current ->
+                        when (current) {
+                            is Condition -> {
+                                current.unsubscribe(this)
+                            }
+                        }
+                    }
                     if (result.success) {
                         if (result.operation.success) {
                             free(true)
@@ -203,6 +211,7 @@ class Installer(entryPoint: SSH) :
                         is Condition -> {
 
                             command = String.EMPTY
+                            current.subscribe(listener)
                             current.execute(entryPoint)
                         }
                         is Reboot -> {
