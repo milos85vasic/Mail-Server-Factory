@@ -38,6 +38,10 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
 
                 return Reboot(definition.value.toInt())
             }
+            InstallationStepType.CONDITION.type -> {
+
+                return Condition(definition.value)
+            }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")
     }
