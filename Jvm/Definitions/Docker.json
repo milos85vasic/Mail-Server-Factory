@@ -6,6 +6,10 @@
       "installationSteps": {
         "CentOS": [
           {
+            "type": "condition",
+            "value": "docker --version"
+          },
+          {
             "type": "packageGroup",
             "value": "Development Tools"
           },
@@ -43,6 +47,10 @@
           }
         ],
         "Ubuntu": [
+          {
+            "type": "condition",
+            "value": "docker --version"
+          },
           {
             "type": "packages",
             "value": "apt-transport-https, ca-certificates, curl, gnupg-agent, software-properties-common, lsb-core"
