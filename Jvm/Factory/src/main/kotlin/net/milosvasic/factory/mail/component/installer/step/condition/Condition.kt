@@ -8,14 +8,11 @@ import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
-import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class Condition(private val command: String) :
-    InstallationStep<Connection>(),
-    Subscription<OperationResultListener>,
-    Notifying<OperationResult> {
+    InstallationStep<Connection>(), Subscription<OperationResultListener>, Notifying<OperationResult> {
 
     private val busy = Busy()
     private var connection: Connection? = null

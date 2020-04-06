@@ -7,6 +7,8 @@ import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
+import net.milosvasic.factory.mail.component.installer.step.condition.Condition
+import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.installer.step.reboot.RebootOperation
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
@@ -20,9 +22,9 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
 class Installer(entryPoint: SSH) :
-        BusyWorker<InstallationStep<*>>(entryPoint),
-        Installation,
-        Initialization {
+    BusyWorker<InstallationStep<*>>(entryPoint),
+    Installation,
+    Initialization {
 
     private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)
@@ -61,6 +63,10 @@ class Installer(entryPoint: SSH) :
                     } else {
                         free(false)
                     }
+                }
+                is ConditionOperation -> {
+
+                    // TODO: Handle this
                 }
             }
         }
@@ -185,6 +191,11 @@ class Installer(entryPoint: SSH) :
 
                             command = String.EMPTY
                             current.execute(installer)
+                        }
+                        is Condition -> {
+
+                            command = String.EMPTY
+                            current.execute(entryPoint)
                         }
                         is Reboot -> {
 
