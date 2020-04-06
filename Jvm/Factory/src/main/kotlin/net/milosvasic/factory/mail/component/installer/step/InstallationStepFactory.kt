@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.installer.step
 
 import net.milosvasic.factory.mail.common.ObtainParametrized
+import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
@@ -40,7 +41,9 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
             }
             InstallationStepType.CONDITION.type -> {
 
-                return Condition(definition.value)
+                return Condition(
+                    definition.value
+                )
             }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")
