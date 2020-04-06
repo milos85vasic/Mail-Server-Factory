@@ -6,6 +6,10 @@
       "installationSteps": {
         "CentOS": [
           {
+            "type": "condition",
+            "value": "vagrant --version"
+          },
+          {
             "type": "command",
             "value": "echo \"WORK IN PROGRESS 1\""
           },
@@ -19,6 +23,10 @@
           }
         ],
         "Ubuntu": [
+          {
+            "type": "condition",
+            "value": "vagrant --version"
+          },
           {
             "type": "command",
             "value": "echo \"WORK IN PROGRESS 1\""
