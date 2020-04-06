@@ -81,7 +81,11 @@ class Installer(entryPoint: SSH) :
                             tryNext()
                         }
                     } else {
-                        free(false)
+                        if (result.operation.result) {
+                            tryNext()
+                        } else {
+                            free(false)
+                        }
                     }
                 }
             }
