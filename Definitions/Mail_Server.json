@@ -6,6 +6,10 @@
       "installationSteps": {
         "Docker": [
           {
+            "type": "stack",
+            "value": "Docker"
+          },
+          {
             "type": "service",
             "value": "Docker/Postgres"
           }
