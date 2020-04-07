@@ -56,7 +56,7 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
         connection?.subscribe(listener)
     }
 
-    protected fun finish(success: Boolean, operation: Operation = getOperation()) {
+    protected fun finish(success: Boolean, operation: Operation) {
         connection?.unsubscribe(listener)
         connection = null
         val operationResult = OperationResult(operation, success)
@@ -64,6 +64,4 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
     }
 
     abstract fun handleResult(result: OperationResult)
-
-    abstract fun getOperation(): Operation
 }

@@ -12,6 +12,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
 
     private var pingCount = 0
     private val rebootScheduleTime = 3
+    private val operation = RebootOperation()
     private val defaultCommand = Commands.reboot(rebootScheduleTime)
     private var command = defaultCommand
 
@@ -24,19 +25,19 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
                     } catch (e: InterruptedException) {
 
                         log.e(e)
-                        finish(false)
+                        finish(false, operation)
                     }
                     if (result.success) {
                         ping()
                     } else {
-                        finish(false)
+                        finish(false, operation)
                     }
                 }
             }
             is Command -> {
 
                 if (result.success) {
-                    finish(true)
+                    finish(true, operation)
                 } else {
 
                     if (pingCount <= timeoutInSeconds) {
@@ -44,7 +45,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
                     } else {
 
                         log.e("Reboot timeout exceeded.")
-                        finish(false)
+                        finish(false, operation)
                     }
                 }
             }
@@ -61,8 +62,6 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
         connection?.execute(command)
     }
 
-    override fun getOperation() = RebootOperation()
-
     private fun ping() {
 
         pingCount++
@@ -71,14 +70,14 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
         if (host == null) {
 
             log.e("No host to ping provided")
-            finish(false)
+            finish(false, operation)
         } else {
 
             val terminal = connection?.terminal
             if (terminal == null) {
 
                 log.e("No terminal for pinging provided")
-                finish(false)
+                finish(false, operation)
             } else {
 
                 command = Commands.ping(host, 1)
