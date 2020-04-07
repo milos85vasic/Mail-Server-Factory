@@ -111,4 +111,8 @@ Legacy/services.json
 *.tmp
 
 .idea
+.idea/*
 
+gradlew*
+gradle
+gradle/*
