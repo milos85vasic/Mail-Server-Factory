@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.validation.Validator
 import java.util.concurrent.ConcurrentLinkedQueue
 
 abstract class RemoteOperationInstallationStep<T : Connection> :
@@ -44,9 +45,7 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: T) {
 
-        if (params.size > 1 || params.isEmpty()) {
-            throw IllegalArgumentException("Expected 1 argument")
-        }
+        Validator.Arguments.validateSingle(params)
         BusyWorker.busy(busy)
 
         connection = params[0]

@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.installer.step
 
 import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.validation.Validator
 
 class CommandInstallationStep(val command: String) : InstallationStep<Connection>() {
 
@@ -8,9 +9,7 @@ class CommandInstallationStep(val command: String) : InstallationStep<Connection
     @Throws(IllegalArgumentException::class)
     override fun execute(vararg params: Connection) {
 
-        if (params.size > 1 || params.isEmpty()) {
-            throw IllegalArgumentException("Expected 1 argument")
-        }
+        Validator.Arguments.validateSingle(params)
         val connection = params[0]
         connection.execute(command)
     }

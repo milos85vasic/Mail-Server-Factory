@@ -5,6 +5,7 @@ import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.common.ObtainParametrized
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepFactory
+import net.milosvasic.factory.mail.validation.Validator
 import java.io.File
 
 data class SoftwareConfiguration(
@@ -17,9 +18,7 @@ data class SoftwareConfiguration(
         @Throws(IllegalArgumentException::class, JsonParseException::class)
         override fun obtain(vararg param: String): SoftwareConfiguration {
 
-            if (param.size > 1 || param.isEmpty()) {
-                throw IllegalArgumentException("Expected 1 argument")
-            }
+            Validator.Arguments.validateSingle(param)
             val configurationName = param[0]
             val configurationFile = File(configurationName)
             if (configurationFile.exists()) {
@@ -41,9 +40,7 @@ data class SoftwareConfiguration(
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun obtain(vararg param: String): List<InstallationStep<*>> {
 
-        if (param.size > 1 || param.isEmpty()) { // TODO: Refactor as we did with busy stuff - delegate...
-            throw IllegalArgumentException("Expected 1 argument")
-        }
+        Validator.Arguments.validateSingle(param)
         val factory = InstallationStepFactory()
         val installationSteps = mutableListOf<InstallationStep<*>>()
         software.forEach {
