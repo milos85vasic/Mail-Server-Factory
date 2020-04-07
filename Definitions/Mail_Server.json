@@ -1,0 +1,16 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "service",
+            "value": "Docker/PostgreSQL"
+          }
+        ]
+      }
+    }
+  ]
+}
