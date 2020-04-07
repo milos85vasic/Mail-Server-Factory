@@ -7,6 +7,7 @@ import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
+import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
@@ -22,9 +23,9 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
 class Installer(entryPoint: SSH) :
-    BusyWorker<InstallationStep<*>>(entryPoint),
-    Installation,
-    Initialization {
+        BusyWorker<InstallationStep<*>>(entryPoint),
+        Installation,
+        Initialization {
 
     private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)
@@ -51,13 +52,7 @@ class Installer(entryPoint: SSH) :
                 }
                 is RebootOperation -> {
 
-                    item?.let { current ->
-                        when (current) {
-                            is Reboot -> {
-                                current.unsubscribe(this)
-                            }
-                        }
-                    }
+                    unsubscribeFromItem(this)
                     if (result.success) {
                         tryNext()
                     } else {
@@ -66,14 +61,7 @@ class Installer(entryPoint: SSH) :
                 }
                 is ConditionOperation -> {
 
-                    // TODO: Refactor as RebootOperation shares the same code!
-                    item?.let { current ->
-                        when (current) {
-                            is Condition -> {
-                                current.unsubscribe(this)
-                            }
-                        }
-                    }
+                    unsubscribeFromItem(this)
                     if (result.success) {
                         if (result.operation.result) {
                             free(true)
@@ -273,5 +261,15 @@ class Installer(entryPoint: SSH) :
         busy()
         configuration = null
         free()
+    }
+
+    private fun unsubscribeFromItem(listener: OperationResultListener) {
+        item?.let { current ->
+            when (current) {
+                is RemoteOperationInstallationStep -> {
+                    current.unsubscribe(listener)
+                }
+            }
+        }
     }
 }
