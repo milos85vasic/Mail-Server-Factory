@@ -116,3 +116,5 @@ Legacy/services.json
 gradlew*
 gradle
 gradle/*
+.gradle
+.gradle/*
