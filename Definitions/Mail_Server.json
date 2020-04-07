@@ -7,7 +7,7 @@
         "Docker": [
           {
             "type": "service",
-            "value": "Docker/PostgreSQL"
+            "value": "Docker/Postgres"
           }
         ]
       }
