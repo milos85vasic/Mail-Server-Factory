@@ -12,7 +12,9 @@
   },
   "software": [
     "Definitions/Docker.json",
-    "Definitions/Vagrant.json",
+    "Definitions/Vagrant.json"
+  ],
+  "containers": [
     "Definitions/Mail_Server.json"
   ]
 }
