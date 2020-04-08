@@ -1,7 +1,8 @@
-package net.milosvasic.factory.mail.docker
+package net.milosvasic.factory.mail.component.docker
 
 enum class DockerCommand(val command: String) {
 
+    DOCKER("docker"),
     RUN("run"),
     BUILD("build"),
     COMMIT("commit"),

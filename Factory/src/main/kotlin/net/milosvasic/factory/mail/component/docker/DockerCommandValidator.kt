@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.docker
+package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.common.Validation
 

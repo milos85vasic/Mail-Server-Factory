@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.docker
+package net.milosvasic.factory.mail.component.docker
 
 import javafx.util.Builder
 import net.milosvasic.factory.mail.EMPTY
@@ -49,7 +49,8 @@ class DockerCommandBuilder : Builder<String> {
 
         val validator = DockerCommandValidator()
         if (validator.validate(this)) {
-            return "docker ${command.command} $volume $name $image"
+            val dockerCommand = DockerCommand.DOCKER.command
+            return "$dockerCommand ${command.command} $volume $name $image"
         }
         return String.EMPTY
     }
