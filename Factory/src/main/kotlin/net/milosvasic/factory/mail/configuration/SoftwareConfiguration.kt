@@ -45,7 +45,7 @@ data class SoftwareConfiguration(
         val installationSteps = mutableListOf<InstallationStep<*>>()
         software.forEach {
             val os = param[0]
-            val msg = "No installation steps for ${it.name} for $os"
+            val msg = "No installation steps for '${it.name}' installation step for $os"
             val recipe = it.installationSteps[os] ?: throw IllegalStateException(msg)
             recipe.forEach { definition ->
                 installationSteps.add(factory.obtain(definition))
