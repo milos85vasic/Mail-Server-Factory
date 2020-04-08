@@ -17,7 +17,6 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.Architecture
 import net.milosvasic.factory.mail.os.OSType
-import net.milosvasic.factory.mail.processor.ServiceProcessor
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
@@ -53,7 +52,6 @@ class ServerFactory : Application {
                     val ssh = SSH(configuration.remote)
                     val terminal = ssh.terminal
                     val installer = Installer(ssh)
-                    val processor = ServiceProcessor(ssh)
                     val pingCommand = Command(Commands.ping(host))
                     val testCommand = Commands.echo("Hello")
                     val hostInfoCommand = Commands.getHostInfo()
@@ -74,11 +72,6 @@ class ServerFactory : Application {
                             } else {
 
                                 installer.terminate()
-
-                                // TODO: Continue the flow.
-                                configuration.services.forEach { service ->
-                                    processor.process(service)
-                                }
                                 finish()
                             }
                         }
