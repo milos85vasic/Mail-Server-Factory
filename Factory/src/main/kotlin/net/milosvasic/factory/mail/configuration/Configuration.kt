@@ -29,31 +29,13 @@ data class Configuration(
                 val configurationJson = configurationFile.readText()
                 val gson = Gson()
                 try {
-
                     val configuration = gson.fromJson(configurationJson, Configuration::class.java)
-
                     configuration.variables.keys.forEach {
-
                         val value = configuration.variables[it]
-                        when (value) {
-                            is Double -> {
-
-                                log.e("> > > > > > ${value + 100000}")
-                            }
-                            is Boolean -> {
-
-                                log.i("> > > > > > $value")
-                            }
-                            is String -> {
-
-                                log.i("> > > > > > $value")
-                            }
-                        }
-
+                        log.v("Configuration variable: $it -> $value")
                     }
 
                     return configuration
-
                 } catch (e: JsonParseException) {
 
                     throw IllegalArgumentException("Unable to parse JSON: ${e.message}")
