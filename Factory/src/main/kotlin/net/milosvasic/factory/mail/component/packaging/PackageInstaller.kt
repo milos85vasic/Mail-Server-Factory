@@ -77,6 +77,7 @@ class PackageInstaller(entryPoint: SSH) :
     override fun terminate() {
         checkNotInitialized()
         detach(manager)
+        manager?.terminate()
         super.terminate()
     }
 

@@ -51,6 +51,7 @@ class ServerFactory : Application {
 
                 val host = configuration.remote.host
                 val ssh = SSH(configuration.remote)
+                // TODO: val docker = Docker(ssh)
                 val terminal = ssh.terminal
                 val installer = Installer(ssh)
                 val pingCommand = Command(Commands.ping(host))

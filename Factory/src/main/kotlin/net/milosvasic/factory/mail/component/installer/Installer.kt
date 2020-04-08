@@ -15,8 +15,8 @@ import net.milosvasic.factory.mail.component.installer.step.reboot.RebootOperati
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
+import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
-import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -25,10 +25,10 @@ import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
 class Installer(entryPoint: SSH) :
         BusyWorker<InstallationStep<*>>(entryPoint),
+        ConfigurableSoftware,
         Installation,
         Initialization {
 
-    private val docker = Docker(entryPoint)
     private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)
     private var configuration: SoftwareConfiguration? = null
@@ -251,7 +251,7 @@ class Installer(entryPoint: SSH) :
 
     @Synchronized
     @Throws(BusyException::class)
-    fun setConfiguration(configuration: SoftwareConfiguration) {
+    override fun setConfiguration(configuration: SoftwareConfiguration) {
         busy()
         this.configuration = configuration
         free()
@@ -259,7 +259,7 @@ class Installer(entryPoint: SSH) :
 
     @Synchronized
     @Throws(BusyException::class)
-    fun clearConfiguration() {
+    override fun clearConfiguration() {
         busy()
         configuration = null
         free()
