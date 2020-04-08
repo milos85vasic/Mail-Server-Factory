@@ -1,7 +1,7 @@
 {
   "name": "Mail server configuration",
   "variables": {
-
+    "SERVER_HOME": "/root"
   },
   "remote": {
     "port": 22,

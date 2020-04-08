@@ -1,16 +1,16 @@
 {
   "name": "Mail server configuration",
-  "applications": [],
-  "services": [
-    {
-      "type": "Postfix",
-      "name": "Red-Elf mail sender"
-    }
-  ],
+  "variables": {
+    "SERVER_HOME": "/root"
+  },
   "remote": {
     "port": 22,
     "user": "root",
     "host": "192.168.100.102"
   },
-  "software": ["Definitions/Docker.json", "Definitions/Vagrant.json"]
+  "software": [
+    "Definitions/Docker.json",
+    "Definitions/Vagrant.json",
+    "Definitions/Mail_Server.json"
+  ]
 }
