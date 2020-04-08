@@ -1,6 +1,7 @@
 {
   "name": "Mail server configuration",
   "variables": {
+    "SOMETHING": 25,
     "SERVER_HOME": "/root"
   },
   "remote": {
