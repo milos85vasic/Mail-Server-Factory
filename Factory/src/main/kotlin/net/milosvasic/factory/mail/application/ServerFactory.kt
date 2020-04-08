@@ -36,9 +36,14 @@ class ServerFactory : Application {
             try {
                 val configuration = Configuration.obtain(configurationFile)
                 val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
+                val containersConfiguration = mutableListOf<SoftwareConfiguration>()
                 configuration.software.forEach {
                     val softwareConfiguration = SoftwareConfiguration.obtain(it)
                     softwareConfigurations.add(softwareConfiguration)
+                }
+                configuration.containers.forEach {
+                    val containerConfiguration = SoftwareConfiguration.obtain(it)
+                    containersConfiguration.add(containerConfiguration)
                 }
                 log.v(configuration.name)
 

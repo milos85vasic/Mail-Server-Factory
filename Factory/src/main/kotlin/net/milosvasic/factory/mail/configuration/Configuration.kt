@@ -13,7 +13,8 @@ data class Configuration(
         val name: String,
         val remote: Remote,
         val variables: Map<String, Any>,
-        val software: List<String>
+        val software: List<String>,
+        val containers: List<String>
 ) {
 
     companion object : ObtainParametrized<File, Configuration> {
