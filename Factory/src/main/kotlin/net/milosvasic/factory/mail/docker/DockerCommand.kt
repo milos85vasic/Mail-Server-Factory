@@ -7,5 +7,6 @@ enum class DockerCommand(val command: String) {
     COMMIT("commit"),
     START("start"),
     STOP("stop"),
-    KILL("kill")
+    KILL("kill"),
+    VERSION("--version")
 }
