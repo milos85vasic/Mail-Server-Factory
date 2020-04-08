@@ -4,11 +4,6 @@ import net.milosvasic.factory.mail.localhost
 
 object Commands {
 
-    object Docker {
-
-
-    }
-
     fun echo(what: String) = "echo '$what'"
 
     fun ssh(user: String = "root", command: String, port: Int = 22, host: String = localhost): String {
