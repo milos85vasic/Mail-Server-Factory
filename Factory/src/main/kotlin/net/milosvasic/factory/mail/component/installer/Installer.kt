@@ -16,6 +16,7 @@ import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
+import net.milosvasic.factory.mail.docker.Docker
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -27,6 +28,7 @@ class Installer(entryPoint: SSH) :
         Installation,
         Initialization {
 
+    private val docker = Docker(entryPoint)
     private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)
     private var configuration: SoftwareConfiguration? = null
