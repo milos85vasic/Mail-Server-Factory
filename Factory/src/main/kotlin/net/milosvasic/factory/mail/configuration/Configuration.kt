@@ -34,10 +34,15 @@ data class Configuration(
 
                     configuration.variables.keys.forEach {
 
-                        when (val value = configuration.variables[it]) {
-                            is Int -> {
+                        val value = configuration.variables[it]
+                        when (value) {
+                            is Double -> {
 
                                 log.e("> > > > > > ${value + 100000}")
+                            }
+                            is Boolean -> {
+
+                                log.i("> > > > > > $value")
                             }
                             is String -> {
 
