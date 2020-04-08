@@ -37,6 +37,7 @@ class ServerFactory : Application {
                 val configuration = Configuration.obtain(configurationFile)
                 val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
                 val containersConfiguration = mutableListOf<SoftwareConfiguration>()
+
                 configuration.software.forEach {
                     val softwareConfiguration = SoftwareConfiguration.obtain(it)
                     softwareConfigurations.add(softwareConfiguration)
@@ -45,6 +46,7 @@ class ServerFactory : Application {
                     val containerConfiguration = SoftwareConfiguration.obtain(it)
                     containersConfiguration.add(containerConfiguration)
                 }
+
                 log.v(configuration.name)
 
                 val host = configuration.remote.host
