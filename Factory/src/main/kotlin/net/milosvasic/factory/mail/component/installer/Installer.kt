@@ -1,9 +1,7 @@
 package net.milosvasic.factory.mail.component.installer
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
-import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
@@ -13,7 +11,6 @@ import net.milosvasic.factory.mail.component.installer.step.reboot.RebootOperati
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
-import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -22,9 +19,7 @@ import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
 class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
 
-    private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)
-    private var configuration: SoftwareConfiguration? = null
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -121,34 +116,19 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
-    override fun checkInitialized() {
-        if (isInitialized()) {
-            throw IllegalStateException("Installer has been already initialized")
-        }
-    }
-
-    @Synchronized
-    @Throws(IllegalStateException::class)
-    override fun checkNotInitialized() {
-        if (!isInitialized()) {
-            throw IllegalStateException("Installer has not been initialized")
-        }
-    }
-
-    @Synchronized
     override fun isInitialized() = installer.isInitialized()
 
     @Synchronized
     override fun install() {
 
-        if (configuration == null) {
+        if (config == null) {
 
             log.e("No configuration available. Please set configuration before installation.")
             free(false)
+            return
         } else {
 
-            configuration?.let {
+            config?.let {
                 try {
                     val steps = it.obtain(entryPoint.getRemoteOS().getType().osName)
                     busy()
@@ -240,22 +220,6 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
         val operation = InstallerOperation()
         val result = OperationResult(operation, success)
         notify(result)
-    }
-
-    @Synchronized
-    @Throws(BusyException::class)
-    override fun setConfiguration(configuration: SoftwareConfiguration) {
-        busy()
-        this.configuration = configuration
-        free()
-    }
-
-    @Synchronized
-    @Throws(BusyException::class)
-    override fun clearConfiguration() {
-        busy()
-        configuration = null
-        free()
     }
 
     private fun unsubscribeFromItem(listener: OperationResultListener) {

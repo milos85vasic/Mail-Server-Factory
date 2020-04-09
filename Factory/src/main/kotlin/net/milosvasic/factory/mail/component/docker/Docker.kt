@@ -1,48 +1,45 @@
 package net.milosvasic.factory.mail.component.docker
 
-import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
-import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
+import java.util.concurrent.atomic.AtomicBoolean
 
 class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
-    private var configuration: SoftwareConfiguration? = null
+    private val initialized = AtomicBoolean()
 
-    @Synchronized
-    @Throws(BusyException::class)
-    override fun setConfiguration(configuration: SoftwareConfiguration) {
-        busy()
-        this.configuration = configuration
-        free()
+    private val listener = object : OperationResultListener {
+        override fun onOperationPerformed(result: OperationResult) {
+
+            when (result.operation) {
+
+                // TODO:
+            }
+        }
     }
 
     @Synchronized
-    @Throws(BusyException::class)
-    override fun clearConfiguration() {
-        busy()
-        configuration = null
-        free()
-    }
-
+    @Throws(IllegalStateException::class)
     override fun initialize() {
-
+        checkInitialized()
+        busy()
+        command = "${DockerCommand.DOCKER.command} ${DockerCommand.VERSION.command}"
+        entryPoint.execute(command)
     }
 
-    override fun isInitialized(): Boolean {
-
-        // TODO:
-        return false
+    @Synchronized
+    @Throws(IllegalStateException::class)
+    override fun terminate() {
+        checkNotInitialized()
+        initialized.set(false)
+        clearConfiguration()
+        super.terminate()
     }
 
-    override fun checkInitialized() {
-        TODO("Not yet implemented")
-    }
-
-    override fun checkNotInitialized() {
-        TODO("Not yet implemented")
-    }
+    @Synchronized
+    override fun isInitialized() = initialized.get()
 
     override fun install() {
         TODO("Not yet implemented")
