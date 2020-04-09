@@ -1,8 +1,8 @@
 {
   "software": [
     {
-      "name": "Docker",
-      "version": "19.03",
+      "name": "Vagrant",
+      "version": "Tbd.",
       "installationSteps": {
         "CentOS": [
           {
@@ -11,15 +11,15 @@
           },
           {
             "type": "command",
-            "value": "echo \"WORK IN PROGRESS 1\""
+            "value": "echo \"WORK IN PROGRESS 1: {{SERVER_HOME}}\""
           },
           {
             "type": "command",
-            "value": "echo \"WORK IN PROGRESS 2\""
+            "value": "echo \"WORK IN PROGRESS 2: {{SERVER_HOME}}\""
           },
           {
             "type": "command",
-            "value": "echo \"WORK IN PROGRESS 3\""
+            "value": "echo \"WORK IN PROGRESS 3: {{SERVER_HOME}}\""
           }
         ],
         "Ubuntu": [

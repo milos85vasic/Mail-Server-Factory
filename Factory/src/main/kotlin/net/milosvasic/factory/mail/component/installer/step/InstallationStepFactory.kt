@@ -18,13 +18,13 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
         when (definition.type) {
             InstallationStepType.PACKAGE_GROUP.type -> {
 
-                val group = Group(definition.value)
+                val group = Group(definition.getValue())
                 return PackageManagerInstallationStep(listOf(group))
             }
             InstallationStepType.PACKAGES.type -> {
 
                 val packages = mutableListOf<Package>()
-                val split = definition.value.split(",")
+                val split = definition.getValue().split(",")
                 split.forEach {
                     packages.add(Package(it.trim()))
                 }
@@ -32,16 +32,16 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
             }
             InstallationStepType.COMMAND.type -> {
 
-                return CommandInstallationStep(definition.value)
+                return CommandInstallationStep(definition.getValue())
             }
             InstallationStepType.REBOOT.type -> {
 
-                return Reboot(definition.value.toInt())
+                return Reboot(definition.getValue().toInt())
             }
             InstallationStepType.CONDITION.type -> {
 
                 return Condition(
-                    definition.value
+                    definition.getValue()
                 )
             }
         }
