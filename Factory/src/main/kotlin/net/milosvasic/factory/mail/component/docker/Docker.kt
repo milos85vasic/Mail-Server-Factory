@@ -1,16 +1,12 @@
 package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.busy.BusyWorker
-import net.milosvasic.factory.mail.component.installer.step.InstallationStep
-import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
+import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 
-class Docker(entryPoint: Connection) :
-        BusyWorker<InstallationStep<*>>(entryPoint),
-        ConfigurableSoftware {
+class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
     private var configuration: SoftwareConfiguration? = null
 
@@ -28,6 +24,14 @@ class Docker(entryPoint: Connection) :
         busy()
         configuration = null
         free()
+    }
+
+    override fun install() {
+        TODO("Not yet implemented")
+    }
+
+    override fun uninstall() {
+        TODO("Not yet implemented")
     }
 
     override fun tryNext() {

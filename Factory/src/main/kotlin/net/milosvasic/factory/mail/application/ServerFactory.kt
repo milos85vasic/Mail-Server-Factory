@@ -3,9 +3,8 @@ package net.milosvasic.factory.mail.application
 import net.milosvasic.factory.mail.common.Application
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
-import net.milosvasic.factory.mail.component.installer.Installer
-import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
-import net.milosvasic.factory.mail.component.installer.InstallerOperation
+import net.milosvasic.factory.mail.component.docker.Docker
+import net.milosvasic.factory.mail.component.installer.*
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.error.ERROR
@@ -51,31 +50,41 @@ class ServerFactory : Application {
 
                     val host = configuration.remote.host
                     val ssh = SSH(configuration.remote)
-                    // TODO: val docker = Docker(ssh)
+                    val docker = Docker(ssh)
                     val terminal = ssh.terminal
                     val installer = Installer(ssh)
                     val pingCommand = Command(Commands.ping(host))
                     val testCommand = Commands.echo("Hello")
                     val hostInfoCommand = Commands.getHostInfo()
                     var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
+                    var containerConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
+
+                    fun tryNext(iterator: Iterator<SoftwareConfiguration>, installer: InstallerAbstract) {
+                        if (iterator.hasNext()) {
+                            val softwareConfiguration = iterator.next()
+                            try {
+                                installer.setConfiguration(softwareConfiguration)
+                                installer.install()
+                            } catch (e: BusyException) {
+
+                                fail(e)
+                            }
+                        } else {
+
+                            installer.terminate()
+                            finish()
+                        }
+                    }
 
                     fun tryNextSoftwareConfiguration() {
                         softwareConfigurationsIterator?.let {
+                            tryNext(it, installer)
+                        }
+                    }
 
-                            if (it.hasNext()) {
-                                val softwareConfiguration = it.next()
-                                try {
-                                    installer.setConfiguration(softwareConfiguration)
-                                    installer.install()
-                                } catch (e: BusyException) {
-
-                                    fail(e)
-                                }
-                            } else {
-
-                                installer.terminate()
-                                finish()
-                            }
+                    fun tryNextContainerConfiguration() {
+                        containerConfigurationsIterator?.let {
+                            tryNext(it, docker)
                         }
                     }
 

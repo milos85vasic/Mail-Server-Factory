@@ -23,11 +23,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
-class Installer(entryPoint: SSH) :
-        BusyWorker<InstallationStep<*>>(entryPoint),
-        ConfigurableSoftware,
-        Installation,
-        Initialization {
+class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint), Initialization {
 
     private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)
