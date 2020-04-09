@@ -25,7 +25,7 @@ class ServerFactory : Application {
 
     override fun run(args: Array<String>) {
         log.i("STARTED")
-        val argumentsValidator = ServerFactoryArgumentsValidator()
+        val argumentsValidator = ArgumentsValidator()
         try {
             if (argumentsValidator.validate(args)) {
                 val configurationFile = args[0]
