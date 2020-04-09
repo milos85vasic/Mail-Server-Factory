@@ -94,7 +94,7 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
         notify(success)
     }
 
-    protected fun onFailedResult(e: IllegalStateException) {
+    protected fun onFailedResult(e: Exception) {
         log.e(e)
         free(false)
     }

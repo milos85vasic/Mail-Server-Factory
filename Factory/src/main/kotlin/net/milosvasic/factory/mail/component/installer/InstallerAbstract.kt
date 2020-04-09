@@ -1,13 +1,27 @@
 package net.milosvasic.factory.mail.component.installer
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
+import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
+import net.milosvasic.factory.mail.component.installer.step.condition.Condition
+import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
+import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
+import net.milosvasic.factory.mail.component.installer.step.reboot.RebootOperation
+import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
+import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.Operation
+import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
 abstract class InstallerAbstract(entryPoint: Connection) :
         BusyWorker<InstallationStep<*>>(entryPoint),
@@ -16,7 +30,95 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         Initialization {
 
     protected var item: InstallationStep<*>? = null
-    protected var config: SoftwareConfiguration? = null
+
+    private var config: SoftwareConfiguration? = null
+
+    private val listener = object : OperationResultListener {
+        override fun onOperationPerformed(result: OperationResult) {
+
+            try {
+                handleResult(result)
+            } catch (e: IllegalStateException) {
+
+                onFailedResult(e)
+            } catch (e: IllegalArgumentException) {
+
+                onFailedResult(e)
+            }
+        }
+    }
+
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
+    override fun handleResult(result: OperationResult) {
+        when (result.operation) {
+            is PackageInstallerInitializationOperation -> {
+
+                free()
+                val installerInitializationOperation = InstallerInitializationOperation()
+                val operationResult = OperationResult(installerInitializationOperation, result.success)
+                notify(operationResult)
+            }
+            is PackageManagerOperation -> {
+
+                if (result.success) {
+                    tryNext()
+                } else {
+                    free(false)
+                }
+            }
+            is RebootOperation -> {
+
+                unsubscribeFromItem(listener)
+                if (result.success) {
+                    tryNext()
+                } else {
+                    free(false)
+                }
+            }
+            is ConditionOperation -> {
+
+                unsubscribeFromItem(listener)
+                if (result.success) {
+                    if (result.operation.result) {
+                        free(true)
+                    } else {
+                        tryNext()
+                    }
+                } else {
+                    if (result.operation.result) {
+                        tryNext()
+                    } else {
+                        free(false)
+                    }
+                }
+            }
+            is SSHCommand -> {
+
+                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
+                    onCommandPerformed(result)
+                }
+            }
+        }
+    }
+
+    protected open fun onCommandPerformed(result: OperationResult) {
+        if (result.success) {
+
+            try {
+                tryNext()
+            } catch (e: IllegalStateException) {
+
+                log.e(e)
+                free(false)
+            } catch (e: IllegalArgumentException) {
+
+                log.e(e)
+                free(false)
+            }
+        } else {
+            free(false)
+        }
+    }
 
     @Synchronized
     override fun install() {
@@ -53,6 +155,75 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         throw UnsupportedOperationException("Not implemented yet.")
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
+    override fun tryNext() {
+
+        if (iterator == null) {
+            free(false)
+            return
+        }
+        iterator?.let {
+            if (it.hasNext()) {
+                item = it.next()
+                item?.let { current ->
+                    handleNext(current)
+                }
+            } else {
+
+                free(true)
+            }
+        }
+    }
+
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
+    protected open fun handleNext(current: InstallationStep<*>): Boolean {
+        when (current) {
+            is CommandInstallationStep -> {
+
+                command = current.command
+                current.execute(entryPoint)
+                return true
+            }
+            is Condition -> {
+
+                command = String.EMPTY
+                current.subscribe(listener)
+                current.execute(entryPoint)
+                return true
+            }
+            is Reboot -> {
+
+                if (entryPoint is SSH) {
+                    command = String.EMPTY
+                    current.subscribe(listener)
+                    current.execute(entryPoint)
+                } else {
+
+                    val clazz = entryPoint::class.simpleName
+                    val msg = "Reboot installation step does not support $clazz connection"
+                    throw IllegalArgumentException(msg)
+                }
+                return true
+            }
+        }
+        return false
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class)
+    override fun initialize() {
+        checkInitialized()
+        busy()
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class)
+    override fun terminate() {
+        checkNotInitialized()
+        clearConfiguration()
+        super.terminate()
+    }
+
     @Synchronized
     @Throws(IllegalStateException::class)
     override fun checkInitialized() {
@@ -85,5 +256,33 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         free()
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
+    override fun onSuccessResult() {
+        tryNext()
+    }
+
+    override fun onFailedResult() {
+        free(false)
+    }
+
+    @Synchronized
+    override fun notify(success: Boolean) {
+        val operation = getNotifyOperation()
+        val result = OperationResult(operation, success)
+        notify(result)
+    }
+
     abstract fun getEnvironmentName(): String
+
+    abstract fun getNotifyOperation(): Operation
+
+    private fun unsubscribeFromItem(listener: OperationResultListener) {
+        item?.let { current ->
+            when (current) {
+                is RemoteOperationInstallationStep -> {
+                    current.unsubscribe(listener)
+                }
+            }
+        }
+    }
 }
