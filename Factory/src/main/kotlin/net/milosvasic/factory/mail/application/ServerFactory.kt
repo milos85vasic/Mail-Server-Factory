@@ -159,10 +159,7 @@ class ServerFactory : Application {
 
                                         log.i("Installer is ready")
                                         softwareConfigurationsIterator = softwareConfigurations.iterator()
-                                        if (!tryNextSoftwareConfiguration()) {
-                                            docker.subscribe(this)
-                                            docker.initialize()
-                                        }
+                                        nextSoftwareConfiguration()
                                     } else {
 
                                         log.e("Could not initialize installer")
@@ -175,7 +172,7 @@ class ServerFactory : Application {
 
                                         log.i("Docker is ready")
                                         containerConfigurationsIterator = containersConfigurations.iterator()
-                                        tryNextContainerConfiguration()
+                                        nextContainerConfiguration()
                                     } else {
 
                                         log.e("Could not initialize Docker")
@@ -185,10 +182,7 @@ class ServerFactory : Application {
                                 is InstallerOperation -> {
 
                                     if (result.success) {
-                                        if (!tryNextSoftwareConfiguration()) {
-                                            docker.subscribe(this)
-                                            docker.initialize()
-                                        }
+                                        nextSoftwareConfiguration()
                                     } else {
 
                                         log.e("Could not perform installation")
@@ -198,7 +192,7 @@ class ServerFactory : Application {
                                 is DockerOperation -> {
 
                                     if (result.success) {
-                                        tryNextContainerConfiguration()
+                                        nextContainerConfiguration()
                                     } else {
 
                                         log.e("Could not perform docker operation")
@@ -210,6 +204,20 @@ class ServerFactory : Application {
                                     log.e("Unexpected operation has been performed: ${result.operation}")
                                     fail(ERROR.INITIALIZATION_FAILURE)
                                 }
+                            }
+                        }
+
+                        private fun nextSoftwareConfiguration() {
+                            if (!tryNextSoftwareConfiguration()) {
+                                docker.subscribe(this)
+                                docker.initialize()
+                            }
+                        }
+
+                        private fun nextContainerConfiguration() {
+                            if (!tryNextContainerConfiguration()) {
+                                docker.unsubscribe(this)
+                                docker.terminate()
                             }
                         }
                     }
