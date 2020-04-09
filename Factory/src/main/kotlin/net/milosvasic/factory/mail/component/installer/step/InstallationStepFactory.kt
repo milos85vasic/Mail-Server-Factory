@@ -10,7 +10,7 @@ import net.milosvasic.factory.mail.validation.Validator
 
 class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, InstallationStep<*>> {
 
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun obtain(vararg param: InstallationStepDefinition): InstallationStep<*> {
 
         Validator.Arguments.validateSingle(param)
