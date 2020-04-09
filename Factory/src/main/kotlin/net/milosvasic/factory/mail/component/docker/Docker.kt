@@ -57,13 +57,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     @Synchronized
     override fun isInitialized() = initialized.get()
 
-    override fun install() {
-        TODO("Not yet implemented")
-    }
-
-    override fun uninstall() {
-        TODO("Not yet implemented")
-    }
+    override fun getEnvironmentName() = "Docker"
 
     override fun tryNext() {
 

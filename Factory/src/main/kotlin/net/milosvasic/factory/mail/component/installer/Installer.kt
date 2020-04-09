@@ -118,40 +118,7 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
     @Synchronized
     override fun isInitialized() = installer.isInitialized()
 
-    @Synchronized
-    override fun install() {
-
-        if (config == null) {
-
-            log.e("No configuration available. Please set configuration before installation.")
-            free(false)
-            return
-        } else {
-
-            config?.let {
-                try {
-                    val steps = it.obtain(entryPoint.getRemoteOS().getType().osName)
-                    busy()
-                    iterator = steps.iterator()
-                    tryNext()
-                } catch (e: IllegalArgumentException) {
-
-                    log.e(e)
-                    free(false)
-                } catch (e: IllegalStateException) {
-
-                    log.e(e)
-                    free(false)
-                }
-            }
-        }
-    }
-
-    @Synchronized
-    @Throws(UnsupportedOperationException::class)
-    override fun uninstall() {
-        throw UnsupportedOperationException("Not implemented yet.")
-    }
+    override fun getEnvironmentName() = entryPoint.getRemoteOS().getType().osName
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun tryNext() {
