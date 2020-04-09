@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.common.Application
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.component.docker.Docker
+import net.milosvasic.factory.mail.component.docker.DockerOperation
 import net.milosvasic.factory.mail.component.installer.*
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
@@ -35,7 +36,7 @@ class ServerFactory : Application {
 
                     val configuration = ConfigurationManager.getConfiguration()
                     val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
-                    val containersConfiguration = mutableListOf<SoftwareConfiguration>()
+                    val containersConfigurations = mutableListOf<SoftwareConfiguration>()
 
                     configuration.software.forEach {
                         val softwareConfiguration = SoftwareConfiguration.obtain(it)
@@ -43,7 +44,7 @@ class ServerFactory : Application {
                     }
                     configuration.containers.forEach {
                         val containerConfiguration = SoftwareConfiguration.obtain(it)
-                        containersConfiguration.add(containerConfiguration)
+                        containersConfigurations.add(containerConfiguration)
                     }
 
                     log.v(configuration.name)
@@ -59,7 +60,7 @@ class ServerFactory : Application {
                     var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
                     var containerConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
 
-                    fun tryNext(iterator: Iterator<SoftwareConfiguration>, installer: InstallerAbstract) {
+                    fun tryNext(iterator: Iterator<SoftwareConfiguration>, installer: InstallerAbstract): Boolean {
                         if (iterator.hasNext()) {
                             val softwareConfiguration = iterator.next()
                             try {
@@ -70,21 +71,27 @@ class ServerFactory : Application {
                                 fail(e)
                             }
                         } else {
+                            return false
+                        }
+                        return true
+                    }
 
-                            installer.terminate()
-                            finish()
+                    fun tryNextContainerConfiguration() {
+                        containerConfigurationsIterator?.let {
+                            if (!tryNext(it, docker)) {
+                                finish()
+                            }
                         }
                     }
 
                     fun tryNextSoftwareConfiguration() {
                         softwareConfigurationsIterator?.let {
-                            tryNext(it, installer)
-                        }
-                    }
+                            if (!tryNext(it, installer)) {
 
-                    fun tryNextContainerConfiguration() {
-                        containerConfigurationsIterator?.let {
-                            tryNext(it, docker)
+                                installer.terminate()
+                                containerConfigurationsIterator = containersConfigurations.iterator()
+                                tryNextContainerConfiguration()
+                            }
                         }
                     }
 
@@ -162,6 +169,16 @@ class ServerFactory : Application {
                                     } else {
 
                                         log.e("Could not perform installation")
+                                        fail(ERROR.INSTALLATION_FAILURE)
+                                    }
+                                }
+                                is DockerOperation -> {
+
+                                    if (result.success) {
+                                        tryNextContainerConfiguration()
+                                    } else {
+
+                                        log.e("Could not perform docker operation")
                                         fail(ERROR.INSTALLATION_FAILURE)
                                     }
                                 }
