@@ -26,6 +26,24 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
         free()
     }
 
+    override fun initialize() {
+
+    }
+
+    override fun isInitialized(): Boolean {
+
+        // TODO:
+        return false
+    }
+
+    override fun checkInitialized() {
+        TODO("Not yet implemented")
+    }
+
+    override fun checkNotInitialized() {
+        TODO("Not yet implemented")
+    }
+
     override fun install() {
         TODO("Not yet implemented")
     }

@@ -2,8 +2,6 @@ package net.milosvasic.factory.mail.component.installer
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.busy.BusyWorker
-import net.milosvasic.factory.mail.component.Initialization
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
@@ -15,7 +13,6 @@ import net.milosvasic.factory.mail.component.installer.step.reboot.RebootOperati
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
-import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -23,7 +20,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
-class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint), Initialization {
+class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
 
     private var item: InstallationStep<*>? = null
     private val installer = PackageInstaller(entryPoint)

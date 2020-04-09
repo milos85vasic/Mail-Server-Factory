@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.common.Application
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.component.docker.Docker
+import net.milosvasic.factory.mail.component.docker.DockerInitializationOperation
 import net.milosvasic.factory.mail.component.docker.DockerOperation
 import net.milosvasic.factory.mail.component.installer.*
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
@@ -89,8 +90,7 @@ class ServerFactory : Application {
                             if (!tryNext(it, installer)) {
 
                                 installer.terminate()
-                                containerConfigurationsIterator = containersConfigurations.iterator()
-                                tryNextContainerConfiguration()
+                                docker.initialize()
                             }
                         }
                     }
@@ -159,6 +159,19 @@ class ServerFactory : Application {
                                     } else {
 
                                         log.e("Could not initialize installer")
+                                        fail(ERROR.INITIALIZATION_FAILURE)
+                                    }
+                                }
+                                is DockerInitializationOperation -> {
+
+                                    if (result.success) {
+
+                                        log.i("Docker is ready")
+                                        containerConfigurationsIterator = containersConfigurations.iterator()
+                                        tryNextContainerConfiguration()
+                                    } else {
+
+                                        log.e("Could not initialize Docker")
                                         fail(ERROR.INITIALIZATION_FAILURE)
                                     }
                                 }
