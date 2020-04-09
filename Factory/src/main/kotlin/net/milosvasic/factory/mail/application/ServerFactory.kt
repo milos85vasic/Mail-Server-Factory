@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
 import net.milosvasic.factory.mail.configuration.Configuration
+import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.fail
@@ -31,10 +32,12 @@ class ServerFactory : Application {
             fail(ERROR.EMPTY_DATA)
         } else {
 
-            val configurationFileName = args[0]
-            val configurationFile = File(configurationFileName)
+            val configurationFile = args[0]
             try {
-                val configuration = Configuration.obtain(configurationFile)
+                ConfigurationManager.setConfigurationPath(configurationFile)
+                ConfigurationManager.initialize()
+
+                val configuration = ConfigurationManager.getConfiguration()
                 val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
                 val containersConfiguration = mutableListOf<SoftwareConfiguration>()
 
@@ -168,6 +171,12 @@ class ServerFactory : Application {
                 ssh.subscribe(listener)
                 terminal.execute(pingCommand)
             } catch (e: IllegalArgumentException) {
+
+                fail(e)
+            } catch (e: IllegalArgumentException) {
+
+                fail(e)
+            } catch (e: BusyException) {
 
                 fail(e)
             }
