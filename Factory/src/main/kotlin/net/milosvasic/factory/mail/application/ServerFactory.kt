@@ -24,7 +24,6 @@ import kotlin.system.exitProcess
 class ServerFactory : Application {
 
     override fun run(args: Array<String>) {
-
         log.i("STARTED")
         val argumentsValidator = ServerFactoryArgumentsValidator()
         try {
