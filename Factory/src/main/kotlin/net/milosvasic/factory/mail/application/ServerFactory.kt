@@ -2,10 +2,10 @@ package net.milosvasic.factory.mail.application
 
 import net.milosvasic.factory.mail.common.Application
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
-import net.milosvasic.factory.mail.configuration.Configuration
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.error.ERROR
@@ -19,7 +19,6 @@ import net.milosvasic.factory.mail.os.OSType
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
-import java.io.File
 import kotlin.system.exitProcess
 
 class ServerFactory : Application {
@@ -27,159 +26,168 @@ class ServerFactory : Application {
     override fun run(args: Array<String>) {
 
         log.i("STARTED")
-        if (args.isEmpty()) { // TODO: Move to validator.
+        val argumentsValidator = ServerFactoryArgumentsValidator()
+        try {
+            if (argumentsValidator.validate(args)) {
+                val configurationFile = args[0]
+                try {
 
-            fail(ERROR.EMPTY_DATA)
-        } else {
+                    ConfigurationManager.setConfigurationPath(configurationFile)
+                    ConfigurationManager.initialize()
 
-            val configurationFile = args[0]
-            try {
-                ConfigurationManager.setConfigurationPath(configurationFile)
-                ConfigurationManager.initialize()
+                    val configuration = ConfigurationManager.getConfiguration()
+                    val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
+                    val containersConfiguration = mutableListOf<SoftwareConfiguration>()
 
-                val configuration = ConfigurationManager.getConfiguration()
-                val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
-                val containersConfiguration = mutableListOf<SoftwareConfiguration>()
+                    configuration.software.forEach {
+                        val softwareConfiguration = SoftwareConfiguration.obtain(it)
+                        softwareConfigurations.add(softwareConfiguration)
+                    }
+                    configuration.containers.forEach {
+                        val containerConfiguration = SoftwareConfiguration.obtain(it)
+                        containersConfiguration.add(containerConfiguration)
+                    }
 
-                configuration.software.forEach {
-                    val softwareConfiguration = SoftwareConfiguration.obtain(it)
-                    softwareConfigurations.add(softwareConfiguration)
-                }
-                configuration.containers.forEach {
-                    val containerConfiguration = SoftwareConfiguration.obtain(it)
-                    containersConfiguration.add(containerConfiguration)
-                }
+                    log.v(configuration.name)
 
-                log.v(configuration.name)
+                    val host = configuration.remote.host
+                    val ssh = SSH(configuration.remote)
+                    // TODO: val docker = Docker(ssh)
+                    val terminal = ssh.terminal
+                    val installer = Installer(ssh)
+                    val pingCommand = Command(Commands.ping(host))
+                    val testCommand = Commands.echo("Hello")
+                    val hostInfoCommand = Commands.getHostInfo()
+                    var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
 
-                val host = configuration.remote.host
-                val ssh = SSH(configuration.remote)
-                // TODO: val docker = Docker(ssh)
-                val terminal = ssh.terminal
-                val installer = Installer(ssh)
-                val pingCommand = Command(Commands.ping(host))
-                val testCommand = Commands.echo("Hello")
-                val hostInfoCommand = Commands.getHostInfo()
-                var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
+                    fun tryNext() {
+                        softwareConfigurationsIterator?.let {
 
-                fun tryNext() {
-                    softwareConfigurationsIterator?.let {
+                            if (it.hasNext()) {
+                                val softwareConfiguration = it.next()
+                                try {
+                                    installer.setConfiguration(softwareConfiguration)
+                                    installer.install()
+                                } catch (e: BusyException) {
 
-                        if (it.hasNext()) {
-                            val softwareConfiguration = it.next()
-                            try {
-                                installer.setConfiguration(softwareConfiguration)
-                                installer.install()
-                            } catch (e: BusyException) {
+                                    fail(e)
+                                }
+                            } else {
 
-                                fail(e)
+                                installer.terminate()
+                                finish()
                             }
-                        } else {
-
-                            installer.terminate()
-                            finish()
                         }
                     }
-                }
 
-                val listener = object : OperationResultListener {
-                    override fun onOperationPerformed(result: OperationResult) {
-                        when (result.operation) {
-                            is SSHCommand -> {
-                                when (result.operation.command) {
-                                    hostInfoCommand -> {
-                                        if (result.success) {
-                                            val os = ssh.getRemoteOS()
-                                            os.parseAndSetSystemInfo(result.data)
-                                            if (os.getType() == OSType.UNKNOWN) {
-                                                log.w("Host operating system is unknown")
+                    val listener = object : OperationResultListener {
+                        override fun onOperationPerformed(result: OperationResult) {
+                            when (result.operation) {
+                                is SSHCommand -> {
+                                    when (result.operation.command) {
+                                        hostInfoCommand -> {
+                                            if (result.success) {
+                                                val os = ssh.getRemoteOS()
+                                                os.parseAndSetSystemInfo(result.data)
+                                                if (os.getType() == OSType.UNKNOWN) {
+                                                    log.w("Host operating system is unknown")
+                                                } else {
+                                                    log.i("Host operating system: ${ssh.getRemoteOS().getName()}")
+                                                }
+                                                if (os.getArchitecture() == Architecture.UNKNOWN) {
+                                                    log.w("Host system architecture is unknown")
+                                                } else {
+                                                    val arch = ssh.getRemoteOS().getArchitecture().arch.toUpperCase()
+                                                    log.i("Host system architecture: $arch")
+                                                }
+
+                                                installer.subscribe(this)
+                                                installer.initialize()
                                             } else {
-                                                log.i("Host operating system: ${ssh.getRemoteOS().getName()}")
-                                            }
-                                            if (os.getArchitecture() == Architecture.UNKNOWN) {
-                                                log.w("Host system architecture is unknown")
-                                            } else {
-                                                val arch = ssh.getRemoteOS().getArchitecture().arch.toUpperCase()
-                                                log.i("Host system architecture: $arch")
-                                            }
 
-                                            installer.subscribe(this)
-                                            installer.initialize()
-                                        } else {
-
-                                            log.e("Could not connect to: ${configuration.remote}")
-                                            fail(ERROR.INITIALIZATION_FAILURE)
+                                                log.e("Could not connect to: ${configuration.remote}")
+                                                fail(ERROR.INITIALIZATION_FAILURE)
+                                            }
                                         }
-                                    }
-                                    testCommand -> {
-                                        if (result.success) {
-                                            log.v("Connected to: ${configuration.remote}")
-                                            ssh.execute(hostInfoCommand, true)
-                                        } else {
+                                        testCommand -> {
+                                            if (result.success) {
+                                                log.v("Connected to: ${configuration.remote}")
+                                                ssh.execute(hostInfoCommand, true)
+                                            } else {
 
-                                            log.e("Could not connect to: ${configuration.remote}")
-                                            fail(ERROR.INITIALIZATION_FAILURE)
+                                                log.e("Could not connect to: ${configuration.remote}")
+                                                fail(ERROR.INITIALIZATION_FAILURE)
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            is Command -> {
-                                when (result.operation.toExecute) {
-                                    pingCommand.toExecute -> {
-                                        if (result.success) {
-                                            ssh.execute(testCommand)
-                                        } else {
+                                is Command -> {
+                                    when (result.operation.toExecute) {
+                                        pingCommand.toExecute -> {
+                                            if (result.success) {
+                                                ssh.execute(testCommand)
+                                            } else {
 
-                                            log.e("Host is unreachable: $host")
-                                            fail(ERROR.INITIALIZATION_FAILURE)
+                                                log.e("Host is unreachable: $host")
+                                                fail(ERROR.INITIALIZATION_FAILURE)
+                                            }
                                         }
                                     }
                                 }
-                            }
-                            is InstallerInitializationOperation -> {
+                                is InstallerInitializationOperation -> {
 
-                                if (result.success) {
+                                    if (result.success) {
 
-                                    log.i("Installer is ready")
-                                    softwareConfigurationsIterator = softwareConfigurations.iterator()
-                                    tryNext()
-                                } else {
+                                        log.i("Installer is ready")
+                                        softwareConfigurationsIterator = softwareConfigurations.iterator()
+                                        tryNext()
+                                    } else {
 
-                                    log.e("Could not initialize installer")
+                                        log.e("Could not initialize installer")
+                                        fail(ERROR.INITIALIZATION_FAILURE)
+                                    }
+                                }
+                                is InstallerOperation -> {
+
+                                    if (result.success) {
+                                        tryNext()
+                                    } else {
+
+                                        log.e("Could not perform installation")
+                                        fail(ERROR.INSTALLATION_FAILURE)
+                                    }
+                                }
+                                else -> {
+
+                                    log.e("Unexpected operation has been performed: ${result.operation}")
                                     fail(ERROR.INITIALIZATION_FAILURE)
                                 }
                             }
-                            is InstallerOperation -> {
-
-                                if (result.success) {
-                                    tryNext()
-                                } else {
-
-                                    log.e("Could not perform installation")
-                                    fail(ERROR.INSTALLATION_FAILURE)
-                                }
-                            }
-                            else -> {
-
-                                log.e("Unexpected operation has been performed: ${result.operation}")
-                                fail(ERROR.INITIALIZATION_FAILURE)
-                            }
                         }
                     }
+
+                    ssh.subscribe(listener)
+                    terminal.execute(pingCommand)
+                } catch (e: IllegalArgumentException) {
+
+                    fail(e)
+                } catch (e: IllegalArgumentException) {
+
+                    fail(e)
+                } catch (e: BusyException) {
+
+                    fail(e)
                 }
+            } else {
 
-                ssh.subscribe(listener)
-                terminal.execute(pingCommand)
-            } catch (e: IllegalArgumentException) {
-
-                fail(e)
-            } catch (e: IllegalArgumentException) {
-
-                fail(e)
-            } catch (e: BusyException) {
-
-                fail(e)
+                fail(ERROR.INVALID_DATA)
             }
+        } catch (e: EmptyDataException) {
+
+            fail(ERROR.EMPTY_DATA)
+        } catch (e: IllegalArgumentException) {
+
+            fail(e)
         }
     }
 

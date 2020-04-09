@@ -6,8 +6,9 @@ enum class ERROR(
 ) {
 
     EMPTY_DATA(1, "No input data provided"),
-    FILE_DOES_NOT_EXIST(2, "File does not exist"),
-    FATAL_EXCEPTION(3, "Fatal exception"),
-    INITIALIZATION_FAILURE(4, "Initialization failure"),
-    INSTALLATION_FAILURE(5, "Installation failure")
+    INVALID_DATA(3, "Invalid data provided"),
+    FILE_DOES_NOT_EXIST(3, "File does not exist"),
+    FATAL_EXCEPTION(4, "Fatal exception"),
+    INITIALIZATION_FAILURE(5, "Initialization failure"),
+    INSTALLATION_FAILURE(6, "Installation failure")
 }
