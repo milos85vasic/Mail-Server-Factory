@@ -59,7 +59,7 @@ class ServerFactory : Application {
                     val hostInfoCommand = Commands.getHostInfo()
                     var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
 
-                    fun tryNext() {
+                    fun tryNextSoftwareConfiguration() {
                         softwareConfigurationsIterator?.let {
 
                             if (it.hasNext()) {
@@ -139,7 +139,7 @@ class ServerFactory : Application {
 
                                         log.i("Installer is ready")
                                         softwareConfigurationsIterator = softwareConfigurations.iterator()
-                                        tryNext()
+                                        tryNextSoftwareConfiguration()
                                     } else {
 
                                         log.e("Could not initialize installer")
@@ -149,7 +149,7 @@ class ServerFactory : Application {
                                 is InstallerOperation -> {
 
                                     if (result.success) {
-                                        tryNext()
+                                        tryNextSoftwareConfiguration()
                                     } else {
 
                                         log.e("Could not perform installation")
