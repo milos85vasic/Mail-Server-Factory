@@ -1,6 +1,8 @@
 package net.milosvasic.factory.mail.component.docker
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
+import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
@@ -14,8 +16,20 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
         override fun onOperationPerformed(result: OperationResult) {
 
             when (result.operation) {
+                is Command -> {
+                    if (command != String.EMPTY && result.operation.toExecute.endsWith(command)) {
+                        if (result.success) {
 
-                // TODO:
+                            free()
+                            val dockerInitializationOperation = DockerInitializationOperation()
+                            val operationResult = OperationResult(dockerInitializationOperation, result.success)
+                            notify(operationResult)
+                        } else {
+
+                            free(false)
+                        }
+                    }
+                }
             }
         }
     }
@@ -25,6 +39,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     override fun initialize() {
         checkInitialized()
         busy()
+        entryPoint.subscribe(listener)
         command = "${DockerCommand.DOCKER.command} ${DockerCommand.VERSION.command}"
         entryPoint.execute(command)
     }
@@ -33,6 +48,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     @Throws(IllegalStateException::class)
     override fun terminate() {
         checkNotInitialized()
+        entryPoint.unsubscribe(listener)
         initialized.set(false)
         clearConfiguration()
         super.terminate()

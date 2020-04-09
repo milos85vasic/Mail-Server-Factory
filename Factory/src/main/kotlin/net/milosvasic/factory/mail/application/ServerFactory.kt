@@ -77,22 +77,26 @@ class ServerFactory : Application {
                         return true
                     }
 
-                    fun tryNextContainerConfiguration() {
+                    fun tryNextContainerConfiguration(): Boolean {
+                        var result = false
                         containerConfigurationsIterator?.let {
-                            if (!tryNext(it, docker)) {
+                            result = tryNext(it, docker)
+                            if (!result) {
                                 finish()
                             }
                         }
+                        return result
                     }
 
-                    fun tryNextSoftwareConfiguration() {
+                    fun tryNextSoftwareConfiguration(): Boolean {
+                        var result = false
                         softwareConfigurationsIterator?.let {
-                            if (!tryNext(it, installer)) {
-
+                            result = tryNext(it, installer)
+                            if (!result) {
                                 installer.terminate()
-                                docker.initialize()
                             }
                         }
+                        return result
                     }
 
                     val listener = object : OperationResultListener {
@@ -155,7 +159,10 @@ class ServerFactory : Application {
 
                                         log.i("Installer is ready")
                                         softwareConfigurationsIterator = softwareConfigurations.iterator()
-                                        tryNextSoftwareConfiguration()
+                                        if (!tryNextSoftwareConfiguration()) {
+                                            docker.subscribe(this)
+                                            docker.initialize()
+                                        }
                                     } else {
 
                                         log.e("Could not initialize installer")
@@ -178,7 +185,10 @@ class ServerFactory : Application {
                                 is InstallerOperation -> {
 
                                     if (result.success) {
-                                        tryNextSoftwareConfiguration()
+                                        if (!tryNextSoftwareConfiguration()) {
+                                            docker.subscribe(this)
+                                            docker.initialize()
+                                        }
                                     } else {
 
                                         log.e("Could not perform installation")
