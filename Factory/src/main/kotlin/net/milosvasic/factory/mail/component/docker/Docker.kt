@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
+import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import java.util.concurrent.atomic.AtomicBoolean
@@ -24,6 +25,24 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
                 free(false)
             }
+        }
+    }
+
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
+    override fun handleNext(current: InstallationStep<*>): Boolean {
+        if(!super.handleNext(current)){
+
+            // when (current) {
+
+                // TODO: Support docker installation steps
+
+               // else -> {
+                    throw IllegalStateException("Unsupported installation step: $current")
+               // }
+            // }
+        } else {
+
+            return true
         }
     }
 
