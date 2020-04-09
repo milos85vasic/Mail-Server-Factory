@@ -1,0 +1,24 @@
+{
+  "software": [
+    {
+      "name": "Dummy echo",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "command",
+            "value": "echo \"Echo 1: {{SERVER_HOME}}\""
+          },
+          {
+            "type": "command",
+            "value": "echo \"Echo 2: {{SOMETHING_2}}\""
+          },
+          {
+            "type": "command",
+            "value": "echo \"Echo 3: {{SOMETHING}}\""
+          }
+        ]
+      }
+    }
+  ]
+}
