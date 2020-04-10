@@ -1,7 +1,7 @@
 package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.component.docker.step.Volume
+import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.operation.OperationResult
