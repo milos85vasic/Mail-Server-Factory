@@ -1,6 +1,8 @@
 package net.milosvasic.factory.mail.component.installer.step
 
 import net.milosvasic.factory.mail.common.ObtainParametrized
+import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepType
+import net.milosvasic.factory.mail.component.docker.step.Volume
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.packaging.item.Group
@@ -40,9 +42,11 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
             }
             InstallationStepType.CONDITION.type -> {
 
-                return Condition(
-                    definition.getValue()
-                )
+                return Condition(definition.getValue())
+            }
+            DockerInstallationStepType.VOLUME.type -> {
+
+                return Volume(definition.getValue())
             }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")

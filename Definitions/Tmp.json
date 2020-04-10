@@ -8,6 +8,14 @@
           {
             "type": "volume",
             "value": "{{SERVER_HOME}}/Mail-Server:/root/Mail-Server"
+          },
+          {
+            "type": "stack",
+            "value": "Docker"
+          },
+          {
+            "type": "service",
+            "value": "Docker/Postgres"
           }
         ]
       }

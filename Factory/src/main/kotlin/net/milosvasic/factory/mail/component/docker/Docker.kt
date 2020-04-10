@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.docker
 
+import net.milosvasic.factory.mail.component.docker.step.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -30,16 +31,18 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun handleNext(current: InstallationStep<*>): Boolean {
-        if(!super.handleNext(current)){
+        if (!super.handleNext(current)) {
 
-            // when (current) {
+            when (current) {
+                is Volume -> {
 
-                // TODO: Support docker installation steps
-
-               // else -> {
+                    current.execute(entryPoint)
+                    return true
+                }
+                else -> {
                     throw IllegalStateException("Unsupported installation step: $current")
-               // }
-            // }
+                }
+            }
         } else {
 
             return true
