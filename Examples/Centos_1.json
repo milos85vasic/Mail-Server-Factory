@@ -15,6 +15,6 @@
     "Definitions/Vagrant.json"
   ],
   "containers": [
-    "Definitions/Dummy_Echo.json"
+    "Definitions/Mail_Server.json"
   ]
 }
