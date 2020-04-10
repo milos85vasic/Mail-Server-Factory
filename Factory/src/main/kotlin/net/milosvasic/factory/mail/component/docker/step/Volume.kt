@@ -8,7 +8,7 @@ import net.milosvasic.factory.mail.remote.Connection
 
 class Volume(private val volumeDefinition: String) : DockerInstallationStep() {
 
-    private val command = "echo '1 2 3'"
+    private val command = "echo 'volume: $volumeDefinition'"
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
