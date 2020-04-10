@@ -32,7 +32,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
         super.handleResult(result)
         when (result.operation) {
 
-            is DockerOperation -> {
+            is DockerInstallationOperation -> {
 
                 unsubscribeFromItem(listener)
                 if (result.success) {

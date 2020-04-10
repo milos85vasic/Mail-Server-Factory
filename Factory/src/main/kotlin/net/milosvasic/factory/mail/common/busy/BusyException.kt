@@ -1,3 +1,3 @@
 package net.milosvasic.factory.mail.common.busy
 
-class BusyException() : IllegalStateException("Busy")
+class BusyException : IllegalStateException("Busy")
