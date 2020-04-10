@@ -276,7 +276,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
 
     abstract fun getNotifyOperation(): Operation
 
-    private fun unsubscribeFromItem(listener: OperationResultListener) {
+    protected fun unsubscribeFromItem(listener: OperationResultListener) {
         item?.let { current ->
             when (current) {
                 is RemoteOperationInstallationStep -> {
