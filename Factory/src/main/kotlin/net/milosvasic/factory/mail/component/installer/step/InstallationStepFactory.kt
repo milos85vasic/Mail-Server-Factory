@@ -46,7 +46,7 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
             }
             DockerInstallationStepType.VOLUME.type -> {
 
-                return Volume(definition.getValue())
+                return Volume(definition.getValue(), definition.name)
             }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")

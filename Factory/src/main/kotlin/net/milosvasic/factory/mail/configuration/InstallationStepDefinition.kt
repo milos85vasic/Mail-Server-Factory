@@ -1,9 +1,11 @@
 package net.milosvasic.factory.mail.configuration
 
+import net.milosvasic.factory.mail.EMPTY
 import java.util.regex.Pattern
 
 class InstallationStepDefinition(
     val type: String,
+    val name: String = String.EMPTY,
     private val value: String
 ) {
 
