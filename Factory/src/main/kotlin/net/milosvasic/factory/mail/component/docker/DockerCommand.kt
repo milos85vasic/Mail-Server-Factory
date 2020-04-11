@@ -4,6 +4,7 @@ enum class DockerCommand(val command: String) {
 
     DOCKER("docker"),
     RUN("run"),
+    PS("ps"),
     BUILD("build"),
     COMMIT("commit"),
     START("start"),

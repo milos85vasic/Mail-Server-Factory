@@ -19,4 +19,6 @@ object Commands {
     fun getApplicationInfo(application: String): String = "which $application"
 
     fun reboot(rebootIn: Int = 2) = "( sleep $rebootIn ; reboot ) & "
+
+    fun grep(what: String) = "grep \"$what\""
 }
