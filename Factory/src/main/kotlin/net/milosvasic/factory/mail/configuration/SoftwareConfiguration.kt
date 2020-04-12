@@ -11,7 +11,7 @@ import java.io.File
 data class SoftwareConfiguration(
     var configuration: String,
     val software: List<SoftwareConfigurationItem>
-) : ObtainParametrized<String, List<InstallationStep<*>>> {
+) : ObtainParametrized<String, Map<String, List<InstallationStep<*>>>> {
 
     companion object : ObtainParametrized<String, SoftwareConfiguration> {
 
@@ -38,18 +38,20 @@ data class SoftwareConfiguration(
 
     @Synchronized
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    override fun obtain(vararg param: String): List<InstallationStep<*>> {
+    override fun obtain(vararg param: String): Map<String, List<InstallationStep<*>>> {
 
         Validator.Arguments.validateSingle(param)
         val factory = InstallationStepFactory()
-        val installationSteps = mutableListOf<InstallationStep<*>>()
+        val installationSteps = mutableMapOf<String, List<InstallationStep<*>>>()
         software.forEach {
             val os = param[0]
             val msg = "No installation steps for '${it.name}' installation step for $os"
             val recipe = it.installationSteps[os] ?: throw IllegalStateException(msg)
+            val items = mutableListOf<InstallationStep<*>>()
             recipe.forEach { definition ->
-                installationSteps.add(factory.obtain(definition))
+                items.add(factory.obtain(definition))
             }
+            installationSteps[it.name] = items
         }
         return installationSteps
     }

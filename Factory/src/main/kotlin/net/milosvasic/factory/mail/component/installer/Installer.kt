@@ -29,7 +29,7 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun handleNext(current: InstallationStep<*>): Boolean {
-        if(!super.handleNext(current)){
+        if (!super.handleNext(current)) {
 
             when (current) {
                 is PackageManagerInstallationStep -> {

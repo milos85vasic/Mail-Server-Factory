@@ -24,7 +24,7 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
                 if (result.operation.toExecute.contains(psA)) {
 
                     if (result.success) {
-                        log.w("Volume '$name' already exist, skipping installation step.")
+                        log.w("Volume '$name' already exist, skipping installation step")
                         finish(result.success, DockerInstallationOperation())
                     } else {
 

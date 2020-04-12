@@ -53,7 +53,7 @@ abstract class PackageManager(entryPoint: Connection) :
                 clazz = it::class
             } else {
                 if (clazz != it::class) {
-                    throw IllegalArgumentException("All members must be of the same type.")
+                    throw IllegalArgumentException("All members must be of the same type")
                 }
             }
         }

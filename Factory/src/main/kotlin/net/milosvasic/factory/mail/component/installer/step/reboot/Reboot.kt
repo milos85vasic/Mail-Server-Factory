@@ -44,7 +44,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
                         ping()
                     } else {
 
-                        log.e("Reboot timeout exceeded.")
+                        log.e("Reboot timeout exceeded")
                         finish(false, operation)
                     }
                 }

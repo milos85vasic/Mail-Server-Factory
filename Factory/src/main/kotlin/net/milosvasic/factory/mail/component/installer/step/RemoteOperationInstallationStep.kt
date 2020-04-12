@@ -50,7 +50,7 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
 
         connection = params[0]
         if (connection == null) {
-            throw IllegalArgumentException("Connection is null.")
+            throw IllegalArgumentException("Connection is null")
         }
         connection?.subscribe(listener)
     }

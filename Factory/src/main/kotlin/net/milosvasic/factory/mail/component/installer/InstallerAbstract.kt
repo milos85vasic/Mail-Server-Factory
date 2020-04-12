@@ -32,6 +32,8 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     protected var item: InstallationStep<*>? = null
 
     private var config: SoftwareConfiguration? = null
+    private var sectionIterator: Iterator<String>? = null
+    private lateinit var steps: Map<String, List<InstallationStep<*>>>
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -80,7 +82,8 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 unsubscribeFromItem(listener)
                 if (result.success) {
                     if (result.operation.result) {
-                        free(true)
+
+                        tryNextSection()
                     } else {
                         tryNext()
                     }
@@ -125,17 +128,28 @@ abstract class InstallerAbstract(entryPoint: Connection) :
 
         if (config == null) {
 
-            log.e("No configuration available. Please set configuration before installation.")
+            log.e("No configuration available. Please set configuration before installation")
             free(false)
             return
         } else {
 
             config?.let {
                 try {
-                    val steps = it.obtain(getEnvironmentName())
+                    steps = it.obtain(getEnvironmentName())
                     busy()
-                    iterator = steps.iterator()
-                    tryNext()
+                    sectionIterator = steps.keys.iterator()
+                    sectionIterator?.let { secIt ->
+
+                        if (secIt.hasNext()) {
+                            iterator = steps[secIt.next()]?.iterator()
+                            tryNext()
+                        } else {
+
+                            log.e("No section to iterate")
+                            free(false)
+                            return
+                        }
+                    }
                 } catch (e: IllegalArgumentException) {
 
                     log.e(e)
@@ -152,7 +166,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     @Synchronized
     @Throws(UnsupportedOperationException::class)
     override fun uninstall() {
-        throw UnsupportedOperationException("Not implemented yet.")
+        throw UnsupportedOperationException("Not implemented yet")
     }
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
@@ -170,7 +184,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 }
             } else {
 
-                free(true)
+                tryNextSection()
             }
         }
     }
@@ -282,6 +296,20 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 is RemoteOperationInstallationStep -> {
                     current.unsubscribe(listener)
                 }
+            }
+        }
+    }
+
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
+    private fun tryNextSection() {
+        sectionIterator?.let { secIt ->
+
+            if (secIt.hasNext()) {
+                iterator = steps[secIt.next()]?.iterator()
+                tryNext()
+            } else {
+
+                free(true)
             }
         }
     }
