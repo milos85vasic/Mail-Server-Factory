@@ -89,6 +89,18 @@
           }
         ]
       }
+    },
+    {
+      "name": "Docker Compose",
+      "version": "1.25.4",
+      "installationSteps": {
+        "CentOS": [
+
+        ],
+        "Ubuntu": [
+
+        ]
+      }
     }
   ]
 }
