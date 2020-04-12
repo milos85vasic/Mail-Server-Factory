@@ -7,12 +7,13 @@ enum class DockerInstallationStepType(
 ) {
 
     UNKNOWN(InstallationStepType.UNKNOWN.type),
-    VOLUME("volume");
+    VOLUME("volume"),
+    STACK("stack");
 
     companion object {
 
         fun getByValue(value: String): DockerInstallationStepType {
-            DockerInstallationStepType.values().forEach {
+            values().forEach {
                 if (it.type == value) {
                     return it
                 }

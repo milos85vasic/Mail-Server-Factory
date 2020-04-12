@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
@@ -68,6 +69,13 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
             when (current) {
                 is Volume -> {
+
+                    command = String.EMPTY
+                    current.subscribe(listener)
+                    current.execute(entryPoint)
+                    return true
+                }
+                is Stack -> {
 
                     command = String.EMPTY
                     current.subscribe(listener)
