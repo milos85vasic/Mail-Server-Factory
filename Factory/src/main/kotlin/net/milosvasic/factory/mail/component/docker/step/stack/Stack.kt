@@ -1,8 +1,10 @@
 package net.milosvasic.factory.mail.component.docker.step.stack
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.component.docker.DockerCommand
 import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
+import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
@@ -28,7 +30,16 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: Connection) {
         super.execute(*params)
-        command = "echo 'STACK: $composeYmlPath'"
+        var args = "--build-arg"
+        val variables = ConfigurationManager.getConfiguration().variables
+        if (variables.isEmpty()) {
+            args = String.EMPTY
+        } else {
+            variables.keys.forEach { key ->
+                args += " $key=${variables[key]}"
+            }
+        }
+        command = "${DockerCommand.COMPOSE} ${DockerCommand.BUILD} $args"
         connection?.execute(command)
     }
 }
