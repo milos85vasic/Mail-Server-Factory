@@ -1,0 +1,14 @@
+version '1.0'
+
+services:
+
+  db:
+    image postgres:12.2
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGDATA: /root/Mail-Server/Postgres/Database
+    volumes:
+    - Mail-Server-Storage:/root/Mail-Server
+
