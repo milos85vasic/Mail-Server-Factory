@@ -9,6 +9,10 @@
             "type": "volume",
             "name": "Mail-Server-Storage",
             "value": "{{SERVER_HOME}}/Mail-Server:/root/Mail-Server"
+          },
+          {
+            "type": "stack",
+            "value": "Docker/Postgres"
           }
         ]
       }
