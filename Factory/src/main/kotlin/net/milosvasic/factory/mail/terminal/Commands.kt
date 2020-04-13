@@ -7,6 +7,7 @@ object Commands {
 
     const val scp = "scp -P"
     const val tarCompress = "tar -zcvf"
+    const val tarDecompress = "tar -zxvf"
     const val tarExtension = ".tar.gz"
 
     fun echo(what: String) = "echo '$what'"
@@ -37,4 +38,6 @@ object Commands {
         val destination = where.replace(".tar", "").replace(".gz", "")
         return "$tarCompress $destination$tarExtension $what"
     }
+
+    fun unTar(what: String, where: String) = "$tarDecompress $what -C $where"
 }

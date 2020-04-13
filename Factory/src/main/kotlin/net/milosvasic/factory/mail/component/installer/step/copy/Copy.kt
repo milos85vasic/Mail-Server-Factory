@@ -41,6 +41,13 @@ class Copy(val what: String, val where: String) : RemoteOperationInstallationSte
                 }
                 if (result.operation.toExecute.startsWith(Commands.scp)) {
 
+                    val file = "$where${File.separator}${whatFile.name}${Commands.tarExtension}"
+                    command = Commands.unTar(file, where)
+                    connection?.execute(command)
+                    return
+                }
+                if (result.operation.toExecute.contains(Commands.tarDecompress)) {
+
                     finish(result.success, operation)
                     return
                 }
