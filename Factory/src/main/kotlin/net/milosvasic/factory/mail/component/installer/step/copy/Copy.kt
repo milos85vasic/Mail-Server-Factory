@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.terminal.Commands
 import java.io.File
 
 class Copy(val what: String, val where: String) : RemoteOperationInstallationStep<SSH>() {
@@ -45,7 +46,8 @@ class Copy(val what: String, val where: String) : RemoteOperationInstallationSte
             if (whatFile.exists()) {
                 if (whatFile.isDirectory) {
 
-                    command = "echo 'WORK IN PROGRESS'"
+                    val directoryName = whatFile.name
+                    command = Commands.tar(whatFile.absolutePath, directoryName)
                     terminal.execute(Command(command))
                 } else {
 

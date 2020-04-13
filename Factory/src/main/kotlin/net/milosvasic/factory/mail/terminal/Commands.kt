@@ -27,4 +27,10 @@ object Commands {
 
         return "scp -P ${remote.port} $what ${remote.account}@${remote.host}:$where"
     }
+
+    fun tar(what: String, where: String): String {
+
+        val destination = where.replace(".tar", "").replace(".gz", "")
+        return "tar -zcvf $destination.tar.gz $what"
+    }
 }
