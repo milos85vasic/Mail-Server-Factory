@@ -5,6 +5,10 @@ import net.milosvasic.factory.mail.remote.Remote
 
 object Commands {
 
+    const val scp = "scp -P"
+    const val tarCompress = "tar -zcvf"
+    const val tarExtension = ".tar.gz"
+
     fun echo(what: String) = "echo '$what'"
 
     fun ssh(user: String = "root", command: String, port: Int = 22, host: String = localhost): String {
@@ -25,12 +29,12 @@ object Commands {
 
     fun scp(what: String, where: String, remote: Remote): String {
 
-        return "scp -P ${remote.port} $what ${remote.account}@${remote.host}:$where"
+        return "$scp ${remote.port} $what ${remote.account}@${remote.host}:$where"
     }
 
     fun tar(what: String, where: String): String {
 
         val destination = where.replace(".tar", "").replace(".gz", "")
-        return "tar -zcvf $destination.tar.gz $what"
+        return "$tarCompress $destination$tarExtension $what"
     }
 }

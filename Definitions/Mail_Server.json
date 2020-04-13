@@ -7,11 +7,11 @@
         "Docker": [
           {
             "type": "copy",
-            "value": "Docker/Postgres:/root/Docker/Postgres"
+            "value": "Docker/Postgres:/root"
           },
           {
             "type": "stack",
-            "value": "Docker/Postgres"
+            "value": "/root/Postgres"
           }
         ]
       }

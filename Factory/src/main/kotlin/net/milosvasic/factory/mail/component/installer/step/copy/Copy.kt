@@ -7,25 +7,42 @@ import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.Terminal
 import java.io.File
 
 class Copy(val what: String, val where: String) : RemoteOperationInstallationStep<SSH>() {
 
     companion object {
-
         const val delimiter = ":"
     }
 
+    private val whatFile = File(what)
     private var command = String.EMPTY
+    private var terminal: Terminal? = null
     private val operation = CopyOperation()
+    private val destination = "${whatFile.absolutePath}${File.separator}${whatFile.name}${Commands.tarExtension}"
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
             is Command -> {
-                if (result.operation.toExecute.endsWith(command)) {
+                if (result.operation.toExecute.startsWith(Commands.tarCompress)) {
 
-                    // TODO:
+                    val remote = connection?.getRemote()
+                    if (remote == null) {
+
+                        log.e("No remote available")
+                        finish(false, operation)
+                    } else {
+
+                        command = Commands.scp(destination, where, remote)
+                        terminal?.execute(Command(command))
+                    }
+                    return
+                }
+                if (result.operation.toExecute.startsWith(Commands.scp)) {
+
                     finish(result.success, operation)
+                    return
                 }
             }
         }
@@ -35,20 +52,18 @@ class Copy(val what: String, val where: String) : RemoteOperationInstallationSte
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: SSH) {
         super.execute(*params)
-        val terminal = connection?.terminal
+        terminal = connection?.terminal
         if (terminal == null) {
 
             log.e("No terminal for copying")
             finish(false, operation)
         } else {
 
-            val whatFile = File(what)
             if (whatFile.exists()) {
                 if (whatFile.isDirectory) {
 
-                    val directoryName = whatFile.name
-                    command = Commands.tar(whatFile.absolutePath, directoryName)
-                    terminal.execute(Command(command))
+                    command = Commands.tar(whatFile.absolutePath, destination)
+                    terminal?.execute(Command(command))
                 } else {
 
                     log.e("${whatFile.absolutePath} is not directory")
