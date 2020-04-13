@@ -218,16 +218,12 @@ abstract class InstallerAbstract(entryPoint: Connection) :
             }
             is Reboot -> {
 
-                if (entryPoint is SSH) {
-                    command = String.EMPTY
-                    current.subscribe(listener)
-                    current.execute(entryPoint)
-                } else {
+                executeViaSSH(current)
+                return true
+            }
+            is Copy -> {
 
-                    val clazz = entryPoint::class.simpleName
-                    val msg = "Reboot installation step does not support $clazz connection"
-                    throw IllegalArgumentException(msg)
-                }
+                executeViaSSH(current)
                 return true
             }
         }
@@ -319,9 +315,22 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 iterator = steps[secIt.next()]?.iterator()
                 tryNext()
             } else {
-
                 free(true)
             }
+        }
+    }
+
+    private fun executeViaSSH(step: RemoteOperationInstallationStep<SSH>) {
+        if (entryPoint is SSH) {
+
+            command = String.EMPTY
+            step.subscribe(listener)
+            step.execute(entryPoint)
+        } else {
+
+            val clazz = entryPoint::class.simpleName
+            val msg = "${step::class.simpleName} installation step does not support $clazz connection"
+            throw IllegalArgumentException(msg)
         }
     }
 }

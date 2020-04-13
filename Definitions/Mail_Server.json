@@ -6,6 +6,10 @@
       "installationSteps": {
         "Docker": [
           {
+            "type": "copy",
+            "value": "Docker/Postgres:/root/Docker/Postgres"
+          },
+          {
             "type": "stack",
             "value": "Docker/Postgres"
           }
