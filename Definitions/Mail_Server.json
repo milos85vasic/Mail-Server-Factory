@@ -6,12 +6,16 @@
       "installationSteps": {
         "Docker": [
           {
+            "type": "command",
+            "value": "mkdir -p {{DOCKER_DEFINITIONS}}/Postgres"
+          },
+          {
             "type": "copy",
-            "value": "Docker/Postgres:/root"
+            "value": "Docker/Postgres:{{DOCKER_DEFINITIONS}}/Postgres"
           },
           {
             "type": "stack",
-            "value": "/root/Postgres"
+            "value": "{{DOCKER_DEFINITIONS}}/Postgres"
           }
         ]
       }
