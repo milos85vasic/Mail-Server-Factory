@@ -7,12 +7,9 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-#      PGDATA: /root/Mail-Server/Postgres/Database
-#    volumes:
-#    - storage:/root/Mail-Server
+      PGDATA: /Server/Postgres/Database
+    volumes:
+      - ${SERVER_HOME}/Server/Postgres/Database:/Server/Postgres/Database
 
-  storage:
-    external_links:
-      - Server-Storage
 
 

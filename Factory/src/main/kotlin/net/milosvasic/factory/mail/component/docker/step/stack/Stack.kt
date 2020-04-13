@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
+import java.io.File
 
 
 class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
@@ -39,7 +40,11 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
                 args += " $key=${variables[key]}"
             }
         }
-        command = "$args ${DockerCommand.COMPOSE.command} -f $composeYmlPath/docker-compose.yml ${DockerCommand.UP.command}"
+        var path = composeYmlPath
+        if (!path.endsWith(".yml")) {
+            path += File.separator + "docker-compose.yml"
+        }
+        command = "$args ${DockerCommand.COMPOSE.command} -f $composeYmlPath ${DockerCommand.UP.command}"
         connection?.execute(command)
     }
 }

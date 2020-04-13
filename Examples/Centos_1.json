@@ -1,10 +1,8 @@
 {
   "name": "Mail server configuration",
   "variables": {
-    "POSTGRES_PASSWORD": "Postgres123",
-    "SOMETHING": 25,
-    "SOMETHING_2": true,
-    "SERVER_HOME": "/root"
+    "SERVER_HOME": "/root",
+    "POSTGRES_PASSWORD": "Postgres123"
   },
   "remote": {
     "port": 22,
