@@ -9,6 +9,8 @@ import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
+import net.milosvasic.factory.mail.component.installer.step.copy.Copy
+import net.milosvasic.factory.mail.component.installer.step.copy.CopyOperation
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.installer.step.reboot.RebootOperation
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
@@ -93,6 +95,15 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                     } else {
                         free(false)
                     }
+                }
+            }
+            is CopyOperation -> {
+
+                unsubscribeFromItem(listener)
+                if (result.success) {
+                    tryNext()
+                } else {
+                    free(false)
                 }
             }
             is SSHCommand -> {
