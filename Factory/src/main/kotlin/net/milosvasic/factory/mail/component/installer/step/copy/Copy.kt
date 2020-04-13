@@ -1,19 +1,22 @@
 package net.milosvasic.factory.mail.component.installer.step.copy
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import java.io.File
 
-class Copy(what: String, where: String) : RemoteOperationInstallationStep<SSH>() {
+class Copy(val what: String, val where: String) : RemoteOperationInstallationStep<SSH>() {
 
     companion object {
 
         const val delimiter = ":"
     }
 
-    private var command = "" // TODO:
+    private var command = String.EMPTY
+    private val operation = CopyOperation()
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
@@ -21,7 +24,7 @@ class Copy(what: String, where: String) : RemoteOperationInstallationStep<SSH>()
                 if (result.operation.toExecute.endsWith(command)) {
 
                     // TODO:
-                    finish(result.success, CopyOperation())
+                    finish(result.success, operation)
                 }
             }
         }
@@ -35,11 +38,19 @@ class Copy(what: String, where: String) : RemoteOperationInstallationStep<SSH>()
         if (terminal == null) {
 
             log.e("No terminal for copying")
-            finish(false, CopyOperation())
+            finish(false, operation)
         } else {
 
-            command = "echo 'WORK IN PROGRESS'"
-            terminal.execute(Command(command))
+            val whatFile = File(what)
+            if (whatFile.exists()) {
+
+                command = "echo 'WORK IN PROGRESS'"
+                terminal.execute(Command(command))
+            } else {
+
+                log.e("File does not exist: ${whatFile.absolutePath}")
+                finish(false, operation)
+            }
         }
     }
 }
