@@ -44,7 +44,7 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
         if (!path.endsWith(".yml")) {
             path += File.separator + "docker-compose.yml"
         }
-        command = "$args ${DockerCommand.COMPOSE.command} -f $composeYmlPath ${DockerCommand.UP.command}"
+        command = "$args ${DockerCommand.COMPOSE.command} -f $composeYmlPath ${DockerCommand.UP.command} -d --remove-orphans"
         connection?.execute(command)
     }
 }
