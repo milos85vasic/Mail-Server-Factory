@@ -39,7 +39,7 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
                 args += " $key=${variables[key]}"
             }
         }
-        command = "${DockerCommand.COMPOSE.command} ${DockerCommand.BUILD} $args"
+        command = "${DockerCommand.COMPOSE.command} ${DockerCommand.BUILD.command} $args"
         connection?.execute(command)
     }
 }
