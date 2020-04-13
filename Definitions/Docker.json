@@ -100,6 +100,18 @@
             "value": "docker-compose --version"
           },
           {
+            "type": "packages",
+            "value": "epel-release, python-pip"
+          },
+          {
+            "type": "command",
+            "value": "pip --version"
+          },
+          {
+            "type": "packages",
+            "value": "python-devel, libffi-devel, openssl-devel, glibc-devel, gcc, gcc-c++, make"
+          },
+          {
             "type": "command",
             "value": "echo \"- - - - - - - - WORK IN PROGRESS !!! - - - - - - -\""
           }
