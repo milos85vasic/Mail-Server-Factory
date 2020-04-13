@@ -43,9 +43,15 @@ class Copy(val what: String, val where: String) : RemoteOperationInstallationSte
 
             val whatFile = File(what)
             if (whatFile.exists()) {
+                if (whatFile.isDirectory) {
 
-                command = "echo 'WORK IN PROGRESS'"
-                terminal.execute(Command(command))
+                    command = "echo 'WORK IN PROGRESS'"
+                    terminal.execute(Command(command))
+                } else {
+
+                    log.e("${whatFile.absolutePath} is not directory")
+                    finish(false, operation)
+                }
             } else {
 
                 log.e("File does not exist: ${whatFile.absolutePath}")
