@@ -47,6 +47,10 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
         }
     }
 
+    /*
+    * FIXME: Create Scp installation step to deploy YML.
+    *  Scp installation step should rely on SSH commands, not on local (host) system's SCP.
+    * */
     @Synchronized
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: Connection) {
