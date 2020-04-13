@@ -5,8 +5,6 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
-import net.milosvasic.factory.mail.terminal.Commands
 
 class Copy(what: String, where: String) : RemoteOperationInstallationStep<SSH>() {
 
