@@ -2,11 +2,15 @@ package net.milosvasic.factory.mail.component.installer.step.copy
 
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 
 class Copy(what: String, where: String) : RemoteOperationInstallationStep<SSH>() {
+
+    companion object {
+
+        val delimiter = ":"
+    }
 
     private var command = "" // TODO:
 

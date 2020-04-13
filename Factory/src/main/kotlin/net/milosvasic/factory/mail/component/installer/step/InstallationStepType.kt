@@ -9,6 +9,7 @@ enum class InstallationStepType(
     PACKAGES("packages"),
     COMMAND("command"),
     REBOOT("reboot"),
+    COPY("copy"),
     CONDITION("condition");
 
     companion object {
