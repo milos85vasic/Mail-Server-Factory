@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.terminal
 
 import net.milosvasic.factory.mail.localhost
+import net.milosvasic.factory.mail.remote.Remote
 
 object Commands {
 
@@ -21,4 +22,9 @@ object Commands {
     fun reboot(rebootIn: Int = 2) = "( sleep $rebootIn ; reboot ) & "
 
     fun grep(what: String) = "grep \"$what\""
+
+    fun scp(what: String, where: String, remote: Remote): String {
+
+        return "scp -P ${remote.port} $what ${remote.account}@${remote.host}:$where"
+    }
 }
