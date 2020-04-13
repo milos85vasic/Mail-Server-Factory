@@ -6,8 +6,8 @@ import net.milosvasic.factory.mail.remote.Remote
 object Commands {
 
     const val scp = "scp -P"
-    const val tarCompress = "tar -zcvf"
-    const val tarDecompress = "tar -zxvf"
+    const val tarCompress = "tar -cjf"
+    const val tarDecompress = "tar -xvf"
     const val tarExtension = ".tar.gz"
 
     fun echo(what: String) = "echo '$what'"
@@ -36,7 +36,7 @@ object Commands {
     fun tar(what: String, where: String): String {
 
         val destination = where.replace(".tar", "").replace(".gz", "")
-        return "$tarCompress $destination$tarExtension $what"
+        return "$tarCompress $destination$tarExtension -C $what ."
     }
 
     fun unTar(what: String, where: String) = "$tarDecompress $what -C $where"

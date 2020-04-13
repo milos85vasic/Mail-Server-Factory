@@ -10,7 +10,7 @@ import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
 import java.io.File
 
-class Copy(val what: String, val where: String) : RemoteOperationInstallationStep<SSH>() {
+class Copy(what: String, private val where: String) : RemoteOperationInstallationStep<SSH>() {
 
     companion object {
         const val delimiter = ":"
@@ -20,7 +20,8 @@ class Copy(val what: String, val where: String) : RemoteOperationInstallationSte
     private var command = String.EMPTY
     private var terminal: Terminal? = null
     private val operation = CopyOperation()
-    private val destination = "${whatFile.absolutePath}${File.separator}${whatFile.name}${Commands.tarExtension}"
+    private val destinationPath = whatFile.parentFile.absolutePath
+    private val destination = "$destinationPath${File.separator}${whatFile.name}${Commands.tarExtension}"
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
