@@ -5,7 +5,7 @@ services:
     image: library/postgres:12
     restart: always
     ports:
-    - 5432:5432
+    - 15432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
