@@ -30,7 +30,7 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: Connection) {
         super.execute(*params)
-        var args = "--build-arg"
+        var args = String.EMPTY
         val variables = ConfigurationManager.getConfiguration().variables
         if (variables.isEmpty()) {
             args = String.EMPTY
@@ -39,7 +39,7 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
                 args += " $key=${variables[key]}"
             }
         }
-        command = "${DockerCommand.COMPOSE.command} ${DockerCommand.BUILD.command} $args"
+        command = "$args ${DockerCommand.COMPOSE.command} -f $composeYmlPath/docker-compose.yml ${DockerCommand.UP.command}"
         connection?.execute(command)
     }
 }

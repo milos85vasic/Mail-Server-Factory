@@ -7,7 +7,7 @@
         "Docker": [
           {
             "type": "volume",
-            "name": "Mail-Server-Storage",
+            "name": "Server-Storage",
             "value": "{{SERVER_HOME}}/Mail-Server:/root/Mail-Server"
           },
           {

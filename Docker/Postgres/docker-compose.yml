@@ -1,14 +1,18 @@
-version '1.0'
+version: "3.7"
 
 services:
-
-  db:
-    image postgres:12.2
+  postgres_database:
+    image: library/postgres:12
     restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: /root/Mail-Server/Postgres/Database
-    volumes:
-    - Mail-Server-Storage:/root/Mail-Server
+#      PGDATA: /root/Mail-Server/Postgres/Database
+#    volumes:
+#    - storage:/root/Mail-Server
+
+  storage:
+    external_links:
+      - Server-Storage
+
 
