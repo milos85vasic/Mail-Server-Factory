@@ -92,7 +92,7 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
     private fun generate(command: String, script: String): String {
 
         val bashHead = "#!/bin/sh"
-        val chmod = "chmod +rx $script"
+        val chmod = "chmod u+x $script"
         return "${Commands.printf("$bashHead\\n$command")} > $script; $chmod"
     }
 }
