@@ -5,9 +5,8 @@ Requires=docker.service
 
 [Service]
 Restart=always
-ExecStartPre=/bin/bash -c '/usr/bin/docker '
-ExecStart=
-ExecStop=
+ExecStart=/root/Docker/Definitions/Postgres/run.sh
+ExecStop=/usr/local/bin/docker-compose -f /root/Docker/Definitions/Postgres/docker-compose.yml down -v
 
 [Install]
 WantedBy=multi-user.target
