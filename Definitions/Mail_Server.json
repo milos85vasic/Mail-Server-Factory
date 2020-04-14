@@ -20,6 +20,10 @@
           {
             "type": "command",
             "value": "ln -s {{DOCKER_DEFINITIONS}}/Postgres/database.postgres.service /etc/systemd/system/database.postgres.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable database.postgres.service"
           }
         ]
       }
