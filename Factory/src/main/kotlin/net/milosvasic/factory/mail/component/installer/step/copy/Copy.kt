@@ -20,8 +20,9 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
     private var command = String.EMPTY
     private var terminal: Terminal? = null
     private val operation = CopyOperation()
-    private val destinationPath = whatFile.parentFile.absolutePath
-    private val destination = "$destinationPath${File.separator}${whatFile.name}${Commands.tarExtension}"
+    private val localPath = whatFile.parentFile.absolutePath
+    private val localTar = "$localPath${File.separator}${whatFile.name}${Commands.tarExtension}"
+    private val remoteTar = "$where${File.separator}${whatFile.name}${Commands.tarExtension}"
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
@@ -35,19 +36,24 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
                         finish(false, operation)
                     } else {
 
-                        command = Commands.scp(destination, where, remote)
+                        command = Commands.scp(localTar, where, remote)
                         terminal?.execute(Command(command))
                     }
                     return
                 }
                 if (isScp(result.operation)) {
 
-                    val file = "$where${File.separator}${whatFile.name}${Commands.tarExtension}"
-                    command = Commands.unTar(file, where)
+                    command = Commands.unTar(remoteTar, where)
                     connection?.execute(command)
                     return
                 }
                 if (isTarDecompress(result.operation)) {
+
+                    command = Commands.rm(remoteTar)
+                    connection?.execute(command)
+                    return
+                }
+                if (isRm(result.operation)) {
 
                     finish(result.success, operation)
                     return
@@ -70,7 +76,7 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
             if (whatFile.exists()) {
                 if (whatFile.isDirectory) {
 
-                    command = Commands.tar(whatFile.absolutePath, destination)
+                    command = Commands.tar(whatFile.absolutePath, localTar)
                     terminal?.execute(Command(command))
                 } else {
 
@@ -93,4 +99,7 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
 
     private fun isTarCompress(operation: Command) =
             operation.toExecute.startsWith(Commands.tarCompress)
+
+    private fun isRm(operation: Command) =
+            operation.toExecute.contains(Commands.rm(remoteTar))
 }
