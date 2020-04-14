@@ -26,15 +26,30 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
                     if (dockerCompose) {
                         dockerCompose = false
 
-                        val run = "run.sh"
-                        val bashHead = "#!/bin/sh"
+                        val stop = "stop.sh"
+                        val start = "start.sh"
+                        val restart = "restart.sh"
                         val path = getYmlPath()
                         val file = File(path)
                         val directory = file.parentFile
-                        val shellScript = "$directory${File.separator}$run"
-                        val chmod = "chmod +rx $shellScript"
-                        val cmd = command
-                        command = "${Commands.printf("$bashHead\\n$cmd")} > $shellScript; $chmod"
+                        val stopShellScript = "$directory${File.separator}$stop"
+                        val startShellScript = "$directory${File.separator}$start"
+                        val restartShellScript = "$directory${File.separator}$restart"
+                        val startCmd = command
+                        val compose = DockerCommand.COMPOSE.command
+                        val stopCmd = "$compose -f $path down -v"
+                        val restartCmd = "sh stop.sh;\\nsh start.sh;"
+
+                        val startGenerate = generate(startCmd, startShellScript)
+                        val stopGenerate = generate(stopCmd, stopShellScript)
+                        val restartGenerate = generate(restartCmd, restartShellScript)
+
+                        val builder = StringBuilder()
+                                .append(startGenerate)
+                                .append("; ").append(stopGenerate)
+                                .append("; ").append(restartGenerate)
+
+                        command = builder.toString()
                         connection?.execute(command)
                     } else {
 
@@ -72,5 +87,12 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
             path += File.separator + "docker-compose.yml"
         }
         return path
+    }
+
+    private fun generate(command: String, script: String): String {
+
+        val bashHead = "#!/bin/sh"
+        val chmod = "chmod +rx $script"
+        return "${Commands.printf("$bashHead\\n$command")} > $script; $chmod"
     }
 }
