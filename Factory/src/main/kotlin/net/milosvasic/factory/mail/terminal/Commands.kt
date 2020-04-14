@@ -14,6 +14,8 @@ object Commands {
 
     fun echo(what: String) = "echo '$what'"
 
+    fun printf(what: String) = "printf '$what'"
+
     fun ssh(user: String = "root", command: String, port: Int = 22, host: String = localhost): String {
         return "$ssh $port $user@$host $command"
     }

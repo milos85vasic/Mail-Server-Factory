@@ -8,11 +8,13 @@ import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.terminal.Commands
 import java.io.File
 
 
 class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
 
+    private var dockerCompose = false
     private var command = String.EMPTY
 
     override fun handleResult(result: OperationResult) {
@@ -21,7 +23,23 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
             is Command -> {
                 if (command != String.EMPTY && result.operation.toExecute.endsWith(command)) {
 
-                    finish(result.success, DockerInstallationOperation())
+                    if (dockerCompose) {
+                        dockerCompose = false
+
+                        val run = "run.sh"
+                        val bashHead = "#!/bin/sh"
+                        val path = getYmlPath()
+                        val file = File(path)
+                        val directory = file.parentFile
+                        val shellScript = "$directory${File.separator}$run"
+                        val chmod = "chmod +rx $shellScript"
+                        val cmd = command
+                        command = "${Commands.printf("$bashHead\\n$cmd")} > $shellScript; $chmod"
+                        connection?.execute(command)
+                    } else {
+
+                        finish(result.success, DockerInstallationOperation())
+                    }
                 }
             }
         }
@@ -32,6 +50,7 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
     override fun execute(vararg params: Connection) {
         super.execute(*params)
 
+        dockerCompose = true
         var args = String.EMPTY
         val variables = ConfigurationManager.getConfiguration().variables
         if (variables.isEmpty()) {

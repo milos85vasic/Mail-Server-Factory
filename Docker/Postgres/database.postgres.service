@@ -1,0 +1,13 @@
+[Unit]
+Description=Postgres database running on Docker
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStartPre=/bin/bash -c '/usr/bin/docker '
+ExecStart=
+ExecStop=
+
+[Install]
+WantedBy=multi-user.target

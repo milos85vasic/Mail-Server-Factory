@@ -1,7 +1,7 @@
 {
   "software": [
     {
-      "name": "Mail server stack",
+      "name": "Mail server stack: Database",
       "version": "1.0.0",
       "installationSteps": {
         "Docker": [
@@ -16,6 +16,10 @@
           {
             "type": "stack",
             "value": "{{DOCKER_DEFINITIONS}}/Postgres"
+          },
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER_DEFINITIONS}}/Postgres/database.postgres.service /etc/systemd/system/database.postgres.service"
           }
         ]
       }

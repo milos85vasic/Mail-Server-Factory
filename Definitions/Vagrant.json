@@ -11,15 +11,15 @@
           },
           {
             "type": "command",
-            "value": "echo \"WORK IN PROGRESS 1: {{SERVER_HOME}}\""
+            "value": "echo \"WORK IN PROGRESS 1\""
           },
           {
             "type": "command",
-            "value": "echo \"WORK IN PROGRESS 2: {{SOMETHING_2}}\""
+            "value": "echo \"WORK IN PROGRESS 2\""
           },
           {
             "type": "command",
-            "value": "echo \"WORK IN PROGRESS 3: {{SOMETHING}}\""
+            "value": "echo \"WORK IN PROGRESS 3\""
           }
         ],
         "Ubuntu": [

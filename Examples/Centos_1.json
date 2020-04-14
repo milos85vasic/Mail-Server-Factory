@@ -2,7 +2,7 @@
   "name": "Mail server configuration",
   "variables": {
     "SERVER_HOME": "/root",
-    "DOCKER_DEFINITIONS": "/root/Docker",
+    "DOCKER_DEFINITIONS": "/root/Docker/Definitions",
     "POSTGRES_PASSWORD": "Postgres123"
   },
   "remote": {
