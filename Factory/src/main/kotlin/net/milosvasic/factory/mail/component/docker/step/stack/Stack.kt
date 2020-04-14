@@ -16,6 +16,7 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
 
     private var dockerCompose = false
     private var command = String.EMPTY
+    private val flags = "-d --remove-orphans"
 
     override fun handleResult(result: OperationResult) {
 
@@ -36,9 +37,10 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
                         val startShellScript = "$directory${File.separator}$start"
                         val restartShellScript = "$directory${File.separator}$restart"
                         val startCmd = command
-                        val compose = DockerCommand.COMPOSE.command
-                        val stopCmd = "$compose -f $path down -v"
                         val restartCmd = "sh stop.sh;\\nsh start.sh;"
+                        val stopCmd = startCmd
+                                .replace(DockerCommand.UP.command, DockerCommand.DOWN.command)
+                                .replace(flags, "")
 
                         val startGenerate = generate(startCmd, startShellScript)
                         val stopGenerate = generate(stopCmd, stopShellScript)
@@ -76,7 +78,6 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
             }
         }
         val path = getYmlPath()
-        val flags = "-d --remove-orphans"
         command = "$args ${DockerCommand.COMPOSE.command} -f $path ${DockerCommand.UP.command} $flags"
         connection?.execute(command)
     }
