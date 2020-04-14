@@ -26,7 +26,7 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
             is Command -> {
-                if (result.operation.toExecute.startsWith(Commands.tarCompress)) {
+                if (isTarCompress(result.operation)) {
 
                     val remote = connection?.getRemote()
                     if (remote == null) {
@@ -40,14 +40,14 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
                     }
                     return
                 }
-                if (result.operation.toExecute.startsWith(Commands.scp)) {
+                if (isScp(result.operation)) {
 
                     val file = "$where${File.separator}${whatFile.name}${Commands.tarExtension}"
                     command = Commands.unTar(file, where)
                     connection?.execute(command)
                     return
                 }
-                if (result.operation.toExecute.contains(Commands.tarDecompress)) {
+                if (isTarDecompress(result.operation)) {
 
                     finish(result.success, operation)
                     return
@@ -84,4 +84,13 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
             }
         }
     }
+
+    private fun isScp(operation: Command) =
+            operation.toExecute.startsWith(Commands.scp)
+
+    private fun isTarDecompress(operation: Command) =
+            operation.toExecute.contains(Commands.tarDecompress)
+
+    private fun isTarCompress(operation: Command) =
+            operation.toExecute.startsWith(Commands.tarCompress)
 }
