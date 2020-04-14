@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.remote.Remote
 object Commands {
 
     const val rm = "rm"
+    const val ssh = "ssh -p"
     const val scp = "scp -P"
     const val tarCompress = "tar -cjf"
     const val tarDecompress = "tar -xvf"
@@ -14,7 +15,7 @@ object Commands {
     fun echo(what: String) = "echo '$what'"
 
     fun ssh(user: String = "root", command: String, port: Int = 22, host: String = localhost): String {
-        return "ssh -p $port $user@$host $command"
+        return "$ssh $port $user@$host $command"
     }
 
     fun ping(host: String, timeoutInSeconds: Int = 3): String {

@@ -53,7 +53,13 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
                     connection?.execute(command)
                     return
                 }
-                if (isRm(result.operation)) {
+                if (isRmRemote(result.operation, remoteTar)) {
+
+                    command = Commands.rm(localTar)
+                    terminal?.execute(Command(command))
+                    return
+                }
+                if (isRm(result.operation, localTar)) {
 
                     finish(result.success, operation)
                     return
@@ -100,6 +106,10 @@ class Copy(what: String, private val where: String) : RemoteOperationInstallatio
     private fun isTarCompress(operation: Command) =
             operation.toExecute.startsWith(Commands.tarCompress)
 
-    private fun isRm(operation: Command) =
-            operation.toExecute.contains(Commands.rm(remoteTar))
+    private fun isRmRemote(operation: Command, file: String) =
+            isRm(operation, file) &&
+                    operation.toExecute.startsWith(Commands.ssh)
+
+    private fun isRm(operation: Command, file: String) =
+            operation.toExecute.contains(Commands.rm(file))
 }
