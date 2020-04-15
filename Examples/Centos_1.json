@@ -2,7 +2,7 @@
   "name": "Mail server configuration",
   "variables": {
     "SERVER_HOME": "/root",
-    "DOCKER_DEFINITIONS": "/root/Docker/Definitions",
+    "DOCKER_HOME": "{{SERVER_HOME}}/Docker",
     "DB_PORT": "35432",
     "DB_PASSWORD": "Postgres123"
   },
