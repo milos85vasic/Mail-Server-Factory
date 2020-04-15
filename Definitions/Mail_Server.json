@@ -6,6 +6,10 @@
       "installationSteps": {
         "Docker": [
           {
+            "type": "condition",
+            "value": "file /etc/systemd/system/database.postgres.service"
+          },
+          {
             "type": "command",
             "value": "mkdir -p {{DOCKER_DEFINITIONS}}/Postgres"
           },
@@ -24,6 +28,10 @@
           {
             "type": "command",
             "value": "systemctl enable database.postgres.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
           }
         ]
       }
