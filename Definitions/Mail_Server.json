@@ -7,7 +7,7 @@
         "Docker": [
           {
             "type": "condition",
-            "value": "systemctl status database.postgres"
+            "value": "docker ps -a --filter \"status=running\" | grep \"postgres_database\""
           },
           {
             "type": "command",
