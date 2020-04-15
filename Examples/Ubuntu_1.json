@@ -3,7 +3,8 @@
   "variables": {
     "SERVER_HOME": "/root",
     "DOCKER_DEFINITIONS": "/root/Docker/Definitions",
-    "POSTGRES_PASSWORD": "Postgres123"
+    "DB_PORT": "35432",
+    "DB_PASSWORD": "Postgres123"
   },
   "remote": {
     "port": 22,
