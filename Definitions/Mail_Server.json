@@ -7,7 +7,7 @@
         "Docker": [
           {
             "type": "condition",
-            "value": "file /etc/systemd/system/database.postgres.service"
+            "value": "systemctl status database.postgres"
           },
           {
             "type": "command",
@@ -23,6 +23,10 @@
           },
           {
             "type": "command",
+            "value": "docker ps -a --filter \"status=running\" | grep \"postgres_database\""
+          },
+          {
+            "type": "command",
             "value": "ln -s {{DOCKER_DEFINITIONS}}/Postgres/database.postgres.service /etc/systemd/system/database.postgres.service"
           },
           {
@@ -32,6 +36,10 @@
           {
             "type": "reboot",
             "value": "120"
+          },
+          {
+            "type": "command",
+            "value": "docker ps -a --filter \"status=running\" | grep \"postgres_database\""
           }
         ]
       }
