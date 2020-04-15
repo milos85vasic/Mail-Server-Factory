@@ -11,8 +11,7 @@
     "host": "192.168.100.102"
   },
   "software": [
-    "Definitions/Docker.json",
-    "Definitions/Vagrant.json"
+    "Definitions/Docker.json"
   ],
   "containers": [
     "Definitions/Mail_Server.json"
