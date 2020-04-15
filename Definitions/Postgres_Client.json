@@ -1,0 +1,22 @@
+{
+  "software": [
+    {
+      "name": "Postgres Client",
+      "version": "9.X",
+      "installationSteps": {
+        "CentOS": [
+          {
+            "type": "packages",
+            "value": "postgresql-upgrade"
+          }
+        ],
+        "Ubuntu": [
+          {
+            "type": "packages",
+            "value": "postgresql-client-9.3"
+          }
+        ]
+      }
+    }
+  ]
+}

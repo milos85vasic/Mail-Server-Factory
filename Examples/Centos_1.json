@@ -12,7 +12,7 @@
   },
   "software": [
     "Definitions/Docker.json",
-    "Definitions/Vagrant.json"
+    "Definitions/Postgres_Client.json"
   ],
   "containers": [
     "Definitions/Mail_Server.json"
