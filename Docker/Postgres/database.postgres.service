@@ -6,8 +6,6 @@ Requires=docker.service
 [Service]
 Restart=always
 ExecStart=/root/Docker/Definitions/Postgres/start.sh
-ExecStop=/root/Docker/Definitions/Postgres/stop.sh
-ExecReload=/root/Docker/Definitions/Postgres/restart.sh
 
 [Install]
 WantedBy=multi-user.target
