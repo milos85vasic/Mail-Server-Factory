@@ -85,7 +85,6 @@ class Stack(
         if (variables.isEmpty()) {
             args = String.EMPTY
         } else {
-            // TODO: Filter only required variables!
             variables.keys.forEach { key ->
                 args += " $key=${configuration.getVariableParsed(key)}"
             }
