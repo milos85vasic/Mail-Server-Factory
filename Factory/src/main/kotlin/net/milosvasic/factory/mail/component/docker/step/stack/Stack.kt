@@ -69,12 +69,13 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
 
         dockerCompose = true
         var args = String.EMPTY
-        val variables = ConfigurationManager.getConfiguration().variables
+        val configuration = ConfigurationManager.getConfiguration()
+        val variables = configuration.variables
         if (variables.isEmpty()) {
             args = String.EMPTY
         } else {
             variables.keys.forEach { key ->
-                args += " $key=${variables[key]}"
+                args += " $key=${configuration.getVariableParsed(key)}"
             }
         }
         val path = getYmlPath()
