@@ -12,11 +12,22 @@ import net.milosvasic.factory.mail.terminal.Commands
 import java.io.File
 
 
-class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
+class Stack(
+        private val composeYmlPath: String,
+        composeFileName: String = defaultComposeFileName,
+        private val composeFileExtension: String = defaultComposeFileExtension
+) : DockerInstallationStep() {
+
+    companion object {
+
+        private const val defaultComposeFileName: String = "docker-compose"
+        private const val defaultComposeFileExtension: String = ".yml"
+    }
 
     private var dockerCompose = false
     private var command = String.EMPTY
     private val flags = "-d --remove-orphans"
+    private val composeFile = "$composeFileName$composeFileExtension"
 
     override fun handleResult(result: OperationResult) {
 
@@ -85,8 +96,8 @@ class Stack(private val composeYmlPath: String) : DockerInstallationStep() {
 
     private fun getYmlPath(): String {
         var path = composeYmlPath
-        if (!path.endsWith(".yml")) {
-            path += File.separator + "docker-compose.yml"
+        if (!path.endsWith(composeFileExtension)) {
+            path += File.separator + composeFile
         }
         return path
     }
