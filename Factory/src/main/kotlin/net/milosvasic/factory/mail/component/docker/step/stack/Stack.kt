@@ -50,7 +50,7 @@ class Stack(
                         val startCmd = command
                         val restartCmd = "sh stop.sh;\\nsh start.sh;"
                         val stopCmd = startCmd
-                                .replace(DockerCommand.UP.command, DockerCommand.DOWN.command)
+                                .replace(DockerCommand.UP.obtain(), DockerCommand.DOWN.obtain())
                                 .replace(flags, "")
 
                         val startGenerate = generate(startCmd, startShellScript)
@@ -90,7 +90,7 @@ class Stack(
             }
         }
         val path = getYmlPath()
-        command = "$args ${DockerCommand.COMPOSE.command} -f $path ${DockerCommand.UP.command} $flags"
+        command = "$args ${DockerCommand.COMPOSE.obtain()} -f $path ${DockerCommand.UP.obtain()} $flags"
         connection?.execute(command)
     }
 

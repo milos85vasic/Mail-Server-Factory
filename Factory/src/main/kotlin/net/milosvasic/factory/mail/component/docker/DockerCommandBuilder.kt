@@ -49,8 +49,8 @@ class DockerCommandBuilder : Builder<String> {
 
         val validator = DockerCommandValidator()
         if (validator.validate(this)) {
-            val dockerCommand = DockerCommand.DOCKER.command
-            return "$dockerCommand ${command.command} $volume $name $image"
+            val dockerCommand = DockerCommand.DOCKER.obtain()
+            return "$dockerCommand ${command.obtain()} $volume $name $image"
         }
         return String.EMPTY
     }

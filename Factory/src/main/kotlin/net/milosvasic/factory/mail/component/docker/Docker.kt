@@ -96,7 +96,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     @Throws(IllegalStateException::class)
     override fun initialize() {
         super.initialize()
-        command = "${DockerCommand.DOCKER.command} ${DockerCommand.VERSION.command}"
+        command = "${DockerCommand.DOCKER.obtain()} ${DockerCommand.VERSION.obtain()}"
         entryPoint.execute(command)
     }
 

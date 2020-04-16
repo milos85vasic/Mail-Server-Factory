@@ -20,7 +20,7 @@ class DockerCommandValidator : Validation<DockerCommandBuilder> {
         val image = what.getImage()
         val volume = what.getVolume()
         val command = what.getCommand()
-        val run = DockerCommand.RUN.command
+        val run = DockerCommand.RUN.obtain()
 
         if (volume.isNotEmpty() && command != DockerCommand.RUN) {
             throw IllegalArgumentException("Volume can be used only with '$run' command")

@@ -15,7 +15,7 @@ import net.milosvasic.factory.mail.terminal.Commands
 
 class Volume(private val mapping: String, private val name: String) : DockerInstallationStep() {
 
-    private val psA = "${DockerCommand.DOCKER.command} ${DockerCommand.PS.command} -a"
+    private val psA = "${DockerCommand.DOCKER.obtain()} ${DockerCommand.PS.obtain()} -a"
     private var command = "$psA | ${Commands.grep(name)}"
 
     override fun handleResult(result: OperationResult) {
