@@ -47,6 +47,7 @@ data class Configuration(
         }
     }
 
+    @Throws(IllegalStateException::class)
     fun getVariableParsed(key: String): Any? {
         val variable = variables[key]
         variable?.let {

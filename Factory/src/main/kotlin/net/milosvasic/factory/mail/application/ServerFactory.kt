@@ -232,10 +232,7 @@ class ServerFactory : Application {
                 } catch (e: IllegalArgumentException) {
 
                     fail(e)
-                } catch (e: IllegalArgumentException) {
-
-                    fail(e)
-                } catch (e: BusyException) {
+                } catch (e: IllegalStateException) {
 
                     fail(e)
                 }
