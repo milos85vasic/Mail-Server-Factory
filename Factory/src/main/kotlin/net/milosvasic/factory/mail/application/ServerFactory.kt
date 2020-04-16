@@ -36,6 +36,11 @@ class ServerFactory : Application {
                     ConfigurationManager.initialize()
 
                     val configuration = ConfigurationManager.getConfiguration()
+                    configuration.variables.keys.forEach {
+                        val value = configuration.getVariableParsed(it)
+                        log.v("Configuration variable: $it -> $value")
+                    }
+
                     val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
                     val containersConfigurations = mutableListOf<SoftwareConfiguration>()
 

@@ -4,8 +4,8 @@ import java.util.regex.Pattern
 
 object Variable {
 
-    private const val open = "{{"
-    private const val close = "}}"
+    const val open = "{{"
+    const val close = "}}"
 
     private fun getRegex() = "${Pattern.quote(open)}(.*?)${Pattern.quote(close)}"
 

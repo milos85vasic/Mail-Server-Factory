@@ -30,13 +30,8 @@ data class Configuration(
                 val configurationJson = configurationFile.readText()
                 val gson = Gson()
                 try {
-                    val configuration = gson.fromJson(configurationJson, Configuration::class.java)
-                    configuration.variables.keys.forEach {
-                        val value = configuration.variables[it]
-                        log.v("Configuration variable: $it -> $value")
-                    }
-
-                    return configuration
+                    return gson.fromJson(configurationJson, Configuration::class.java)
+                    
                 } catch (e: JsonParseException) {
 
                     throw IllegalArgumentException("Unable to parse JSON: ${e.message}")
@@ -50,5 +45,16 @@ data class Configuration(
                 throw IllegalArgumentException("$msg: ${configurationFile.absoluteFile}")
             }
         }
+    }
+
+    fun getVariableParsed(key: String): Any? {
+        val variable = variables[key]
+        variable?.let {
+            val str = it.toString()
+            if (str.contains(Variable.open) && str.contains(Variable.close)) {
+                return Variable.parse(str)
+            }
+        }
+        return variable
     }
 }
