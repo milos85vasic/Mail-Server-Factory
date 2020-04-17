@@ -10,6 +10,9 @@ object Commands {
     const val find = "find "
     const val ssh = "ssh -p"
     const val scp = "scp -P"
+    const val chmod = "chmod -R"
+    const val chgrp = "chgrp -R"
+    const val chown = "chown -R"
     const val tarCompress = "tar -cjf"
     const val tarDecompress = "tar -xvf"
     const val tarExtension = ".tar.gz"
@@ -50,4 +53,10 @@ object Commands {
     fun unTar(what: String, where: String) = "$tarDecompress $what -C $where"
 
     fun rm(what: String) = "$rm $what"
+
+    fun chmod(where: String, mode: String) = "$chmod $mode $where"
+
+    fun chgrp(group: String, directory: String) = "$chgrp $group $directory"
+
+    fun chown(account: String, directory: String) = "$chown $account $directory"
 }
