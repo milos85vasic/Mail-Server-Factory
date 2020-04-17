@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.terminal
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.localhost
 import net.milosvasic.factory.mail.remote.Remote
 
@@ -59,4 +60,15 @@ object Commands {
     fun chgrp(group: String, directory: String) = "$chgrp $group $directory"
 
     fun chown(account: String, directory: String) = "$chown $account $directory"
+
+    fun concatenate(vararg commands: String): String {
+        var result = String.EMPTY
+        commands.forEach {
+            if (result.isNotEmpty() && !result.isBlank()) {
+                result += "; "
+            }
+            result += it
+        }
+        return result
+    }
 }

@@ -1,9 +1,9 @@
 package net.milosvasic.factory.mail.component.docker
 
-import javafx.util.Builder
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.common.Build
 
-class DockerCommandBuilder : Builder<String> {
+class DockerCommandBuilder : Build<String> {
 
     private var name = String.EMPTY
     private var image = String.EMPTY

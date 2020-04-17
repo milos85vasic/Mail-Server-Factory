@@ -8,6 +8,8 @@ import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.security.Permission
+import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
 import java.io.File
@@ -84,6 +86,31 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                     return
                 }
                 if (isRm(result.operation, localTar)) {
+
+                    val remote = connection?.getRemote()
+                    if (remote == null) {
+
+                        log.e("No remote available")
+                        finish(false, operation)
+                    } else {
+
+                        val chown = Commands.chown(remote.account, where)
+                        val chgrp = Commands.chgrp(remote.account, where)
+                        val permissions = Permissions(Permission(7), Permission(0), Permission(0))
+
+                        try {
+                            val chmod = Commands.chmod(where, permissions.obtain())
+                            command = Commands.concatenate(chown, chgrp, chmod)
+                            connection?.execute(command)
+                        } catch (e: IllegalArgumentException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        }
+                    }
+                    return
+                }
+                if (isChown(result.operation) && isChgrp(result.operation) && isChmod(result.operation)) {
 
                     finish(result.success, operation)
                     return
@@ -206,4 +233,13 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
     private fun isFind(operation: Command) =
             operation.toExecute.contains(Commands.find)
+
+    private fun isChown(operation: Command) =
+            operation.toExecute.contains(Commands.chown)
+
+    private fun isChgrp(operation: Command) =
+            operation.toExecute.contains(Commands.chgrp)
+
+    private fun isChmod(operation: Command) =
+            operation.toExecute.contains(Commands.chmod)
 }
