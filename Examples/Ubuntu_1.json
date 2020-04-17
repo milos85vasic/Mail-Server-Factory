@@ -3,7 +3,7 @@
   "variables": {
     "SERVER_HOME": "/root",
     "DOCKER_HOME": "{{SERVER_HOME}}/Docker",
-    "DOCKER_COMPOSE_BIN": "/usr/local/bin",
+    "DOCKER_COMPOSE_PATH": "/usr/local/bin",
     "DB_PORT": "35432",
     "DB_PASSWORD": "Postgres123"
   },
