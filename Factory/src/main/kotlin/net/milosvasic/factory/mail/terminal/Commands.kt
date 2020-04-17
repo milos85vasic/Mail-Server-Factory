@@ -6,9 +6,11 @@ import net.milosvasic.factory.mail.remote.Remote
 object Commands {
 
     const val rm = "rm"
+    const val here = "."
+    const val find = "find "
     const val ssh = "ssh -p"
     const val scp = "scp -P"
-    const val tar = "tar "
+    const val tarCompress = "tar -cjf"
     const val tarDecompress = "tar -xvf"
     const val tarExtension = ".tar.gz"
 
@@ -37,14 +39,12 @@ object Commands {
         return "$scp ${remote.port} $what ${remote.account}@${remote.host}:$where"
     }
 
-    fun tar(what: String, where: String, excludes: List<String> = listOf()): String {
+    fun find(what: String, where: String) = "$find$where -name \"$what\""
 
-        var exclude = ""
-        excludes.forEach {
-            exclude += "--exclude='$it' "
-        }
+    fun tar(what: String, where: String): String {
+
         val destination = where.replace(".tar", "").replace(".gz", "")
-        return "$tar $exclude -cjf $destination$tarExtension -C $what ."
+        return "$tarCompress $destination$tarExtension -C $what ."
     }
 
     fun unTar(what: String, where: String) = "$tarDecompress $what -C $where"
