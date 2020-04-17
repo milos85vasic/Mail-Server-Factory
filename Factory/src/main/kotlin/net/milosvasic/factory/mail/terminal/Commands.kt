@@ -8,7 +8,7 @@ object Commands {
     const val rm = "rm"
     const val ssh = "ssh -p"
     const val scp = "scp -P"
-    const val tarCompress = "tar -cjf"
+    const val tar = "tar "
     const val tarDecompress = "tar -xvf"
     const val tarExtension = ".tar.gz"
 
@@ -37,10 +37,14 @@ object Commands {
         return "$scp ${remote.port} $what ${remote.account}@${remote.host}:$where"
     }
 
-    fun tar(what: String, where: String): String {
+    fun tar(what: String, where: String, excludes: List<String> = listOf()): String {
 
+        var exclude = ""
+        excludes.forEach {
+            exclude += "--exclude='$it' "
+        }
         val destination = where.replace(".tar", "").replace(".gz", "")
-        return "$tarCompress $destination$tarExtension -C $what ."
+        return "$tar $exclude -cjf $destination$tarExtension -C $what ."
     }
 
     fun unTar(what: String, where: String) = "$tarDecompress $what -C $where"

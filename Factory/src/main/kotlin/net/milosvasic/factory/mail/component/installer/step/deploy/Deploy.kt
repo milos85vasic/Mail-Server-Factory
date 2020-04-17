@@ -86,8 +86,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                 if (whatFile.isDirectory) {
 
                     processFiles(whatFile)
-                    // TODO: Tar all except proto files.
-                    command = Commands.tar(whatFile.absolutePath, localTar)
+                    command = Commands.tar(whatFile.absolutePath, localTar, listOf("$prototypePrefix*"))
                     terminal?.execute(Command(command))
                 } else {
 
@@ -175,7 +174,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
             operation.toExecute.contains(Commands.tarDecompress)
 
     private fun isTarCompress(operation: Command) =
-            operation.toExecute.startsWith(Commands.tarCompress)
+            operation.toExecute.startsWith(Commands.tar)
 
     private fun isRmRemote(operation: Command, file: String) =
             isRm(operation, file) &&
