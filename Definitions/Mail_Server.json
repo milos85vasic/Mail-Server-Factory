@@ -14,7 +14,7 @@
             "value": "mkdir -p {{DOCKER_HOME}}/Postgres"
           },
           {
-            "type": "copy",
+            "type": "deploy",
             "value": "Docker/Postgres:{{DOCKER_HOME}}/Postgres"
           },
           {

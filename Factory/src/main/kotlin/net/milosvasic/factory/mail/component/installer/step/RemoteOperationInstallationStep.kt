@@ -55,7 +55,7 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
         connection?.subscribe(listener)
     }
 
-    protected fun finish(success: Boolean, operation: Operation) {
+    protected open fun finish(success: Boolean, operation: Operation) {
         connection?.unsubscribe(listener)
         connection = null
         val operationResult = OperationResult(operation, success)

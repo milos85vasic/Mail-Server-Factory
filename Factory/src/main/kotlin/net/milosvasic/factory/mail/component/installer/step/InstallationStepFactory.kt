@@ -5,8 +5,8 @@ import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepT
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
-import net.milosvasic.factory.mail.component.installer.step.copy.Copy
-import net.milosvasic.factory.mail.component.installer.step.copy.CopyValidator
+import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
+import net.milosvasic.factory.mail.component.installer.step.deploy.DeployValidator
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
@@ -47,18 +47,18 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
 
                 return Condition(definition.getValue())
             }
-            InstallationStepType.COPY.type -> {
+            InstallationStepType.DEPLOY.type -> {
 
-                val validator = CopyValidator()
+                val validator = DeployValidator()
                 if (validator.validate(definition.getValue())) {
 
-                    val fromTo = definition.getValue().split(Copy.delimiter)
+                    val fromTo = definition.getValue().split(Deploy.delimiter)
                     val from = fromTo[0].trim()
                     val to = fromTo[1].trim()
-                    return Copy(from, to)
+                    return Deploy(from, to)
                 } else {
 
-                    throw IllegalArgumentException("Invalid copy parameters")
+                    throw IllegalArgumentException("Invalid deploy parameters")
                 }
             }
             DockerInstallationStepType.VOLUME.type -> {
