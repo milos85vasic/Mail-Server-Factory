@@ -86,6 +86,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                 if (whatFile.isDirectory) {
 
                     processFiles(whatFile)
+                    // TODO: Tar all except proto files.
                     command = Commands.tar(whatFile.absolutePath, localTar)
                     terminal?.execute(Command(command))
                 } else {
