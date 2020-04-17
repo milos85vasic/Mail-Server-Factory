@@ -13,7 +13,7 @@ data class Permissions(
 
         val validator = PermissionsValidator()
         if (validator.validate(user, group, others)) {
-            return "$user$group$others"
+            return "${user.value}${group.value}${others.value}"
         }
         return "000"
     }
