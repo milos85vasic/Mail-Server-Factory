@@ -96,7 +96,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
                         val chown = Commands.chown(remote.account, where)
                         val chgrp = Commands.chgrp(remote.account, where)
-                        val permissions = Permissions(Permission(7), Permission(0), Permission(0))
+                        val permissions = Permissions(Permission.ALL, Permission.NONE, Permission.NONE)
 
                         try {
                             val chmod = Commands.chmod(where, permissions.obtain())
