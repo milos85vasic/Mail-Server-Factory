@@ -5,9 +5,12 @@ import net.milosvasic.factory.mail.component.docker.DockerCommand
 import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.security.Permission
+import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.Commands
 import java.io.File
 
@@ -27,6 +30,7 @@ class Stack(
     private var dockerCompose = false
     private var command = String.EMPTY
     private val flags = "-d --remove-orphans"
+    private val operation = DockerInstallationOperation()
     private val composeFile = "$composeFileName$composeFileExtension"
 
     override fun handleResult(result: OperationResult) {
@@ -57,20 +61,43 @@ class Stack(
                         val stopGenerate = generate(stopCmd, stopShellScript)
                         val restartGenerate = generate(restartCmd, restartShellScript)
 
-                        val builder = StringBuilder()
-                                .append(startGenerate)
-                                .append("; ").append(stopGenerate)
-                                .append("; ").append(restartGenerate)
+                        try {
+                            val ownershipAndPermissionsStart = getOwnershipAndPermissions(startShellScript)
+                            val ownershipAndPermissionsStop = getOwnershipAndPermissions(stopShellScript)
+                            val ownershipAndPermissionsRestart = getOwnershipAndPermissions(restartShellScript)
 
-                        command = builder.toString()
-                        connection?.execute(command)
+                            command = Commands.concatenate(
+                                    startGenerate,
+                                    stopGenerate,
+                                    restartGenerate,
+                                    ownershipAndPermissionsStart,
+                                    ownershipAndPermissionsStop,
+                                    ownershipAndPermissionsRestart
+                            )
+                            connection?.execute(command)
+                        } catch (e: IllegalArgumentException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        }
                     } else {
 
-                        finish(result.success, DockerInstallationOperation())
+                        finish(result.success, operation)
                     }
                 }
             }
         }
+    }
+
+    @Throws(IllegalArgumentException::class)
+    private fun getOwnershipAndPermissions(script: String): String {
+        val account = connection?.getRemote()?.account ?: throw IllegalArgumentException("No host for connection provided")
+        val permissions = Permissions(Permission.ALL, Permission.NONE, Permission.NONE)
+        return Commands.concatenate(
+                Commands.chown(account, script),
+                Commands.chgrp(account, script),
+                Commands.chmod(script, permissions.obtain())
+        )
     }
 
     @Synchronized
