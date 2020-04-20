@@ -11,6 +11,7 @@ object Commands {
     const val find = "find "
     const val ssh = "ssh -p"
     const val scp = "scp -P"
+    const val mkdir = "mkdir -p"
     const val chmod = "chmod -R"
     const val chgrp = "chgrp -R"
     const val chown = "chown -R"
@@ -60,6 +61,8 @@ object Commands {
     fun chgrp(group: String, directory: String) = "$chgrp $group $directory"
 
     fun chown(account: String, directory: String) = "$chown $account $directory"
+
+    fun mkdir(path: String) = "$mkdir $path"
 
     fun concatenate(vararg commands: String): String {
         var result = String.EMPTY

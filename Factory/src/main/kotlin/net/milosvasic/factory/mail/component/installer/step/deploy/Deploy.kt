@@ -33,6 +33,34 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
             is Command -> {
+                if (isMkdir(result.operation)) {
+
+                    terminal = connection?.terminal
+                    if (terminal == null) {
+
+                        log.e("No terminal for deployment")
+                        finish(false, operation)
+                    } else {
+
+                        if (whatFile.exists()) {
+                            if (whatFile.isDirectory) {
+
+                                processFiles(whatFile)
+                                command = Commands.tar(whatFile.absolutePath, localTar)
+                                terminal?.execute(Command(command))
+                            } else {
+
+                                log.e("${whatFile.absolutePath} is not directory")
+                                finish(false, operation)
+                            }
+                        } else {
+
+                            log.e("File does not exist: ${whatFile.absolutePath}")
+                            finish(false, operation)
+                        }
+                    }
+                    return
+                }
                 if (isTarCompress(result.operation)) {
 
                     val remote = connection?.getRemote()
@@ -123,30 +151,8 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: SSH) {
         super.execute(*params)
-        terminal = connection?.terminal
-        if (terminal == null) {
-
-            log.e("No terminal for deployment")
-            finish(false, operation)
-        } else {
-
-            if (whatFile.exists()) {
-                if (whatFile.isDirectory) {
-
-                    processFiles(whatFile)
-                    command = Commands.tar(whatFile.absolutePath, localTar)
-                    terminal?.execute(Command(command))
-                } else {
-
-                    log.e("${whatFile.absolutePath} is not directory")
-                    finish(false, operation)
-                }
-            } else {
-
-                log.e("File does not exist: ${whatFile.absolutePath}")
-                finish(false, operation)
-            }
-        }
+        command = Commands.mkdir(where)
+        connection?.execute(command)
     }
 
     override fun finish(success: Boolean, operation: Operation) {
@@ -242,4 +248,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
     private fun isChmod(operation: Command) =
             operation.toExecute.contains(Commands.chmod)
+
+    private fun isMkdir(operation: Command) =
+            operation.toExecute.contains(Commands.mkdir)
 }

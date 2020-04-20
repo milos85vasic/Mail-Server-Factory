@@ -10,10 +10,6 @@
             "value": "postgres_database"
           },
           {
-            "type": "command",
-            "value": "mkdir -p {{DOCKER_HOME}}/Postgres"
-          },
-          {
             "type": "deploy",
             "value": "Docker/Postgres:{{DOCKER_HOME}}/Postgres"
           },
