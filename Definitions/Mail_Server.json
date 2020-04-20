@@ -43,12 +43,14 @@
     {
       "name": "Mail server stack: Postfix",
       "version": "1.0.0",
-      "installationSteps": [
-        {
-          "type": "deploy",
-          "value": "Docker/Postfix:{{DOCKER_HOME}}/Postfix"
-        }
-      ]
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "deploy",
+            "value": "Docker/Postfix:{{DOCKER_HOME}}/Postfix"
+          }
+        ]
+      }
     }
   ]
 }
