@@ -6,8 +6,8 @@
       "installationSteps": {
         "Docker": [
           {
-            "type": "condition",
-            "value": "docker ps -a --filter \"status=running\" | grep \"postgres_database\""
+            "type": "conditionCheck",
+            "value": "postgres_database"
           },
           {
             "type": "command",
@@ -22,8 +22,8 @@
             "value": "{{DOCKER_HOME}}/Postgres"
           },
           {
-            "type": "command",
-            "value": "docker ps -a --filter \"status=running\" | grep \"postgres_database\""
+            "type": "check",
+            "value": "postgres_database"
           },
           {
             "type": "command",
@@ -38,8 +38,8 @@
             "value": "120"
           },
           {
-            "type": "command",
-            "value": "docker ps -a --filter \"status=running\" | grep \"postgres_database\""
+            "type": "check",
+            "value": "postgres_database"
           }
         ]
       }

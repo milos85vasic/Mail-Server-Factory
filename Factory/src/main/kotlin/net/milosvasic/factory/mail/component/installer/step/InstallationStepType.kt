@@ -8,5 +8,7 @@ enum class InstallationStepType(val type: String) {
     COMMAND("command"),
     REBOOT("reboot"),
     DEPLOY("deploy"),
-    CONDITION("condition")
+    CONDITION("condition"),
+    CHECK("check"),
+    CONDITION_CHECK("conditionCheck")
 }

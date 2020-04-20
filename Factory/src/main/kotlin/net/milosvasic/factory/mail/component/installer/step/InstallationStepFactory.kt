@@ -2,6 +2,8 @@ package net.milosvasic.factory.mail.component.installer.step
 
 import net.milosvasic.factory.mail.common.ObtainParametrized
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepType
+import net.milosvasic.factory.mail.component.docker.step.stack.Check
+import net.milosvasic.factory.mail.component.docker.step.stack.ConditionCheck
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
@@ -46,6 +48,14 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
             InstallationStepType.CONDITION.type -> {
 
                 return Condition(definition.getValue())
+            }
+            InstallationStepType.CONDITION_CHECK.type -> {
+
+                return ConditionCheck(definition.getValue())
+            }
+            InstallationStepType.CHECK.type -> {
+
+                return Check(definition.getValue())
             }
             InstallationStepType.DEPLOY.type -> {
 

@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
+import net.milosvasic.factory.mail.component.docker.step.stack.CheckOperation
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
@@ -71,6 +72,15 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 }
             }
             is RebootOperation -> {
+
+                unsubscribeFromItem(listener)
+                if (result.success) {
+                    tryNext()
+                } else {
+                    free(false)
+                }
+            }
+            is CheckOperation -> {
 
                 unsubscribeFromItem(listener)
                 if (result.success) {
