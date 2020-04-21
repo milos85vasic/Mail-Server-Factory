@@ -266,9 +266,9 @@ mynetworks_style = host
 # of listing the patterns here. Specify type:table for table-based lookups
 # (the value on the table right-hand side is not used).
 #
-mynetworks = 192.168.100.0/24, 127.0.0.0/8 # TODO: __NETWORKS__
-#mynetworks = $config_directory/mynetworks
-#mynetworks = hash:/etc/postfix/network_table
+# mynetworks = 192.168.100.0/24, 127.0.0.0/8
+# mynetworks = $config_directory/mynetworks
+# mynetworks = hash:/etc/postfix/network_table
 
 # The relay_domains parameter restricts what destinations this system will
 # relay mail to.  See the smtpd_recipient_restrictions description in
