@@ -82,6 +82,7 @@ mail_owner = postfix
 # parameters.
 #
 #mydomain = domain.tld
+# TODO: {{DOMAIN}}
 
 # SENDING MAIL
 # 
