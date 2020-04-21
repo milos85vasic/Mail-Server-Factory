@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Starting Postfix"
+echo "Starting Postfix on `hostname`"
 
 # TODO: Tbd.
 
