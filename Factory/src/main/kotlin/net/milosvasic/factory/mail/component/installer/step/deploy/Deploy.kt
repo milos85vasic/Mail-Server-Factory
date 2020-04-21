@@ -45,9 +45,15 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                         if (whatFile.exists()) {
                             if (whatFile.isDirectory) {
 
-                                processFiles(whatFile)
-                                command = Commands.tar(whatFile.absolutePath, localTar)
-                                terminal?.execute(Command(command))
+                                try {
+                                    processFiles(whatFile)
+                                    command = Commands.tar(whatFile.absolutePath, localTar)
+                                    terminal?.execute(Command(command))
+                                } catch (e: IllegalStateException) {
+
+                                    log.e(e)
+                                    finish(false, operation)
+                                }
                             } else {
 
                                 log.e("${whatFile.absolutePath} is not directory")
@@ -165,7 +171,9 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
         val fileList = directory.listFiles()
         fileList?.let { files ->
             files.forEach { file ->
-                if (file.name.toLowerCase().startsWith(prototypePrefix)) {
+                if (file.isDirectory) {
+                    processFiles(file)
+                } else if (file.name.toLowerCase().startsWith(prototypePrefix)) {
                     processFile(directory, file)
                 }
             }
@@ -177,7 +185,9 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
         val fileList = directory.listFiles()
         fileList?.let { files ->
             files.forEach { file ->
-                if (file.name.toLowerCase().startsWith(prototypePrefix)) {
+                if (file.isDirectory) {
+                    cleanupFiles(file)
+                } else if (file.name.toLowerCase().startsWith(prototypePrefix)) {
                     val toRemove = File(directory, getName(file))
                     cleanupFile(toRemove)
                 }

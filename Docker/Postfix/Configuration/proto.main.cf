@@ -74,7 +74,7 @@ mail_owner = postfix
 #
 #myhostname = host.domain.tld
 #myhostname = virtual.domain.tld
-# TODO: {{HOST_NAMES}}
+# TODO: __HOST_NAMES__
 
 # The mydomain parameter specifies the local internet domain name.
 # The default is to use $myhostname minus the first component.
@@ -82,7 +82,7 @@ mail_owner = postfix
 # parameters.
 #
 #mydomain = domain.tld
-# TODO: {{DOMAIN}}
+# TODO: __DOMAIN__
 
 # SENDING MAIL
 # 
