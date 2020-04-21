@@ -75,7 +75,7 @@ mail_owner = postfix
 #myhostname = host.domain.tld
 #myhostname = virtual.domain.tld
 myhostname = local.postfix.dev
-# TODO: __HOST_NAMES__
+# TODO: __HOST_NAMES__ (white space or newline + white space separated values)
 
 # The mydomain parameter specifies the local internet domain name.
 # The default is to use $myhostname minus the first component.
