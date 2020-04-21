@@ -685,3 +685,16 @@ readme_directory = /usr/share/doc/postfix-2.10.1/README_FILES
 # TODO:
 # default_database_type = pgsql
 # canonical_maps = pgsql:/path
+
+# parent_domain_matches_subdomains =
+#     debug_peer_list
+#     fast_flush_domains
+#     mynetworks
+#     permit_mx_backup_networks
+#     qmqpd_authorized_clients
+#     relay_domains
+#     smtpd_access_maps
+#     transport_maps
+
+# TODO:
+# transport_maps = pgsql:/path
