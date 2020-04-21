@@ -15,4 +15,5 @@ ADD Scripts/start.sh /start.sh
 # TODO: Expose
 
 RUN newaliases
+RUN postalias /etc/aliases
 CMD sh start.sh
