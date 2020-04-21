@@ -4,4 +4,6 @@ echo "Starting Postfix"
 
 # TODO: Tbd.
 
-postfix start
+service postfix start
+chkconfig postfix on
+service postfix status
