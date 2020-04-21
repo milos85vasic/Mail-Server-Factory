@@ -13,4 +13,4 @@ ADD Scripts/start.sh /start.sh
 # TODO: Env
 # TODO: Expose
 
-CMD sh start.sh
+CMD start.sh
