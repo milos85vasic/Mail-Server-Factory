@@ -84,7 +84,7 @@ myhostname = local.postfix.dev
 #
 #mydomain = domain.tld
 mydomain = postfix.dev
-# TODO: __DOMAIN__
+# TODO: __DOMAIN__ --- All domains, separated
 
 # SENDING MAIL
 # 
