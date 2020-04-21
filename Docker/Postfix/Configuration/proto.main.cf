@@ -388,6 +388,7 @@ mynetworks = 192.168.100.0/24, 127.0.0.0/8 # TODO: __NETWORKS__
 #
 #alias_maps = dbm:/etc/aliases
 alias_maps = hash:/etc/aliases
+# TODO: alias_maps = pgsql:/path
 #alias_maps = hash:/etc/aliases, nis:mail.aliases
 #alias_maps = netinfo:/aliases
 
