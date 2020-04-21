@@ -14,4 +14,5 @@ ADD Scripts/start.sh /start.sh
 # TODO: Env
 # TODO: Expose
 
+RUN newaliases
 CMD sh start.sh
