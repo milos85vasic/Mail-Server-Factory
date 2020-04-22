@@ -4,4 +4,4 @@ echo "Starting Postfix on `hostname`"
 
 # TODO: Tbd.
 
-postfix start
+postfix start && postfix check
