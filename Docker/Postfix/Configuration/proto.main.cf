@@ -255,72 +255,6 @@ unknown_local_recipient_reject_code = 550
 #mynetworks_style = subnet
 mynetworks_style = host
 
-# Alternatively, you can specify the mynetworks list by hand, in
-# which case Postfix ignores the mynetworks_style setting.
-#
-# Specify an explicit list of network/netmask patterns, where the
-# mask specifies the number of bits in the network part of a host
-# address.
-#
-# You can also specify the absolute pathname of a pattern file instead
-# of listing the patterns here. Specify type:table for table-based lookups
-# (the value on the table right-hand side is not used).
-#
-# mynetworks = 192.168.100.0/24, 127.0.0.0/8
-# mynetworks = $config_directory/mynetworks
-# mynetworks = hash:/etc/postfix/network_table
-
-# The relay_domains parameter restricts what destinations this system will
-# relay mail to.  See the smtpd_recipient_restrictions description in
-# postconf(5) for detailed information.
-#
-# By default, Postfix relays mail
-# - from "trusted" clients (IP address matches $mynetworks) to any destination,
-# - from "untrusted" clients to destinations that match $relay_domains or
-#   subdomains thereof, except addresses with sender-specified routing.
-# The default relay_domains value is $mydestination.
-# 
-# In addition to the above, the Postfix SMTP server by default accepts mail
-# that Postfix is final destination for:
-# - destinations that match $inet_interfaces or $proxy_interfaces,
-# - destinations that match $mydestination
-# - destinations that match $virtual_alias_domains,
-# - destinations that match $virtual_mailbox_domains.
-# These destinations do not need to be listed in $relay_domains.
-# 
-# Specify a list of hosts or domains, /file/name patterns or type:name
-# lookup tables, separated by commas and/or whitespace.  Continue
-# long lines by starting the next line with whitespace. A file name
-# is replaced by its contents; a type:name table is matched when a
-# (parent) domain appears as lookup key.
-#
-# NOTE: Postfix will not automatically forward mail for domains that
-# list this system as their primary or backup MX host. See the
-# permit_mx_backup restriction description in postconf(5).
-#
-#relay_domains = $mydestination
-
-# INTERNET OR INTRANET
-
-# The relayhost parameter specifies the default host to send mail to
-# when no entry is matched in the optional transport(5) table. When
-# no relayhost is given, mail is routed directly to the destination.
-#
-# On an intranet, specify the organizational domain name. If your
-# internal DNS uses no MX records, specify the name of the intranet
-# gateway host instead.
-#
-# In the case of SMTP, specify a domain, host, host:port, [host]:port,
-# [address] or [address]:port; the form [host] turns off MX lookups.
-#
-# If you're connected via UUCP, see also the default_transport parameter.
-#
-#relayhost = $mydomain
-#relayhost = [gateway.my.domain]
-#relayhost = [mailserver.isp.tld]
-#relayhost = uucphost
-#relayhost = [an.ip.add.ress]
-
 # REJECTING UNKNOWN RELAY USERS
 #
 # The relay_recipient_maps parameter specifies optional lookup tables
@@ -697,3 +631,7 @@ append_dot_mydomain = no
 # Any address whose fully qualified hostname matches the domain portion is stripped down to just the domain name:
 # TODO:
 # masquerade_domains = __DOMAIN_NAMES__
+
+# TODO:
+# body_checks = regexp:/etc/postfix/re_body_checks
+# body_checks_size_limit = 51200
