@@ -686,6 +686,9 @@ readme_directory = /usr/share/doc/postfix-2.10.1/README_FILES
 # Set to 100MB:
 message_size_limit = 102400000
 
+# Set to 1MB:
+bounce_size_limit = 1024000
+
 append_at_myorigin = no
 append_dot_mydomain = no
 
