@@ -702,6 +702,9 @@ readme_directory = /usr/share/doc/postfix-2.10.1/README_FILES
 # TODO:
 # transport_maps = pgsql:/path
 
+# TODO:
+# relocated_maps = pgsql:/path
+
 # Set to 100MB:
 message_size_limit = 102400000
 
