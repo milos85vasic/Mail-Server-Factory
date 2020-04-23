@@ -130,7 +130,10 @@ mydestination = $myhostname, localhost.$mydomain, $mydomain
 # TODO: __DOMAIN_NAMES__ --- All domains, separated
 # virtual_alias_domains = domain, domain, domain ...
 
-# TODO:
+# TODO: Probably not needed. Maps mails to local sys. accounts.
+# info@ora.com helene@localhost
+# info@oreilly.com frank@localhost
+# kdent@oreilly.com kyle.dent@onlamp.com
 # virtual_alias_maps = pgsql:/path
 
 
