@@ -65,58 +65,14 @@ mail_owner = postfix
 #
 #default_privs = nobody
 
-# INTERNET HOST AND DOMAIN NAMES
-# 
-# The myhostname parameter specifies the internet hostname of this
-# mail system. The default is to use the fully-qualified domain name
-# from gethostname(). $myhostname is used as a default value for many
-# other configuration parameters.
-#
-#myhostname = host.domain.tld
-#myhostname = virtual.domain.tld
+# TODO: Main host name
 myhostname = local.postfix.dev
-# TODO: __HOST_NAMES__ (white space or newline + white space separated values - or just comma separated)
 
-# The mydomain parameter specifies the local internet domain name.
-# The default is to use $myhostname minus the first component.
-# $mydomain is used as a default value for many other configuration
-# parameters.
-#
-#mydomain = domain.tld
+# TODO: Main domain
 mydomain = postfix.dev
-# TODO: __DOMAIN_NAMES__ --- All domains, separated
 
-# SENDING MAIL
-# 
-# The myorigin parameter specifies the domain that locally-posted
-# mail appears to come from. The default is to append $myhostname,
-# which is fine for small sites.  If you run a domain with multiple
-# machines, you should (1) change this to $mydomain and (2) set up
-# a domain-wide alias database that aliases each user to
-# user@that.users.mailhost.
-#
-# For the sake of consistency between sender and recipient addresses,
-# myorigin also specifies the default domain name that is appended
-# to recipient addresses that have no @domain part.
-#
-#myorigin = $myhostname
 myorigin = $mydomain
 
-# RECEIVING MAIL
-
-# The inet_interfaces parameter specifies the network interface
-# addresses that this mail system receives mail on.  By default,
-# the software claims all active interfaces on the machine. The
-# parameter also controls delivery of mail to user@[ip.address].
-#
-# See also the proxy_interfaces parameter, for network addresses that
-# are forwarded to us via a proxy or network address translator.
-#
-# Note: you need to stop/start Postfix when this parameter changes.
-#
-inet_interfaces = all
-#inet_interfaces = $myhostname
-#inet_interfaces = $myhostname, localhost
 inet_interfaces = localhost
 
 # Enable IPv4, and IPv6 if supported
@@ -168,8 +124,12 @@ inet_protocols = ipv4
 # mydestination = $myhostname, localhost.$mydomain, localhost
 # mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
 # mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain,
+
+# TODO: Only main domain
 mydestination = $myhostname, localhost.$mydomain, $mydomain
-#	mail.$mydomain, www.$mydomain, ftp.$mydomain
+# TODO: __DOMAIN_NAMES__ --- All domains, separated
+# virtual_alias_domains = domain, domain, domain ...
+
 
 # REJECTING MAIL FOR UNKNOWN LOCAL USERS
 #
