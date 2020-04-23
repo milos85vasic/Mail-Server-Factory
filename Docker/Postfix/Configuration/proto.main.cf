@@ -137,11 +137,11 @@ mydestination = $myhostname, localhost.$mydomain, $mydomain
 # TODO: __DOMAIN_NAMES__ --- All domains, separated
 # virtual_mailbox_domains = domain, domain, domain ...
 
-# TODO:
-# virtual_mailbox_maps = pgsql:/path
-
 # TODO: Path!
 virtual_mailbox_base = /usr/local/vmail
+
+# TODO:
+# virtual_mailbox_maps = pgsql:/path
 
 # REJECTING MAIL FOR UNKNOWN LOCAL USERS
 #
