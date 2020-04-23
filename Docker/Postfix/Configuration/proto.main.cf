@@ -356,8 +356,8 @@ alias_database = hash:/etc/aliases
 # mailbox file is /var/spool/mail/user or /var/mail/user.  Specify
 # "Maildir/" for qmail-style delivery (the / is required).
 #
-#home_mailbox = Mailbox
-home_mailbox = Maildir/
+# home_mailbox = Mailbox
+# home_mailbox = Maildir/
  
 # We use 'Maildir' mail format:
 mail_spool_directory = /var/spool/mail/
