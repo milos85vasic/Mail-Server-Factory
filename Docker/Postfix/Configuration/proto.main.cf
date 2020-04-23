@@ -607,3 +607,5 @@ append_dot_mydomain = no
 # TODO:
 # body_checks = regexp:/etc/postfix/re_body_checks
 # body_checks_size_limit = 51200
+
+virtual_transport = dovecot
