@@ -359,12 +359,8 @@ alias_database = hash:/etc/aliases
 #home_mailbox = Mailbox
 home_mailbox = Maildir/
  
-# The mail_spool_directory parameter specifies the directory where
-# UNIX-style mailboxes are kept. The default setting depends on the
-# system type.
-#
-#mail_spool_directory = /var/mail
-#mail_spool_directory = /var/spool/mail
+# We use 'Maildir' mail format:
+mail_spool_directory = /var/spool/mail/
 
 # The mailbox_command parameter specifies the optional external
 # command to use instead of mailbox delivery. The command is run as
