@@ -144,7 +144,7 @@ virtual_mailbox_base = /usr/local/vmail
 # virtual_mailbox_maps = pgsql:/path
 
 # TODO: Provide real account and group IDs:
-virtual_uid_maps = static:1003
+virtual_uid_maps = pgsql:/path
 virtual_gid_maps = static:1005
 
 # REJECTING MAIL FOR UNKNOWN LOCAL USERS
