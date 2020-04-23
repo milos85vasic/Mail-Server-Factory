@@ -143,6 +143,10 @@ virtual_mailbox_base = /usr/local/vmail
 # TODO:
 # virtual_mailbox_maps = pgsql:/path
 
+# TODO: Provide real account and group IDs:
+virtual_uid_maps = static:1003
+virtual_gid_maps = static:1005
+
 # REJECTING MAIL FOR UNKNOWN LOCAL USERS
 #
 # The local_recipient_maps parameter specifies optional lookup tables
