@@ -130,6 +130,9 @@ mydestination = $myhostname, localhost.$mydomain, $mydomain
 # TODO: __DOMAIN_NAMES__ --- All domains, separated
 # virtual_alias_domains = domain, domain, domain ...
 
+# TODO:
+# virtual_alias_maps = pgsql:/path
+
 
 # REJECTING MAIL FOR UNKNOWN LOCAL USERS
 #
