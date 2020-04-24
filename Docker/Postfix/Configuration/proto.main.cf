@@ -619,6 +619,7 @@ smtpd_recipient_restrictions =
     reject_unknown_sender_domain
 
 smtpd_delay_reject = no
+smtpd_helo_required = yes
 
 # TODO:
 # smtpd_client_restrictions
