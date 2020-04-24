@@ -615,7 +615,16 @@ smtpd_recipient_restrictions =
     permit_sasl_authenticated
     permit_mynetworks
     reject_unauth_destination
+    reject_non_fqdn_recipient
     reject_invalid_hostname
+    reject_unknown_sender_domain
+    reject_unknown_recipient_domain
+
+smtpd_helo_restrictions =
+    reject_invalid_hostname
+
+smtpd_sender_restrictions =
+    reject_non_fqdn_sender
     reject_unknown_sender_domain
 
 # TODO:
