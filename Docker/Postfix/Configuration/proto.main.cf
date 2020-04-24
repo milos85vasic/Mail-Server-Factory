@@ -627,6 +627,5 @@ smtpd_recipient_restrictions =
 
 smtpd_delay_reject = no
 smtpd_helo_required = yes
-header_checks = regexp:/etc/postfix/header_checks
 
 smtpd_client_message_rate_limit = 5
