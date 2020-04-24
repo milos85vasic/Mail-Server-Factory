@@ -645,3 +645,5 @@ smtpd_sasl_auth_enable = yes
 # TODO: Path
 smtpd_sasl_path = private/auth
 smtpd_tls_auth_only = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
