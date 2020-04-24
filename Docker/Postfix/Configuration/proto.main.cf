@@ -619,3 +619,5 @@ smtpd_recipient_restrictions = permit_sasl_authenticated, permit_mynetworks, rej
 # smtpd_sender_restrictions
 # smtpd_recipient_restrictions
 # smtpd_data_restrictions
+
+smtpd_client_message_rate_limit = 5
