@@ -609,3 +609,6 @@ append_dot_mydomain = no
 # body_checks_size_limit = 51200
 
 virtual_transport = dovecot
+
+# Anti-spam configuration:
+smtpd_recipient_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unauth_destination
