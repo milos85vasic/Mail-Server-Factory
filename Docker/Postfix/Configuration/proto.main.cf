@@ -611,7 +611,13 @@ append_dot_mydomain = no
 virtual_transport = dovecot
 
 # Anti-spam configuration:
-smtpd_recipient_restrictions = permit_sasl_authenticated, permit_mynetworks, reject_unauth_destination
+smtpd_recipient_restrictions =
+    permit_sasl_authenticated
+    permit_mynetworks
+    reject_unauth_destination
+    reject_invalid_hostname
+    reject_unknown_sender_domain
+
 smtpd_delay_reject = no
 
 # TODO:
