@@ -659,3 +659,6 @@ smtp_use_tls = yes
 # TODO: Points to a directory of files each containing a public certificate for a Certificate Authority you trust
 # smtpd_tls_CApath = /etc/postfix/certs/
 
+# Content filtering:
+# TODO: Pass to ClamAV instance (proper IP instead of loopback)
+# content_filter = chkmsg:[127.0.0.1]:10025
