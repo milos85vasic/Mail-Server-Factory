@@ -618,14 +618,15 @@ smtpd_recipient_restrictions =
     reject_invalid_hostname
     reject_unknown_sender_domain
 
-smtpd_delay_reject = no
-smtpd_helo_required = yes
-
 # TODO:
 # smtpd_client_restrictions
 # smtpd_helo_restrictions
 # smtpd_sender_restrictions
 # smtpd_recipient_restrictions
 # smtpd_data_restrictions
+
+smtpd_delay_reject = no
+smtpd_helo_required = yes
+header_checks = regexp:/etc/postfix/header_checks
 
 smtpd_client_message_rate_limit = 5
