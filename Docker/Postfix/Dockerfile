@@ -18,5 +18,5 @@ RUN newaliases
 # TODO: Use Postgres
 RUN postalias /etc/aliases
 # TODO: Mapping virtual with system accounts, probably we will need this:
-RUN postmap virtual_alias && postmap canonical
+# RUN postmap virtual_alias && postmap canonical
 CMD sh start.sh
