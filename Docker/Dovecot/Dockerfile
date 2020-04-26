@@ -1,7 +1,7 @@
 FROM centos:centos7.7.1908
 
 RUN yum update -y
-RUN yum --enablerepo=centosplus install -y dovecot
+RUN yum --enablerepo=centosplus install -y dovecot dovecot-pgsql
 RUN yum install -y openssl
 ADD Configuration /etc/dovecot
 
