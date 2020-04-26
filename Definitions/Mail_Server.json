@@ -51,6 +51,18 @@
           }
         ]
       }
+    },
+    {
+      "name": "Mail server stack: Dovecot",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "deploy",
+            "value": "Docker/Dovecot:{{DOCKER_HOME}}/Dovecot"
+          }
+        ]
+      }
     }
   ]
 }
