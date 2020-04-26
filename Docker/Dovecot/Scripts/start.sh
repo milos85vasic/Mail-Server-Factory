@@ -2,7 +2,6 @@
 
 echo "Starting Dovecot on `hostname`"
 
-mkdir /run/dovecot
 chmod -R +r /run/dovecot
 chmod -R +w /run/dovecot
 
