@@ -2,7 +2,7 @@ FROM centos:centos7.7.1908
 
 RUN yum update -y
 RUN yum --enablerepo=centosplus install -y dovecot
-RUN yum install -y openssl rsyslog
+RUN yum install -y openssl
 ADD Configuration /etc/dovecot
 
 ADD Scripts/start.sh /start.sh
