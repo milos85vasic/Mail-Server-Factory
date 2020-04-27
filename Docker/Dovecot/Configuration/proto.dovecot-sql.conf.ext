@@ -1,0 +1,5 @@
+driver = pgsql
+# TODO:
+# connect = host=__DB_HOST__ dbname=__DB_NAME__ user=__DB_USER__ password=__DB_PASSWORD__
+# default_pass_scheme = PLAIN
+# password_query = SELECT email as user, password FROM mail_view_users WHERE email='%u';
