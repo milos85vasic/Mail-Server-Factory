@@ -4,3 +4,4 @@ driver = pgsql
 # default_pass_scheme = PLAIN
 # password_query = SELECT email as user, password FROM mail_view_users WHERE email='%u';
 # user_query = TBD.
+# iterate_query = SELECT username AS user FROM users
