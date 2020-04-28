@@ -643,7 +643,7 @@ smtpd_client_message_rate_limit = 5
 # SASL:
 smtpd_sasl_type = dovecot
 smtpd_sasl_auth_enable = yes
-# TODO: Path
+# TODO: Path ---> proto.10-master.conf, service auth { ... inet_listener !!!
 smtpd_sasl_path = private/auth
 smtpd_tls_auth_only = yes
 smtpd_sasl_security_options = noanonymous
