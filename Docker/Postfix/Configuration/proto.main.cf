@@ -614,6 +614,7 @@ virtual_transport = dovecot
 smtpd_recipient_restrictions =
     permit_sasl_authenticated
     permit_mynetworks
+    reject_unverified_recipient
     reject_unauth_destination
     reject_non_fqdn_recipient
     reject_invalid_hostname
@@ -662,3 +663,12 @@ smtp_use_tls = yes
 # Content filtering:
 # TODO: Pass to ClamAV instance (proper IP instead of loopback)
 # content_filter = chkmsg:[127.0.0.1]:10025
+
+address_verify_map = btree:$data_directory/verify_cache
+address_verify_negative_expire_time = 3d
+address_verify_negative_refresh_time = 3h
+address_verify_positive_expire_time = 31d
+address_verify_positive_refresh_time = 7d
+unverified_recipient_reject_code = 577
+
+
