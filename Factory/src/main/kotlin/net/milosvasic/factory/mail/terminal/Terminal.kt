@@ -14,8 +14,6 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.lang.Exception
-import java.lang.StringBuilder
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class Terminal :

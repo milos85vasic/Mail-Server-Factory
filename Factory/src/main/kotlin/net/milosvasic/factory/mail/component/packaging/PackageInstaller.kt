@@ -3,7 +3,10 @@ package net.milosvasic.factory.mail.component.packaging
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.Initialization
-import net.milosvasic.factory.mail.component.packaging.item.*
+import net.milosvasic.factory.mail.component.packaging.item.Group
+import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
+import net.milosvasic.factory.mail.component.packaging.item.Package
+import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult

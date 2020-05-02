@@ -1,7 +1,10 @@
 package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.common.Obtain
-import net.milosvasic.factory.mail.configuration.*
+import net.milosvasic.factory.mail.configuration.ConfigurationManager
+import net.milosvasic.factory.mail.configuration.VariableContext
+import net.milosvasic.factory.mail.configuration.VariableKey
+import net.milosvasic.factory.mail.configuration.VariableNode
 import java.io.File
 
 enum class DockerCommand : Obtain<String> {
