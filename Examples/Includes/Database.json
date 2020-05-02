@@ -1,0 +1,8 @@
+{
+  "variables": {
+    "DB": {
+      "DB_PORT": "35432",
+      "DB_PASSWORD": "Postgres123"
+    }
+  }
+}
