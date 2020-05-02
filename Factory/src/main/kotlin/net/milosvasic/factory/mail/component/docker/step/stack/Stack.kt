@@ -4,7 +4,6 @@ import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.docker.DockerCommand
 import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
-import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -105,20 +104,9 @@ class Stack(
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: Connection) {
         super.execute(*params)
-
         dockerCompose = true
-        var args = String.EMPTY
-        val configuration = ConfigurationManager.getConfiguration()
-        val variables = configuration.variables
-        if (variables == null || variables.isEmpty()) {
-            args = String.EMPTY
-        } else {
-            variables.keys.forEach { key ->
-                args += " $key=${configuration.getVariableParsed(key)}"
-            }
-        }
         val path = getYmlPath()
-        command = "$args ${DockerCommand.COMPOSE.obtain()} -f $path ${DockerCommand.UP.obtain()} $flags"
+        command = "${DockerCommand.COMPOSE.obtain()} -f $path ${DockerCommand.UP.obtain()} $flags"
         connection?.execute(command)
     }
 

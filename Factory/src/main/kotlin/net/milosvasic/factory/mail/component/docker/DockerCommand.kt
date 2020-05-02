@@ -1,8 +1,7 @@
 package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.common.Obtain
-import net.milosvasic.factory.mail.configuration.ConfigurationManager
-import net.milosvasic.factory.mail.configuration.VariableKey
+import net.milosvasic.factory.mail.configuration.*
 import java.io.File
 
 enum class DockerCommand : Obtain<String> {
@@ -33,9 +32,11 @@ enum class DockerCommand : Obtain<String> {
         @Throws(IllegalStateException::class)
         override fun obtain(): String {
 
+            val context = VariableContext.Docker.context
             val dockerComposePath = VariableKey.DOCKER_COMPOSE_PATH.key
             val configuration = ConfigurationManager.getConfiguration()
-            return "${configuration.getVariableParsed(dockerComposePath)}${File.separator}docker-compose"
+            val key = "$context${VariableNode.contextSeparator}$dockerComposePath"
+            return "${configuration.getVariableParsed(key)}${File.separator}docker-compose"
         }
     },
     START {

@@ -30,7 +30,7 @@ object Variable {
                 if (variables == null) {
                     noVariable(match)
                 } else {
-                    val rawVariable = variables[match] ?: noVariable(match)
+                    val rawVariable = variables.get(match) ?: noVariable(match)
                     val variable = parse(rawVariable.toString())
                     result = result.replace("$open$match$close", variable)
                 }

@@ -5,7 +5,7 @@ open class ConfigurationInclude(
         val includes: MutableList<String>?,
         val software: MutableList<String>?,
         val containers: MutableList<String>?,
-        val variables: MutableMap<String, MutableMap<String, Any>>?
+        val variables: VariableNode?
 ) {
 
     override fun toString(): String {

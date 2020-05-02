@@ -6,13 +6,13 @@ services:
     container_name: postgres_database
     restart: always
     ports:
-    - ${DB_PORT}:5432
+    - {{DB.DB_PORT}}:5432
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_PASSWORD: {{DB.DB_PASSWORD}}
       PGDATA: /Server/Postgres/Database
     volumes:
-      - ${SERVER_HOME}/Server/Postgres/Database:/Server/Postgres/Database
+      - {{SERVER.SERVER_HOME}}/Server/Postgres/Database:/Server/Postgres/Database
 
 
 
