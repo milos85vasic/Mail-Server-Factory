@@ -91,7 +91,8 @@ class Stack(
 
     @Throws(IllegalArgumentException::class)
     private fun getOwnershipAndPermissions(script: String): String {
-        val account = connection?.getRemote()?.account ?: throw IllegalArgumentException("No host for connection provided")
+        val account = connection?.getRemote()?.account
+                ?: throw IllegalArgumentException("No host for connection provided")
         val permissions = Permissions(Permission.ALL, Permission.NONE, Permission.NONE)
         return Commands.concatenate(
                 Commands.chown(account, script),
@@ -109,7 +110,7 @@ class Stack(
         var args = String.EMPTY
         val configuration = ConfigurationManager.getConfiguration()
         val variables = configuration.variables
-        if (variables.isEmpty()) {
+        if (variables == null || variables.isEmpty()) {
             args = String.EMPTY
         } else {
             variables.keys.forEach { key ->

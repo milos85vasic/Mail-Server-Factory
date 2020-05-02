@@ -36,7 +36,10 @@ class ServerFactory : Application {
                     ConfigurationManager.initialize()
 
                     val configuration = ConfigurationManager.getConfiguration()
-                    configuration.variables.keys.forEach {
+
+                    // TODO: Remove me!
+                    return
+                    configuration.variables?.keys?.forEach {
                         val value = configuration.getVariableParsed(it)
                         log.v("Configuration variable: $it -> $value")
                     }
@@ -44,11 +47,11 @@ class ServerFactory : Application {
                     val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
                     val containersConfigurations = mutableListOf<SoftwareConfiguration>()
 
-                    configuration.software.forEach {
+                    configuration.software?.forEach {
                         val softwareConfiguration = SoftwareConfiguration.obtain(it)
                         softwareConfigurations.add(softwareConfiguration)
                     }
-                    configuration.containers.forEach {
+                    configuration.containers?.forEach {
                         val containerConfiguration = SoftwareConfiguration.obtain(it)
                         containersConfigurations.add(containerConfiguration)
                     }

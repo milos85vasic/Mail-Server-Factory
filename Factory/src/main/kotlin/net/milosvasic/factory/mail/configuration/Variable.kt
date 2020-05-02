@@ -20,11 +20,20 @@ object Variable {
         while (matcher.find()) {
             val match = matcher.group(1)
             if (match.isNotEmpty()) {
-                val rawVariable = ConfigurationManager.getConfiguration().variables[match]
-                        ?: throw IllegalStateException("No variable defined in the configuration for: '$match'")
 
-                val variable = parse(rawVariable.toString())
-                result = result.replace("$open$match$close", variable)
+                @Throws(IllegalStateException::class)
+                fun noVariable(match: String) {
+                    throw IllegalStateException("No variable defined in the configuration for: '$match'")
+                }
+
+                val variables = ConfigurationManager.getConfiguration().variables
+                if (variables == null) {
+                    noVariable(match)
+                } else {
+                    val rawVariable = variables[match] ?: noVariable(match)
+                    val variable = parse(rawVariable.toString())
+                    result = result.replace("$open$match$close", variable)
+                }
             }
         }
         return result

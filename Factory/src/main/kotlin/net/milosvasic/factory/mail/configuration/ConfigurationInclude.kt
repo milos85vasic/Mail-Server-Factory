@@ -2,12 +2,13 @@ package net.milosvasic.factory.mail.configuration
 
 open class ConfigurationInclude(
 
-        val variables: MutableMap<String, MutableMap<String, Any>> = mutableMapOf(),
-        val software: MutableList<String> = mutableListOf(),
-        val containers: MutableList<String> = mutableListOf()
+        val includes: MutableList<String>?,
+        val software: MutableList<String>?,
+        val containers: MutableList<String>?,
+        val variables: MutableMap<String, MutableMap<String, Any>>?
 ) {
 
     override fun toString(): String {
-        return "ConfigurationInclude(variables=$variables, software=$software, containers=$containers)"
+        return "ConfigurationInclude(\nincludes=$includes, \nvariables=$variables, \nsoftware=$software, \ncontainers=$containers\n)"
     }
 }

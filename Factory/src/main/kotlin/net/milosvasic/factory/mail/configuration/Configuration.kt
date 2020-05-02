@@ -13,14 +13,18 @@ import java.io.File
 class Configuration(
         val name: String = String.EMPTY,
         val remote: Remote,
-        variables: MutableMap<String, MutableMap<String, Any>> = mutableMapOf(),
-        software: MutableList<String> = mutableListOf(),
-        containers: MutableList<String> = mutableListOf()
+
+        includes: MutableList<String>?,
+        software: MutableList<String>?,
+        containers: MutableList<String>?,
+        variables: MutableMap<String, MutableMap<String, Any>>?
 
 ) : ConfigurationInclude(
-        variables,
+
+        includes,
         software,
-        containers
+        containers,
+        variables
 ) {
 
     companion object : ObtainParametrized<File, Configuration> {
@@ -32,12 +36,17 @@ class Configuration(
             val configurationFile = param[0]
             if (configurationFile.exists()) {
 
-                // TODO: !!!
                 log.v("Configuration file: ${configurationFile.absolutePath}")
                 val configurationJson = configurationFile.readText()
                 val gson = Gson()
                 try {
-                    return gson.fromJson(configurationJson, Configuration::class.java)
+                    val configuration = gson.fromJson(configurationJson, Configuration::class.java)
+                    configuration.includes?.forEach { include ->
+                        val includeFile = File(include)
+                        val includedConfiguration = obtain(includeFile)
+                        configuration.merge(includedConfiguration)
+                    }
+                    return configuration
 
                 } catch (e: JsonParseException) {
 
@@ -56,28 +65,41 @@ class Configuration(
 
     fun merge(configuration: ConfigurationInclude) {
 
-        variables.append(configuration.variables)
-        software.addAll(configuration.software)
-        containers.addAll(configuration.containers)
+        configuration.includes?.let {
+            includes?.addAll(it)
+        }
+        configuration.variables?.let {
+            variables?.append(it)
+        }
+        configuration.software?.let {
+            software?.addAll(it)
+        }
+        configuration.containers?.let {
+            containers?.addAll(it)
+        }
     }
 
     @Throws(IllegalStateException::class)
     fun getVariableParsed(key: String): Any? {
-        val variable = variables[key]
-        variable?.let {
-            val str = it.toString()
-            if (str.contains(Variable.open) && str.contains(Variable.close)) {
-                return Variable.parse(str)
-            }
-        }
-        return variable
+
+        // FIXME:
+//        val variable = variables[key]
+//        variable?.let {
+//            val str = it.toString()
+//            if (str.contains(Variable.open) && str.contains(Variable.close)) {
+//                return Variable.parse(str)
+//            }
+//        }
+//        return variable
+
+        return null
     }
 
     override fun toString(): String {
-        return "Configuration(name='$name', remote=$remote)\n${super.toString()}"
+        return "Configuration(\nname='$name', \nremote=$remote\n)\n${super.toString()}"
     }
 
-    private fun<T> MutableMap<String, MutableMap<String, T>>.append(
+    private fun <T> MutableMap<String, MutableMap<String, T>>.append(
             vararg appends: MutableMap<String, MutableMap<String, T>>
     ): MutableMap<String, MutableMap<String, T>> {
 
