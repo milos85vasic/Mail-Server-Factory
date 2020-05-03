@@ -50,17 +50,21 @@ data class SoftwareConfiguration(
     override fun obtain(vararg param: String): Map<String, List<InstallationStep<*>>> {
 
         Validator.Arguments.validateSingle(param)
+        val os = param[0]
         val factory = InstallationStepFactory()
         val installationSteps = mutableMapOf<String, List<InstallationStep<*>>>()
         software.forEach {
-            val os = param[0]
-            val msg = "No installation steps for '${it.name}' installation step for $os"
-            val recipe = it.installationSteps[os] ?: throw IllegalStateException(msg)
-            val items = mutableListOf<InstallationStep<*>>()
-            recipe.forEach { definition ->
-                items.add(factory.obtain(definition))
+            val steps = it.installationSteps[os]
+            steps?.let { recipe ->
+                val items = mutableListOf<InstallationStep<*>>()
+                recipe.forEach { definition ->
+                    items.add(factory.obtain(definition))
+                }
+                installationSteps[it.name] = items
             }
-            installationSteps[it.name] = items
+        }
+        if (installationSteps.isEmpty()) {
+            throw IllegalArgumentException("No installation steps for '$os' platform")
         }
         return installationSteps
     }
