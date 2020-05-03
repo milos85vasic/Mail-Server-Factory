@@ -153,9 +153,9 @@ data class VariableNode(
                 if (child.name == position.trim()) {
                     node = child
                 }
-                if (node == this) {
-                    return null
-                }
+            }
+            if (node == this) {
+                return null
             }
         }
         return node.value.toString()
