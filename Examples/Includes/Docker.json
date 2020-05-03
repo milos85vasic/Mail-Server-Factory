@@ -1,0 +1,8 @@
+{
+  "variables": {
+    "DOCKER": {
+      "DOCKER_HOME": "{{SERVER.SERVER_HOME}}/Docker",
+      "DOCKER_COMPOSE_PATH": "/usr/local/bin"
+    }
+  }
+}

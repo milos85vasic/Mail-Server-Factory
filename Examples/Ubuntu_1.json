@@ -1,11 +1,13 @@
 {
   "name": "Mail server configuration",
+  "includes": [
+    "Examples/Includes/Database.json",
+    "Examples/Includes/Docker.json"
+  ],
   "variables": {
-    "SERVER_HOME": "/root",
-    "DOCKER_HOME": "{{SERVER_HOME}}/Docker",
-    "DOCKER_COMPOSE_PATH": "/usr/local/bin",
-    "DB_PORT": "35432",
-    "DB_PASSWORD": "Postgres123"
+    "SERVER": {
+      "SERVER_HOME": "/root"
+    }
   },
   "remote": {
     "port": 22,
@@ -13,9 +15,9 @@
     "host": "192.168.100.102"
   },
   "software": [
-    "Definitions/Docker.json"
+    "Definitions/Docker/Definition.json"
   ],
   "containers": [
-    "Definitions/Mail_Server.json"
+    "Definitions/Mail_Server/Definition.json"
   ]
 }

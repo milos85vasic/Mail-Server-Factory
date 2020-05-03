@@ -1,14 +1,20 @@
 package net.milosvasic.factory.mail.application
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Application
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.component.docker.DockerInitializationOperation
 import net.milosvasic.factory.mail.component.docker.DockerOperation
-import net.milosvasic.factory.mail.component.installer.*
+import net.milosvasic.factory.mail.component.installer.Installer
+import net.milosvasic.factory.mail.component.installer.InstallerAbstract
+import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
+import net.milosvasic.factory.mail.component.installer.InstallerOperation
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
+import net.milosvasic.factory.mail.configuration.Variable
+import net.milosvasic.factory.mail.configuration.VariableNode
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
@@ -36,19 +42,39 @@ class ServerFactory : Application {
                     ConfigurationManager.initialize()
 
                     val configuration = ConfigurationManager.getConfiguration()
-                    configuration.variables.keys.forEach {
-                        val value = configuration.getVariableParsed(it)
-                        log.v("Configuration variable: $it -> $value")
+
+                    fun printVariableNode(variableNode: VariableNode?, prefix: String = String.EMPTY) {
+                        val prefixEnd = "-> "
+                        variableNode?.let { node ->
+                            if (node.value != String.EMPTY) {
+                                val printablePrefix = if (prefix != String.EMPTY) {
+                                    " $prefix $prefixEnd"
+                                } else {
+                                    " "
+                                }
+                                val nodeValue = Variable.parse(node.value.toString())
+                                log.v("Configuration variable:$printablePrefix${node.name} -> $nodeValue")
+                            }
+                            node.children.forEach { child ->
+                                var nextPrefix = prefix
+                                if (nextPrefix != String.EMPTY && !nextPrefix.endsWith(prefixEnd)) {
+                                    nextPrefix += " $prefixEnd"
+                                }
+                                nextPrefix += node.name
+                                printVariableNode(child, nextPrefix)
+                            }
+                        }
                     }
+                    printVariableNode(configuration.variables)
 
                     val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
                     val containersConfigurations = mutableListOf<SoftwareConfiguration>()
 
-                    configuration.software.forEach {
+                    configuration.software?.forEach {
                         val softwareConfiguration = SoftwareConfiguration.obtain(it)
                         softwareConfigurations.add(softwareConfiguration)
                     }
-                    configuration.containers.forEach {
+                    configuration.containers?.forEach {
                         val containerConfiguration = SoftwareConfiguration.obtain(it)
                         containersConfigurations.add(containerConfiguration)
                     }

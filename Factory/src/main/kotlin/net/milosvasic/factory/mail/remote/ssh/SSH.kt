@@ -1,10 +1,10 @@
 package net.milosvasic.factory.mail.remote.ssh
 
 import net.milosvasic.factory.mail.common.Notifying
-import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.OperatingSystem
+import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.terminal.Terminal
 import java.util.concurrent.ConcurrentLinkedQueue

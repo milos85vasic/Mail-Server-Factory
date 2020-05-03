@@ -11,11 +11,11 @@
           },
           {
             "type": "deploy",
-            "value": "Docker/Postgres:{{DOCKER_HOME}}/Postgres"
+            "value": "Docker/Postgres:{{DOCKER.DOCKER_HOME}}/Postgres"
           },
           {
             "type": "stack",
-            "value": "{{DOCKER_HOME}}/Postgres"
+            "value": "{{DOCKER.DOCKER_HOME}}/Postgres"
           },
           {
             "type": "check",
@@ -23,7 +23,7 @@
           },
           {
             "type": "command",
-            "value": "ln -s {{DOCKER_HOME}}/Postgres/database.postgres.service /etc/systemd/system/database.postgres.service"
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Postgres/database.postgres.service /etc/systemd/system/database.postgres.service"
           },
           {
             "type": "command",
@@ -36,30 +36,6 @@
           {
             "type": "check",
             "value": "postgres_database"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Mail server stack: Postfix",
-      "version": "1.0.0",
-      "installationSteps": {
-        "Docker": [
-          {
-            "type": "deploy",
-            "value": "Docker/Postfix:{{DOCKER_HOME}}/Postfix"
-          }
-        ]
-      }
-    },
-    {
-      "name": "Mail server stack: Dovecot",
-      "version": "1.0.0",
-      "installationSteps": {
-        "Docker": [
-          {
-            "type": "deploy",
-            "value": "Docker/Dovecot:{{DOCKER_HOME}}/Dovecot"
           }
         ]
       }

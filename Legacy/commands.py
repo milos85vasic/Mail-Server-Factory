@@ -152,24 +152,6 @@ def passwd(user):
 def run_as_user(account, command):
     return "sudo -H -u " + account + " bash -c '" + command + "'"
 
-
-def run_as_user_with_password(account, password, command):
-    #  TODO: Check first if relatively to the current location script exists.
-    if not os.path.isfile("~/" + toolkit_directory + "/" + run_as_user_with_password_script):
-        steps = []
-        if not os.path.isdir("~/" + toolkit_directory):
-            steps.append(
-                mkdir("~/" + toolkit_directory)
-            )
-        steps.append(
-            "git clone --recurse-submodules " + toolkit_repo + " ~/" + toolkit_directory
-        )
-        run(steps)
-    # return "sh " + "~/" + toolkit_directory + "/" + run_as_user_with_password_script + " " + account + " " + password + " \"" + command + "\""
-    #  return "sh " + "~/" + toolkit_directory + "/" + run_as_user_with_password_script + " test1 TestUser001 ls"
-    return "echo XXXXXXXXXXXXXXXXXXXXXX"  # FIXME: Still does not work.
-
-
 def git_clone(what):
     return "git clone " + what
 

@@ -1,7 +1,8 @@
 package net.milosvasic.factory.mail.configuration
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.ObtainParametrized
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.log
@@ -9,12 +10,21 @@ import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.validation.Validator
 import java.io.File
 
-data class Configuration(
-        val name: String,
+class Configuration(
+        val name: String = String.EMPTY,
         val remote: Remote,
-        val variables: Map<String, Any>,
-        val software: List<String>,
-        val containers: List<String>
+
+        includes: MutableList<String>?,
+        software: MutableList<String>?,
+        containers: MutableList<String>?,
+        variables: VariableNode?
+
+) : ConfigurationInclude(
+
+        includes,
+        software,
+        containers,
+        variables
 ) {
 
     companion object : ObtainParametrized<File, Configuration> {
@@ -28,10 +38,19 @@ data class Configuration(
 
                 log.v("Configuration file: ${configurationFile.absolutePath}")
                 val configurationJson = configurationFile.readText()
-                val gson = Gson()
+                val variablesDeserializer = VariableNode.getDeserializer()
+                val gsonBuilder = GsonBuilder()
+                gsonBuilder.registerTypeAdapter(VariableNode::class.java, variablesDeserializer)
+                val gson = gsonBuilder.create()
                 try {
-                    return gson.fromJson(configurationJson, Configuration::class.java)
-                    
+                    val configuration = gson.fromJson(configurationJson, Configuration::class.java)
+                    configuration.includes?.forEach { include ->
+                        val includeFile = File(include)
+                        val includedConfiguration = obtain(includeFile)
+                        configuration.merge(includedConfiguration)
+                    }
+                    return configuration
+
                 } catch (e: JsonParseException) {
 
                     throw IllegalArgumentException("Unable to parse JSON: ${e.message}")
@@ -47,15 +66,32 @@ data class Configuration(
         }
     }
 
+    fun merge(configuration: ConfigurationInclude) {
+
+        configuration.includes?.let {
+            includes?.addAll(it)
+        }
+        configuration.variables?.let {
+            variables?.append(it)
+        }
+        configuration.software?.let {
+            software?.addAll(it)
+        }
+        configuration.containers?.let {
+            containers?.addAll(it)
+        }
+    }
+
     @Throws(IllegalStateException::class)
     fun getVariableParsed(key: String): Any? {
-        val variable = variables[key]
-        variable?.let {
-            val str = it.toString()
-            if (str.contains(Variable.open) && str.contains(Variable.close)) {
-                return Variable.parse(str)
-            }
+
+        variables?.let { it ->
+            return it.get(key)
         }
-        return variable
+        return null
+    }
+
+    override fun toString(): String {
+        return "Configuration(\nname='$name', \nremote=$remote\n)\n${super.toString()}"
     }
 }

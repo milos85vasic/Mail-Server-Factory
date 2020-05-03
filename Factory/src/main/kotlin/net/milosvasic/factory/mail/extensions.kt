@@ -2,10 +2,8 @@ package net.milosvasic.factory.mail
 
 import net.milosvasic.factory.mail.common.Logger
 import net.milosvasic.factory.mail.error.ERROR
-import java.lang.StringBuilder
-import kotlin.system.exitProcess
-
 import net.milosvasic.logger.CompositeLogger
+import kotlin.system.exitProcess
 
 const val localhost = "127.0.0.1"
 val compositeLogger = CompositeLogger()
@@ -65,3 +63,5 @@ fun fail(e: Exception) {
 
 val String.Companion.EMPTY: String
     get() = ""
+
+

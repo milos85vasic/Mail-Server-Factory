@@ -1,0 +1,16 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack: Postfix",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "deploy",
+            "value": "Docker/Postfix:{{DOCKER.DOCKER_HOME}}/Postfix"
+          }
+        ]
+      }
+    }
+  ]
+}
