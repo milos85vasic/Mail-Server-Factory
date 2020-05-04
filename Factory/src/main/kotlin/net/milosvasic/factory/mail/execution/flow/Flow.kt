@@ -8,13 +8,11 @@ abstract class Flow<T, M> : Runnable, BusyDelegation {
     private val busy = Busy()
     private var currentSubject: T? = null
     private var currentOperation: M? = null
-    private var currentOperations = mutableListOf<M>()
     private val subjects = mutableMapOf<T, List<M>>()
+    private var currentOperations = mutableListOf<M>()
     private var subjectsIterator: Iterator<T>? = null
     private var operationsIterator: Iterator<M>? = null
     private var callback: FlowCallback = DefaultFlowCallback()
-
-    abstract val processingRecipe: FlowProcessingRecipe<T, M>
 
     private val processingCallback = object : FlowProcessingCallback {
 
@@ -83,6 +81,19 @@ abstract class Flow<T, M> : Runnable, BusyDelegation {
         }
     }
 
+    @Synchronized
+    @Throws(BusyException::class)
+    override fun busy() {
+        BusyDelegate.busy(busy)
+    }
+
+    @Synchronized
+    override fun free() {
+        BusyDelegate.free(busy)
+    }
+
+    abstract fun getProcessingRecipe(subject: T, operation: M): ProcessingRecipe
+
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     private fun tryNext() {
         if (subjectsIterator == null) {
@@ -130,7 +141,8 @@ abstract class Flow<T, M> : Runnable, BusyDelegation {
         }
         currentSubject?.let { subject ->
             currentOperation?.let { operation ->
-                processingRecipe.process(subject, operation, processingCallback)
+                val recipe = getProcessingRecipe(subject, operation)
+                recipe.process(processingCallback)
             }
         }
     }
@@ -153,16 +165,5 @@ abstract class Flow<T, M> : Runnable, BusyDelegation {
             }
         }
         finish(false, message)
-    }
-
-    @Synchronized
-    @Throws(BusyException::class)
-    override fun busy() {
-        BusyDelegate.busy(busy)
-    }
-
-    @Synchronized
-    override fun free() {
-        BusyDelegate.free(busy)
     }
 }
