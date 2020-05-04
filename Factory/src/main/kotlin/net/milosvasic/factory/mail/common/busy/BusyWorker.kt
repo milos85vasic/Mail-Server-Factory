@@ -21,15 +21,12 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
         @Synchronized
         @Throws(BusyException::class)
         override fun busy(what: Busy) {
-            if (what.isBusy()) {
-                throw BusyException()
-            }
-            what.setBusy(true)
+            BusyDelegate.busy(what)
         }
 
         @Synchronized
         override fun free(what: Busy) {
-            what.setBusy(false)
+            BusyDelegate.free(what)
         }
     }
 
