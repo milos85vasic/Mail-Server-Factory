@@ -133,8 +133,8 @@ class ServerFactory : Application {
                         override fun onOperationPerformed(result: OperationResult) {
                             when (result.operation) {
                                 is TerminalCommand -> {
-                                    when (result.operation) {
-                                        hostInfoCommand -> {
+                                    when (result.operation.command) { // FIXME: By using flow get a rid off by value comparison.
+                                        hostInfoCommand.command -> {
                                             if (result.success) {
                                                 val os = ssh.getRemoteOS()
                                                 os.parseAndSetSystemInfo(result.data)
@@ -158,7 +158,7 @@ class ServerFactory : Application {
                                                 fail(ERROR.INITIALIZATION_FAILURE)
                                             }
                                         }
-                                        testCommand -> {
+                                        testCommand.command -> {
                                             if (result.success) {
                                                 log.v("Connected to: ${configuration.remote}")
                                                 ssh.execute(hostInfoCommand, true)
@@ -168,7 +168,7 @@ class ServerFactory : Application {
                                                 fail(ERROR.INITIALIZATION_FAILURE)
                                             }
                                         }
-                                        pingCommand -> {
+                                        pingCommand.command -> {
                                             if (result.success) {
                                                 ssh.execute(testCommand)
                                             } else {
