@@ -177,7 +177,14 @@ class ServerFactory : Application {
                                         }
                                         isPing(resultCommand) -> {
                                             if (result.success) {
-                                                ssh.execute(testCommand)
+
+                                                try {
+                                                    ssh.execute(testCommand)
+                                                } catch (e: BusyException) {
+                                                    fail(e)
+                                                } catch (e: IllegalArgumentException) {
+                                                    fail(e)
+                                                }
                                             } else {
 
                                                 log.e("Host is unreachable: $host")

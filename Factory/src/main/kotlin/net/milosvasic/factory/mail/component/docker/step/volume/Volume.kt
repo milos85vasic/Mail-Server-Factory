@@ -44,7 +44,17 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
                                     .containerName(name)
 
                             command = builder.build()
-                            connection?.execute(TerminalCommand(command))
+                            try {
+                                connection?.execute(TerminalCommand(command))
+                            } catch (e: IllegalArgumentException) {
+
+                                log.e(e)
+                                finish(false, DockerInstallationOperation())
+                            }  catch (e: IllegalStateException) {
+
+                                log.e(e)
+                                finish(false, DockerInstallationOperation())
+                            }
                         } else {
 
                             finish(false, DockerInstallationOperation())

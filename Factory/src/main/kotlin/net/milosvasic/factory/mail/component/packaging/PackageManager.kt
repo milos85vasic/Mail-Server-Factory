@@ -30,15 +30,19 @@ abstract class PackageManager(entryPoint: Connection) :
             is TerminalCommand -> {
                 val cmd = result.operation.command
                 if (command!= String.EMPTY && cmd.endsWith(command)) {
-                    if (result.success) {
 
-                        try {
+                    try {
+                        if (result.success) {
                             onSuccessResult()
-                        } catch (e: IllegalStateException) {
-                            onFailedResult(e)
+                        } else {
+                            onFailedResult()
                         }
-                    } else {
-                        onFailedResult()
+                    } catch (e: IllegalStateException) {
+
+                        onFailedResult(e)
+                    } catch (e: IllegalArgumentException) {
+
+                        onFailedResult(e)
                     }
                 }
             }
@@ -69,7 +73,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun install(packages: List<Package>) {
         busy()
         iterator = packages.iterator()
@@ -78,7 +82,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun install(packages: Packages) {
         busy()
         val list = listOf(Package(packages.value))
@@ -88,7 +92,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun uninstall(packages: List<Package>) {
         busy()
         iterator = packages.iterator()
@@ -97,7 +101,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun groupInstall(groups: List<Group>) {
         busy()
         iterator = groups.iterator()
@@ -106,7 +110,7 @@ abstract class PackageManager(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun groupUninstall(groups: List<Group>) {
         busy()
         iterator = groups.iterator()
@@ -114,7 +118,7 @@ abstract class PackageManager(entryPoint: Connection) :
         tryNext()
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun tryNext() {
         if (iterator == null) {
             free(false)
@@ -151,21 +155,25 @@ abstract class PackageManager(entryPoint: Connection) :
         }
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     private fun installPackage(item: Package) {
         command = "${installCommand()} ${item.value}"
         entryPoint.execute(TerminalCommand(command))
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     private fun uninstallPackage(item: Package) {
         command = "${uninstallCommand()} ${item.value}"
         entryPoint.execute(TerminalCommand(command))
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     private fun installGroup(item: Group) {
         command = "${groupInstallCommand()} \"${item.value}\""
         entryPoint.execute(TerminalCommand(command))
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     private fun uninstallGroup(item: Group) {
         command = "${groupUninstallCommand()} \"${item.value}\""
         entryPoint.execute(TerminalCommand(command))
@@ -178,7 +186,7 @@ abstract class PackageManager(entryPoint: Connection) :
         notify(result)
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun onSuccessResult() {
         tryNext()
     }

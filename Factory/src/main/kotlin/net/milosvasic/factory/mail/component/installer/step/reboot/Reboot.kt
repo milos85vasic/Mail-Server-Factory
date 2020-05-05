@@ -79,7 +79,17 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
             } else {
 
                 command = Commands.ping(host, 1)
-                terminal.execute(TerminalCommand(command))
+                try {
+                    terminal.execute(TerminalCommand(command))
+                } catch (e: IllegalStateException) {
+
+                    log.e(e)
+                    finish(false, operation)
+                } catch (e: IllegalArgumentException) {
+
+                    log.e(e)
+                    finish(false, operation)
+                }
             }
         }
     }

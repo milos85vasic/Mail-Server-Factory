@@ -53,6 +53,10 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
                                     log.e(e)
                                     finish(false, operation)
+                                } catch (e: IllegalArgumentException) {
+
+                                    log.e(e)
+                                    finish(false, operation)
                                 }
                             } else {
 
@@ -77,20 +81,50 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                     } else {
 
                         command = Commands.scp(localTar, where, remote)
-                        terminal?.execute(TerminalCommand(command))
+                        try {
+                            terminal?.execute(TerminalCommand(command))
+                        } catch (e: IllegalArgumentException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        } catch (e: IllegalStateException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        }
                     }
                     return
                 }
                 if (isScp(result.operation)) {
 
                     command = Commands.unTar(remoteTar, where)
-                    connection?.execute(TerminalCommand(command))
+                    try {
+                        connection?.execute(TerminalCommand(command))
+                    } catch (e: IllegalArgumentException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    } catch (e: IllegalStateException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    }
                     return
                 }
                 if (isTarDecompress(result.operation)) {
 
                     command = Commands.rm(remoteTar)
-                    connection?.execute(TerminalCommand(command))
+                    try {
+                        connection?.execute(TerminalCommand(command))
+                    } catch (e: IllegalStateException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    } catch (e: IllegalArgumentException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    }
                     return
                 }
                 if (isRmRemote(result.operation, remoteTar)) {
@@ -102,21 +136,42 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                         }
                         exclude += "${Commands.find(it, Commands.here)} -exec ${Commands.rm} {} \\;"
                     }
-                    if (exclude != String.EMPTY) {
+                    try {
 
-                        command = exclude
-                        connection?.execute(TerminalCommand(command))
-                    } else {
+                        if (exclude != String.EMPTY) {
 
-                        command = Commands.rm(localTar)
-                        terminal?.execute(TerminalCommand(command))
+                            command = exclude
+                            connection?.execute(TerminalCommand(command))
+                        } else {
+
+                            command = Commands.rm(localTar)
+                            terminal?.execute(TerminalCommand(command))
+                        }
+                    } catch (e: IllegalStateException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    } catch (e: IllegalArgumentException) {
+
+                        log.e(e)
+                        finish(false, operation)
                     }
                     return
                 }
                 if (isFind(result.operation)) {
 
                     command = Commands.rm(localTar)
-                    terminal?.execute(TerminalCommand(command))
+                    try {
+                        terminal?.execute(TerminalCommand(command))
+                    } catch (e: IllegalArgumentException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    } catch (e: IllegalStateException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    }
                     return
                 }
                 if (isRm(result.operation, localTar)) {
@@ -137,6 +192,10 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                             command = Commands.concatenate(chown, chgrp, chmod)
                             connection?.execute(TerminalCommand(command))
                         } catch (e: IllegalArgumentException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        } catch (e: IllegalStateException) {
 
                             log.e(e)
                             finish(false, operation)

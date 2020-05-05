@@ -18,30 +18,18 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
 
-            try {
-                handleResult(result)
-            } catch (e: IllegalStateException) {
-
-                onFailedResult(e)
-            } catch (e: IllegalArgumentException) {
-
-                onFailedResult(e)
-            }
+            handleResultAndCatch(result)
         }
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun handleResult(result: OperationResult) {
         super.handleResult(result)
         when (result.operation) {
 
             is DockerInstallationOperation -> {
-
                 unsubscribeFromItem(listener)
-                if (result.success) {
-                    tryNext()
-                } else {
-                    free(false)
-                }
+                checkResultAndTryNext(result)
             }
         }
     }
@@ -94,7 +82,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun initialize() {
         super.initialize()
         command = "${DockerCommand.DOCKER.obtain()} ${DockerCommand.VERSION.obtain()}"

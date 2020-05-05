@@ -45,7 +45,8 @@ class PackageInstaller(entryPoint: SSH) :
                             onFailedResult()
                         }
                     } catch (e: IllegalStateException) {
-
+                        onFailedResult(e)
+                    } catch (e: IllegalArgumentException) {
                         onFailedResult(e)
                     }
                 }
@@ -59,7 +60,8 @@ class PackageInstaller(entryPoint: SSH) :
                 try {
                     onFailedResult()
                 } catch (e: IllegalStateException) {
-
+                    onFailedResult(e)
+                } catch (e: IllegalArgumentException) {
                     onFailedResult(e)
                 }
             }
@@ -67,7 +69,7 @@ class PackageInstaller(entryPoint: SSH) :
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun initialize() {
         checkInitialized()
         busy()
@@ -84,7 +86,7 @@ class PackageInstaller(entryPoint: SSH) :
         super.terminate()
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun onSuccessResult() {
         item?.let {
             manager = it
@@ -94,12 +96,12 @@ class PackageInstaller(entryPoint: SSH) :
         tryNext()
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun onFailedResult() {
         tryNext()
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun tryNext() {
         manager?.let {
             free(true)
@@ -129,31 +131,31 @@ class PackageInstaller(entryPoint: SSH) :
         manager?.install(*items.toList().toTypedArray())
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun install(packages: List<Package>) {
         checkNotInitialized()
         manager?.install(packages)
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun install(packages: Packages) {
         checkNotInitialized()
         manager?.install(packages)
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun uninstall(packages: List<Package>) {
         checkNotInitialized()
         manager?.uninstall(packages)
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun groupInstall(groups: List<Group>) {
         checkNotInitialized()
         manager?.groupInstall(groups)
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun groupUninstall(groups: List<Group>) {
         checkNotInitialized()
         manager?.groupUninstall(groups)

@@ -7,7 +7,7 @@ import net.milosvasic.factory.mail.validation.Validator
 class CommandInstallationStep(val command: String) : InstallationStep<Connection>() {
 
     @Synchronized
-    @Throws(IllegalArgumentException::class)
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: Connection) {
 
         Validator.Arguments.validateSingle(params)

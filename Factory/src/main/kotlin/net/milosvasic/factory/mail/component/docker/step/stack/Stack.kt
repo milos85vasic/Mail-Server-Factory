@@ -78,6 +78,10 @@ class Stack(
 
                             log.e(e)
                             finish(false, operation)
+                        } catch (e: IllegalStateException) {
+
+                            log.e(e)
+                            finish(false, operation)
                         }
                     } else {
 
