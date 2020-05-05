@@ -13,9 +13,12 @@ open class SSHCommand(
 
     Commands.ssh(
         remote.account,
-        command.toExecute,
+        command.command,
         remote.port,
         remote.host
     ),
     obtainCommandOutput
-)
+) {
+
+    fun getCommand() = toExecute
+}

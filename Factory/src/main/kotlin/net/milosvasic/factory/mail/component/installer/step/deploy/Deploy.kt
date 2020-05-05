@@ -33,7 +33,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is Command -> {
+            is TerminalCommand -> {
                 if (isMkdir(result.operation)) {
 
                     terminal = connection?.terminal
@@ -232,34 +232,34 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
     private fun getName(file: File) = file.name.toLowerCase().replace(prototypePrefix, "")
 
-    private fun isScp(operation: Command) =
-            operation.toExecute.startsWith(Commands.scp)
+    private fun isScp(operation: TerminalCommand) =
+            operation.command.startsWith(Commands.scp)
 
-    private fun isTarDecompress(operation: Command) =
-            operation.toExecute.contains(Commands.tarDecompress)
+    private fun isTarDecompress(operation: TerminalCommand) =
+            operation.command.contains(Commands.tarDecompress)
 
-    private fun isTarCompress(operation: Command) =
-            operation.toExecute.startsWith(Commands.tarCompress)
+    private fun isTarCompress(operation: TerminalCommand) =
+            operation.command.startsWith(Commands.tarCompress)
 
-    private fun isRmRemote(operation: Command, file: String) =
+    private fun isRmRemote(operation: TerminalCommand, file: String) =
             isRm(operation, file) &&
-                    operation.toExecute.startsWith(Commands.ssh)
+                    operation.command.startsWith(Commands.ssh)
 
-    private fun isRm(operation: Command, file: String) =
-            operation.toExecute.contains(Commands.rm(file))
+    private fun isRm(operation: TerminalCommand, file: String) =
+            operation.command.contains(Commands.rm(file))
 
-    private fun isFind(operation: Command) =
-            operation.toExecute.contains(Commands.find)
+    private fun isFind(operation: TerminalCommand) =
+            operation.command.contains(Commands.find)
 
-    private fun isChown(operation: Command) =
-            operation.toExecute.contains(Commands.chown)
+    private fun isChown(operation: TerminalCommand) =
+            operation.command.contains(Commands.chown)
 
-    private fun isChgrp(operation: Command) =
-            operation.toExecute.contains(Commands.chgrp)
+    private fun isChgrp(operation: TerminalCommand) =
+            operation.command.contains(Commands.chgrp)
 
-    private fun isChmod(operation: Command) =
-            operation.toExecute.contains(Commands.chmod)
+    private fun isChmod(operation: TerminalCommand) =
+            operation.command.contains(Commands.chmod)
 
-    private fun isMkdir(operation: Command) =
-            operation.toExecute.contains(Commands.mkdir)
+    private fun isMkdir(operation: TerminalCommand) =
+            operation.command.contains(Commands.mkdir)
 }

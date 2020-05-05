@@ -169,11 +169,7 @@ class ServerFactory : Application {
                                                 fail(ERROR.INITIALIZATION_FAILURE)
                                             }
                                         }
-                                    }
-                                }
-                                is Command -> {
-                                    when (result.operation.toExecute) {
-                                        pingCommand.toExecute -> {
+                                        pingCommand -> {
                                             if (result.success) {
                                                 ssh.execute(testCommand)
                                             } else {

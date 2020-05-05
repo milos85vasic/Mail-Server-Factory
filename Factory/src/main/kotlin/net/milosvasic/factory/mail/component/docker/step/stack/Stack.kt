@@ -5,7 +5,6 @@ import net.milosvasic.factory.mail.component.docker.DockerCommand
 import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.security.Permission
@@ -36,8 +35,8 @@ class Stack(
     override fun handleResult(result: OperationResult) {
 
         when (result.operation) {
-            is Command -> {
-                if (command != String.EMPTY && result.operation.toExecute.endsWith(command)) {
+            is TerminalCommand -> {
+                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
 
                     if (dockerCompose) {
                         dockerCompose = false

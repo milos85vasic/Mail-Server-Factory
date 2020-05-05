@@ -7,7 +7,6 @@ import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
 import net.milosvasic.factory.mail.component.docker.Image
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.Commands
@@ -21,8 +20,8 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is Command -> {
-                if (result.operation.toExecute.contains(psA)) {
+            is TerminalCommand -> {
+                if (result.operation.command.contains(psA)) {
 
                     if (result.success) {
                         log.w("Volume '$name' already exist, skipping installation step")
@@ -53,7 +52,7 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
                     }
                     return
                 }
-                if (command != String.EMPTY && result.operation.toExecute.endsWith(command)) {
+                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
 
                     finish(result.success, DockerInstallationOperation())
                 }

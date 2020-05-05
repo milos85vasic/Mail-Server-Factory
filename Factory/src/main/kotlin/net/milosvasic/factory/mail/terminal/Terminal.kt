@@ -31,8 +31,8 @@ class Terminal :
         BusyWorker.busy(busy)
         val action = Runnable {
             try {
-                log.d(">>> ${what.toExecute}")
-                val process = runtime.exec(what.toExecute)
+                log.d(">>> ${what.command}")
+                val process = runtime.exec(what.command)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
                 val obtainCommandOutput = what.obtainCommandOutput

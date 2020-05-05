@@ -30,12 +30,12 @@ class SSH(private val remote: Remote) :
     }
 
     override fun execute(what: TerminalCommand) {
-        val command = TerminalCommand(SSHCommand(remote, what).toExecute)
+        val command = TerminalCommand(SSHCommand(remote, what).getCommand())
         terminal.execute(command)
     }
 
     fun execute(data: TerminalCommand, obtainCommandOutput: Boolean) {
-        val command = TerminalCommand(SSHCommand(remote, data, obtainCommandOutput).toExecute)
+        val command = TerminalCommand(SSHCommand(remote, data, obtainCommandOutput).getCommand())
         terminal.execute(command)
     }
 

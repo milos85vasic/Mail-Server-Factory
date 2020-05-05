@@ -8,7 +8,6 @@ import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
@@ -35,8 +34,8 @@ class PackageInstaller(entryPoint: SSH) :
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is Command -> {
-                val cmd = result.operation.toExecute
+            is TerminalCommand -> {
+                val cmd = result.operation.command
                 if (command != String.EMPTY && cmd.endsWith(command)) {
 
                     try {
