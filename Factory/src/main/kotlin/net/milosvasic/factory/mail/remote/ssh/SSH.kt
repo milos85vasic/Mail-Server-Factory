@@ -35,7 +35,7 @@ class SSH(private val remote: Remote) :
     }
 
     fun execute(data: TerminalCommand, obtainCommandOutput: Boolean) {
-        val command = TerminalCommand(SSHCommand(remote, data, obtainCommandOutput).getCommand())
+        val command = TerminalCommand(SSHCommand(remote, data).getCommand(), obtainCommandOutput)
         terminal.execute(command)
     }
 

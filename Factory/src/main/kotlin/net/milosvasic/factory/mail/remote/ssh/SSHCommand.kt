@@ -7,8 +7,7 @@ import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 open class SSHCommand(
     remote: Remote,
-    val command: TerminalCommand,
-    obtainCommandOutput: Boolean = false
+    val command: TerminalCommand
 ) : Command(
 
     Commands.ssh(
@@ -16,8 +15,7 @@ open class SSHCommand(
         command.command,
         remote.port,
         remote.host
-    ),
-    obtainCommandOutput
+    )
 ) {
 
     fun getCommand() = toExecute
