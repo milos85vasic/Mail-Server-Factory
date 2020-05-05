@@ -129,12 +129,19 @@ class ServerFactory : Application {
                         return result
                     }
 
+                    fun isHostInfo(command: TerminalCommand) = command.command.endsWith(hostInfoCommand.command)
+
+                    fun isTest(command: TerminalCommand) = command.command.endsWith(testCommand.command)
+
+                    fun isPing(command: TerminalCommand) = command.command.endsWith(pingCommand.command)
+
                     val listener = object : OperationResultListener {
                         override fun onOperationPerformed(result: OperationResult) {
                             when (result.operation) {
                                 is TerminalCommand -> {
-                                    when (result.operation.command) { // FIXME: By using flow get a rid off by value comparison.
-                                        hostInfoCommand.command -> {
+                                    val resultCommand = result.operation
+                                    when { // FIXME: By using flow get a rid off by value comparison.
+                                        isHostInfo(resultCommand) -> {
                                             if (result.success) {
                                                 val os = ssh.getRemoteOS()
                                                 os.parseAndSetSystemInfo(result.data)
@@ -158,7 +165,7 @@ class ServerFactory : Application {
                                                 fail(ERROR.INITIALIZATION_FAILURE)
                                             }
                                         }
-                                        testCommand.command -> {
+                                        isTest(resultCommand) -> {
                                             if (result.success) {
                                                 log.v("Connected to: ${configuration.remote}")
                                                 ssh.execute(hostInfoCommand, true)
@@ -168,7 +175,7 @@ class ServerFactory : Application {
                                                 fail(ERROR.INITIALIZATION_FAILURE)
                                             }
                                         }
-                                        pingCommand.command -> {
+                                        isPing(resultCommand) -> {
                                             if (result.success) {
                                                 ssh.execute(testCommand)
                                             } else {
