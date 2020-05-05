@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.packaging
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
@@ -28,7 +29,7 @@ abstract class PackageManager(entryPoint: Connection) :
         when (result.operation) {
             is TerminalCommand -> {
                 val cmd = result.operation.command
-                if (command == cmd) {
+                if (command!= String.EMPTY && cmd.endsWith(command)) {
                     if (result.success) {
 
                         try {
