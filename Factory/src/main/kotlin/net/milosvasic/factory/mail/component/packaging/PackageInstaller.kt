@@ -12,6 +12,7 @@ import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class PackageInstaller(entryPoint: SSH) :
     BusyWorker<PackageManager>(entryPoint),
@@ -114,7 +115,7 @@ class PackageInstaller(entryPoint: SSH) :
                 item = it.next()
                 item?.let { current ->
                     command = Commands.getApplicationInfo(current.applicationBinaryName)
-                    entryPoint.execute(command)
+                    entryPoint.execute(TerminalCommand(command))
                 }
             } else {
                 free(false)

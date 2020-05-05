@@ -9,7 +9,6 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import java.io.BufferedReader
@@ -17,7 +16,7 @@ import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class Terminal :
-    Execution<Command>,
+    Execution<TerminalCommand>,
     Subscription<OperationResultListener>,
     Notifying<OperationResult> {
 
@@ -28,7 +27,7 @@ class Terminal :
 
     @Synchronized
     @Throws(BusyException::class)
-    override fun execute(what: Command) {
+    override fun execute(what: TerminalCommand) {
         BusyWorker.busy(busy)
         val action = Runnable {
             try {

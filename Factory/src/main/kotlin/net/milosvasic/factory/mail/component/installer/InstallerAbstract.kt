@@ -24,7 +24,7 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 abstract class InstallerAbstract(entryPoint: Connection) :
         BusyWorker<InstallationStep<*>>(entryPoint),
@@ -116,7 +116,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                     free(false)
                 }
             }
-            is SSHCommand -> {
+            is TerminalCommand -> {
 
                 if (command != String.EMPTY && result.operation.command.endsWith(command)) {
                     onCommandPerformed(result)

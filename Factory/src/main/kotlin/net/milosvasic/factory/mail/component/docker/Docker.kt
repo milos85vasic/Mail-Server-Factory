@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.atomic.AtomicBoolean
 
 class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
@@ -97,7 +98,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     override fun initialize() {
         super.initialize()
         command = "${DockerCommand.DOCKER.obtain()} ${DockerCommand.VERSION.obtain()}"
-        entryPoint.execute(command)
+        entryPoint.execute(TerminalCommand(command))
     }
 
     @Synchronized

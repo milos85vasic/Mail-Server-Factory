@@ -24,8 +24,8 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.Architecture
 import net.milosvasic.factory.mail.os.OSType
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import kotlin.system.exitProcess
 
 class ServerFactory : Application {
@@ -86,9 +86,9 @@ class ServerFactory : Application {
                     val docker = Docker(ssh)
                     val terminal = ssh.terminal
                     val installer = Installer(ssh)
-                    val pingCommand = Command(Commands.ping(host))
-                    val testCommand = Commands.echo("Hello")
-                    val hostInfoCommand = Commands.getHostInfo()
+                    val pingCommand = TerminalCommand(Commands.ping(host))
+                    val hostInfoCommand = TerminalCommand(Commands.getHostInfo())
+                    val testCommand = TerminalCommand(Commands.echo("Hello"))
                     var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
                     var containerConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
 
@@ -133,8 +133,8 @@ class ServerFactory : Application {
                     val listener = object : OperationResultListener {
                         override fun onOperationPerformed(result: OperationResult) {
                             when (result.operation) {
-                                is SSHCommand -> {
-                                    when (result.operation.command) {
+                                is TerminalCommand -> {
+                                    when (result.operation) {
                                         hostInfoCommand -> {
                                             if (result.success) {
                                                 val os = ssh.getRemoteOS()

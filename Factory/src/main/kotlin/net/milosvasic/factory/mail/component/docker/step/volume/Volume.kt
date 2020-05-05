@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 
 class Volume(private val mapping: String, private val name: String) : DockerInstallationStep() {
@@ -44,7 +45,7 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
                                     .containerName(name)
 
                             command = builder.build()
-                            connection?.execute(command)
+                            connection?.execute(TerminalCommand(command))
                         } else {
 
                             finish(false, DockerInstallationOperation())
@@ -64,6 +65,6 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: Connection) {
         super.execute(*params)
-        connection?.execute(command)
+        connection?.execute(TerminalCommand(command))
     }
 }

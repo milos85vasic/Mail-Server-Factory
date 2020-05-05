@@ -7,6 +7,7 @@ import net.milosvasic.factory.mail.os.OperatingSystem
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.terminal.Terminal
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class SSH(private val remote: Remote) :
@@ -28,12 +29,14 @@ class SSH(private val remote: Remote) :
         terminal.subscribe(listener)
     }
 
-    override fun execute(what: String) {
-        terminal.execute(SSHCommand(remote, what))
+    override fun execute(what: TerminalCommand) {
+        val command = TerminalCommand(SSHCommand(remote, what).toExecute)
+        terminal.execute(command)
     }
 
-    fun execute(data: String, obtainCommandOutput: Boolean) {
-        terminal.execute(SSHCommand(remote, data, obtainCommandOutput))
+    fun execute(data: TerminalCommand, obtainCommandOutput: Boolean) {
+        val command = TerminalCommand(SSHCommand(remote, data, obtainCommandOutput).toExecute)
+        terminal.execute(command)
     }
 
     override fun subscribe(what: OperationResultListener) {

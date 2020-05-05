@@ -12,6 +12,7 @@ import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.io.File
 
 class Deploy(what: String, private val where: String) : RemoteOperationInstallationStep<SSH>() {
@@ -48,7 +49,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                                 try {
                                     processFiles(whatFile)
                                     command = Commands.tar(whatFile.absolutePath, localTar)
-                                    terminal?.execute(Command(command))
+                                    terminal?.execute(TerminalCommand(command))
                                 } catch (e: IllegalStateException) {
 
                                     log.e(e)
@@ -77,20 +78,20 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                     } else {
 
                         command = Commands.scp(localTar, where, remote)
-                        terminal?.execute(Command(command))
+                        terminal?.execute(TerminalCommand(command))
                     }
                     return
                 }
                 if (isScp(result.operation)) {
 
                     command = Commands.unTar(remoteTar, where)
-                    connection?.execute(command)
+                    connection?.execute(TerminalCommand(command))
                     return
                 }
                 if (isTarDecompress(result.operation)) {
 
                     command = Commands.rm(remoteTar)
-                    connection?.execute(command)
+                    connection?.execute(TerminalCommand(command))
                     return
                 }
                 if (isRmRemote(result.operation, remoteTar)) {
@@ -105,18 +106,18 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                     if (exclude != String.EMPTY) {
 
                         command = exclude
-                        connection?.execute(command)
+                        connection?.execute(TerminalCommand(command))
                     } else {
 
                         command = Commands.rm(localTar)
-                        terminal?.execute(Command(command))
+                        terminal?.execute(TerminalCommand(command))
                     }
                     return
                 }
                 if (isFind(result.operation)) {
 
                     command = Commands.rm(localTar)
-                    terminal?.execute(Command(command))
+                    terminal?.execute(TerminalCommand(command))
                     return
                 }
                 if (isRm(result.operation, localTar)) {
@@ -135,7 +136,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                         try {
                             val chmod = Commands.chmod(where, permissions.obtain())
                             command = Commands.concatenate(chown, chgrp, chmod)
-                            connection?.execute(command)
+                            connection?.execute(TerminalCommand(command))
                         } catch (e: IllegalArgumentException) {
 
                             log.e(e)
@@ -158,7 +159,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
     override fun execute(vararg params: SSH) {
         super.execute(*params)
         command = Commands.mkdir(where)
-        connection?.execute(command)
+        connection?.execute(TerminalCommand(command))
     }
 
     override fun finish(success: Boolean, operation: Operation) {

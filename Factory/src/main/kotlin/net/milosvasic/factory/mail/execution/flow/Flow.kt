@@ -1,7 +1,10 @@
 package net.milosvasic.factory.mail.execution.flow
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.busy.*
+import net.milosvasic.factory.mail.common.busy.Busy
+import net.milosvasic.factory.mail.common.busy.BusyDelegate
+import net.milosvasic.factory.mail.common.busy.BusyDelegation
+import net.milosvasic.factory.mail.common.busy.BusyException
 
 abstract class Flow<T, M> : Runnable, BusyDelegation {
 
@@ -109,8 +112,10 @@ abstract class Flow<T, M> : Runnable, BusyDelegation {
             }
         } else {
             if (operationsIterator == null) {
-                subjects[currentSubject]?.let { operations ->
-                    operationsIterator = operations.iterator()
+                currentSubject?.let {
+                    subjects[it]?.let { operations ->
+                        operationsIterator = operations.iterator()
+                    }
                 }
             }
         }

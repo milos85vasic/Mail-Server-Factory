@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.io.File
 
 
@@ -73,7 +74,7 @@ class Stack(
                                     ownershipAndPermissionsStop,
                                     ownershipAndPermissionsRestart
                             )
-                            connection?.execute(command)
+                            connection?.execute(TerminalCommand(command))
                         } catch (e: IllegalArgumentException) {
 
                             log.e(e)
@@ -107,7 +108,7 @@ class Stack(
         dockerCompose = true
         val path = getYmlPath()
         command = "${DockerCommand.COMPOSE.obtain()} -f $path ${DockerCommand.UP.obtain()} $flags"
-        connection?.execute(command)
+        connection?.execute(TerminalCommand(command))
     }
 
     private fun getYmlPath(): String {

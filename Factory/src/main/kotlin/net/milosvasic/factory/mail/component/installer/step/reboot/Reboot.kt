@@ -5,8 +5,8 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallationStep<SSH>() {
 
@@ -18,7 +18,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is SSHCommand -> {
+            is TerminalCommand -> {
                 if (result.operation.command.endsWith(command)) {
                     try {
                         Thread.sleep(3000)
@@ -59,7 +59,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
         log.v("Reboot timeout in seconds: $timeoutInSeconds")
         pingCount = 0
         command = defaultCommand
-        connection?.execute(command)
+        connection?.execute(TerminalCommand(command))
     }
 
     private fun ping() {
@@ -81,7 +81,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
             } else {
 
                 command = Commands.ping(host, 1)
-                terminal.execute(Command(command))
+                terminal.execute(TerminalCommand(command))
             }
         }
     }

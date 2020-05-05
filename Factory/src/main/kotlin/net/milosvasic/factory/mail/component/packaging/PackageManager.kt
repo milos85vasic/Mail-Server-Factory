@@ -8,7 +8,7 @@ import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import kotlin.reflect.KClass
 
 abstract class PackageManager(entryPoint: Connection) :
@@ -26,7 +26,7 @@ abstract class PackageManager(entryPoint: Connection) :
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is SSHCommand -> {
+            is TerminalCommand -> {
                 val cmd = result.operation.command
                 if (command == cmd) {
                     if (result.success) {
@@ -152,22 +152,22 @@ abstract class PackageManager(entryPoint: Connection) :
 
     private fun installPackage(item: Package) {
         command = "${installCommand()} ${item.value}"
-        entryPoint.execute(command)
+        entryPoint.execute(TerminalCommand(command))
     }
 
     private fun uninstallPackage(item: Package) {
         command = "${uninstallCommand()} ${item.value}"
-        entryPoint.execute(command)
+        entryPoint.execute(TerminalCommand(command))
     }
 
     private fun installGroup(item: Group) {
         command = "${groupInstallCommand()} \"${item.value}\""
-        entryPoint.execute(command)
+        entryPoint.execute(TerminalCommand(command))
     }
 
     private fun uninstallGroup(item: Group) {
         command = "${groupUninstallCommand()} \"${item.value}\""
-        entryPoint.execute(command)
+        entryPoint.execute(TerminalCommand(command))
     }
 
     @Synchronized
