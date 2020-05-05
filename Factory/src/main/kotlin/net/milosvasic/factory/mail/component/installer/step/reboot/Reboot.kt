@@ -2,7 +2,6 @@ package net.milosvasic.factory.mail.component.installer.step.reboot
 
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
@@ -32,20 +31,19 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
                     } else {
                         finish(false, operation)
                     }
-                }
-            }
-            is Command -> {
-
-                if (result.success) {
-                    finish(true, operation)
                 } else {
 
-                    if (pingCount <= timeoutInSeconds) {
-                        ping()
+                    if (result.success) {
+                        finish(true, operation)
                     } else {
 
-                        log.e("Reboot timeout exceeded")
-                        finish(false, operation)
+                        if (pingCount <= timeoutInSeconds) {
+                            ping()
+                        } else {
+
+                            log.e("Reboot timeout exceeded")
+                            finish(false, operation)
+                        }
                     }
                 }
             }
