@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.installer.step.reboot
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -11,38 +12,43 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
 
     private var pingCount = 0
     private val rebootScheduleTime = 3
-    private val operation = RebootOperation()
     private val defaultCommand = Commands.reboot(rebootScheduleTime)
     private var command = defaultCommand
+    private val operation = RebootOperation()
+    private var pingCommand: String = String.EMPTY
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
             is TerminalCommand -> {
-                if (result.operation.command.endsWith(command)) {
-                    try {
-                        Thread.sleep(3000)
-                    } catch (e: InterruptedException) {
+                val cmd = result.operation.command
+                when {
+                    isReboot(cmd) -> {
 
-                        log.e(e)
-                        finish(false, operation)
-                    }
-                    if (result.success) {
-                        ping()
-                    } else {
-                        finish(false, operation)
-                    }
-                } else {
+                        try {
+                            Thread.sleep(3000)
+                        } catch (e: InterruptedException) {
 
-                    if (result.success) {
-                        finish(true, operation)
-                    } else {
-
-                        if (pingCount <= timeoutInSeconds) {
+                            log.e(e)
+                            finish(false, operation)
+                        }
+                        if (result.success) {
                             ping()
                         } else {
-
-                            log.e("Reboot timeout exceeded")
                             finish(false, operation)
+                        }
+                    }
+                    isPing(cmd) -> {
+                        if (result.success) {
+                            finish(true, operation)
+                        } else {
+
+                            if (pingCount <= timeoutInSeconds) {
+                                ping()
+                            } else {
+
+                                log.e("Reboot timeout exceeded")
+                                finish(false, operation)
+                            }
                         }
                     }
                 }
@@ -78,7 +84,8 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
                 finish(false, operation)
             } else {
 
-                command = Commands.ping(host, 1)
+                pingCommand = Commands.ping(host, 1)
+                command = pingCommand
                 try {
                     terminal.execute(TerminalCommand(command))
                 } catch (e: IllegalStateException) {
@@ -93,4 +100,8 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
             }
         }
     }
+
+    private fun isReboot(cmd: String) = cmd.endsWith(defaultCommand)
+
+    private fun isPing(cmd: String) = pingCommand != String.EMPTY && cmd.endsWith(pingCommand)
 }
