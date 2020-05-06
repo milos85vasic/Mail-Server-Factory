@@ -120,7 +120,9 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
             }
         }
         if (operationsIterator == null) {
-            throw IllegalArgumentException("No operations provided for subject: $currentSubject")
+            subjects[currentSubject]?.let {
+                operationsIterator = it.iterator()
+            }
         }
         if (currentOperation == null) {
             operationsIterator?.let { oIterator ->
