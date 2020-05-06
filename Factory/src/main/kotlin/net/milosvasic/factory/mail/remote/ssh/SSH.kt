@@ -1,12 +1,14 @@
 package net.milosvasic.factory.mail.remote.ssh
 
 import net.milosvasic.factory.mail.common.Notifying
+import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.OperatingSystem
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.terminal.Terminal
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class SSH(private val remote: Remote) :
@@ -28,12 +30,18 @@ class SSH(private val remote: Remote) :
         terminal.subscribe(listener)
     }
 
-    override fun execute(what: String) {
-        terminal.execute(SSHCommand(remote, what))
+    @Synchronized
+    @Throws(BusyException::class, IllegalArgumentException::class)
+    override fun execute(what: TerminalCommand) {
+        val command = TerminalCommand(SSHCommand(remote, what).getCommand())
+        terminal.execute(command)
     }
 
-    fun execute(data: String, obtainCommandOutput: Boolean) {
-        terminal.execute(SSHCommand(remote, data, obtainCommandOutput))
+    @Synchronized
+    @Throws(BusyException::class, IllegalArgumentException::class)
+    fun execute(data: TerminalCommand, obtainCommandOutput: Boolean) {
+        val command = TerminalCommand(SSHCommand(remote, data).getCommand(), obtainCommandOutput)
+        terminal.execute(command)
     }
 
     override fun subscribe(what: OperationResultListener) {

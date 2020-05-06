@@ -5,12 +5,12 @@ import net.milosvasic.factory.mail.component.docker.DockerCommand
 import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.io.File
 
 
@@ -35,8 +35,8 @@ class Stack(
     override fun handleResult(result: OperationResult) {
 
         when (result.operation) {
-            is Command -> {
-                if (command != String.EMPTY && result.operation.toExecute.endsWith(command)) {
+            is TerminalCommand -> {
+                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
 
                     if (dockerCompose) {
                         dockerCompose = false
@@ -73,8 +73,12 @@ class Stack(
                                     ownershipAndPermissionsStop,
                                     ownershipAndPermissionsRestart
                             )
-                            connection?.execute(command)
+                            connection?.execute(TerminalCommand(command))
                         } catch (e: IllegalArgumentException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        } catch (e: IllegalStateException) {
 
                             log.e(e)
                             finish(false, operation)
@@ -107,7 +111,7 @@ class Stack(
         dockerCompose = true
         val path = getYmlPath()
         command = "${DockerCommand.COMPOSE.obtain()} -f $path ${DockerCommand.UP.obtain()} $flags"
-        connection?.execute(command)
+        connection?.execute(TerminalCommand(command))
     }
 
     private fun getYmlPath(): String {

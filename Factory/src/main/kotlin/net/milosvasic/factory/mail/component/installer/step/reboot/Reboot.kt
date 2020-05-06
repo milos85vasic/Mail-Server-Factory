@@ -1,51 +1,55 @@
 package net.milosvasic.factory.mail.component.installer.step.reboot
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallationStep<SSH>() {
 
     private var pingCount = 0
     private val rebootScheduleTime = 3
-    private val operation = RebootOperation()
     private val defaultCommand = Commands.reboot(rebootScheduleTime)
     private var command = defaultCommand
+    private val operation = RebootOperation()
+    private var pingCommand: String = String.EMPTY
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is SSHCommand -> {
-                if (result.operation.command.endsWith(command)) {
-                    try {
-                        Thread.sleep(3000)
-                    } catch (e: InterruptedException) {
+            is TerminalCommand -> {
+                val cmd = result.operation.command
+                when {
+                    isReboot(cmd) -> {
 
-                        log.e(e)
-                        finish(false, operation)
+                        try {
+                            Thread.sleep(3000)
+                        } catch (e: InterruptedException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        }
+                        if (result.success) {
+                            ping()
+                        } else {
+                            finish(false, operation)
+                        }
                     }
-                    if (result.success) {
-                        ping()
-                    } else {
-                        finish(false, operation)
-                    }
-                }
-            }
-            is Command -> {
+                    isPing(cmd) -> {
+                        if (result.success) {
+                            finish(true, operation)
+                        } else {
 
-                if (result.success) {
-                    finish(true, operation)
-                } else {
+                            if (pingCount <= timeoutInSeconds) {
+                                ping()
+                            } else {
 
-                    if (pingCount <= timeoutInSeconds) {
-                        ping()
-                    } else {
-
-                        log.e("Reboot timeout exceeded")
-                        finish(false, operation)
+                                log.e("Reboot timeout exceeded")
+                                finish(false, operation)
+                            }
+                        }
                     }
                 }
             }
@@ -59,7 +63,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
         log.v("Reboot timeout in seconds: $timeoutInSeconds")
         pingCount = 0
         command = defaultCommand
-        connection?.execute(command)
+        connection?.execute(TerminalCommand(command))
     }
 
     private fun ping() {
@@ -80,9 +84,24 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
                 finish(false, operation)
             } else {
 
-                command = Commands.ping(host, 1)
-                terminal.execute(Command(command))
+                pingCommand = Commands.ping(host, 1)
+                command = pingCommand
+                try {
+                    terminal.execute(TerminalCommand(command))
+                } catch (e: IllegalStateException) {
+
+                    log.e(e)
+                    finish(false, operation)
+                } catch (e: IllegalArgumentException) {
+
+                    log.e(e)
+                    finish(false, operation)
+                }
             }
         }
     }
+
+    private fun isReboot(cmd: String) = cmd.endsWith(defaultCommand)
+
+    private fun isPing(cmd: String) = pingCommand != String.EMPTY && cmd.endsWith(pingCommand)
 }

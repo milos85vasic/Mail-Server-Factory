@@ -15,15 +15,7 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
 
-            try {
-                handleResult(result)
-            } catch (e: IllegalStateException) {
-
-                onFailedResult(e)
-            } catch (e: IllegalArgumentException) {
-
-                onFailedResult(e)
-            }
+            handleResultAndCatch(result)
         }
     }
 
@@ -49,7 +41,7 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun initialize() {
         super.initialize()
         installer.subscribe(listener)

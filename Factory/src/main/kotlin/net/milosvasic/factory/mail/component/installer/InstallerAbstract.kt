@@ -24,7 +24,7 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 abstract class InstallerAbstract(entryPoint: Connection) :
         BusyWorker<InstallationStep<*>>(entryPoint),
@@ -40,16 +40,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
-
-            try {
-                handleResult(result)
-            } catch (e: IllegalStateException) {
-
-                onFailedResult(e)
-            } catch (e: IllegalArgumentException) {
-
-                onFailedResult(e)
-            }
+            handleResultAndCatch(result)
         }
     }
 
@@ -65,36 +56,23 @@ abstract class InstallerAbstract(entryPoint: Connection) :
             }
             is PackageManagerOperation -> {
 
-                if (result.success) {
-                    tryNext()
-                } else {
-                    free(false)
-                }
+                checkResultAndTryNext(result)
             }
             is RebootOperation -> {
 
                 unsubscribeFromItem(listener)
-                if (result.success) {
-                    tryNext()
-                } else {
-                    free(false)
-                }
+                checkResultAndTryNext(result)
             }
             is CheckOperation -> {
 
                 unsubscribeFromItem(listener)
-                if (result.success) {
-                    tryNext()
-                } else {
-                    free(false)
-                }
+                checkResultAndTryNext(result)
             }
             is ConditionOperation -> {
 
                 unsubscribeFromItem(listener)
                 if (result.success) {
                     if (result.operation.result) {
-
                         tryNextSection()
                     } else {
                         tryNext()
@@ -116,7 +94,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                     free(false)
                 }
             }
-            is SSHCommand -> {
+            is TerminalCommand -> {
 
                 if (command != String.EMPTY && result.operation.command.endsWith(command)) {
                     onCommandPerformed(result)
@@ -125,23 +103,16 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         }
     }
 
-    protected open fun onCommandPerformed(result: OperationResult) {
+    protected fun checkResultAndTryNext(result: OperationResult) {
         if (result.success) {
-
-            try {
-                tryNext()
-            } catch (e: IllegalStateException) {
-
-                log.e(e)
-                free(false)
-            } catch (e: IllegalArgumentException) {
-
-                log.e(e)
-                free(false)
-            }
+            tryNextOrFail()
         } else {
             free(false)
         }
+    }
+
+    protected open fun onCommandPerformed(result: OperationResult) {
+        checkResultAndTryNext(result)
     }
 
     @Synchronized
@@ -173,12 +144,10 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                     }
                 } catch (e: IllegalArgumentException) {
 
-                    log.e(e)
-                    free(false)
+                    onFailedResult(e)
                 } catch (e: IllegalStateException) {
 
-                    log.e(e)
-                    free(false)
+                    onFailedResult(e)
                 }
             }
         }
@@ -317,6 +286,16 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         }
     }
 
+    protected fun handleResultAndCatch(result: OperationResult) {
+        try {
+            handleResult(result)
+        } catch (e: IllegalStateException) {
+            onFailedResult(e)
+        } catch (e: IllegalArgumentException) {
+            onFailedResult(e)
+        }
+    }
+
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     private fun tryNextSection() {
         sectionIterator?.let { secIt ->
@@ -327,6 +306,16 @@ abstract class InstallerAbstract(entryPoint: Connection) :
             } else {
                 free(true)
             }
+        }
+    }
+
+    private fun tryNextOrFail() {
+        try {
+            tryNext()
+        } catch (e: IllegalStateException) {
+            onFailedResult(e)
+        } catch (e: IllegalArgumentException) {
+            onFailedResult(e)
         }
     }
 

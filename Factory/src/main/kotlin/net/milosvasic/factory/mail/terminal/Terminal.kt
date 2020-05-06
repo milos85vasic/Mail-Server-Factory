@@ -9,7 +9,6 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import java.io.BufferedReader
@@ -17,7 +16,7 @@ import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class Terminal :
-    Execution<Command>,
+    Execution<TerminalCommand>,
     Subscription<OperationResultListener>,
     Notifying<OperationResult> {
 
@@ -27,13 +26,16 @@ class Terminal :
     private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
 
     @Synchronized
-    @Throws(BusyException::class)
-    override fun execute(what: Command) {
+    @Throws(BusyException::class, IllegalArgumentException::class)
+    override fun execute(what: TerminalCommand) {
+        if (what.command == String.EMPTY) {
+            throw IllegalArgumentException("Empty terminal command")
+        }
         BusyWorker.busy(busy)
         val action = Runnable {
             try {
-                log.d(">>> ${what.toExecute}")
-                val process = runtime.exec(what.toExecute)
+                log.d(">>> ${what.command}")
+                val process = runtime.exec(what.command)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
                 val obtainCommandOutput = what.obtainCommandOutput

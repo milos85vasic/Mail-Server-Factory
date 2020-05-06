@@ -18,14 +18,13 @@ import net.milosvasic.factory.mail.configuration.VariableNode
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.Architecture
 import net.milosvasic.factory.mail.os.OSType
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import kotlin.system.exitProcess
 
 class ServerFactory : Application {
@@ -86,9 +85,9 @@ class ServerFactory : Application {
                     val docker = Docker(ssh)
                     val terminal = ssh.terminal
                     val installer = Installer(ssh)
-                    val pingCommand = Command(Commands.ping(host))
-                    val testCommand = Commands.echo("Hello")
-                    val hostInfoCommand = Commands.getHostInfo()
+                    val pingCommand = TerminalCommand(Commands.ping(host))
+                    val hostInfoCommand = TerminalCommand(Commands.getHostInfo())
+                    val testCommand = TerminalCommand(Commands.echo("Hello"))
                     var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
                     var containerConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
 
@@ -130,12 +129,19 @@ class ServerFactory : Application {
                         return result
                     }
 
+                    fun isHostInfo(command: TerminalCommand) = command.command.endsWith(hostInfoCommand.command)
+
+                    fun isTest(command: TerminalCommand) = command.command.endsWith(testCommand.command)
+
+                    fun isPing(command: TerminalCommand) = command.command.endsWith(pingCommand.command)
+
                     val listener = object : OperationResultListener {
                         override fun onOperationPerformed(result: OperationResult) {
                             when (result.operation) {
-                                is SSHCommand -> {
-                                    when (result.operation.command) {
-                                        hostInfoCommand -> {
+                                is TerminalCommand -> {
+                                    val resultCommand = result.operation
+                                    when { // FIXME: By using flow get a rid off by value comparison.
+                                        isHostInfo(resultCommand) -> {
                                             if (result.success) {
                                                 val os = ssh.getRemoteOS()
                                                 os.parseAndSetSystemInfo(result.data)
@@ -159,7 +165,7 @@ class ServerFactory : Application {
                                                 fail(ERROR.INITIALIZATION_FAILURE)
                                             }
                                         }
-                                        testCommand -> {
+                                        isTest(resultCommand) -> {
                                             if (result.success) {
                                                 log.v("Connected to: ${configuration.remote}")
                                                 ssh.execute(hostInfoCommand, true)
@@ -169,13 +175,16 @@ class ServerFactory : Application {
                                                 fail(ERROR.INITIALIZATION_FAILURE)
                                             }
                                         }
-                                    }
-                                }
-                                is Command -> {
-                                    when (result.operation.toExecute) {
-                                        pingCommand.toExecute -> {
+                                        isPing(resultCommand) -> {
                                             if (result.success) {
-                                                ssh.execute(testCommand)
+
+                                                try {
+                                                    ssh.execute(testCommand)
+                                                } catch (e: BusyException) {
+                                                    fail(e)
+                                                } catch (e: IllegalArgumentException) {
+                                                    fail(e)
+                                                }
                                             } else {
 
                                                 log.e("Host is unreachable: $host")

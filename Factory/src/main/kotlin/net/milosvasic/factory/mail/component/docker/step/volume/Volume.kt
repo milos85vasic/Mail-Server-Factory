@@ -7,10 +7,10 @@ import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
 import net.milosvasic.factory.mail.component.docker.Image
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 
 class Volume(private val mapping: String, private val name: String) : DockerInstallationStep() {
@@ -20,8 +20,8 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is Command -> {
-                if (result.operation.toExecute.contains(psA)) {
+            is TerminalCommand -> {
+                if (result.operation.command.contains(psA)) {
 
                     if (result.success) {
                         log.w("Volume '$name' already exist, skipping installation step")
@@ -44,7 +44,17 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
                                     .containerName(name)
 
                             command = builder.build()
-                            connection?.execute(command)
+                            try {
+                                connection?.execute(TerminalCommand(command))
+                            } catch (e: IllegalArgumentException) {
+
+                                log.e(e)
+                                finish(false, DockerInstallationOperation())
+                            }  catch (e: IllegalStateException) {
+
+                                log.e(e)
+                                finish(false, DockerInstallationOperation())
+                            }
                         } else {
 
                             finish(false, DockerInstallationOperation())
@@ -52,7 +62,7 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
                     }
                     return
                 }
-                if (command != String.EMPTY && result.operation.toExecute.endsWith(command)) {
+                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
 
                     finish(result.success, DockerInstallationOperation())
                 }
@@ -64,6 +74,6 @@ class Volume(private val mapping: String, private val name: String) : DockerInst
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: Connection) {
         super.execute(*params)
-        connection?.execute(command)
+        connection?.execute(TerminalCommand(command))
     }
 }

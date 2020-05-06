@@ -4,7 +4,6 @@ import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.configuration.Variable
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Command
 import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
@@ -12,6 +11,7 @@ import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.io.File
 
 class Deploy(what: String, private val where: String) : RemoteOperationInstallationStep<SSH>() {
@@ -32,7 +32,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is Command -> {
+            is TerminalCommand -> {
                 if (isMkdir(result.operation)) {
 
                     terminal = connection?.terminal
@@ -48,8 +48,12 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                                 try {
                                     processFiles(whatFile)
                                     command = Commands.tar(whatFile.absolutePath, localTar)
-                                    terminal?.execute(Command(command))
+                                    terminal?.execute(TerminalCommand(command))
                                 } catch (e: IllegalStateException) {
+
+                                    log.e(e)
+                                    finish(false, operation)
+                                } catch (e: IllegalArgumentException) {
 
                                     log.e(e)
                                     finish(false, operation)
@@ -77,20 +81,50 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                     } else {
 
                         command = Commands.scp(localTar, where, remote)
-                        terminal?.execute(Command(command))
+                        try {
+                            terminal?.execute(TerminalCommand(command))
+                        } catch (e: IllegalArgumentException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        } catch (e: IllegalStateException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        }
                     }
                     return
                 }
                 if (isScp(result.operation)) {
 
                     command = Commands.unTar(remoteTar, where)
-                    connection?.execute(command)
+                    try {
+                        connection?.execute(TerminalCommand(command))
+                    } catch (e: IllegalArgumentException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    } catch (e: IllegalStateException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    }
                     return
                 }
                 if (isTarDecompress(result.operation)) {
 
                     command = Commands.rm(remoteTar)
-                    connection?.execute(command)
+                    try {
+                        connection?.execute(TerminalCommand(command))
+                    } catch (e: IllegalStateException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    } catch (e: IllegalArgumentException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    }
                     return
                 }
                 if (isRmRemote(result.operation, remoteTar)) {
@@ -102,21 +136,42 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                         }
                         exclude += "${Commands.find(it, Commands.here)} -exec ${Commands.rm} {} \\;"
                     }
-                    if (exclude != String.EMPTY) {
+                    try {
 
-                        command = exclude
-                        connection?.execute(command)
-                    } else {
+                        if (exclude != String.EMPTY) {
 
-                        command = Commands.rm(localTar)
-                        terminal?.execute(Command(command))
+                            command = exclude
+                            connection?.execute(TerminalCommand(command))
+                        } else {
+
+                            command = Commands.rm(localTar)
+                            terminal?.execute(TerminalCommand(command))
+                        }
+                    } catch (e: IllegalStateException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    } catch (e: IllegalArgumentException) {
+
+                        log.e(e)
+                        finish(false, operation)
                     }
                     return
                 }
                 if (isFind(result.operation)) {
 
                     command = Commands.rm(localTar)
-                    terminal?.execute(Command(command))
+                    try {
+                        terminal?.execute(TerminalCommand(command))
+                    } catch (e: IllegalArgumentException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    } catch (e: IllegalStateException) {
+
+                        log.e(e)
+                        finish(false, operation)
+                    }
                     return
                 }
                 if (isRm(result.operation, localTar)) {
@@ -135,8 +190,12 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                         try {
                             val chmod = Commands.chmod(where, permissions.obtain())
                             command = Commands.concatenate(chown, chgrp, chmod)
-                            connection?.execute(command)
+                            connection?.execute(TerminalCommand(command))
                         } catch (e: IllegalArgumentException) {
+
+                            log.e(e)
+                            finish(false, operation)
+                        } catch (e: IllegalStateException) {
 
                             log.e(e)
                             finish(false, operation)
@@ -158,7 +217,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
     override fun execute(vararg params: SSH) {
         super.execute(*params)
         command = Commands.mkdir(where)
-        connection?.execute(command)
+        connection?.execute(TerminalCommand(command))
     }
 
     override fun finish(success: Boolean, operation: Operation) {
@@ -231,34 +290,34 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
     private fun getName(file: File) = file.name.toLowerCase().replace(prototypePrefix, "")
 
-    private fun isScp(operation: Command) =
-            operation.toExecute.startsWith(Commands.scp)
+    private fun isScp(operation: TerminalCommand) =
+            operation.command.startsWith(Commands.scp)
 
-    private fun isTarDecompress(operation: Command) =
-            operation.toExecute.contains(Commands.tarDecompress)
+    private fun isTarDecompress(operation: TerminalCommand) =
+            operation.command.contains(Commands.tarDecompress)
 
-    private fun isTarCompress(operation: Command) =
-            operation.toExecute.startsWith(Commands.tarCompress)
+    private fun isTarCompress(operation: TerminalCommand) =
+            operation.command.startsWith(Commands.tarCompress)
 
-    private fun isRmRemote(operation: Command, file: String) =
+    private fun isRmRemote(operation: TerminalCommand, file: String) =
             isRm(operation, file) &&
-                    operation.toExecute.startsWith(Commands.ssh)
+                    operation.command.startsWith(Commands.ssh)
 
-    private fun isRm(operation: Command, file: String) =
-            operation.toExecute.contains(Commands.rm(file))
+    private fun isRm(operation: TerminalCommand, file: String) =
+            operation.command.contains(Commands.rm(file))
 
-    private fun isFind(operation: Command) =
-            operation.toExecute.contains(Commands.find)
+    private fun isFind(operation: TerminalCommand) =
+            operation.command.contains(Commands.find)
 
-    private fun isChown(operation: Command) =
-            operation.toExecute.contains(Commands.chown)
+    private fun isChown(operation: TerminalCommand) =
+            operation.command.contains(Commands.chown)
 
-    private fun isChgrp(operation: Command) =
-            operation.toExecute.contains(Commands.chgrp)
+    private fun isChgrp(operation: TerminalCommand) =
+            operation.command.contains(Commands.chgrp)
 
-    private fun isChmod(operation: Command) =
-            operation.toExecute.contains(Commands.chmod)
+    private fun isChmod(operation: TerminalCommand) =
+            operation.command.contains(Commands.chmod)
 
-    private fun isMkdir(operation: Command) =
-            operation.toExecute.contains(Commands.mkdir)
+    private fun isMkdir(operation: TerminalCommand) =
+            operation.command.contains(Commands.mkdir)
 }
