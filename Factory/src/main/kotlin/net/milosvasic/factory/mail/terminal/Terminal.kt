@@ -2,6 +2,7 @@ package net.milosvasic.factory.mail.terminal
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Execution
+import net.milosvasic.factory.mail.common.Executor
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.Busy
@@ -16,8 +17,7 @@ import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class Terminal :
-    Execution<TerminalCommand>,
-    Subscription<OperationResultListener>,
+    Executor<TerminalCommand>,
     Notifying<OperationResult> {
 
     private val busy = Busy()
