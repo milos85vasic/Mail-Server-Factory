@@ -155,12 +155,12 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     }
 
     private fun finish(success: Boolean, message: String = String.EMPTY) {
-        callback.onFinish(success, message)
         currentSubject = null
         currentOperation = null
         subjectsIterator = null
         operationsIterator = null
         currentOperations = mutableListOf()
+        callback.onFinish(success, message)
         free()
     }
 
