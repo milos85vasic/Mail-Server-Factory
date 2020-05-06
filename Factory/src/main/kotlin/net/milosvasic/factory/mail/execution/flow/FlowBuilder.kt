@@ -81,6 +81,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
             subjects[it] = currentOperations
         }
         currentSubject = null
+        currentOperations = mutableListOf()
         try {
             tryNext()
         } catch (e: IllegalArgumentException) {
@@ -149,6 +150,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
                     currentOperation = oIterator.next()
                 } else {
                     currentSubject = null
+                    operationsIterator = null
                     tryNext()
                     return
                 }
