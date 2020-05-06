@@ -5,6 +5,8 @@ package net.milosvasic.factory.mail
 import net.milosvasic.factory.mail.application.ServerFactory
 import net.milosvasic.factory.mail.execution.flow.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.command.CommandFlow
+import net.milosvasic.factory.mail.remote.Remote
+import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
@@ -32,8 +34,14 @@ fun main(args: Array<String>) {
     }
 
     val terminal = Terminal()
+    val ssh = SSH(Remote(localhost, 22, "root"))
     CommandFlow()
             .width(terminal)
+            .perform(TerminalCommand(Commands.echo("Moja Maja")))
+            .perform(Commands.echo("Moja Maja 2"))
+            .perform(TerminalCommand(Commands.echo("Moja Maja 3")))
+            .perform(Commands.echo("Moja Maja 4"))
+            .width(ssh)
             .perform(TerminalCommand(Commands.echo("Moja Maja")))
             .perform(Commands.echo("Moja Maja 2"))
             .perform(TerminalCommand(Commands.echo("Moja Maja 3")))
