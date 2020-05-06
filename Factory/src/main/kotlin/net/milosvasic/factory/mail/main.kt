@@ -32,7 +32,7 @@ fun main(args: Array<String>) {
         }
     }
 
-    var count = 0
+    var count = 1
     val terminal = Terminal()
     val ssh = SSH(Remote("192.168.100.101", 22, "root"))
     CommandFlow()
