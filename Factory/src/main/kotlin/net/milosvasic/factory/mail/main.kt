@@ -21,9 +21,9 @@ fun main(args: Array<String>) {
     CommandFlow()
             .width(terminal)
             .perform(TerminalCommand(Commands.echo("Moja Maja")))
-            .perform("Moja Maja 2")
+            .perform(Commands.echo("Moja Maja 2"))
             .perform(TerminalCommand(Commands.echo("Moja Maja 3")))
-            .perform("Moja Maja 4")
+            .perform(Commands.echo("Moja Maja 4"))
             .run()
 
     return // TODO: Remove when flow implementation is complete.
