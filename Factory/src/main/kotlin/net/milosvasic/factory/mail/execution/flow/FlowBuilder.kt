@@ -5,13 +5,10 @@ import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyDelegate
 import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.log
-import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
 
     private val busy = Busy()
-    private var finished = AtomicBoolean()
     private var currentSubject: T? = null
     private var currentOperation: M? = null
     private val subjects = mutableMapOf<T, List<M>>()
@@ -80,7 +77,6 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     @Throws(BusyException::class)
     override fun run() {
         busy()
-        finished.set(false)
         currentSubject?.let {
             subjects[it] = currentOperations
         }
@@ -109,8 +105,18 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
 
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     private fun tryNext() {
-        if (finished.get()) {
-            return
+        if (subjects.isEmpty()) {
+            throw IllegalArgumentException("No subjects provided")
+        }
+        subjects.keys.forEach {
+            if (subjects[it] == null) {
+                throw IllegalArgumentException("Null operations provided for subject: $it")
+            }
+            subjects[it]?.let { children ->
+                if (children.isEmpty()) {
+                    throw IllegalArgumentException("No operations provided for subject: $it")
+                }
+            }
         }
         if (subjectsIterator == null) {
             subjectsIterator = subjects.keys.iterator()
@@ -168,7 +174,6 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     }
 
     private fun finish(success: Boolean, message: String = String.EMPTY) {
-        finished.set(true)
         currentSubject = null
         currentOperation = null
         subjectsIterator = null

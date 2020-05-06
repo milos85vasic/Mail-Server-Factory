@@ -9,7 +9,7 @@ class DefaultFlowCallback : FlowCallback {
         if (success) {
             log.v("Flow finished")
         } else {
-            log.w("Flow finished with errors: $message")
+            log.w(message)
         }
     }
 }

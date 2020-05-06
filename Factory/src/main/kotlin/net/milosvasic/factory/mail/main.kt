@@ -20,16 +20,15 @@ fun main(args: Array<String>) {
     initLogging()
 
 
+
     val flowCallback = object : FlowCallback{
         override fun onFinish(success: Boolean, message: String) {
             if (success) {
-
                 log.i("Flow finished")
             } else {
-
                 log.e(message)
             }
-            //exitProcess(0)
+//            exitProcess(0)
         }
     }
 
