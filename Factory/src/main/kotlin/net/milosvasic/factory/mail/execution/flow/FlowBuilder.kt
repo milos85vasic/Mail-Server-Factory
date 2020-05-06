@@ -5,10 +5,13 @@ import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyDelegate
 import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.log
+import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
 
     private val busy = Busy()
+    private var finished = AtomicBoolean()
     private var currentSubject: T? = null
     private var currentOperation: M? = null
     private val subjects = mutableMapOf<T, List<M>>()
@@ -18,20 +21,27 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     private var callback: FlowCallback = DefaultFlowCallback()
 
     private val processingCallback = object : FlowProcessingCallback {
-
         override fun onFinish(success: Boolean, message: String) {
 
-            if (success) {
-                currentOperation = null
-                try {
-                    tryNext()
-                } catch (e: IllegalArgumentException) {
-                    finish(e)
-                } catch (e: IllegalStateException) {
-                    finish(e)
+            subjectsIterator?.let { sIterator ->
+                operationsIterator?.let { oIterator ->
+                    if (!sIterator.hasNext() && !oIterator.hasNext()) {
+                        finish(true)
+                    } else {
+                        if (success) {
+                            currentOperation = null
+                            try {
+                                tryNext()
+                            } catch (e: IllegalArgumentException) {
+                                finish(e)
+                            } catch (e: IllegalStateException) {
+                                finish(e)
+                            }
+                        } else {
+                            finish(false, message)
+                        }
+                    }
                 }
-            } else {
-                finish(false, message)
             }
         }
     }
@@ -67,10 +77,10 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
         return this
     }
 
-    @Synchronized
     @Throws(BusyException::class)
     override fun run() {
         busy()
+        finished.set(false)
         currentSubject?.let {
             subjects[it] = currentOperations
         }
@@ -99,6 +109,9 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
 
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     private fun tryNext() {
+        if (finished.get()) {
+            return
+        }
         if (subjectsIterator == null) {
             subjectsIterator = subjects.keys.iterator()
         }
@@ -155,6 +168,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     }
 
     private fun finish(success: Boolean, message: String = String.EMPTY) {
+        finished.set(true)
         currentSubject = null
         currentOperation = null
         subjectsIterator = null
@@ -164,7 +178,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
         free()
     }
 
-    private fun finish(e: Exception){
+    private fun finish(e: Exception) {
         var message = String.EMPTY
         e.message?.let {
             message = it
