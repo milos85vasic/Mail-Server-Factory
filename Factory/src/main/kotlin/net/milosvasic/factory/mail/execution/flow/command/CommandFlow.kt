@@ -7,7 +7,6 @@ import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.ProcessingRecipe
-import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.terminal.TerminalCommand
@@ -50,7 +49,16 @@ class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand>() {
             private val operationCallback = object : OperationResultListener {
                 override fun onOperationPerformed(result: OperationResult) {
                     subject.unsubscribe(this)
-                    callback?.onFinish(result.success, String.EMPTY)
+                    val message = if (result.success) {
+                        String.EMPTY
+                    } else {
+                        if (result.operation is TerminalCommand) {
+                            "Command failed: ${result.operation.command}"
+                        } else {
+                            "Command failed: ${result.operation}"
+                        }
+                    }
+                    callback?.onFinish(result.success, message)
                     callback = null
                 }
             }
