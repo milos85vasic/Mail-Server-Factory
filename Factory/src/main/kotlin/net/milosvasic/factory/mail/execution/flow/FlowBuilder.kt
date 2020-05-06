@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.execution.flow
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyDelegate
 import net.milosvasic.factory.mail.common.busy.BusyDelegation
@@ -9,11 +10,11 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
 
     private val busy = Busy()
-    private var currentSubject: T? = null
     private var currentOperation: M? = null
-    private val subjects = mutableMapOf<T, List<M>>()
+    private var currentSubject: Wrapper<T>? = null
     private var currentOperations = mutableListOf<M>()
-    private var subjectsIterator: Iterator<T>? = null
+    private val subjects = mutableMapOf<Wrapper<T>, List<M>>()
+    private var subjectsIterator: Iterator<Wrapper<T>>? = null
     private var operationsIterator: Iterator<M>? = null
     private var callback: FlowCallback = DefaultFlowCallback()
 
@@ -52,7 +53,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
             subjects[it] = currentOperations
         }
         currentOperations = mutableListOf()
-        currentSubject = subject
+        currentSubject = Wrapper(subject)
         return this
     }
 
@@ -169,7 +170,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
         }
         currentSubject?.let { subject ->
             currentOperation?.let { operation ->
-                val recipe = getProcessingRecipe(subject, operation)
+                val recipe = getProcessingRecipe(subject.content, operation)
                 recipe.process(processingCallback)
             }
         }
