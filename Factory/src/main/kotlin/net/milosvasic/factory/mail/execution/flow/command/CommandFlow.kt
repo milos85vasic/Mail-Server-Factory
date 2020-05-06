@@ -1,10 +1,14 @@
 package net.milosvasic.factory.mail.execution.flow.command
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Executor
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.ProcessingRecipe
+import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand>() {
@@ -38,6 +42,23 @@ class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand>() {
             operation: TerminalCommand
     ): ProcessingRecipe {
 
-        TODO("Not yet implemented")
+        return object : ProcessingRecipe {
+
+            private var callback: FlowProcessingCallback? = null
+
+            private val operationCallback = object : OperationResultListener {
+                override fun onOperationPerformed(result: OperationResult) {
+                    subject.unsubscribe(this)
+                    callback?.onFinish(result.success, String.EMPTY)
+                    callback = null
+                }
+            }
+
+            override fun process(callback: FlowProcessingCallback) {
+                this.callback = callback
+                subject.subscribe(operationCallback)
+                subject.execute(operation)
+            }
+        }
     }
 }
