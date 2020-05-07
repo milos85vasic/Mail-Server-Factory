@@ -27,7 +27,8 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
         if (busy.isBusy()) {
             throw BusyException()
         }
-        currentSubject = insertSubject(subject)
+        currentSubject = Wrapper(subject)
+        insertSubject()
         return this
     }
 
@@ -94,9 +95,4 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     protected abstract fun process()
 
     protected abstract fun insertSubject()
-
-    private fun insertSubject(subject: T): Wrapper<T> {
-        insertSubject()
-        return Wrapper(subject)
-    }
 }

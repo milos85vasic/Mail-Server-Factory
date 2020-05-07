@@ -6,14 +6,14 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 
-abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrapper<T>, List<M>>>(), FlowPerform<T, M, D> {
+abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrapper<T>, MutableList<M>>>(), FlowPerform<T, M, D> {
 
     private var currentOperation: M? = null
-    private var currentOperations = mutableListOf<M>()
     private var operationsIterator: Iterator<M>? = null
+    private val collectionWrapper = CollectionWrapper<MutableMap<Wrapper<T>, MutableList<M>>>(mutableMapOf())
 
-    override val subjects: CollectionWrapper<MutableMap<Wrapper<T>, List<M>>>
-        get() = CollectionWrapper(mutableMapOf())
+    override val subjects: CollectionWrapper<MutableMap<Wrapper<T>, MutableList<M>>>
+        get() = collectionWrapper
 
     override val processingCallback: FlowProcessingCallback
         get() = object : FlowProcessingCallback {
@@ -44,9 +44,8 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
 
     override fun insertSubject() {
         currentSubject?.let {
-            subjects.get()[it] = currentOperations
+            subjects.get()[it] = mutableListOf()
         }
-        currentOperations = mutableListOf()
     }
 
     @Throws(BusyException::class)
@@ -54,7 +53,7 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
         if (busy.isBusy()) {
             throw BusyException()
         }
-        currentOperations.add(what)
+        subjects.get()[currentSubject]?.add(what)
         return this
     }
 
@@ -65,11 +64,11 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
         }
         subjects.get().keys.forEach {
             if (subjects.get()[it] == null) {
-                throw IllegalArgumentException("Null operations provided for subject: $it")
+                throw IllegalArgumentException("Null operations provided for subject: ${it.content}")
             }
             subjects.get()[it]?.let { children ->
                 if (children.isEmpty()) {
-                    throw IllegalArgumentException("No operations provided for subject: $it")
+                    throw IllegalArgumentException("No operations provided for subject: ${it.content}")
                 }
             }
         }
@@ -117,7 +116,6 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
         super.cleanupStates()
         currentOperation = null
         operationsIterator = null
-        currentOperations = mutableListOf()
     }
 
     @Throws(IllegalStateException::class)
