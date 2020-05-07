@@ -2,7 +2,7 @@ package net.milosvasic.factory.mail.remote.ssh
 
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.operation.Configuration
+import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.OperatingSystem
@@ -42,7 +42,7 @@ class SSH(private val remote: Remote) :
     @Throws(BusyException::class, IllegalArgumentException::class)
     fun execute(data: TerminalCommand, obtainOutput: Boolean) {
         val command = TerminalCommand(SSHCommand(remote, data).getCommand())
-            command.configuration[Configuration.OBTAIN_RESULT] = obtainOutput
+            command.configuration[CommandConfiguration.OBTAIN_RESULT] = obtainOutput
         terminal.execute(command)
     }
 

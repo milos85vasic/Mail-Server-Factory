@@ -8,7 +8,7 @@ import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.ProcessingRecipe
-import net.milosvasic.factory.mail.operation.Configuration
+import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.terminal.TerminalCommand
@@ -37,7 +37,7 @@ class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand, Stri
 
     @Throws(BusyException::class)
     fun perform(what: TerminalCommand, dataHandler: DataHandler<String>): CommandFlow {
-        what.configuration[Configuration.OBTAIN_RESULT] = true
+        what.configuration[CommandConfiguration.OBTAIN_RESULT] = true
         super.perform(what)
         dataHandlers[what] = dataHandler
         return this
@@ -46,7 +46,7 @@ class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand, Stri
     @Throws(BusyException::class)
     fun perform(what: String, dataHandler: DataHandler<String>): CommandFlow {
         val command = TerminalCommand(what)
-        command.configuration[Configuration.OBTAIN_RESULT] = true
+        command.configuration[CommandConfiguration.OBTAIN_RESULT] = true
         super.perform(command)
         dataHandlers[command] = dataHandler
         return this
