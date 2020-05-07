@@ -16,8 +16,8 @@ import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class Terminal :
-    Executor<TerminalCommand>,
-    Notifying<OperationResult> {
+        Executor<TerminalCommand>,
+        Notifying<OperationResult> {
 
     private val busy = Busy()
     private val runtime = Runtime.getRuntime()
@@ -33,25 +33,39 @@ class Terminal :
         BusyWorker.busy(busy)
         val action = Runnable {
             try {
-                log.d(">>> ${what.command}")
+                var logCommand = false
+                what.configuration[CommandConfiguration.LOG_COMMAND]?.let {
+                    logCommand = it
+                }
+                if (logCommand) {
+                    log.d(">>> ${what.command}")
+                }
+
                 val process = runtime.exec(what.command)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
 
-                var obtainCommandOutput = false
+                var obtainOutput = false
                 what.configuration[CommandConfiguration.OBTAIN_RESULT]?.let {
-                    obtainCommandOutput = it
+                    obtainOutput = it
                 }
 
-                val inData = readToLog(stdIn, obtainCommandOutput)
-                val errData = readToLog(stdErr, obtainCommandOutput)
+                var logCommandResult = false
+                what.configuration[CommandConfiguration.LOG_COMMAND_RESULT]?.let {
+                    logCommandResult = it
+                }
+
+                val inData = readToLog(stdIn, obtainOutput, logCommandResult)
+                val errData = readToLog(stdErr, obtainOutput, logCommandResult)
                 val noExitValue = -1
                 var exitValue = noExitValue
                 while (exitValue == noExitValue) {
                     try {
                         exitValue = process.exitValue()
                     } catch (e: IllegalThreadStateException) {
-                        log.w(e)
+                        if (logCommandResult) {
+                            log.w(e)
+                        }
                     }
                 }
                 val success = exitValue == 0
@@ -86,12 +100,19 @@ class Terminal :
         }
     }
 
-    private fun readToLog(reader: BufferedReader, obtainCommandOutput: Boolean = false): String {
+    private fun readToLog(
+            reader: BufferedReader,
+            obtainOutput: Boolean = false,
+            logCommandResult: Boolean = false
+
+    ): String {
         val builder = StringBuilder()
         var s = reader.readLine()
         while (s != null) {
-            log.v("<<< $s")
-            if (obtainCommandOutput) {
+            if (logCommandResult) {
+                log.v("<<< $s")
+            }
+            if (obtainOutput) {
                 builder.append(s).append("\n")
             }
             s = reader.readLine()

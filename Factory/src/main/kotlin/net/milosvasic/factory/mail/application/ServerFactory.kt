@@ -2,7 +2,6 @@ package net.milosvasic.factory.mail.application
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Application
-import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.component.docker.Docker
@@ -12,10 +11,7 @@ import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
-import net.milosvasic.factory.mail.configuration.ConfigurationManager
-import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
-import net.milosvasic.factory.mail.configuration.Variable
-import net.milosvasic.factory.mail.configuration.VariableNode
+import net.milosvasic.factory.mail.configuration.*
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.execution.flow.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.command.CommandFlow
@@ -23,9 +19,7 @@ import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.os.Architecture
 import net.milosvasic.factory.mail.os.HostInfoDataHandler
-import net.milosvasic.factory.mail.os.OSType
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand

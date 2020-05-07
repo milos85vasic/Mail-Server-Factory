@@ -8,14 +8,10 @@ enum class CommandConfiguration(val configuration: String) {
 
     companion object {
 
-        var LOG_COMMAND_LOG_DEFAULT = true
-        var LOG_COMMAND_RESULT_DEFAULT = true
-        var OBTAIN_RESULT_DEFAULT = false
-
         val DEFAULT = mapOf(
-                LOG_COMMAND to LOG_COMMAND_LOG_DEFAULT,
-                LOG_COMMAND_RESULT to LOG_COMMAND_RESULT_DEFAULT,
-                OBTAIN_RESULT to OBTAIN_RESULT_DEFAULT
+                LOG_COMMAND to true,
+                LOG_COMMAND_RESULT to true,
+                OBTAIN_RESULT to false
         )
 
         val ALL_ON = mapOf(
