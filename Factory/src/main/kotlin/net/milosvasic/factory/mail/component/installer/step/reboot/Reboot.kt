@@ -2,6 +2,10 @@ package net.milosvasic.factory.mail.component.installer.step.reboot
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
+import net.milosvasic.factory.mail.configuration.ConfigurationManager
+import net.milosvasic.factory.mail.configuration.VariableContext
+import net.milosvasic.factory.mail.configuration.VariableKey
+import net.milosvasic.factory.mail.configuration.VariableNode
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.ssh.SSH
@@ -60,6 +64,35 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: SSH) {
         super.execute(*params)
+        var rebootAllowed = true
+        try {
+            val configuration = ConfigurationManager.getConfiguration()
+            val rebootKey = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.REBOOT_ALLOWED}"
+            val rebootValue = configuration.getVariableParsed(rebootKey)
+            rebootValue?.let {
+                when (it) {
+                    is String -> {
+                        rebootAllowed = it.toBoolean()
+                    }
+                    is Boolean -> {
+                        rebootAllowed = it
+                    }
+                    else -> {
+                        log.e("Cannot use 'reboot allowed' setting with value of: $it")
+                        finish(true, operation)
+                    }
+                }
+            }
+        } catch (e: IllegalStateException) {
+
+            log.e(e)
+            finish(false, operation)
+        }
+        if (!rebootAllowed) {
+            log.w("Reboot is not allowed by configuration")
+            finish(true, operation)
+            return
+        }
         log.v("Reboot timeout in seconds: $timeoutInSeconds")
         pingCount = 0
         command = defaultCommand

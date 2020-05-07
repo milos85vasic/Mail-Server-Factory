@@ -6,7 +6,8 @@
   ],
   "variables": {
     "SERVER": {
-      "SERVER_HOME": "/root"
+      "SERVER_HOME": "/root",
+      "REBOOT_ALLOWED": true
     }
   },
   "remote": {
