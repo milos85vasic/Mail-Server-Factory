@@ -2,6 +2,7 @@ package net.milosvasic.factory.mail.remote.ssh
 
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.operation.Configuration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.OperatingSystem
@@ -33,14 +34,15 @@ class SSH(private val remote: Remote) :
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
-        val command = TerminalCommand(SSHCommand(remote, what).getCommand(), what.obtainOutput)
+        val command = TerminalCommand(SSHCommand(remote, what).getCommand(), what.configuration)
         terminal.execute(command)
     }
 
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
-    fun execute(data: TerminalCommand, obtainCommandOutput: Boolean) {
-        val command = TerminalCommand(SSHCommand(remote, data).getCommand(), obtainCommandOutput)
+    fun execute(data: TerminalCommand, obtainOutput: Boolean) {
+        val command = TerminalCommand(SSHCommand(remote, data).getCommand())
+            command.configuration[Configuration.OBTAIN_RESULT] = obtainOutput
         terminal.execute(command)
     }
 

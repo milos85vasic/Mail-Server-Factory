@@ -10,6 +10,7 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.Configuration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import java.io.BufferedReader
@@ -39,8 +40,10 @@ class Terminal :
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
 
-                 val obtainCommandOutput = what.obtainOutput
-                 log.w("> > > > > > 2: $obtainCommandOutput")
+                var obtainCommandOutput = false
+                what.configuration[Configuration.OBTAIN_RESULT]?.let {
+                    obtainCommandOutput = it
+                }
 
                 val inData = readToLog(stdIn, obtainCommandOutput)
                 val errData = readToLog(stdErr, obtainCommandOutput)
