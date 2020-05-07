@@ -16,12 +16,13 @@ import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.configuration.Variable
 import net.milosvasic.factory.mail.configuration.VariableNode
 import net.milosvasic.factory.mail.error.ERROR
+import net.milosvasic.factory.mail.execution.flow.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.command.CommandFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.os.Architecture
-import net.milosvasic.factory.mail.os.OSType
+import net.milosvasic.factory.mail.os.HostInfoDataHandler
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
@@ -129,70 +130,9 @@ class ServerFactory : Application {
                         return result
                     }
 
-                    fun isHostInfo(command: TerminalCommand) = command.command.endsWith(hostInfoCommand.command)
-
-                    fun isTest(command: TerminalCommand) = command.command.endsWith(testCommand.command)
-
-                    fun isPing(command: TerminalCommand) = command.command.endsWith(pingCommand.command)
-
                     val listener = object : OperationResultListener {
                         override fun onOperationPerformed(result: OperationResult) {
                             when (result.operation) {
-                                is TerminalCommand -> {
-                                    val resultCommand = result.operation
-                                    when { // FIXME: By using flow get a rid off by value comparison.
-                                        isHostInfo(resultCommand) -> {
-                                            if (result.success) {
-                                                val os = ssh.getRemoteOS()
-                                                os.parseAndSetSystemInfo(result.data)
-                                                if (os.getType() == OSType.UNKNOWN) {
-                                                    log.w("Host operating system is unknown")
-                                                } else {
-                                                    log.i("Host operating system: ${ssh.getRemoteOS().getName()}")
-                                                }
-                                                if (os.getArchitecture() == Architecture.UNKNOWN) {
-                                                    log.w("Host system architecture is unknown")
-                                                } else {
-                                                    val arch = ssh.getRemoteOS().getArchitecture().arch.toUpperCase()
-                                                    log.i("Host system architecture: $arch")
-                                                }
-
-                                                installer.subscribe(this)
-                                                installer.initialize()
-                                            } else {
-
-                                                log.e("Could not connect to: ${configuration.remote}")
-                                                fail(ERROR.INITIALIZATION_FAILURE)
-                                            }
-                                        }
-                                        isTest(resultCommand) -> {
-                                            if (result.success) {
-                                                log.v("Connected to: ${configuration.remote}")
-                                                ssh.execute(hostInfoCommand, true)
-                                            } else {
-
-                                                log.e("Could not connect to: ${configuration.remote}")
-                                                fail(ERROR.INITIALIZATION_FAILURE)
-                                            }
-                                        }
-                                        isPing(resultCommand) -> {
-                                            if (result.success) {
-
-                                                try {
-                                                    ssh.execute(testCommand)
-                                                } catch (e: BusyException) {
-                                                    fail(e)
-                                                } catch (e: IllegalArgumentException) {
-                                                    fail(e)
-                                                }
-                                            } else {
-
-                                                log.e("Host is unreachable: $host")
-                                                fail(ERROR.INITIALIZATION_FAILURE)
-                                            }
-                                        }
-                                    }
-                                }
                                 is InstallerInitializationOperation -> {
 
                                     if (result.success) {
@@ -239,11 +179,6 @@ class ServerFactory : Application {
                                         fail(ERROR.INSTALLATION_FAILURE)
                                     }
                                 }
-                                else -> {
-
-                                    log.e("Unexpected operation has been performed: ${result.operation}")
-                                    fail(ERROR.INITIALIZATION_FAILURE)
-                                }
                             }
                         }
 
@@ -262,8 +197,32 @@ class ServerFactory : Application {
                         }
                     }
 
-                    ssh.subscribe(listener)
-                    terminal.execute(pingCommand)
+                    val flowCallback = object : FlowCallback<String> {
+                        override fun onFinish(success: Boolean, message: String, data: String?) {
+
+                            if (success) {
+                                ssh.subscribe(listener)
+                                installer.subscribe(listener)
+                                installer.initialize()
+                            } else {
+                                log.e(message)
+                                fail(ERROR.INITIALIZATION_FAILURE)
+                            }
+                        }
+                    }
+
+                    CommandFlow()
+                            .width(terminal)
+                            .perform(pingCommand)
+                            .width(ssh)
+                            .perform(testCommand)
+                            .perform(
+                                    hostInfoCommand,
+                                    HostInfoDataHandler(ssh.getRemoteOS())
+                            )
+                            .onFinish(flowCallback)
+                            .run()
+
                 } catch (e: IllegalArgumentException) {
 
                     fail(e)

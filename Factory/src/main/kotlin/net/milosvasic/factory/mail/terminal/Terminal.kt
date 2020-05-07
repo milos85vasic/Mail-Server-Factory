@@ -1,9 +1,8 @@
 package net.milosvasic.factory.mail.terminal
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.Execution
+import net.milosvasic.factory.mail.common.Executor
 import net.milosvasic.factory.mail.common.Notifying
-import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
@@ -11,14 +10,14 @@ import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentLinkedQueue
 
 class Terminal :
-    Execution<TerminalCommand>,
-    Subscription<OperationResultListener>,
-    Notifying<OperationResult> {
+        Executor<TerminalCommand>,
+        Notifying<OperationResult> {
 
     private val busy = Busy()
     private val runtime = Runtime.getRuntime()
@@ -34,20 +33,39 @@ class Terminal :
         BusyWorker.busy(busy)
         val action = Runnable {
             try {
-                log.d(">>> ${what.command}")
+                var logCommand = false
+                what.configuration[CommandConfiguration.LOG_COMMAND]?.let {
+                    logCommand = it
+                }
+                if (logCommand) {
+                    log.d(">>> ${what.command}")
+                }
+
                 val process = runtime.exec(what.command)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
-                val obtainCommandOutput = what.obtainCommandOutput
-                val inData = readToLog(stdIn, obtainCommandOutput)
-                val errData = readToLog(stdErr, obtainCommandOutput)
+
+                var obtainOutput = false
+                what.configuration[CommandConfiguration.OBTAIN_RESULT]?.let {
+                    obtainOutput = it
+                }
+
+                var logCommandResult = false
+                what.configuration[CommandConfiguration.LOG_COMMAND_RESULT]?.let {
+                    logCommandResult = it
+                }
+
+                val inData = readToLog(stdIn, obtainOutput, logCommandResult)
+                val errData = readToLog(stdErr, obtainOutput, logCommandResult)
                 val noExitValue = -1
                 var exitValue = noExitValue
                 while (exitValue == noExitValue) {
                     try {
                         exitValue = process.exitValue()
                     } catch (e: IllegalThreadStateException) {
-                        log.w(e)
+                        if (logCommandResult) {
+                            log.w(e)
+                        }
                     }
                 }
                 val success = exitValue == 0
@@ -82,12 +100,19 @@ class Terminal :
         }
     }
 
-    private fun readToLog(reader: BufferedReader, obtainCommandOutput: Boolean = false): String {
+    private fun readToLog(
+            reader: BufferedReader,
+            obtainOutput: Boolean = false,
+            logCommandResult: Boolean = false
+
+    ): String {
         val builder = StringBuilder()
         var s = reader.readLine()
         while (s != null) {
-            log.v("<<< $s")
-            if (obtainCommandOutput) {
+            if (logCommandResult) {
+                log.v("<<< $s")
+            }
+            if (obtainOutput) {
                 builder.append(s).append("\n")
             }
             s = reader.readLine()
