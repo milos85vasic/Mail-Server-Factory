@@ -64,7 +64,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: SSH) {
         super.execute(*params)
-        var rebootAllowed = true
+        var rebootAllowed = false
         try {
             val configuration = ConfigurationManager.getConfiguration()
             val rebootKey = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.REBOOT_ALLOWED}"
