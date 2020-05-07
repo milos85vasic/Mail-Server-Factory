@@ -38,7 +38,10 @@ class Terminal :
                 val process = runtime.exec(what.command)
                 val stdIn = BufferedReader(InputStreamReader(process.inputStream))
                 val stdErr = BufferedReader(InputStreamReader(process.errorStream))
-                val obtainCommandOutput = what.obtainCommandOutput
+
+                 val obtainCommandOutput = what.obtainOutput
+                 log.w("> > > > > > 2: $obtainCommandOutput")
+
                 val inData = readToLog(stdIn, obtainCommandOutput)
                 val errData = readToLog(stdErr, obtainCommandOutput)
                 val noExitValue = -1

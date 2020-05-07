@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.execution.flow.command
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.common.Executor
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.execution.flow.FlowBuilder
@@ -11,7 +12,9 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
-class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand>() {
+class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand, String>() {
+
+    private val dataHandlers = mutableMapOf<TerminalCommand, DataHandler<String>>()
 
     @Throws(BusyException::class)
     override fun width(subject: Executor<TerminalCommand>): CommandFlow {
@@ -32,7 +35,23 @@ class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand>() {
     }
 
     @Throws(BusyException::class)
-    override fun onFinish(callback: FlowCallback): CommandFlow {
+    fun perform(what: TerminalCommand, dataHandler: DataHandler<String>): CommandFlow {
+        what.obtainOutput = true
+        super.perform(what)
+        dataHandlers[what] = dataHandler
+        return this
+    }
+
+    @Throws(BusyException::class)
+    fun perform(what: String, dataHandler: DataHandler<String>): CommandFlow {
+        val command = TerminalCommand(what, true)
+        super.perform(command)
+        dataHandlers[command] = dataHandler
+        return this
+    }
+
+    @Throws(BusyException::class)
+    override fun onFinish(callback: FlowCallback<String>): CommandFlow {
         super.onFinish(callback)
         return this
     }
@@ -49,6 +68,10 @@ class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand>() {
             private val operationCallback = object : OperationResultListener {
                 override fun onOperationPerformed(result: OperationResult) {
                     subject.unsubscribe(this)
+                    if (result.success) {
+                        val dataHandler = dataHandlers[operation]
+                        dataHandler?.onData(result.data)
+                    }
                     val message = if (result.success) {
                         String.EMPTY
                     } else {

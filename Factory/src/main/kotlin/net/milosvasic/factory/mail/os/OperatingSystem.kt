@@ -36,23 +36,23 @@ data class OperatingSystem(
                     .trim()
                     .toLowerCase()
 
-                when (arch) {
-                    "x8664" -> {
+                when  {
+                    arch.startsWith("x8664")  -> {
                         architecture = Architecture.X86_64
                     }
-                    Architecture.X86_64.arch -> {
+                    arch.startsWith(Architecture.X86_64.arch) -> {
                         architecture = Architecture.X86_64
                     }
-                    Architecture.ARMHF.arch -> {
+                    arch.startsWith(Architecture.ARMHF.arch) -> {
                         architecture = Architecture.ARMHF
                     }
-                    Architecture.ARM64.arch -> {
+                    arch.startsWith(Architecture.ARM64.arch) -> {
                         architecture = Architecture.ARM64
                     }
-                    Architecture.PPC64EL.arch -> {
+                    arch.startsWith(Architecture.PPC64EL.arch) -> {
                         architecture = Architecture.PPC64EL
                     }
-                    Architecture.S390X.arch -> {
+                    arch.startsWith(Architecture.S390X.arch) -> {
                         architecture = Architecture.S390X
                     }
                 }

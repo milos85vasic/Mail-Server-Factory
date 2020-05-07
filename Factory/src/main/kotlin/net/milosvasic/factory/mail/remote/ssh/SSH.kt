@@ -33,7 +33,7 @@ class SSH(private val remote: Remote) :
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
-        val command = TerminalCommand(SSHCommand(remote, what).getCommand())
+        val command = TerminalCommand(SSHCommand(remote, what).getCommand(), what.obtainOutput)
         terminal.execute(command)
     }
 

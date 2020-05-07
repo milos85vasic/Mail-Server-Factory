@@ -7,7 +7,7 @@ import net.milosvasic.factory.mail.common.busy.BusyDelegate
 import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyException
 
-abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
+abstract class FlowBuilder<T, M, D> : Flow<T, M, D>, BusyDelegation {
 
     private val busy = Busy()
     private var currentOperation: M? = null
@@ -16,10 +16,10 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     private val subjects = mutableMapOf<Wrapper<T>, List<M>>()
     private var subjectsIterator: Iterator<Wrapper<T>>? = null
     private var operationsIterator: Iterator<M>? = null
-    private var callback: FlowCallback = DefaultFlowCallback()
+    private var callback: FlowCallback<D> = DefaultFlowCallback()
 
     private val processingCallback = object : FlowProcessingCallback {
-        override fun onFinish(success: Boolean, message: String) {
+        override fun onFinish(success: Boolean, message: String, data: String?) {
 
             subjectsIterator?.let { sIterator ->
                 operationsIterator?.let { oIterator ->
@@ -45,7 +45,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     }
 
     @Throws(BusyException::class)
-    override fun width(subject: T): Flow<T, M> {
+    override fun width(subject: T): Flow<T, M, D> {
         if (busy.isBusy()) {
             throw BusyException()
         }
@@ -58,7 +58,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     }
 
     @Throws(BusyException::class)
-    override fun perform(what: M): Flow<T, M> {
+    override fun perform(what: M): Flow<T, M, D> {
         if (busy.isBusy()) {
             throw BusyException()
         }
@@ -67,7 +67,7 @@ abstract class FlowBuilder<T, M> : Flow<T, M>, BusyDelegation {
     }
 
     @Throws(BusyException::class)
-    override fun onFinish(callback: FlowCallback): Flow<T, M> {
+    override fun onFinish(callback: FlowCallback<D>): Flow<T, M, D> {
         if (busy.isBusy()) {
             throw BusyException()
         }
