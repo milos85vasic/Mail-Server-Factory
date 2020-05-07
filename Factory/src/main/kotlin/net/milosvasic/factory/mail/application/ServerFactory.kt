@@ -11,7 +11,10 @@ import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
-import net.milosvasic.factory.mail.configuration.*
+import net.milosvasic.factory.mail.configuration.ConfigurationManager
+import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
+import net.milosvasic.factory.mail.configuration.Variable
+import net.milosvasic.factory.mail.configuration.VariableNode
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.execution.flow.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.command.CommandFlow
@@ -176,11 +179,6 @@ class ServerFactory : Application {
                                         fail(ERROR.INSTALLATION_FAILURE)
                                     }
                                 }
-                                else -> {
-
-                                    log.e("Unexpected operation has been performed: ${result.operation}")
-                                    fail(ERROR.INITIALIZATION_FAILURE)
-                                }
                             }
                         }
 
@@ -203,14 +201,10 @@ class ServerFactory : Application {
                         override fun onFinish(success: Boolean, message: String, data: String?) {
 
                             if (success) {
-
-                                log.i("We did it!")
-                                finish()
-//                                ssh.subscribe(listener)
-//                                installer.subscribe(listener)
-//                                installer.initialize()
+                                ssh.subscribe(listener)
+                                installer.subscribe(listener)
+                                installer.initialize()
                             } else {
-
                                 log.e(message)
                                 fail(ERROR.INITIALIZATION_FAILURE)
                             }

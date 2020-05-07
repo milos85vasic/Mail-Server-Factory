@@ -8,9 +8,9 @@ import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.ProcessingRecipe
-import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand, String>() {
