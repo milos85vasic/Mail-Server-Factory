@@ -2,7 +2,10 @@ package net.milosvasic.factory.mail.application
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Application
+import net.milosvasic.factory.mail.common.busy.Busy
+import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.component.docker.DockerInitializationOperation
@@ -11,13 +14,10 @@ import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
-import net.milosvasic.factory.mail.configuration.ConfigurationManager
-import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
-import net.milosvasic.factory.mail.configuration.Variable
-import net.milosvasic.factory.mail.configuration.VariableNode
+import net.milosvasic.factory.mail.configuration.*
 import net.milosvasic.factory.mail.error.ERROR
-import net.milosvasic.factory.mail.execution.flow.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.command.CommandFlow
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -28,10 +28,43 @@ import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import kotlin.system.exitProcess
 
-class ServerFactory : Application {
+class ServerFactory : Application, BusyDelegation {
+
+    private val busy = Busy()
+    private val arguments = mutableListOf<String>()
+
+    override fun initialize() {
+        checkInitialized()
+        busy()
+
+        free()
+    }
+
+    override fun terminate() {
+        checkNotInitialized()
+        busy()
+
+        free()
+    }
+
+    @Synchronized
+    override fun isInitialized(): Boolean {
+        try {
+            ConfigurationManager.getConfiguration()
+            return true
+        } catch (e: IllegalStateException) {
+            log.w(e)
+        }
+        return false
+    }
 
     override fun run(args: Array<String>) {
         log.i("STARTED")
+        arguments.clear()
+        arguments.addAll(args)
+
+        // TODO: If initialized skip, if not initialize.
+
         val argumentsValidator = ArgumentsValidator()
         try {
             if (argumentsValidator.validate(args)) {
@@ -243,12 +276,40 @@ class ServerFactory : Application {
         }
     }
 
+    private fun finish() {
+        onStop()
+    }
+
     override fun onStop() {
         log.i("FINISHED")
+        terminate()
         exitProcess(0)
     }
 
-    private fun finish() {
-        onStop()
+    @Synchronized
+    @Throws(BusyException::class)
+    override fun busy() {
+        BusyWorker.busy(busy)
+    }
+
+    @Synchronized
+    override fun free() {
+        BusyWorker.free(busy)
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class)
+    override fun checkInitialized() {
+        if (ConfigurationManager.isInitialized()) {
+            throw IllegalStateException("Configuration manager has been already initialized")
+        }
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class)
+    override fun checkNotInitialized() {
+        if (!ConfigurationManager.isInitialized()) {
+            throw IllegalStateException("Configuration manager has not been initialized")
+        }
     }
 }
