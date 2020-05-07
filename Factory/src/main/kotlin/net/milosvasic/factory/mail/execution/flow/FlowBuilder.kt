@@ -13,13 +13,13 @@ import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 
 abstract class FlowBuilder<T, M, D> : Flow<T, M, D>, BusyDelegation {
 
-    private val busy = Busy()
-    private var currentOperation: M? = null
-    private var currentSubject: Wrapper<T>? = null
-    private var currentOperations = mutableListOf<M>()
-    private val subjects = mutableMapOf<Wrapper<T>, List<M>>()
-    private var subjectsIterator: Iterator<Wrapper<T>>? = null
-    private var operationsIterator: Iterator<M>? = null
+    protected val busy = Busy()
+    protected var currentOperation: M? = null
+    protected var currentSubject: Wrapper<T>? = null
+    protected var currentOperations = mutableListOf<M>()
+    protected var operationsIterator: Iterator<M>? = null
+    protected val subjects = mutableMapOf<Wrapper<T>, List<M>>()
+    protected var subjectsIterator: Iterator<Wrapper<T>>? = null
     private var callback: FlowCallback<D> = DefaultFlowCallback()
 
     private val processingCallback = object : FlowProcessingCallback {
@@ -62,15 +62,6 @@ abstract class FlowBuilder<T, M, D> : Flow<T, M, D>, BusyDelegation {
     }
 
     @Throws(BusyException::class)
-    override fun perform(what: M): Flow<T, M, D> {
-        if (busy.isBusy()) {
-            throw BusyException()
-        }
-        currentOperations.add(what)
-        return this
-    }
-
-    @Throws(BusyException::class)
     override fun onFinish(callback: FlowCallback<D>): Flow<T, M, D> {
         if (busy.isBusy()) {
             throw BusyException()
@@ -107,65 +98,8 @@ abstract class FlowBuilder<T, M, D> : Flow<T, M, D>, BusyDelegation {
         BusyDelegate.free(busy)
     }
 
-    protected abstract fun getProcessingRecipe(subject: T, operation: M): ProcessingRecipe
-
-    @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    private fun tryNext() {
-        if (subjects.isEmpty()) {
-            throw IllegalArgumentException("No subjects provided")
-        }
-        subjects.keys.forEach {
-            if (subjects[it] == null) {
-                throw IllegalArgumentException("Null operations provided for subject: $it")
-            }
-            subjects[it]?.let { children ->
-                if (children.isEmpty()) {
-                    throw IllegalArgumentException("No operations provided for subject: $it")
-                }
-            }
-        }
-        if (subjectsIterator == null) {
-            subjectsIterator = subjects.keys.iterator()
-        }
-        if (currentSubject == null) {
-            subjectsIterator?.let { sIterator ->
-                if (sIterator.hasNext()) {
-                    currentSubject = sIterator.next()
-                } else {
-                    finish(true)
-                }
-            }
-        } else {
-            if (operationsIterator == null) {
-                currentSubject?.let {
-                    subjects[it]?.let { operations ->
-                        operationsIterator = operations.iterator()
-                    }
-                }
-            }
-        }
-        if (operationsIterator == null) {
-            subjects[currentSubject]?.let {
-                operationsIterator = it.iterator()
-            }
-        }
-        if (currentOperation == null) {
-            operationsIterator?.let { oIterator ->
-                if (oIterator.hasNext()) {
-                    currentOperation = oIterator.next()
-                } else {
-                    currentSubject = null
-                    operationsIterator = null
-                    tryNext()
-                    return
-                }
-            }
-        }
-        process()
-    }
-
     @Throws(IllegalStateException::class)
-    private fun process() {
+    protected fun process() {
         if (currentSubject == null) {
             throw IllegalStateException("Current subject is null")
         }
@@ -180,7 +114,7 @@ abstract class FlowBuilder<T, M, D> : Flow<T, M, D>, BusyDelegation {
         }
     }
 
-    private fun finish(success: Boolean, message: String = String.EMPTY) {
+    protected fun finish(success: Boolean, message: String = String.EMPTY) {
         currentSubject = null
         currentOperation = null
         subjectsIterator = null
@@ -189,6 +123,10 @@ abstract class FlowBuilder<T, M, D> : Flow<T, M, D>, BusyDelegation {
         callback.onFinish(success, message)
         free()
     }
+
+    protected abstract fun tryNext()
+
+    protected abstract fun getProcessingRecipe(subject: T, operation: M): ProcessingRecipe
 
     private fun finish(e: Exception) {
         var message = String.EMPTY

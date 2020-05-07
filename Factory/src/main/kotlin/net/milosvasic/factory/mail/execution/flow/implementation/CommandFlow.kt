@@ -4,7 +4,7 @@ import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.common.Executor
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.execution.flow.FlowBuilder
+import net.milosvasic.factory.mail.execution.flow.FlowPerformBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
@@ -13,7 +13,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
-class CommandFlow : FlowBuilder<Executor<TerminalCommand>, TerminalCommand, String>() {
+class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalCommand, String>() {
 
     private val dataHandlers = mutableMapOf<TerminalCommand, DataHandler<String>>()
 
