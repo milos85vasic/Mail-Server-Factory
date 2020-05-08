@@ -26,12 +26,14 @@ import net.milosvasic.factory.mail.os.HostInfoDataHandler
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.system.exitProcess
 
 class ServerFactory : Application, BusyDelegation {
 
     private val busy = Busy()
     private val arguments = mutableListOf<String>()
+    private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
 
     override fun initialize() {
         checkInitialized()
@@ -310,6 +312,23 @@ class ServerFactory : Application, BusyDelegation {
     override fun checkNotInitialized() {
         if (!ConfigurationManager.isInitialized()) {
             throw IllegalStateException("Configuration manager has not been initialized")
+        }
+    }
+
+    override fun subscribe(what: OperationResultListener) {
+        subscribers.add(what)
+    }
+
+    override fun unsubscribe(what: OperationResultListener) {
+        subscribers.remove(what)
+    }
+
+    @Synchronized
+    override fun notify(data: OperationResult) {
+        val iterator = subscribers.iterator()
+        while (iterator.hasNext()) {
+            val listener = iterator.next()
+            listener.onOperationPerformed(data)
         }
     }
 }

@@ -15,9 +15,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class Terminal :
-        Executor<TerminalCommand>,
-        Notifying<OperationResult> {
+class Terminal : Executor<TerminalCommand> {
 
     private val busy = Busy()
     private val runtime = Runtime.getRuntime()
