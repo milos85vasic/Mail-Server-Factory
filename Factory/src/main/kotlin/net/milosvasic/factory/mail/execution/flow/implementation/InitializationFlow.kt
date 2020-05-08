@@ -2,20 +2,37 @@ package net.milosvasic.factory.mail.execution.flow.implementation
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.common.initialization.InitializationOperation
 import net.milosvasic.factory.mail.common.initialization.Initializer
+import net.milosvasic.factory.mail.common.initialization.TerminationOperation
 import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
+
+    private val initializationHandlers = mutableMapOf<Initializer, InitializationHandler>()
 
     @Throws(BusyException::class)
     override fun width(subject: Initializer): InitializationFlow {
         super.width(subject)
+        return this
+    }
+
+    @Throws(BusyException::class)
+    fun width(subject: Initializer, handler: InitializationHandler): InitializationFlow {
+        super.width(subject)
+        initializationHandlers[subject] = handler
+        return this
+    }
+
+    @Throws(BusyException::class)
+    fun handler(handler: InitializationHandler): InitializationFlow {
+        val subject = subjects.get().last()
+        initializationHandlers[subject.content] = handler
         return this
     }
 
@@ -33,18 +50,30 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
 
             private val operationCallback = object : OperationResultListener {
                 override fun onOperationPerformed(result: OperationResult) {
-                    subject.unsubscribe(this)
-                    val message = if (result.success) {
-                        String.EMPTY
-                    } else {
-                        if (result.operation is TerminalCommand) {
-                            "Initialization failed: ${result.operation.command}"
-                        } else {
-                            "Initialization failed: ${result.operation}"
+
+                    val handler = initializationHandlers[subject]
+                    when (result.operation) {
+                        is InitializationOperation -> {
+                            val message = if (result.success) {
+                                String.EMPTY
+                            } else {
+                                "Initialization failed for $subject"
+                            }
+                            if (handler == null) {
+                                subject.unsubscribe(this)
+                            } else {
+                                handler.onInitialization(subject, result.success)
+                            }
+                            callback?.onFinish(result.success, message)
+                            callback = null
+                        }
+                        is TerminationOperation -> {
+                            subject.unsubscribe(this)
+                            handler?.let {
+                                handler.onTermination(subject, result.success)
+                            }
                         }
                     }
-                    callback?.onFinish(result.success, message)
-                    callback = null
                 }
             }
 

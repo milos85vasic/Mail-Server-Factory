@@ -50,14 +50,12 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
         if (subjectsIterator == null) {
             subjectsIterator = subjects.get().iterator()
         }
-        if (currentSubject == null) {
-            subjectsIterator?.let { sIterator ->
-                if (sIterator.hasNext()) {
-                    currentSubject = sIterator.next()
-                } else {
-                    finish(true)
-                    return
-                }
+        subjectsIterator?.let { sIterator ->
+            if (sIterator.hasNext()) {
+                currentSubject = sIterator.next()
+            } else {
+                finish(true)
+                return
             }
         }
         process()

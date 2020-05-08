@@ -2,62 +2,47 @@
 
 package net.milosvasic.factory.mail
 
+import net.milosvasic.factory.mail.application.DefaultInitializationHandler
 import net.milosvasic.factory.mail.application.server_factory.ServerFactory
-import net.milosvasic.factory.mail.application.server_factory.ServerFactoryInitializationOperation
-import net.milosvasic.factory.mail.application.server_factory.ServerFactoryTerminationOperation
-import net.milosvasic.factory.mail.error.ERROR
-import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
-import kotlin.system.exitProcess
 
 fun main(args: Array<String>) {
 
     initLogging()
     val factory = ServerFactory(args.toList())
 
-    val initializationCallback = object : OperationResultListener {
-        override fun onOperationPerformed(result: OperationResult) {
-            when (result.operation) {
-                is ServerFactoryInitializationOperation -> {
-                    if (result.success) {
-                        try {
-                            log.i("Server factory initialized")
-                            factory.run()
-                        } catch (e: IllegalStateException) {
+    val callback = object : FlowCallback<String> {
+        override fun onFinish(success: Boolean, message: String, data: String?) {
 
-                            log.e(e)
-                            fail(ERROR.RUNTIME_ERROR)
-                        }
-                    } else {
-                        fail(ERROR.INITIALIZATION_FAILURE)
-                    }
-                }
-                is ServerFactoryTerminationOperation -> {
-                    if (result.success) {
-                        log.i("Server factory terminated")
-                        exitProcess(0)
-                    } else {
-                        fail(ERROR.TERMINATION_FAILURE)
-                    }
-                }
-                else -> {
-                    fail(ERROR.UNEXPECTED_EVENT_RECEIVED)
+            if (success) {
+                try {
+                    log.i("Server factory initialized")
+                    factory.run()
+                } catch (e: IllegalStateException) {
+                    fail(e)
                 }
             }
         }
     }
 
-    factory.subscribe(initializationCallback)
+    val handler = DefaultInitializationHandler()
     try {
-        factory.initialize()
-    } catch (e: IllegalStateException) {
+        InitializationFlow()
+                .width(factory)
+                .handler(handler)
+                .onFinish(callback)
+                .run()
 
-        log.e(e)
-        fail(ERROR.INITIALIZATION_FAILURE)
+    } catch (e: BusyException) {
+
+        fail(e)
     }
+
 }
 
 private fun initLogging() {
