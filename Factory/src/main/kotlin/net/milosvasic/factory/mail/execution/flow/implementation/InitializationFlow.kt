@@ -30,6 +30,13 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
     }
 
     @Throws(BusyException::class)
+    fun handler(handler: InitializationHandler): InitializationFlow {
+        val subject = subjects.get().last()
+        initializationHandlers[subject.content] = handler
+        return this
+    }
+
+    @Throws(BusyException::class)
     override fun onFinish(callback: FlowCallback<String>): InitializationFlow {
         super.onFinish(callback)
         return this
