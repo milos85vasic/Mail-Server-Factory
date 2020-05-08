@@ -5,7 +5,6 @@ package net.milosvasic.factory.mail
 import net.milosvasic.factory.mail.application.DefaultInitializationHandler
 import net.milosvasic.factory.mail.application.server_factory.ServerFactory
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.logger.ConsoleLogger
