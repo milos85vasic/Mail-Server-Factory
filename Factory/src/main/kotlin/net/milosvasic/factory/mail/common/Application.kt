@@ -5,7 +5,7 @@ import net.milosvasic.factory.mail.common.initialization.Termination
 
 interface Application : Initializer, Termination {
 
-    fun run(args: Array<String>)
+    fun run()
 
     fun onStop()
 }

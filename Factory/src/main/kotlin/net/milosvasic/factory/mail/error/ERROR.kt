@@ -5,10 +5,11 @@ enum class ERROR(
     val message: String
 ) {
 
-    EMPTY_DATA(1, "No input data provided"),
-    INVALID_DATA(3, "Invalid data provided"),
+    RUNTIME_ERROR(1, "Runtime error"),
+    UNEXPECTED_EVENT_RECEIVED(2, "Unexpected event received"),
     FILE_DOES_NOT_EXIST(3, "File does not exist"),
     FATAL_EXCEPTION(4, "Fatal exception"),
     INITIALIZATION_FAILURE(5, "Initialization failure"),
-    INSTALLATION_FAILURE(6, "Installation failure")
+    TERMINATION_FAILURE(6, "Termination failure"),
+    INSTALLATION_FAILURE(7, "Installation failure")
 }
