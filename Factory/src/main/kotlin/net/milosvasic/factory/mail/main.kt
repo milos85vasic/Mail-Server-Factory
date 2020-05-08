@@ -3,7 +3,6 @@
 package net.milosvasic.factory.mail
 
 import net.milosvasic.factory.mail.application.server_factory.ServerFactory
-import net.milosvasic.factory.mail.application.server_factory.ServerFactoryInitializationOperation
 import net.milosvasic.factory.mail.application.server_factory.ServerFactoryTerminationOperation
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
