@@ -15,7 +15,7 @@ class InitializationFlowTest : BaseTest() {
         log.i("Test: STARTED")
         val initializers = mutableListOf<Initializer>()
         for (x in 0..5) {
-            val initializer = SimpleInitializer()
+            val initializer = SimpleInitializer("Initializer no. ${x + 1}")
             initializers.add(initializer)
         }
 

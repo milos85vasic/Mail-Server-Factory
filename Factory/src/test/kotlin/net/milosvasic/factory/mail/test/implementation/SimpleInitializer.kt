@@ -12,7 +12,7 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class SimpleInitializer : Application, BusyDelegation {
+class SimpleInitializer(val label: String) : Application, BusyDelegation {
 
     private val busy = Busy()
     private var initialized = false
@@ -26,10 +26,10 @@ class SimpleInitializer : Application, BusyDelegation {
         checkInitialized()
         busy()
         executor.execute {
-            log.v("Initializing")
+            log.v("Initializing: $label")
             Thread.sleep(1000)
             initialized = true
-            log.v("Initialized")
+            log.v("Initialized: $label")
             notifyInit()
         }
     }
