@@ -2,23 +2,19 @@ package net.milosvasic.factory.mail.test
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.DataHandler
-import net.milosvasic.factory.mail.compositeLogger
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
-import net.milosvasic.logger.ConsoleLogger
-import net.milosvasic.logger.FilesystemLogger
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.io.File
 
-class CommandFlowTest {
+class CommandFlowTest : BaseTest() {
 
     @Test
-    fun testCommandFloe() {
+    fun testCommandFlow() {
         initLogging()
         log.i("Test: STARTED")
 
@@ -77,11 +73,5 @@ class CommandFlowTest {
         }
 
         log.i("Test: COMPLETED")
-    }
-
-    private fun initLogging() {
-        val console = ConsoleLogger()
-        val filesystem = FilesystemLogger(File("."))
-        compositeLogger.addLoggers(console, filesystem)
     }
 }
