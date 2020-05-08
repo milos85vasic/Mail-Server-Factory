@@ -10,5 +10,6 @@ enum class ERROR(
     FATAL_EXCEPTION(4, "Fatal exception"),
     INITIALIZATION_FAILURE(5, "Initialization failure"),
     TERMINATION_FAILURE(6, "Termination failure"),
-    INSTALLATION_FAILURE(7, "Installation failure")
+    INSTALLATION_FAILURE(7, "Installation failure"),
+    COMPONENT_INITIALIZATION_FAILURE(8, "Component initialization failure")
 }

@@ -144,7 +144,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         if (configuration == null) {
             throw IllegalStateException("Configuration is null")
         }
-        log.i("STARTED")
+        log.i("Server factory started")
         try {
             configuration?.let { config ->
 
@@ -210,7 +210,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                                 } else {
 
                                     log.e("Could not initialize installer")
-                                    fail(ERROR.INITIALIZATION_FAILURE)
+                                    fail(ERROR.COMPONENT_INITIALIZATION_FAILURE)
                                 }
                             }
                             is DockerInitializationOperation -> {
@@ -223,7 +223,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                                 } else {
 
                                     log.e("Could not initialize Docker")
-                                    fail(ERROR.INITIALIZATION_FAILURE)
+                                    fail(ERROR.COMPONENT_INITIALIZATION_FAILURE)
                                 }
                             }
                             is InstallerOperation -> {
@@ -273,7 +273,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                             installer.initialize()
                         } else {
                             log.e(message)
-                            fail(ERROR.INITIALIZATION_FAILURE)
+                            fail(ERROR.RUNTIME_ERROR)
                         }
                     }
                 }
@@ -300,7 +300,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
     }
 
     override fun onStop() {
-        log.i("FINISHED")
+        log.i("Server factory finished")
         try {
             terminate()
         } catch (e: IllegalStateException) {
