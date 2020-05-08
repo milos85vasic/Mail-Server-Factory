@@ -1,11 +1,10 @@
 package net.milosvasic.factory.mail.terminal
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.execution.Executor
-import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
+import net.milosvasic.factory.mail.common.execution.Executor
 import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
