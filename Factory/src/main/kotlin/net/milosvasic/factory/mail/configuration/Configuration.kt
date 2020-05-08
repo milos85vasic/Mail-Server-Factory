@@ -60,8 +60,7 @@ class Configuration(
                 }
             } else {
 
-                val msg = ERROR.FILE_DOES_NOT_EXIST.message
-                throw IllegalArgumentException("$msg: ${configurationFile.absoluteFile}")
+                throw IllegalArgumentException("File does not exist: ${configurationFile.absoluteFile}")
             }
         }
     }

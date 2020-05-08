@@ -28,7 +28,6 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.system.exitProcess
 
 class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
 
@@ -113,7 +112,6 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
 
             notifyInit(e)
         }
-        free()
     }
 
     @Throws(IllegalStateException::class)
@@ -126,7 +124,6 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         softwareConfigurations.clear()
         containersConfigurations.clear()
         notifyTerm(true)
-        free()
     }
 
     @Synchronized
@@ -358,17 +355,20 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
 
 
     private fun notifyInit(success: Boolean) {
+        free()
         val result = OperationResult(initializationOperation, success)
         notify(result)
     }
 
     private fun notifyTerm(success: Boolean) {
+        free()
         val result = OperationResult(terminationOperation, success)
         notify(result)
     }
 
     @Synchronized
     private fun notifyInit(e: Exception) {
+        free()
         log.e(e)
         val result = OperationResult(initializationOperation, false)
         notify(result)
@@ -376,6 +376,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
 
     @Synchronized
     private fun notifyTerm(e: Exception) {
+        free()
         log.e(e)
         val result = OperationResult(terminationOperation, false)
         notify(result)
