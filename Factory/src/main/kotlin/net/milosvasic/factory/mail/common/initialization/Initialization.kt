@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.component
+package net.milosvasic.factory.mail.common.initialization
 
 interface Initialization {
 

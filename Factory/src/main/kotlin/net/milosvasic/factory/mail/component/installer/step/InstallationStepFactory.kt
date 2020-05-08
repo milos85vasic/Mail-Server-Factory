@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.component.installer.step
 
-import net.milosvasic.factory.mail.common.ObtainParametrized
+import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepType
 import net.milosvasic.factory.mail.component.docker.step.stack.Check
 import net.milosvasic.factory.mail.component.docker.step.stack.ConditionCheck

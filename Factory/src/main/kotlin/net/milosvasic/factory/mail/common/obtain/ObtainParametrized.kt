@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.common
+package net.milosvasic.factory.mail.common.obtain
 
 interface ObtainParametrized<in T, out M> {
 

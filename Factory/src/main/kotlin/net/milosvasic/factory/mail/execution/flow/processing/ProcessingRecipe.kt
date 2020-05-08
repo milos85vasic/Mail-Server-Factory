@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.execution.flow
+package net.milosvasic.factory.mail.execution.flow.processing
 
 interface ProcessingRecipe {
 

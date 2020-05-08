@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.remote
 
-import net.milosvasic.factory.mail.common.Executor
+import net.milosvasic.factory.mail.common.execution.Executor
 import net.milosvasic.factory.mail.os.OperatingSystem
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 

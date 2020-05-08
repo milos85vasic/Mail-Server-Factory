@@ -30,6 +30,9 @@ dependencies {
     implementation "com.google.code.gson:gson:2.8.6"
     
     implementation project(":Logger:Logger")
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
 }
 
 application {
@@ -44,6 +47,10 @@ jar {
     from {
         configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
     }
+}
+
+test {
+    useJUnitPlatform()
 }
 
 sourceSets.main.java.srcDirs += 'src/main/kotlin'

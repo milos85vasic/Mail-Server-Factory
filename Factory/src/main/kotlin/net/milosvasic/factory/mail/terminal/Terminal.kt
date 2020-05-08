@@ -1,7 +1,7 @@
 package net.milosvasic.factory.mail.terminal
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.Executor
+import net.milosvasic.factory.mail.common.execution.Executor
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
@@ -15,9 +15,7 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class Terminal :
-        Executor<TerminalCommand>,
-        Notifying<OperationResult> {
+class Terminal : Executor<TerminalCommand> {
 
     private val busy = Busy()
     private val runtime = Runtime.getRuntime()

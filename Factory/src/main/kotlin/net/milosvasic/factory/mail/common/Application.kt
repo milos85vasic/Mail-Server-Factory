@@ -1,8 +1,11 @@
 package net.milosvasic.factory.mail.common
 
-interface Application {
+import net.milosvasic.factory.mail.common.initialization.Initializer
+import net.milosvasic.factory.mail.common.initialization.Termination
 
-    fun run(args: Array<String>)
+interface Application : Initializer, Termination {
+
+    fun run()
 
     fun onStop()
 }

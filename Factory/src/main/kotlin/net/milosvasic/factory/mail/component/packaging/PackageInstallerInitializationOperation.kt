@@ -1,5 +1,5 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.operation.Operation
+import net.milosvasic.factory.mail.common.initialization.InitializationOperation
 
-class PackageInstallerInitializationOperation : Operation()
+class PackageInstallerInitializationOperation : InitializationOperation()
