@@ -44,7 +44,6 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     @Throws(BusyException::class)
     override fun run() {
         busy()
-        insertSubject()
         currentSubject = null
         try {
             tryNext()
