@@ -1,5 +1,7 @@
 package net.milosvasic.factory.mail.test
 
+import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.compositeLogger
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
@@ -9,6 +11,7 @@ import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import java.io.File
 
@@ -17,8 +20,26 @@ class CommandFlowTest {
     @Test
     fun testCommandFloe() {
         initLogging()
+        log.i("Test: STARTED")
 
+        var count = 0
+        val echo = "Test"
         var finished = false
+        val dataReceived = mutableListOf<String>()
+
+        fun getEcho() = Commands.echo("$echo:${++count}")
+
+        val dataHandler = object : DataHandler<String> {
+            override fun onData(data: String?) {
+                log.v("Data: $data")
+                Assertions.assertNotNull(data)
+                assert(data != String.EMPTY)
+                data?.let {
+                    dataReceived.add(it)
+                }
+            }
+        }
+
         val flowCallback = object : FlowCallback<String> {
 
             override fun onFinish(success: Boolean, message: String, data: String?) {
@@ -30,25 +51,30 @@ class CommandFlowTest {
             }
         }
 
-        var count = 0
-        val echo = "Test"
+        var sum = 0
+        var flow = CommandFlow()
         val terminal = Terminal()
-        CommandFlow()
-                .width(terminal)
-                .perform(Commands.echo("$echo:${++count}"))
-                .perform(TerminalCommand(Commands.echo("$echo:${++count}")))
-                .perform(Commands.echo("$echo:${++count}"))
-                .width(terminal)
-                .perform(TerminalCommand(Commands.echo("$echo:${++count}")))
-                .perform(Commands.echo("$echo:${++count}"))
-                .perform(TerminalCommand(Commands.echo("$echo:${++count}")))
-                .perform(Commands.echo("$echo:${++count}"))
-                .onFinish(flowCallback)
-                .run()
+        val iterations = listOf(1, 2, 3, 4, 5, 6, 7)
+        iterations.forEach {
+            sum += it
+            flow = flow.width(terminal)
+            for (x in 0 until it) {
+                flow = flow.perform(TerminalCommand(getEcho()), dataHandler)
+            }
+        }
+        flow
+            .onFinish(flowCallback)
+            .run()
 
         while (!finished) {
             Thread.yield()
         }
+
+        for (x in 1 until sum) {
+            Assertions.assertEquals("$echo:$x", dataReceived[x - 1])
+        }
+
+        log.i("Test: COMPLETED")
     }
 
     private fun initLogging() {
