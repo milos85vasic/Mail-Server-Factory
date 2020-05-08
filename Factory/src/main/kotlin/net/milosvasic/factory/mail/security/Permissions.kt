@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.security
 
-import net.milosvasic.factory.mail.common.Obtain
+import net.milosvasic.factory.mail.common.obtain.Obtain
 
 data class Permissions(
         var user: Permission,

@@ -2,7 +2,7 @@ package net.milosvasic.factory.mail.execution.flow.implementation
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.DataHandler
-import net.milosvasic.factory.mail.common.Executor
+import net.milosvasic.factory.mail.common.execution.Executor
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.execution.flow.FlowPerformBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback

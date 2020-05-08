@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.component.docker
 
-import net.milosvasic.factory.mail.common.Obtain
+import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.VariableContext
 import net.milosvasic.factory.mail.configuration.VariableKey

@@ -1,7 +1,7 @@
 package net.milosvasic.factory.mail.terminal
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.Executor
+import net.milosvasic.factory.mail.common.execution.Executor
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException

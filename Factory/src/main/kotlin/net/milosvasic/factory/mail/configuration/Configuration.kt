@@ -3,7 +3,7 @@ package net.milosvasic.factory.mail.configuration
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.ObtainParametrized
+import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.remote.Remote

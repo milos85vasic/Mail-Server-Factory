@@ -3,7 +3,7 @@ package net.milosvasic.factory.mail.common.busy
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
-import net.milosvasic.factory.mail.component.Termination
+import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -14,7 +14,7 @@ abstract class BusyWorker<T>(protected val entryPoint: Connection) :
     BusyDelegation,
     Subscription<OperationResultListener>,
     Notifying<OperationResult>,
-    Termination {
+        Termination {
 
     companion object : BusyDelegationParametrized<Busy> {
 
