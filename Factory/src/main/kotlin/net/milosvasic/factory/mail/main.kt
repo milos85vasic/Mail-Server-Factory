@@ -24,6 +24,7 @@ fun main(args: Array<String>) {
                 is ServerFactoryInitializationOperation -> {
                     if (result.success) {
                         try {
+                            log.i("Server factory initialized")
                             factory.run()
                         } catch (e: IllegalStateException) {
 
@@ -36,6 +37,7 @@ fun main(args: Array<String>) {
                 }
                 is ServerFactoryTerminationOperation -> {
                     if (result.success) {
+                        log.i("Server factory terminated")
                         exitProcess(0)
                     } else {
                         fail(ERROR.TERMINATION_FAILURE)
