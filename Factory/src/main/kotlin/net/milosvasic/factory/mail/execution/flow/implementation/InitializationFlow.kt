@@ -58,18 +58,18 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
                             } else {
                                 "Initialization failed for $subject"
                             }
-                            callback?.onFinish(result.success, message)
-                            callback = null
                             if (handler == null) {
                                 subject.unsubscribe(this)
                             } else {
-                                handler.onInitialization(result.success)
+                                handler.onInitialization(subject, result.success)
                             }
+                            callback?.onFinish(result.success, message)
+                            callback = null
                         }
                         is TerminationOperation -> {
                             subject.unsubscribe(this)
                             handler?.let {
-                                handler.onTermination(result.success)
+                                handler.onTermination(subject, result.success)
                             }
                         }
                     }

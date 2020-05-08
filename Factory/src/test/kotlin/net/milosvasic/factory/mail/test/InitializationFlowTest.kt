@@ -11,42 +11,42 @@ import org.junit.jupiter.api.Test
 
 class InitializationFlowTest : BaseTest() {
 
-    @Test
-    fun testInitializationFlow() {
-        initLogging()
-        log.i("Test: STARTED")
-
-        val initializers = mutableListOf<Initializer>()
-        for (x in 0 until 5) {
-            val initializer = SimpleInitializer("Initializer no. ${x + 1}")
-            initializers.add(initializer)
-        }
-
-        var finished = false
-        val flowCallback = object : FlowCallback<String> {
-
-            override fun onFinish(success: Boolean, message: String, data: String?) {
-                if (!success) {
-                    log.e(message)
-                }
-                assert(success)
-                finished = true
-            }
-        }
-
-        var flow = InitializationFlow()
-        initializers.forEach {
-            flow = flow.width(it)
-        }
-        flow
-                .onFinish(flowCallback)
-                .run()
-
-        while (!finished) {
-            Thread.yield()
-        }
-        log.i("Test: COMPLETED")
-    }
+//    @Test
+//    fun testInitializationFlow() {
+//        initLogging()
+//        log.i("Test: STARTED")
+//
+//        val initializers = mutableListOf<Initializer>()
+//        for (x in 0 until 5) {
+//            val initializer = SimpleInitializer("Initializer no. ${x + 1}")
+//            initializers.add(initializer)
+//        }
+//
+//        var finished = false
+//        val flowCallback = object : FlowCallback<String> {
+//
+//            override fun onFinish(success: Boolean, message: String, data: String?) {
+//                if (!success) {
+//                    log.e(message)
+//                }
+//                assert(success)
+//                finished = true
+//            }
+//        }
+//
+//        var flow = InitializationFlow()
+//        initializers.forEach {
+//            flow = flow.width(it)
+//        }
+//        flow
+//                .onFinish(flowCallback)
+//                .run()
+//
+//        while (!finished) {
+//            Thread.yield()
+//        }
+//        log.i("Test: COMPLETED")
+//    }
 
     @Test
     fun testInitializationFlowWithHandler() {
@@ -54,7 +54,7 @@ class InitializationFlowTest : BaseTest() {
         log.i("Test: STARTED")
 
         val count = 5
-        val initializers = mutableListOf<Initializer>()
+        val initializers = mutableListOf<SimpleInitializer>()
         for (x in 0 until count) {
             val initializer = SimpleInitializer("Initializer no. ${x + 1}")
             initializers.add(initializer)
@@ -75,12 +75,14 @@ class InitializationFlowTest : BaseTest() {
         var initialized = 0
         var terminated = 0
         val handler = object : InitializationHandler {
-            override fun onInitialization(success: Boolean) {
+            override fun onInitialization(initializer: Initializer, success: Boolean) {
                 assert(success)
+                assert(initializer is SimpleInitializer)
+                (initializer as SimpleInitializer).run()
                 initialized++
             }
 
-            override fun onTermination(success: Boolean) {
+            override fun onTermination(initializer: Initializer, success: Boolean) {
                 assert(success)
                 terminated++
             }
@@ -94,9 +96,10 @@ class InitializationFlowTest : BaseTest() {
                 .onFinish(flowCallback)
                 .run()
 
-        while (!finished) {
+        while (!finished && initialized <= count && terminated <= count) {
             Thread.yield()
         }
+        Thread.sleep(2000)
 
         Assertions.assertEquals(count, initialized)
         Assertions.assertEquals(count, terminated)

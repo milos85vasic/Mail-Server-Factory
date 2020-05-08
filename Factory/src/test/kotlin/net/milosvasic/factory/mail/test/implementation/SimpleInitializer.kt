@@ -5,7 +5,6 @@ import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
-import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -60,7 +59,7 @@ class SimpleInitializer(
     }
 
     override fun onStop() {
-        log.i("Finished")
+        log.v("Finished: $label")
         try {
             terminate()
         } catch (e: IllegalStateException) {
@@ -83,16 +82,16 @@ class SimpleInitializer(
     @Synchronized
     @Throws(IllegalStateException::class)
     override fun checkInitialized() {
-        if (ConfigurationManager.isInitialized()) {
-            throw IllegalStateException("Server factory has been already initialized")
+        if (isInitialized()) {
+            throw IllegalStateException("Initializer has been already initialized")
         }
     }
 
     @Synchronized
     @Throws(IllegalStateException::class)
     override fun checkNotInitialized() {
-        if (!ConfigurationManager.isInitialized()) {
-            throw IllegalStateException("Server factory has not been initialized")
+        if (!isInitialized()) {
+            throw IllegalStateException("Initializer has not been initialized")
         }
     }
 
