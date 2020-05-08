@@ -1,22 +1,16 @@
 package net.milosvasic.factory.mail.execution.flow.implementation
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.application.server_factory.ServerFactoryTerminationOperation
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.initialization.InitializationOperation
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.TerminationOperation
-import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
-import net.milosvasic.factory.mail.fail
-import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.terminal.TerminalCommand
-import kotlin.system.exitProcess
 
 class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
 

@@ -9,15 +9,16 @@ import net.milosvasic.factory.mail.test.implementation.SimpleInitializer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class InitializationFlowTest : BaseTest() {
+class InitializationFlowTestWithHandler : BaseTest() {
 
     @Test
-    fun testInitializationFlow() {
+    fun testInitializationFlowWithHandler() {
         initLogging()
-        log.i("Initialization flow test started")
+        log.i("Initialization flow with handler test started")
 
-        val initializers = mutableListOf<Initializer>()
-        for (x in 0 until 5) {
+        val count = 5
+        val initializers = mutableListOf<SimpleInitializer>()
+        for (x in 0 until count) {
             val initializer = SimpleInitializer("Initializer no. ${x + 1}")
             initializers.add(initializer)
         }
@@ -34,17 +35,37 @@ class InitializationFlowTest : BaseTest() {
             }
         }
 
+        var initialized = 0
+        var terminated = 0
+        val handler = object : InitializationHandler {
+            override fun onInitialization(initializer: Initializer, success: Boolean) {
+                assert(success)
+                assert(initializer is SimpleInitializer)
+                (initializer as SimpleInitializer).run()
+                initialized++
+            }
+
+            override fun onTermination(initializer: Initializer, success: Boolean) {
+                assert(success)
+                terminated++
+            }
+        }
+
         var flow = InitializationFlow()
         initializers.forEach {
-            flow = flow.width(it)
+            flow = flow.width(it, handler)
         }
         flow
                 .onFinish(flowCallback)
                 .run()
 
-        while (!finished) {
+        while (initialized < count || terminated < count) {
             Thread.yield()
         }
-        log.i("Initialization flow test completed")
+
+        Assertions.assertEquals(count, initialized)
+        Assertions.assertEquals(count, terminated)
+        assert(finished)
+        log.i("Initialization flow with handler test completed")
     }
 }
