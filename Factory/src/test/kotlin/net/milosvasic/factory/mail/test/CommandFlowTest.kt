@@ -71,7 +71,9 @@ class CommandFlowTest {
         }
 
         for (x in 1 until sum) {
-            Assertions.assertEquals("$echo:$x", dataReceived[x - 1])
+            val expected = "$echo:$x"
+            val compare = dataReceived[x - 1].replace("'", "")
+            Assertions.assertEquals(expected, compare)
         }
 
         log.i("Test: COMPLETED")
