@@ -18,28 +18,35 @@ class CommandFlowTest {
     fun testCommandFloe() {
         initLogging()
 
+        var finished = false
         val flowCallback = object : FlowCallback<String> {
 
             override fun onFinish(success: Boolean, message: String, data: String?) {
                 log.e(message)
                 assert(success)
+                finished = true
             }
         }
 
+        var count = 0
         val echo = "Test"
         val terminal = Terminal()
         CommandFlow()
                 .width(terminal)
-                .perform(Commands.echo(echo))
-                .perform(TerminalCommand(Commands.echo(echo)))
-                .perform(Commands.echo(echo))
+                .perform(Commands.echo("$echo:${++count}"))
+                .perform(TerminalCommand(Commands.echo("$echo:${++count}")))
+                .perform(Commands.echo("$echo:${++count}"))
                 .width(terminal)
-                .perform(TerminalCommand(Commands.echo(echo)))
-                .perform(Commands.echo(echo))
-                .perform(TerminalCommand(Commands.echo(echo)))
-                .perform(Commands.echo(echo))
+                .perform(TerminalCommand(Commands.echo("$echo:${++count}")))
+                .perform(Commands.echo("$echo:${++count}"))
+                .perform(TerminalCommand(Commands.echo("$echo:${++count}")))
+                .perform(Commands.echo("$echo:${++count}"))
                 .onFinish(flowCallback)
                 .run()
+
+        while (!finished) {
+            Thread.yield()
+        }
     }
 
     private fun initLogging() {
