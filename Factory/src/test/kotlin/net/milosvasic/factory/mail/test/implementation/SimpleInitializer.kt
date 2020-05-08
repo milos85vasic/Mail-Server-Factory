@@ -26,8 +26,10 @@ class SimpleInitializer : Application, BusyDelegation {
         checkInitialized()
         busy()
         executor.execute {
+            log.v("Initializing")
             Thread.sleep(1000)
             initialized = true
+            log.v("Initialized")
             notifyInit()
         }
     }
