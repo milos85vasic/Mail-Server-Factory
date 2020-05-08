@@ -6,6 +6,8 @@ import net.milosvasic.factory.mail.application.server_factory.ServerFactory
 import net.milosvasic.factory.mail.application.server_factory.ServerFactoryInitializationOperation
 import net.milosvasic.factory.mail.application.server_factory.ServerFactoryTerminationOperation
 import net.milosvasic.factory.mail.error.ERROR
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.logger.ConsoleLogger
@@ -21,20 +23,6 @@ fun main(args: Array<String>) {
     val initializationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
             when (result.operation) {
-                is ServerFactoryInitializationOperation -> {
-                    if (result.success) {
-                        try {
-                            log.i("Server factory initialized")
-                            factory.run()
-                        } catch (e: IllegalStateException) {
-
-                            log.e(e)
-                            fail(ERROR.RUNTIME_ERROR)
-                        }
-                    } else {
-                        fail(ERROR.INITIALIZATION_FAILURE)
-                    }
-                }
                 is ServerFactoryTerminationOperation -> {
                     if (result.success) {
                         log.i("Server factory terminated")
@@ -43,21 +31,34 @@ fun main(args: Array<String>) {
                         fail(ERROR.TERMINATION_FAILURE)
                     }
                 }
-                else -> {
-                    fail(ERROR.UNEXPECTED_EVENT_RECEIVED)
-                }
             }
         }
     }
 
     factory.subscribe(initializationCallback)
-    try {
-        factory.initialize()
-    } catch (e: IllegalStateException) {
 
-        log.e(e)
-        fail(ERROR.INITIALIZATION_FAILURE)
+    val callback = object : FlowCallback<String> {
+        override fun onFinish(success: Boolean, message: String, data: String?) {
+
+            if (success) {
+                try {
+                    log.i("Server factory initialized")
+                    factory.run()
+                } catch (e: IllegalStateException) {
+
+                    log.e(e)
+                    fail(ERROR.RUNTIME_ERROR)
+                }
+            } else {
+                fail(ERROR.INITIALIZATION_FAILURE)
+            }
+        }
     }
+
+    InitializationFlow()
+            .width(factory) // TODO: Terminate width parameter - passed like we did with DataHandler
+            .onFinish(callback)
+            .run()
 }
 
 private fun initLogging() {
