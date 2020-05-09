@@ -10,6 +10,7 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.execution.flow.callback.DefaultFlowCallback
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
+import net.milosvasic.factory.mail.log
 
 abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
 
@@ -20,6 +21,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     protected var currentSubject: Wrapper<T>? = null
     protected var subjectsIterator: Iterator<Wrapper<T>>? = null
 
+    private var nextFlow: FlowBuilder<*, *, *>? = null
     private var callback: FlowCallback<D> = DefaultFlowCallback()
 
     @Throws(BusyException::class)
@@ -32,12 +34,27 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
         return this
     }
 
-    @Throws(BusyException::class)
+    @Throws(BusyException::class, IllegalStateException::class)
     override fun onFinish(callback: FlowCallback<D>): Flow<T, D> {
         if (busy.isBusy()) {
             throw BusyException()
         }
         this.callback = callback
+        return this
+    }
+
+    @Throws(BusyException::class)
+    fun connect(flow: FlowBuilder<*, *, *>): FlowBuilder<T, D, C> {
+
+        if (nextFlow == null) {
+            nextFlow = flow
+        } else {
+            var flowToConnectTo = nextFlow
+            while (flowToConnectTo?.nextFlow != null) {
+                flowToConnectTo = flowToConnectTo.nextFlow
+            }
+            flowToConnectTo?.nextFlow = flow
+        }
         return this
     }
 
@@ -67,6 +84,13 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
 
     protected fun finish(success: Boolean, message: String = String.EMPTY) {
         cleanupStates()
+        if (success) {
+            try {
+                nextFlow?.run()
+            } catch (e: Exception) {
+                log.e(e)
+            }
+        }
         callback.onFinish(success, message)
         free()
     }

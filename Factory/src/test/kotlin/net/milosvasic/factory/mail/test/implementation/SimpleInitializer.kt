@@ -31,7 +31,7 @@ class SimpleInitializer(
             log.v("Initializing: $label")
             Thread.sleep(sleepTimeInMillis)
             initialized = true
-            log.v("Initialized: $label")
+            log.d("Initialized: $label")
             notifyInit()
         }
     }

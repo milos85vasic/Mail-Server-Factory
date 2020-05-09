@@ -16,7 +16,7 @@ class CommandFlowTest : BaseTest() {
     @Test
     fun testCommandFlow() {
         initLogging()
-        log.i("Test: STARTED")
+        log.i("Command flow test started")
 
         var count = 0
         val echo = "Test"
@@ -72,6 +72,6 @@ class CommandFlowTest : BaseTest() {
             Assertions.assertEquals(expected, compare)
         }
 
-        log.i("Test: COMPLETED")
+        log.i("Command flow test completed")
     }
 }
