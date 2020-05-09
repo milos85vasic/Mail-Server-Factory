@@ -25,7 +25,7 @@ class FlowConnectTest : BaseTest() {
         var commandFlowExecuted = 0
         var initializationFlowExecuted = 0
 
-        fun getEcho() = Commands.echo("$echo:${++count}")
+        fun getEcho(parent: Int) = Commands.echo("$echo $parent :: ${++count}")
 
         val commandFlowCallback = object : FlowCallback<String> {
             override fun onFinish(success: Boolean, message: String, data: String?) {
@@ -51,13 +51,14 @@ class FlowConnectTest : BaseTest() {
             }
         }
 
-        fun getCommandFlow() : CommandFlow {
+        var commandFlows = 0
+        fun getCommandFlow(parent: Int) : CommandFlow {
             var flow = CommandFlow()
             val terminal = Terminal()
             for (x in 0 until iterations) {
                 flow = flow.width(terminal)
                 for (y in 0 .. x) {
-                    flow = flow.perform(getEcho())
+                    flow = flow.perform(getEcho(parent))
                 }
             }
             flow.onFinish(commandFlowCallback)
@@ -79,11 +80,11 @@ class FlowConnectTest : BaseTest() {
             return initFlow
         }
 
-        val flow = getCommandFlow()
+        val flow = getCommandFlow(++commandFlows)
         for (x in 0 until iterations) {
             flow
                     .connect(getInitFlow(++initFlows))
-                    .connect(getCommandFlow())
+                    .connect(getCommandFlow(++commandFlows))
         }
         flow.run()
 
