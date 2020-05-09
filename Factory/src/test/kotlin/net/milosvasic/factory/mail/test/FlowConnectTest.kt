@@ -91,7 +91,7 @@ class FlowConnectTest : BaseTest() {
         while (commandFlowExecuted < iterations || initializationFlowExecuted < iterations) {
             Thread.yield()
         }
-        Assertions.assertEquals(iterations, commandFlowExecuted)
+        Assertions.assertEquals(iterations + 1, commandFlowExecuted)
         Assertions.assertEquals(iterations, initializationFlowExecuted)
 
         log.i("Flow connect test completed")
