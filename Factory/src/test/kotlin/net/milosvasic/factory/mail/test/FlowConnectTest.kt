@@ -30,7 +30,7 @@ class FlowConnectTest : BaseTest() {
         val commandFlowCallback = object : FlowCallback<String> {
             override fun onFinish(success: Boolean, message: String, data: String?) {
                 if (success) {
-                    log.d("Command flow finished")
+                    log.i("Command flow finished")
                 } else {
                     log.e(message)
                 }
@@ -42,7 +42,7 @@ class FlowConnectTest : BaseTest() {
         val initializationFlowCallback = object : FlowCallback<String> {
             override fun onFinish(success: Boolean, message: String, data: String?) {
                 if (success) {
-                    log.d("Initialization flow finished")
+                    log.i("Initialization flow finished")
                 } else {
                     log.e(message)
                 }
@@ -64,10 +64,11 @@ class FlowConnectTest : BaseTest() {
             return flow
         }
 
-        fun getInitFlow() : InitializationFlow {
+        var initFlows = 0
+        fun getInitFlow(parent: Int) : InitializationFlow {
             val initializers = mutableListOf<Initializer>()
             for (x in 0 until iterations) {
-                val initializer = SimpleInitializer("Initializer no. ${x + 1}")
+                val initializer = SimpleInitializer("Initializer $parent :: ${x + 1}")
                 initializers.add(initializer)
             }
             var initFlow = InitializationFlow()
@@ -81,7 +82,7 @@ class FlowConnectTest : BaseTest() {
         val flow = getCommandFlow()
         for (x in 0 until iterations) {
             flow
-                    .connect(getInitFlow())
+                    .connect(getInitFlow(++initFlows))
                     .connect(getCommandFlow())
         }
         flow.run()
