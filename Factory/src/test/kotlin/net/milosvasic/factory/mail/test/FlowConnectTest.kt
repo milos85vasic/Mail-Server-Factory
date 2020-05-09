@@ -53,21 +53,6 @@ class FlowConnectTest : BaseTest() {
             }
         }
 
-        val initializers = mutableListOf<Initializer>()
-        for (x in 0 until iterations) {
-            val initializer = SimpleInitializer("Initializer no. ${x + 1}")
-            initializers.add(initializer)
-        }
-
-        fun getInitFlow() : InitializationFlow {
-            var initFlow = InitializationFlow()
-            initializers.forEach {
-                initFlow = initFlow.width(it)
-            }
-            return initFlow
-        }
-        val initFlow = getInitFlow().onFinish(initializationFlowCallback)
-
         fun getCommandFlow() : CommandFlow {
             var flow = CommandFlow()
             val terminal = Terminal()
@@ -77,10 +62,25 @@ class FlowConnectTest : BaseTest() {
                     flow = flow.perform(getEcho())
                 }
             }
+            flow.onFinish(commandFlowCallback)
             return flow
         }
-        val flow = getCommandFlow().onFinish(commandFlowCallback)
 
+        fun getInitFlow() : InitializationFlow {
+            val initializers = mutableListOf<Initializer>()
+            for (x in 0 until iterations) {
+                val initializer = SimpleInitializer("Initializer no. ${x + 1}")
+                initializers.add(initializer)
+            }
+            var initFlow = InitializationFlow()
+            initializers.forEach {
+                initFlow = initFlow.width(it)
+            }
+            initFlow.onFinish(initializationFlowCallback)
+            return initFlow
+        }
+
+        val flow = getCommandFlow()
         for (x in 0 until iterations) {
             flow
                     .connect(getInitFlow())
