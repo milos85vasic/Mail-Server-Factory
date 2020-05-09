@@ -8,5 +8,4 @@ interface Flow<T, D> : Runnable {
 
     fun onFinish(callback: FlowCallback<D>): Flow<T, D>
 
-    fun connect(flow: Flow<*, *>): Flow<T, D>
 }

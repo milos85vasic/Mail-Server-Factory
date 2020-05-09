@@ -21,6 +21,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     protected var currentSubject: Wrapper<T>? = null
     protected var subjectsIterator: Iterator<Wrapper<T>>? = null
 
+    private var nextFlow: FlowBuilder<*, *, *>? = null
     private var callback: FlowCallback<D> = DefaultFlowCallback()
 
     @Throws(BusyException::class)
@@ -38,30 +39,22 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
         if (busy.isBusy()) {
             throw BusyException()
         }
-        if (this.callback !is DefaultFlowCallback) {
-            throw IllegalStateException("Finish callback is already set")
-        }
         this.callback = callback
         return this
     }
 
     @Throws(BusyException::class)
-    override fun connect(flow: Flow<*, *>): Flow<T, D> {
+    fun connect(flow: FlowBuilder<*, *, *>): FlowBuilder<T, D, C> {
 
-        val currentCallback = callback
-        val connection = object : FlowCallback<D> {
-            override fun onFinish(success: Boolean, message: String, data: D?) {
-                currentCallback.onFinish(success, message, data)
-                if (success) {
-                    try {
-                        flow.run()
-                    } catch (e: Exception) {
-                        log.e(e)
-                    }
-                }
+        if (nextFlow == null) {
+            nextFlow = flow
+        } else {
+            var flowToConnectTo = nextFlow
+            while (flowToConnectTo?.nextFlow != null) {
+                flowToConnectTo = flowToConnectTo.nextFlow
             }
+            flowToConnectTo?.nextFlow = flow
         }
-        this.callback = connection
         return this
     }
 
@@ -91,6 +84,13 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
 
     protected fun finish(success: Boolean, message: String = String.EMPTY) {
         cleanupStates()
+        if (success) {
+            try {
+                nextFlow?.run()
+            } catch (e: Exception) {
+                log.e(e)
+            }
+        }
         callback.onFinish(success, message)
         free()
     }
