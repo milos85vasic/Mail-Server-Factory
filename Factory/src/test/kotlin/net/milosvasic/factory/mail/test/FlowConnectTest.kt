@@ -28,7 +28,6 @@ class FlowConnectTest : BaseTest() {
         fun getEcho() = Commands.echo("$echo:${++count}")
 
         val commandFlowCallback = object : FlowCallback<String> {
-
             override fun onFinish(success: Boolean, message: String, data: String?) {
                 if (success) {
                     log.d("Command flow finished")
@@ -41,7 +40,6 @@ class FlowConnectTest : BaseTest() {
         }
 
         val initializationFlowCallback = object : FlowCallback<String> {
-
             override fun onFinish(success: Boolean, message: String, data: String?) {
                 if (success) {
                     log.d("Initialization flow finished")
