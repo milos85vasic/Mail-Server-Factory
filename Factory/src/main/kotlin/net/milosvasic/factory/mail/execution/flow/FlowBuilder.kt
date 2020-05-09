@@ -33,10 +33,13 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
         return this
     }
 
-    @Throws(BusyException::class)
+    @Throws(BusyException::class, IllegalStateException::class)
     override fun onFinish(callback: FlowCallback<D>): Flow<T, D> {
         if (busy.isBusy()) {
             throw BusyException()
+        }
+        if (this.callback !is DefaultFlowCallback) {
+            throw IllegalStateException("Finish callback is already set")
         }
         this.callback = callback
         return this
@@ -57,7 +60,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
                 }
             }
         }
-        onFinish(connection)
+        this.callback = connection
         return this
     }
 
