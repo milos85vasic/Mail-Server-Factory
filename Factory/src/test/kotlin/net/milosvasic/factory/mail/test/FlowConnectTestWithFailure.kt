@@ -93,10 +93,11 @@ class FlowConnectTestWithFailure : BaseTest() {
         }
         flow.run()
 
-        while (commandFlowExecuted < 2 || initializationFlowExecuted < 1 || commandFlowFailed < 1) {
+        while (commandFlowExecuted < 1 || initializationFlowExecuted < 1 || commandFlowFailed < 1) {
             Thread.yield()
         }
-        Assertions.assertEquals(2, commandFlowExecuted)
+
+        Assertions.assertEquals(1, commandFlowExecuted)
         Assertions.assertEquals(1, commandFlowFailed)
         Assertions.assertEquals(1, initializationFlowExecuted)
 
