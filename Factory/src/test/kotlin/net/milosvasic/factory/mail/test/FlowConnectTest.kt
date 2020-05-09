@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.test.implementation.SimpleInitializer
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 
@@ -21,32 +22,34 @@ class FlowConnectTest : BaseTest() {
         var count = 0
         val echo = "Test"
         val iterations = 3
-        var commandFlowResult: Boolean? = null
-        var initializationFlowResult: Boolean? = null
+        var commandFlowExecuted = 0
+        var initializationFlowExecuted = 0
 
         fun getEcho() = Commands.echo("$echo:${++count}")
 
         val commandFlowCallback = object : FlowCallback<String> {
 
             override fun onFinish(success: Boolean, message: String, data: String?) {
-                log.v("Command flow finished")
-                if (!success) {
+                if (success) {
+                    log.d("Command flow finished")
+                } else {
                     log.e(message)
                 }
                 assert(success)
-                commandFlowResult = success
+                commandFlowExecuted++
             }
         }
 
         val initializationFlowCallback = object : FlowCallback<String> {
 
             override fun onFinish(success: Boolean, message: String, data: String?) {
-                log.v("Initialization flow finished")
-                if (!success) {
+                if (success) {
+                    log.d("Initialization flow finished")
+                } else {
                     log.e(message)
                 }
                 assert(success)
-                initializationFlowResult = success
+                initializationFlowExecuted++
             }
         }
 
@@ -56,34 +59,40 @@ class FlowConnectTest : BaseTest() {
             initializers.add(initializer)
         }
 
-        var initFlow = InitializationFlow()
-        initializers.forEach {
-            initFlow = initFlow.width(it)
-        }
-        initFlow.onFinish(initializationFlowCallback)
-
-        var flow = CommandFlow()
-        val terminal = Terminal()
-        for (x in 0 until iterations) {
-            flow = flow.width(terminal)
-            for (y in 0 .. x) {
-                flow = flow.perform(getEcho())
+        fun getInitFlow() : InitializationFlow {
+            var initFlow = InitializationFlow()
+            initializers.forEach {
+                initFlow = initFlow.width(it)
             }
+            return initFlow
         }
-        flow
-                .onFinish(commandFlowCallback)
-                .connect(initFlow)
-                .run()
+        val initFlow = getInitFlow().onFinish(initializationFlowCallback)
 
-        while (commandFlowResult == null || initializationFlowResult == null) {
+        fun getCommandFlow() : CommandFlow {
+            var flow = CommandFlow()
+            val terminal = Terminal()
+            for (x in 0 until iterations) {
+                flow = flow.width(terminal)
+                for (y in 0 .. x) {
+                    flow = flow.perform(getEcho())
+                }
+            }
+            return flow
+        }
+        val flow = getCommandFlow().onFinish(commandFlowCallback)
+
+        for (x in 0 until iterations) {
+            flow
+                    .connect(getInitFlow())
+                    .connect(getCommandFlow())
+        }
+        flow.run()
+
+        while (commandFlowExecuted < iterations || initializationFlowExecuted < iterations) {
             Thread.yield()
         }
-        commandFlowResult?.let {
-            assert(it)
-        }
-        initializationFlowResult?.let {
-            assert(it)
-        }
+        Assertions.assertEquals(iterations, commandFlowExecuted)
+        Assertions.assertEquals(iterations, initializationFlowExecuted)
 
         log.i("Flow connect test completed")
     }

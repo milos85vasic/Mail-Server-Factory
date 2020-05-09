@@ -48,9 +48,10 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     @Throws(BusyException::class)
     override fun connect(flow: Flow<*, *>): Flow<T, D> {
 
+        val currentCallback = callback
         val connection = object : FlowCallback<D> {
             override fun onFinish(success: Boolean, message: String, data: D?) {
-                callback.onFinish(success, message, data)
+                currentCallback.onFinish(success, message, data)
                 if (success) {
                     try {
                         flow.run()
