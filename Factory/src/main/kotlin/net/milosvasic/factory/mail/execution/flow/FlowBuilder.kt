@@ -10,6 +10,7 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.execution.flow.callback.DefaultFlowCallback
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
+import net.milosvasic.factory.mail.log
 
 abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
 
@@ -38,6 +39,25 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
             throw BusyException()
         }
         this.callback = callback
+        return this
+    }
+
+    @Throws(BusyException::class)
+    override fun connect(flow: Flow<*, *>): Flow<T, D> {
+
+        val connection = object : FlowCallback<D> {
+            override fun onFinish(success: Boolean, message: String, data: D?) {
+                callback.onFinish(success, message, data)
+                if (success) {
+                    try {
+                        flow.run()
+                    } catch (e: Exception) {
+                        log.e(e)
+                    }
+                }
+            }
+        }
+        onFinish(connection)
         return this
     }
 
