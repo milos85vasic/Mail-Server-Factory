@@ -7,7 +7,7 @@ import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyDelegate
 import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.execution.flow.callback.DefaultFlowCallback
+import net.milosvasic.factory.mail.execution.flow.callback.DefaultApplicationCallback
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.log
@@ -22,7 +22,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     protected var subjectsIterator: Iterator<Wrapper<T>>? = null
 
     private var nextFlow: FlowBuilder<*, *, *>? = null
-    private var callback: FlowCallback<D> = DefaultFlowCallback()
+    private var callback: FlowCallback<D> = DefaultApplicationCallback()
 
     @Throws(BusyException::class)
     override fun width(subject: T): Flow<T, D> {
