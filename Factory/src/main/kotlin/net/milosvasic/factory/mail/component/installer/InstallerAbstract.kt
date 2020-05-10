@@ -29,8 +29,7 @@ import net.milosvasic.factory.mail.terminal.TerminalCommand
 abstract class InstallerAbstract(entryPoint: Connection) :
         LegacyBusyWorker<InstallationStep<*>>(entryPoint),
         ConfigurableSoftware,
-        Installation,
-        Initialization {
+        Installation {
 
     protected var item: InstallationStep<*>? = null
 

@@ -13,12 +13,12 @@ import net.milosvasic.factory.mail.component.docker.DockerInitializationOperatio
 import net.milosvasic.factory.mail.component.docker.DockerOperation
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
-import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
 import net.milosvasic.factory.mail.configuration.*
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -200,19 +200,6 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                 val listener = object : OperationResultListener {
                     override fun onOperationPerformed(result: OperationResult) {
                         when (result.operation) {
-                            is InstallerInitializationOperation -> {
-
-                                if (result.success) {
-
-                                    log.i("Installer is ready")
-                                    softwareConfigurationsIterator = softwareConfigurations.iterator()
-                                    nextSoftwareConfiguration()
-                                } else {
-
-                                    log.e("Could not initialize installer")
-                                    fail(ERROR.COMPONENT_INITIALIZATION_FAILURE)
-                                }
-                            }
                             is DockerInitializationOperation -> {
 
                                 if (result.success) {
@@ -249,17 +236,17 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                         }
                     }
 
-                    private fun nextSoftwareConfiguration() {
-                        if (!tryNextSoftwareConfiguration()) {
-                            docker.subscribe(this)
-                            docker.initialize()
-                        }
-                    }
-
                     private fun nextContainerConfiguration() {
                         if (!tryNextContainerConfiguration()) {
                             docker.unsubscribe(this)
                             docker.terminate()
+                        }
+                    }
+
+                    fun nextSoftwareConfiguration() {
+                        if (!tryNextSoftwareConfiguration()) {
+                            docker.subscribe(this)
+                            docker.initialize()
                         }
                     }
                 }
@@ -270,13 +257,33 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                         if (success) {
                             ssh.subscribe(listener)
                             installer.subscribe(listener)
-                            installer.initialize()
+                            docker.subscribe(listener)
                         } else {
                             log.e(message)
                             fail(ERROR.RUNTIME_ERROR)
                         }
                     }
                 }
+
+                val initFlowCallback = object : FlowCallback<String> {
+                    override fun onFinish(success: Boolean, message: String, data: String?) {
+
+                        if (success) {
+
+                            log.i("Installer is ready")
+                            softwareConfigurationsIterator = softwareConfigurations.iterator()
+                            listener.nextSoftwareConfiguration()
+                        } else {
+
+                            log.e("Could not initialize installer")
+                            fail(ERROR.COMPONENT_INITIALIZATION_FAILURE)
+                        }
+                    }
+                }
+
+                val initFlow = InitializationFlow()
+                        .width(installer)
+                        .onFinish(initFlowCallback)
 
                 CommandFlow()
                         .width(terminal)
@@ -288,6 +295,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                                 HostInfoDataHandler(ssh.getRemoteOS())
                         )
                         .onFinish(flowCallback)
+                        .connect(initFlow)
                         .run()
             }
         } catch (e: IllegalArgumentException) {
