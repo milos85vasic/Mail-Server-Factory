@@ -4,7 +4,7 @@ import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.initialization.Termination
 import java.lang.Exception
 
-class TerminateOrDieCallback<T>(private val termination: Termination) : DieOnFailureCallback<T>() {
+class TerminationCallback<T>(private val termination: Termination) : DieOnFailureCallback<T>() {
 
     override fun onFinish(success: Boolean, message: String, data: T?) {
         super.onFinish(success, message, data)

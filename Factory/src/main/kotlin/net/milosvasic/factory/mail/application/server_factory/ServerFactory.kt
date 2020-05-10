@@ -13,7 +13,7 @@ import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.configuration.*
 import net.milosvasic.factory.mail.execution.flow.callback.DieOnFailureCallback
-import net.milosvasic.factory.mail.execution.flow.callback.TerminateOrDieCallback
+import net.milosvasic.factory.mail.execution.flow.callback.TerminationCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationFlow
@@ -172,7 +172,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                 containersConfigurations.forEach {
                     containerFlow.width(it)
                 }
-                containerFlow.onFinish(TerminateOrDieCallback(this))
+                containerFlow.onFinish(TerminationCallback(this))
 
                 val dockerInitFlow = InitializationFlow()
                         .width(docker)
