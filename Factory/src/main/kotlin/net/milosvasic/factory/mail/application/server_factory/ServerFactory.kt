@@ -10,7 +10,9 @@ import net.milosvasic.factory.mail.common.busy.LegacyBusyWorker
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.docker.Docker
+import net.milosvasic.factory.mail.component.docker.DockerInitializationFlowCallback
 import net.milosvasic.factory.mail.component.installer.Installer
+import net.milosvasic.factory.mail.component.installer.InstallerInitializationFlowCallback
 import net.milosvasic.factory.mail.configuration.*
 import net.milosvasic.factory.mail.execution.flow.callback.DieOnFailureCallback
 import net.milosvasic.factory.mail.execution.flow.callback.TerminationCallback
@@ -283,20 +285,20 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
 
     private fun getDockerInitFlow(docker: Docker, dockerFlow: InstallationFlow): InitializationFlow {
 
-        val dieCallback = DieOnFailureCallback<String>()
+        val initCallback = DockerInitializationFlowCallback()
         return InitializationFlow()
                 .width(docker)
                 .connect(dockerFlow)
-                .onFinish(dieCallback)
+                .onFinish(initCallback)
     }
 
     private fun getInitializationFlow(installer: Installer, installFlow: InstallationFlow): InitializationFlow {
 
-        val dieCallback = DieOnFailureCallback<String>()
+        val initCallback = InstallerInitializationFlowCallback()
         return InitializationFlow()
                 .width(installer)
                 .connect(installFlow)
-                .onFinish(dieCallback)
+                .onFinish(initCallback)
     }
 
     private fun getCommandFlow(ssh: SSH, initFlow: InitializationFlow): CommandFlow {
