@@ -44,6 +44,7 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
         return this
     }
 
+    @Throws(BusyException::class)
     override fun connect(flow: FlowBuilder<*, *, *>): InitializationFlow {
         super.connect(flow)
         return this

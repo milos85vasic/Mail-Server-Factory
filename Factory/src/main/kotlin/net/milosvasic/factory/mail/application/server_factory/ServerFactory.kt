@@ -154,56 +154,20 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         try {
             configuration?.let { config ->
 
-                val host = config.remote.host
                 val ssh = SSH(config.remote)
-                val terminal = ssh.terminal
                 val docker = Docker(ssh)
                 val installer = Installer(ssh)
-                val pingCommand = TerminalCommand(Commands.ping(host))
-                val hostInfoCommand = TerminalCommand(Commands.getHostInfo())
-                val testCommand = TerminalCommand(Commands.echo("Hello"))
 
                 terminators.add(docker)
                 terminators.add(installer)
 
-                val dieCallback = DieOnFailureCallback<String>()
+                val dockerFlow = getDockerFlow(docker)
+                val dockerInitFlow = getDockerInitFlow(docker, dockerFlow)
+                val installFlow = getInstallationFlow(installer, dockerInitFlow)
+                val initFlow = getInitializationFlow(installer, installFlow)
+                val commandFlow = getCommandFlow(ssh, initFlow)
 
-                val containerFlow = InstallationFlow(docker)
-                containersConfigurations.forEach {
-                    containerFlow.width(it)
-                }
-                containerFlow.onFinish(TerminationCallback(this))
-
-                val dockerInitFlow = InitializationFlow()
-                        .width(docker)
-                        .connect(containerFlow)
-                        .onFinish(dieCallback)
-
-                val installFlow = InstallationFlow(installer)
-                softwareConfigurations.forEach {
-                    installFlow.width(it)
-                }
-                installFlow
-                        .connect(dockerInitFlow)
-                        .onFinish(dieCallback)
-
-                val initFlow = InitializationFlow()
-                        .width(installer)
-                        .connect(installFlow)
-                        .onFinish(dieCallback)
-
-                CommandFlow()
-                        .width(terminal)
-                        .perform(pingCommand)
-                        .width(ssh)
-                        .perform(testCommand)
-                        .perform(
-                                hostInfoCommand,
-                                HostInfoDataHandler(ssh.getRemoteOS())
-                        )
-                        .onFinish(dieCallback)
-                        .connect(initFlow)
-                        .run()
+                commandFlow.run()
             }
         } catch (e: IllegalArgumentException) {
 
@@ -219,7 +183,6 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         try {
             terminate()
         } catch (e: IllegalStateException) {
-
             log.e(e)
         }
     }
@@ -295,5 +258,62 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         log.e(e)
         val result = OperationResult(terminationOperation, false)
         notify(result)
+    }
+
+    private fun getInstallationFlow(installer: Installer, dockerInitFlow: InitializationFlow): InstallationFlow {
+        val installFlow = InstallationFlow(installer)
+        val dieCallback = DieOnFailureCallback<String>()
+        softwareConfigurations.forEach {
+            installFlow.width(it)
+        }
+        return installFlow
+                .connect(dockerInitFlow)
+                .onFinish(dieCallback)
+    }
+
+    private fun getDockerFlow(docker: Docker): InstallationFlow {
+
+        val dockerFlow = InstallationFlow(docker)
+        containersConfigurations.forEach {
+            dockerFlow.width(it)
+        }
+        dockerFlow.onFinish(TerminationCallback(this))
+        return dockerFlow
+    }
+
+    private fun getDockerInitFlow(docker: Docker, dockerFlow: InstallationFlow): InitializationFlow {
+
+        val dieCallback = DieOnFailureCallback<String>()
+        return InitializationFlow()
+                .width(docker)
+                .connect(dockerFlow)
+                .onFinish(dieCallback)
+    }
+
+    private fun getInitializationFlow(installer: Installer, installFlow: InstallationFlow): InitializationFlow {
+
+        val dieCallback = DieOnFailureCallback<String>()
+        return InitializationFlow()
+                .width(installer)
+                .connect(installFlow)
+                .onFinish(dieCallback)
+    }
+
+    private fun getCommandFlow(ssh: SSH, initFlow: InitializationFlow): CommandFlow {
+
+        val host = ssh.getRemote().host
+        val pingCommand = TerminalCommand(Commands.ping(host))
+        val hostInfoCommand = TerminalCommand(Commands.getHostInfo())
+        val testCommand = TerminalCommand(Commands.echo("Hello"))
+        val terminal = ssh.terminal
+        val dieCallback = DieOnFailureCallback<String>()
+        return CommandFlow()
+                .width(terminal)
+                .perform(pingCommand)
+                .width(ssh)
+                .perform(testCommand)
+                .perform(hostInfoCommand, HostInfoDataHandler(ssh.getRemoteOS()))
+                .onFinish(dieCallback)
+                .connect(initFlow)
     }
 }
