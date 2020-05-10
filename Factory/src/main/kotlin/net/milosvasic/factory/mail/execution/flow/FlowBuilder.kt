@@ -44,7 +44,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     }
 
     @Throws(BusyException::class)
-    fun connect(flow: FlowBuilder<*, *, *>): FlowBuilder<T, D, C> {
+    open fun connect(flow: FlowBuilder<*, *, *>): FlowBuilder<T, D, C> {
 
         if (nextFlow == null) {
             nextFlow = flow
