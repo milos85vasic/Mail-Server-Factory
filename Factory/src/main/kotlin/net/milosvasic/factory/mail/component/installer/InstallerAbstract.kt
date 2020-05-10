@@ -2,7 +2,7 @@ package net.milosvasic.factory.mail.component.installer
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.busy.BusyWorker
+import net.milosvasic.factory.mail.common.busy.LegacyBusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initialization
 import net.milosvasic.factory.mail.component.docker.step.stack.CheckOperation
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
@@ -27,7 +27,7 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 abstract class InstallerAbstract(entryPoint: Connection) :
-        BusyWorker<InstallationStep<*>>(entryPoint),
+        LegacyBusyWorker<InstallationStep<*>>(entryPoint),
         ConfigurableSoftware,
         Installation,
         Initialization {

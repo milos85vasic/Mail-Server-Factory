@@ -1,11 +1,12 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Packages
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
@@ -13,8 +14,8 @@ import net.milosvasic.factory.mail.terminal.TerminalCommand
 import kotlin.reflect.KClass
 
 abstract class PackageManager(entryPoint: Connection) :
-    BusyWorker<InstallationItem>(entryPoint),
-    PackageManagement<InstallationItem> {
+        BusyWorker<InstallationItem>(entryPoint),
+        PackageManagement<InstallationItem> {
 
     abstract val applicationBinaryName: String
 
@@ -25,26 +26,14 @@ abstract class PackageManager(entryPoint: Connection) :
 
     private var operationType = PackageManagerOperationType.UNKNOWN
 
-    override fun handleResult(result: OperationResult) {
-        when (result.operation) {
-            is TerminalCommand -> {
-                val cmd = result.operation.command
-                if (command!= String.EMPTY && cmd.endsWith(command)) {
+    private val flowCallback = object : FlowCallback<String> {
 
-                    try {
-                        if (result.success) {
-                            onSuccessResult()
-                        } else {
-                            onFailedResult()
-                        }
-                    } catch (e: IllegalStateException) {
-
-                        onFailedResult(e)
-                    } catch (e: IllegalArgumentException) {
-
-                        onFailedResult(e)
-                    }
-                }
+        override fun onFinish(success: Boolean, message: String, data: String?) {
+            if (success) {
+                onSuccessResult()
+            } else {
+                log.e(message)
+                onFailedResult()
             }
         }
     }
@@ -63,22 +52,30 @@ abstract class PackageManager(entryPoint: Connection) :
             }
         }
         busy()
-        iterator = items.iterator()
         operationType = if (clazz == Group::class) {
             PackageManagerOperationType.GROUP_INSTALL
         } else {
             PackageManagerOperationType.PACKAGE_INSTALL
         }
-        tryNext()
+        val flow = CommandFlow().width(entryPoint)
+        items.forEach {
+            val command = getCommand(it)
+            flow.perform(command)
+        }
+        flow.onFinish(flowCallback).run()
     }
 
     @Synchronized
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun install(packages: List<Package>) {
         busy()
-        iterator = packages.iterator()
         operationType = PackageManagerOperationType.PACKAGE_INSTALL
-        tryNext()
+        val flow = CommandFlow().width(entryPoint)
+        packages.forEach {
+            val command = getCommand(it)
+            flow.perform(command)
+        }
+        flow.onFinish(flowCallback).run()
     }
 
     @Synchronized
@@ -86,97 +83,51 @@ abstract class PackageManager(entryPoint: Connection) :
     override fun install(packages: Packages) {
         busy()
         val list = listOf(Package(packages.value))
-        iterator = list.iterator()
         operationType = PackageManagerOperationType.PACKAGE_INSTALL
-        tryNext()
+        val flow = CommandFlow().width(entryPoint)
+        list.forEach {
+            val command = getCommand(it)
+            flow.perform(command)
+        }
+        flow.onFinish(flowCallback).run()
     }
 
     @Synchronized
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun uninstall(packages: List<Package>) {
         busy()
-        iterator = packages.iterator()
         operationType = PackageManagerOperationType.PACKAGE_UNINSTALL
-        tryNext()
+        onFailedResult()
     }
 
     @Synchronized
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun groupInstall(groups: List<Group>) {
         busy()
-        iterator = groups.iterator()
         operationType = PackageManagerOperationType.GROUP_INSTALL
-        tryNext()
+        val flow = CommandFlow().width(entryPoint)
+        groups.forEach {
+            val command = getCommand(it)
+            flow.perform(command)
+        }
+        flow.onFinish(flowCallback).run()
     }
 
     @Synchronized
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun groupUninstall(groups: List<Group>) {
         busy()
-        iterator = groups.iterator()
         operationType = PackageManagerOperationType.GROUP_UNINSTALL
-        tryNext()
+        onFailedResult()
     }
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun tryNext() {
-        if (iterator == null) {
-            free(false)
-            return
-        }
-        if (operationType == PackageManagerOperationType.UNKNOWN) {
-            free(false)
-            return
-        }
-        iterator?.let {
-            if (it.hasNext()) {
-                when (val item = it.next()) {
-                    is Package -> {
-                        if (operationType == PackageManagerOperationType.PACKAGE_INSTALL) {
-                            installPackage(item)
-                        } else {
-                            uninstallPackage(item)
-                        }
-                    }
-                    is Group -> {
-                        if (operationType == PackageManagerOperationType.GROUP_INSTALL) {
-                            installGroup(item)
-                        } else {
-                            uninstallGroup(item)
-                        }
-                    }
-                    else -> {
-                        log.e("Install: unknown installation type: $item")
-                    }
-                }
-            } else {
-                free(true)
-            }
-        }
+    override fun onSuccessResult() {
+        free(true)
     }
 
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    private fun installPackage(item: Package) {
-        command = "${installCommand()} ${item.value}"
-        entryPoint.execute(TerminalCommand(command))
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    private fun uninstallPackage(item: Package) {
-        command = "${uninstallCommand()} ${item.value}"
-        entryPoint.execute(TerminalCommand(command))
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    private fun installGroup(item: Group) {
-        command = "${groupInstallCommand()} \"${item.value}\""
-        entryPoint.execute(TerminalCommand(command))
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    private fun uninstallGroup(item: Group) {
-        command = "${groupUninstallCommand()} \"${item.value}\""
-        entryPoint.execute(TerminalCommand(command))
+    override fun onFailedResult() {
+        free(false)
     }
 
     @Synchronized
@@ -186,12 +137,18 @@ abstract class PackageManager(entryPoint: Connection) :
         notify(result)
     }
 
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun onSuccessResult() {
-        tryNext()
-    }
-
-    override fun onFailedResult() {
-        free(false)
+    @Throws(IllegalArgumentException::class)
+    private fun getCommand(item: InstallationItem): TerminalCommand {
+        return when (item) {
+            is Package -> {
+                TerminalCommand("${installCommand()} ${item.value}")
+            }
+            is Group -> {
+                TerminalCommand("${groupInstallCommand()} \"${item.value}\"")
+            }
+            else -> {
+                throw IllegalArgumentException("Unsupported installation type: ${item::class.simpleName}")
+            }
+        }
     }
 }
