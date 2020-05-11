@@ -66,9 +66,9 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
         return this
     }
 
+    @Throws(IllegalArgumentException::class)
     override fun getProcessingRecipe(
-            subject: Executor<TerminalCommand>,
-            operation: TerminalCommand
+            subject: Executor<TerminalCommand>, operation: TerminalCommand
     ): ProcessingRecipe {
 
         return object : ProcessingRecipe {

@@ -50,6 +50,7 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
         return this
     }
 
+    @Throws(IllegalArgumentException::class)
     override fun getProcessingRecipe(subject: Initializer): ProcessingRecipe {
 
         return object : ProcessingRecipe {

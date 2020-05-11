@@ -1,9 +1,7 @@
 package net.milosvasic.factory.mail.component.installer
 
-import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.component.installer.step.InstallationStep
-import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
+import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
@@ -14,10 +12,21 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
+            when (result.operation) {
+                is PackageInstallerInitializationOperation -> {
 
-            handleResultAndCatch(result)
+                    free()
+                    val installerInitializationOperation = InstallerInitializationOperation()
+                    val operationResult = OperationResult(installerInitializationOperation, result.success)
+                    notify(operationResult)
+                }
+            }
         }
     }
+
+    // TODO: Goes into recipes - Start
+    /*
+
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun handleNext(current: InstallationStep<*>): Boolean {
@@ -39,19 +48,15 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
             return true
         }
     }
+    */
+    // TODO: Goes into recipes - End
 
-    @Synchronized
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun initialize() {
-        super.initialize()
+    override fun initialization() {
         installer.subscribe(listener)
         installer.initialize()
     }
 
-    @Synchronized
-    @Throws(IllegalStateException::class)
-    override fun terminate() {
-        super.terminate()
+    override fun termination() {
         installer.unsubscribe(listener)
         installer.terminate()
     }

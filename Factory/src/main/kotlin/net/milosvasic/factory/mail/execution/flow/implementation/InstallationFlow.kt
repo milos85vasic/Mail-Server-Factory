@@ -1,7 +1,6 @@
 package net.milosvasic.factory.mail.execution.flow.implementation
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
@@ -34,6 +33,7 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
         return this
     }
 
+    @Throws(IllegalArgumentException::class)
     override fun getProcessingRecipe(subject: SoftwareConfiguration): ProcessingRecipe {
 
         return object : ProcessingRecipe {

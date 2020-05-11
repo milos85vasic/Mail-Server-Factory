@@ -13,8 +13,11 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
+    private var command = String.EMPTY
     private val initialized = AtomicBoolean()
 
+    // TODO: Goes into recipes - Start
+    /*
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
 
@@ -80,19 +83,15 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
             return true
         }
     }
+     */
+    // TODO: Goes into recipes - End
 
-    @Synchronized
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun initialize() {
-        super.initialize()
+    override fun initialization() {
         command = "${DockerCommand.DOCKER.obtain()} ${DockerCommand.VERSION.obtain()}"
         entryPoint.execute(TerminalCommand(command))
     }
 
-    @Synchronized
-    @Throws(IllegalStateException::class)
-    override fun terminate() {
-        super.terminate()
+    override fun termination() {
         initialized.set(false)
     }
 

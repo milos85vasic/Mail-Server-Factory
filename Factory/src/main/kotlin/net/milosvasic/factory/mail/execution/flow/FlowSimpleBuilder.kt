@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.common.CollectionWrapper
 import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
+import java.lang.Exception
 
 abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T>>>() {
 
@@ -67,10 +68,15 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
             throw IllegalStateException("Current subject is null")
         }
         currentSubject?.let { subject ->
-            val recipe = getProcessingRecipe(subject.content)
-            recipe.process(processingCallback)
+            try {
+                val recipe = getProcessingRecipe(subject.content)
+                recipe.process(processingCallback)
+            } catch (e: IllegalArgumentException) {
+
+            }
         }
     }
 
+    @Throws(IllegalArgumentException::class)
     protected abstract fun getProcessingRecipe(subject: T): ProcessingRecipe
 }
