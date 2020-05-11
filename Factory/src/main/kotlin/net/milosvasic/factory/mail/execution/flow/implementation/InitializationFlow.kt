@@ -11,8 +11,11 @@ import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
+import net.milosvasic.factory.mail.getMessage
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
+import java.lang.Exception
 
 class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
 
@@ -60,6 +63,7 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
             private val operationCallback = object : OperationResultListener {
                 override fun onOperationPerformed(result: OperationResult) {
 
+                    subject.unsubscribe(this)
                     val handler = initializationHandlers[subject]
                     when (result.operation) {
                         is InitializationOperation -> {
@@ -89,7 +93,13 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
             override fun process(callback: FlowProcessingCallback) {
                 this.callback = callback
                 subject.subscribe(operationCallback)
-                subject.initialize()
+                try {
+                    subject.initialize()
+                } catch (e: Exception) {
+
+                    subject.unsubscribe(operationCallback)
+                    callback.onFinish(false, e.getMessage())
+                }
             }
         }
     }

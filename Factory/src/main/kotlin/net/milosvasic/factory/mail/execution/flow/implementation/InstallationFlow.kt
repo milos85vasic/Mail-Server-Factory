@@ -10,6 +10,7 @@ import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
+import net.milosvasic.factory.mail.getMessage
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -42,6 +43,8 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
 
             private val operationCallback = object : OperationResultListener {
                 override fun onOperationPerformed(result: OperationResult) {
+
+                    installer.unsubscribe(this)
                     when (result.operation) {
                         is InstallerOperation -> {
                             val message = if (result.success) {
@@ -49,7 +52,6 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
                             } else {
                                 "Installation failed for $subject"
                             }
-                            installer.unsubscribe(this)
                             callback?.onFinish(result.success, message)
                             callback = null
                         }
@@ -65,14 +67,8 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
                     installer.install()
                 } catch (e: BusyException) {
 
-                    var message = String.EMPTY
-                    e::class.simpleName?.let {
-                        message = it
-                    }
-                    e.message?.let {
-                        message = it
-                    }
-                    callback.onFinish(false, message)
+                    installer.unsubscribe(operationCallback)
+                    callback.onFinish(false, e.getMessage())
                 }
             }
         }

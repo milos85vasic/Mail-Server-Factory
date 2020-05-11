@@ -10,6 +10,7 @@ import net.milosvasic.factory.mail.execution.flow.FlowPerformBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
+import net.milosvasic.factory.mail.getMessage
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.operation.command.CommandConfiguration
@@ -77,6 +78,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
 
             private val operationCallback = object : OperationResultListener {
                 override fun onOperationPerformed(result: OperationResult) {
+
                     subject.unsubscribe(this)
                     if (result.success) {
                         val dataHandler = dataHandlers[operation]
@@ -99,7 +101,13 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
             override fun process(callback: FlowProcessingCallback) {
                 this.callback = callback
                 subject.subscribe(operationCallback)
-                subject.execute(operation)
+                try {
+                    subject.execute(operation)
+                } catch (e: Exception) {
+
+                    subject.unsubscribe(operationCallback)
+                    callback.onFinish(false, e.getMessage())
+                }
             }
         }
     }

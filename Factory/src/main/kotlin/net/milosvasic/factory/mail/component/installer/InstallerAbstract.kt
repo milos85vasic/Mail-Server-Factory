@@ -4,6 +4,8 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.Termination
+import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
+import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
@@ -45,13 +47,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     fun handleResult(result: OperationResult) {
         when (result.operation) {
-            is PackageInstallerInitializationOperation -> {
 
-                free()
-                val installerInitializationOperation = InstallerInitializationOperation()
-                val operationResult = OperationResult(installerInitializationOperation, result.success)
-                notify(operationResult)
-            }
             is PackageManagerOperation -> {
 
                 //checkResultAndTryNext(result)
@@ -92,12 +88,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                     free(false)
                 }
             }
-            is TerminalCommand -> {
-
-                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
-                    onCommandPerformed(result)
-                }
-            }
         }
 
         private fun executeViaSSH(step: RemoteOperationInstallationStep<SSH>) {
@@ -118,12 +108,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     protected open fun handleNext(current: InstallationStep<*>): Boolean {
         when (current) {
-            is CommandInstallationStep -> {
-
-                command = current.command
-                current.execute(entryPoint)
-                return true
-            }
             is Condition -> {
 
                 command = String.EMPTY
@@ -164,8 +148,16 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                     val flow = InstallationStepFlow(entryPoint)
                     steps.keys.forEach { key ->
                         val values = steps[key]
-                        values?.forEach { installationStep ->
-                            flow.width(installationStep)
+                        values?.forEach { step ->
+                            flow.width(step)
+                            when (step) {
+                                is CommandInstallationStep -> {
+                                    flow.registerRecipe(
+                                            CommandInstallationStep::class,
+                                            CommandInstallationStepRecipe::class
+                                    )
+                                }
+                            }
                         }
                     }
                     flow.onFinish(flowCallback).run()

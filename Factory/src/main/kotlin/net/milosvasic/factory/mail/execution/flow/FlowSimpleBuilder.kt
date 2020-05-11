@@ -4,7 +4,6 @@ import net.milosvasic.factory.mail.common.CollectionWrapper
 import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
-import java.lang.Exception
 
 abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T>>>() {
 
