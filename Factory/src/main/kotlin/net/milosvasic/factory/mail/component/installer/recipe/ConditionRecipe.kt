@@ -4,7 +4,6 @@ import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
-import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingData
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -20,13 +19,13 @@ class ConditionRecipe : InstallationStepRecipe() {
                             callback?.onFinish(
                                     result.success,
                                     getErrorMessage(result),
-                                    FlowProcessingData(boolValue = true)
+                                    ConditionRecipeFlowProcessingData(true)
                             )
                         } else {
                             callback?.onFinish(
                                     result.success,
                                     getErrorMessage(result),
-                                    FlowProcessingData(boolValue = false)
+                                    ConditionRecipeFlowProcessingData(false)
                             )
                         }
                     } else {
@@ -34,7 +33,7 @@ class ConditionRecipe : InstallationStepRecipe() {
                             callback?.onFinish(
                                     result.success,
                                     getErrorMessage(result),
-                                    FlowProcessingData(boolValue = false)
+                                    ConditionRecipeFlowProcessingData(false)
                             )
                         } else {
                             callback?.onFinish(false, String.EMPTY)

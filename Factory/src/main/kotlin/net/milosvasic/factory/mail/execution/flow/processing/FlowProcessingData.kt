@@ -1,6 +1,11 @@
 package net.milosvasic.factory.mail.execution.flow.processing
 
-data class FlowProcessingData(
-        val stringValue: String? = null,
-        val boolValue: Boolean? = null
-)
+abstract class FlowProcessingData(
+        private val stringValue: String? = null,
+        private val boolValue: Boolean? = null
+) {
+
+    override fun toString(): String {
+        return "FlowProcessingData(stringValue=$stringValue, boolValue=$boolValue)"
+    }
+}

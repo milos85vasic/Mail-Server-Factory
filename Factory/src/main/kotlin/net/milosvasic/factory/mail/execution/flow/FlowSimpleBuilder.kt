@@ -16,24 +16,7 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
     override val processingCallback: FlowProcessingCallback
         get() = object : FlowProcessingCallback {
             override fun onFinish(success: Boolean, message: String, data: FlowProcessingData?) {
-
-                subjectsIterator?.let { sIterator ->
-                    if (!sIterator.hasNext()) {
-                        finish(true)
-                    } else {
-                        if (success) {
-                            try {
-                                tryNext()
-                            } catch (e: IllegalArgumentException) {
-                                finish(e)
-                            } catch (e: IllegalStateException) {
-                                finish(e)
-                            }
-                        } else {
-                            finish(false, message)
-                        }
-                    }
-                }
+                tryNextSubject(success, message, data)
             }
         }
 
@@ -75,4 +58,28 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
 
     @Throws(IllegalArgumentException::class)
     protected abstract fun getProcessingRecipe(subject: T): ProcessingRecipe
+
+    protected open fun tryNextSubject(
+            success: Boolean,
+            message: String,
+            data: FlowProcessingData?
+    ) {
+        subjectsIterator?.let { sIterator ->
+            if (!sIterator.hasNext()) {
+                finish(true)
+            } else {
+                if (success) {
+                    try {
+                        tryNext()
+                    } catch (e: IllegalArgumentException) {
+                        finish(e)
+                    } catch (e: IllegalStateException) {
+                        finish(e)
+                    }
+                } else {
+                    finish(false, message)
+                }
+            }
+        }
+    }
 }

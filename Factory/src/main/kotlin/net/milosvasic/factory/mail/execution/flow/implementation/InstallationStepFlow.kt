@@ -2,11 +2,13 @@ package net.milosvasic.factory.mail.execution.flow.implementation
 
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.Toolkit
+import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipeFlowProcessingData
 import net.milosvasic.factory.mail.component.installer.recipe.InstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingData
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -56,5 +58,21 @@ class InstallationStepFlow(private val toolkit: Toolkit) : FlowSimpleBuilder<Ins
             return instance
         }
         throw IllegalArgumentException("No processing recipe available for: ${subject::class.simpleName}")
+    }
+
+    override fun tryNextSubject(success: Boolean, message: String, data: FlowProcessingData?) {
+        when (data) {
+            is ConditionRecipeFlowProcessingData -> {
+                if (success) {
+                    if (data.skipSection) {
+                        finish(true, message)
+                    } else {
+                        super.tryNextSubject(success, message, data)
+                    }
+                } else {
+                    finish(false, message)
+                }
+            }
+        }
     }
 }
