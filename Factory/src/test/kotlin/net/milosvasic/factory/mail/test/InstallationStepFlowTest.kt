@@ -1,5 +1,7 @@
 package net.milosvasic.factory.mail.test
 
+import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
+import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepFactory
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
@@ -41,7 +43,10 @@ class InstallationStepFlowTest : BaseTest() {
             val installationStep = factory.obtain(definition)
             flow = flow.width(installationStep)
         }
-        flow.onFinish(flowCallback).run()
+        flow
+                .registerRecipe(CommandInstallationStep::class, CommandInstallationStepRecipe::class)
+                .onFinish(flowCallback)
+                .run()
 
         while (!finished) {
             Thread.yield()
