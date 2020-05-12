@@ -61,18 +61,14 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
         process()
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun process() {
         if (currentSubject == null) {
             throw IllegalStateException("Current subject is null")
         }
         currentSubject?.let { subject ->
-            try {
-                val recipe = getProcessingRecipe(subject.content)
-                recipe.process(processingCallback)
-            } catch (e: IllegalArgumentException) {
-
-            }
+            val recipe = getProcessingRecipe(subject.content)
+            recipe.process(processingCallback)
         }
     }
 
