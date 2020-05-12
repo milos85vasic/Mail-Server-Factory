@@ -5,16 +5,15 @@ import net.milosvasic.factory.mail.component.installer.step.CommandInstallationS
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
-class CommandInstallationStepRecipe : InstallationStepRecipe<Connection>() {
+class CommandInstallationStepRecipe : InstallationStepRecipe() {
 
     private var command = String.EMPTY
 
     private val operationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
-            entryPoint?.unsubscribe(this)
+            toolkit?.connection?.unsubscribe(this)
             when (result.operation) {
                 is TerminalCommand -> {
 
@@ -36,6 +35,9 @@ class CommandInstallationStepRecipe : InstallationStepRecipe<Connection>() {
         if (!validator.validate(this)) {
             throw IllegalArgumentException("Invalid installation step recipe: $this")
         }
+        if (toolkit?.connection == null) {
+            throw IllegalArgumentException("Connection not provided")
+        }
         step?.let { s ->
             if (s !is CommandInstallationStep) {
                 throw IllegalArgumentException("Unexpected installation step type: ${s::class.simpleName}")
@@ -43,11 +45,14 @@ class CommandInstallationStepRecipe : InstallationStepRecipe<Connection>() {
         }
         try {
 
-            entryPoint?.let { entry ->
+            toolkit?.let { tools ->
                 step?.let { s ->
-                    command = (s as CommandInstallationStep).command
-                    entry.subscribe(operationCallback)
-                    s.execute(entry)
+                    val step = s as CommandInstallationStep
+                    tools.connection?.let { conn ->
+                        command = step.command
+                        conn.subscribe(operationCallback)
+                        step.execute(conn)
+                    }
                 }
             }
         } catch (e: IllegalStateException) {

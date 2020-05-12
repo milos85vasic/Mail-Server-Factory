@@ -1,17 +1,16 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.Subscription
+import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import net.milosvasic.factory.mail.getMessage
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.operation.OperationResultListener
 
-abstract class InstallationStepRecipe<T : Subscription<OperationResultListener>> : ProcessingRecipe {
+abstract class InstallationStepRecipe : ProcessingRecipe {
 
-    protected var entryPoint: T? = null
+    protected var toolkit: Toolkit? = null
     protected var step: InstallationStep<*>? = null
     protected var callback: FlowProcessingCallback? = null
 
@@ -31,11 +30,11 @@ abstract class InstallationStepRecipe<T : Subscription<OperationResultListener>>
     }
 
     @Throws(IllegalStateException::class)
-    fun entryPoint(entryPoint: T) {
-        this.entryPoint?.let {
-            throw IllegalStateException("Entry point is already set")
+    fun toolkit(toolkit: Toolkit) {
+        this.toolkit?.let {
+            throw IllegalStateException("Toolkit point is already set")
         }
-        this.entryPoint = entryPoint
+        this.toolkit = toolkit
     }
 
     @Throws(IllegalStateException::class)
@@ -46,7 +45,7 @@ abstract class InstallationStepRecipe<T : Subscription<OperationResultListener>>
         this.step = step
     }
 
-    fun obtainEntryPoint(): T? = entryPoint
+    fun obtainToolkit(): Toolkit? = toolkit
 
     fun obtainInstallationStep(): InstallationStep<*>? = step
 }

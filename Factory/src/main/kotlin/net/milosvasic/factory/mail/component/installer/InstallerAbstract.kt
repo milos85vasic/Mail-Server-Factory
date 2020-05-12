@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.Termination
+import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.PackageManagerInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
@@ -143,7 +144,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 try {
                     steps = softwareConfiguration.obtain(getEnvironmentName())
                     busy()
-                    val flow = InstallationStepFlow(entryPoint)
+                    val flow = InstallationStepFlow(getToolkit())
                     steps.keys.forEach { key ->
                         val values = steps[key]
                         values?.forEach { step ->
@@ -255,4 +256,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     protected abstract fun getEnvironmentName(): String
 
     protected abstract fun getNotifyOperation(): Operation
+
+    protected abstract fun getToolkit(): Toolkit
 }

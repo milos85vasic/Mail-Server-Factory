@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.installer
 
+import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -67,4 +68,6 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
     override fun getEnvironmentName() = entryPoint.getRemoteOS().getType().osName
 
     override fun getNotifyOperation() = InstallerOperation()
+
+    override fun getToolkit() = Toolkit(entryPoint, installer)
 }

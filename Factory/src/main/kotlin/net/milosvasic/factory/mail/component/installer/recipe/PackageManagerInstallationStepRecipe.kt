@@ -1,17 +1,16 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
-import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
-class PackageManagerInstallationStepRecipe : InstallationStepRecipe<PackageInstaller>() {
+class PackageManagerInstallationStepRecipe : InstallationStepRecipe() {
 
     private val operationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
-            entryPoint?.unsubscribe(this)
+            toolkit?.packageInstaller?.unsubscribe(this)
             when (result.operation) {
                 is PackageManagerOperation -> {
 
@@ -29,6 +28,9 @@ class PackageManagerInstallationStepRecipe : InstallationStepRecipe<PackageInsta
         if (!validator.validate(this)) {
             throw IllegalArgumentException("Invalid installation step recipe: $this")
         }
+        if (toolkit?.packageInstaller == null) {
+            throw IllegalArgumentException("Package installer not provided")
+        }
         step?.let { s ->
             if (s !is PackageManagerInstallationStep) {
                 throw IllegalArgumentException("Unexpected installation step type: ${s::class.simpleName}")
@@ -37,10 +39,13 @@ class PackageManagerInstallationStepRecipe : InstallationStepRecipe<PackageInsta
 
         try {
 
-            entryPoint?.let { entry ->
+            toolkit?.let { tools ->
                 step?.let { s ->
-                    entry.subscribe(operationCallback)
-                    (s as PackageManagerInstallationStep).execute(entry)
+                    val step = s as PackageManagerInstallationStep
+                    tools.packageInstaller?.let { packageInstaller ->
+                        packageInstaller.subscribe(operationCallback)
+                        step.execute(packageInstaller)
+                    }
                 }
             }
         } catch (e: IllegalStateException) {

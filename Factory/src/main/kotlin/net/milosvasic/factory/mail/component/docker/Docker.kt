@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
@@ -96,4 +97,6 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     override fun getEnvironmentName() = "Docker"
 
     override fun getNotifyOperation() = DockerOperation()
+
+    override fun getToolkit() = Toolkit(entryPoint)
 }
