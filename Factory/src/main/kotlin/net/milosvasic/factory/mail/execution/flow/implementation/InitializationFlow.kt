@@ -60,7 +60,6 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
             private val operationCallback = object : OperationResultListener {
                 override fun onOperationPerformed(result: OperationResult) {
 
-                    subject.unsubscribe(this)
                     val handler = initializationHandlers[subject]
                     when (result.operation) {
                         is InitializationOperation -> {
