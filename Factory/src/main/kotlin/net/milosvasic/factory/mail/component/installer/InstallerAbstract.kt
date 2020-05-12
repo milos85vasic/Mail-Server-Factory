@@ -6,10 +6,10 @@ import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
-import net.milosvasic.factory.mail.component.installer.recipe.PackageManagerInstallationStepRecipe
+import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
-import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
+import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
@@ -61,23 +61,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 unsubscribeFromItem(listener)
                 //checkResultAndTryNext(result)
             }
-            is ConditionOperation -> {
 
-                unsubscribeFromItem(listener)
-                if (result.success) {
-                    if (result.operation.result) {
-                        tryNextSection()
-                    } else {
-                        tryNext()
-                    }
-                } else {
-                    if (result.operation.result) {
-                        tryNext()
-                    } else {
-                        free(false)
-                    }
-                }
-            }
             is DeployOperation -> {
 
                 unsubscribeFromItem(listener)
@@ -107,13 +91,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     protected open fun handleNext(current: InstallationStep<*>): Boolean {
         when (current) {
-            is Condition -> {
-
-                command = String.EMPTY
-                current.subscribe(listener)
-                current.execute(entryPoint)
-                return true
-            }
             is Reboot -> {
 
                 executeViaSSH(current)
@@ -170,6 +147,12 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 flow.registerRecipe(
                         CommandInstallationStep::class,
                         CommandInstallationStepRecipe::class
+                )
+            }
+            is Condition -> {
+                flow.registerRecipe(
+                        Condition::class,
+                        ConditionRecipe::class
                 )
             }
         }
