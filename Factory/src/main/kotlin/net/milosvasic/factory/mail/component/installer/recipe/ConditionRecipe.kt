@@ -11,9 +11,9 @@ class ConditionRecipe : InstallationStepRecipe() {
 
     private val operationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
-            toolkit?.connection?.unsubscribe(this)
             when (result.operation) {
                 is ConditionOperation -> {
+                    toolkit?.connection?.unsubscribe(this)
                     if (result.success) {
                         if (result.operation.result) {
                             callback?.onFinish(
