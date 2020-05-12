@@ -149,20 +149,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                         val values = steps[key]
                         values?.forEach { step ->
                             flow.width(step)
-                            when (step) {
-                                is CommandInstallationStep -> {
-                                    flow.registerRecipe(
-                                            CommandInstallationStep::class,
-                                            CommandInstallationStepRecipe::class
-                                    )
-                                }
-                                is PackageManagerInstallationStep -> {
-                                    flow.registerRecipe(
-                                            PackageManagerInstallationStep::class,
-                                            PackageManagerInstallationStepRecipe::class
-                                    )
-                                }
-                            }
+                            registerRecipes(step, flow)
                         }
                     }
                     flow.onFinish(flowCallback).run()
@@ -173,6 +160,17 @@ abstract class InstallerAbstract(entryPoint: Connection) :
 
                     onFailedResult(e)
                 }
+            }
+        }
+    }
+
+    protected open fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) {
+        when (step) {
+            is CommandInstallationStep -> {
+                flow.registerRecipe(
+                        CommandInstallationStep::class,
+                        CommandInstallationStepRecipe::class
+                )
             }
         }
     }
