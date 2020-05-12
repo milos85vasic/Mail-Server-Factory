@@ -5,8 +5,10 @@ import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
+import net.milosvasic.factory.mail.component.installer.recipe.PackageManagerInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
@@ -48,10 +50,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     fun handleResult(result: OperationResult) {
         when (result.operation) {
 
-            is PackageManagerOperation -> {
-
-                //checkResultAndTryNext(result)
-            }
             is RebootOperation -> {
 
                 unsubscribeFromItem(listener)
@@ -155,6 +153,12 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                                     flow.registerRecipe(
                                             CommandInstallationStep::class,
                                             CommandInstallationStepRecipe::class
+                                    )
+                                }
+                                is PackageManagerInstallationStep -> {
+                                    flow.registerRecipe(
+                                            PackageManagerInstallationStep::class,
+                                            PackageManagerInstallationStepRecipe::class
                                     )
                                 }
                             }

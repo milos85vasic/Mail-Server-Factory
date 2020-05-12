@@ -1,16 +1,17 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import net.milosvasic.factory.mail.getMessage
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.operation.OperationResultListener
 
-abstract class InstallationStepRecipe : ProcessingRecipe {
+abstract class InstallationStepRecipe<T : Subscription<OperationResultListener>> : ProcessingRecipe {
 
-    protected var entryPoint: Connection? = null
+    protected var entryPoint: T? = null
     protected var step: InstallationStep<*>? = null
     protected var callback: FlowProcessingCallback? = null
 
@@ -30,7 +31,7 @@ abstract class InstallationStepRecipe : ProcessingRecipe {
     }
 
     @Throws(IllegalStateException::class)
-    fun entryPoint(entryPoint: Connection) {
+    fun entryPoint(entryPoint: T) {
         this.entryPoint?.let {
             throw IllegalStateException("Entry point is already set")
         }
@@ -44,4 +45,8 @@ abstract class InstallationStepRecipe : ProcessingRecipe {
         }
         this.step = step
     }
+
+    fun obtainEntryPoint(): T? = entryPoint
+
+    fun obtainInstallationStep(): InstallationStep<*>? = step
 }
