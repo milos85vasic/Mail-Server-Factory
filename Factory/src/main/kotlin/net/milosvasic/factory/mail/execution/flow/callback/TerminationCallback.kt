@@ -2,7 +2,6 @@ package net.milosvasic.factory.mail.execution.flow.callback
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.initialization.Termination
-import java.lang.Exception
 
 class TerminationCallback<T>(private val termination: Termination) : DieOnFailureCallback<T>() {
 

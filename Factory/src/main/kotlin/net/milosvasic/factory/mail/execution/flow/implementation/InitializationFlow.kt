@@ -1,7 +1,6 @@
 package net.milosvasic.factory.mail.execution.flow.implementation
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.initialization.InitializationOperation
 import net.milosvasic.factory.mail.common.initialization.Initializer
@@ -12,10 +11,8 @@ import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import net.milosvasic.factory.mail.getMessage
-import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import java.lang.Exception
 
 class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
 

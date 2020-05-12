@@ -7,7 +7,6 @@ import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import net.milosvasic.factory.mail.getMessage
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
-import java.lang.Exception
 
 abstract class InstallationStepRecipe : ProcessingRecipe {
 
