@@ -3,6 +3,7 @@ package net.milosvasic.factory.mail.execution.flow
 import net.milosvasic.factory.mail.common.CollectionWrapper
 import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
+import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingData
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 
 abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T>>>() {
@@ -14,7 +15,7 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
 
     override val processingCallback: FlowProcessingCallback
         get() = object : FlowProcessingCallback {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+            override fun onFinish(success: Boolean, message: String, data: FlowProcessingData?) {
 
                 subjectsIterator?.let { sIterator ->
                     if (!sIterator.hasNext()) {

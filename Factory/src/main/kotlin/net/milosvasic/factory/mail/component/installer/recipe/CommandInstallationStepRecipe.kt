@@ -31,13 +31,6 @@ class CommandInstallationStepRecipe : InstallationStepRecipe() {
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun process(callback: FlowProcessingCallback) {
         super.process(callback)
-        val validator = InstallationStepRecipeValidator()
-        if (!validator.validate(this)) {
-            throw IllegalArgumentException("Invalid installation step recipe: $this")
-        }
-        if (toolkit?.connection == null) {
-            throw IllegalArgumentException("Connection not provided")
-        }
         step?.let { s ->
             if (s !is CommandInstallationStep) {
                 throw IllegalArgumentException("Unexpected installation step type: ${s::class.simpleName}")

@@ -14,9 +14,16 @@ abstract class InstallationStepRecipe : ProcessingRecipe {
     protected var step: InstallationStep<*>? = null
     protected var callback: FlowProcessingCallback? = null
 
+    @Throws(IllegalArgumentException::class)
     override fun process(callback: FlowProcessingCallback) {
         this.callback = callback
-
+        val validator = InstallationStepRecipeValidator()
+        if (!validator.validate(this)) {
+            throw IllegalArgumentException("Invalid installation step recipe: $this")
+        }
+        if (toolkit?.connection == null) {
+            throw IllegalArgumentException("Connection not provided")
+        }
     }
 
     protected fun fail(e: Exception) {

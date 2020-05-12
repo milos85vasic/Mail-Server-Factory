@@ -1,8 +1,10 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
+import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingData
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -15,18 +17,29 @@ class ConditionRecipe : InstallationStepRecipe() {
                 is ConditionOperation -> {
                     if (result.success) {
                         if (result.operation.result) {
-                            // tryNextSection()
+                            callback?.onFinish(
+                                    result.success,
+                                    getErrorMessage(result),
+                                    FlowProcessingData(boolValue = true)
+                            )
                         } else {
-                            // tryNext()
+                            callback?.onFinish(
+                                    result.success,
+                                    getErrorMessage(result),
+                                    FlowProcessingData(boolValue = false)
+                            )
                         }
                     } else {
                         if (result.operation.result) {
-                            // tryNext()
+                            callback?.onFinish(
+                                    result.success,
+                                    getErrorMessage(result),
+                                    FlowProcessingData(boolValue = false)
+                            )
                         } else {
-                            // free(false)
+                            callback?.onFinish(false, String.EMPTY)
                         }
                     }
-                    callback?.onFinish(result.success, getErrorMessage(result))
                     callback = null
                 }
             }
@@ -36,13 +49,6 @@ class ConditionRecipe : InstallationStepRecipe() {
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun process(callback: FlowProcessingCallback) {
         super.process(callback)
-        val validator = InstallationStepRecipeValidator()
-        if (!validator.validate(this)) {
-            throw IllegalArgumentException("Invalid installation step recipe: $this")
-        }
-        if (toolkit?.connection == null) {
-            throw IllegalArgumentException("Connection not provided")
-        }
         step?.let { s ->
             if (s !is Condition) {
                 throw IllegalArgumentException("Unexpected installation step type: ${s::class.simpleName}")
