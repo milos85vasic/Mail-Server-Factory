@@ -13,7 +13,10 @@ class ConditionRecipe : InstallationStepRecipe() {
         override fun onOperationPerformed(result: OperationResult) {
             when (result.operation) {
                 is ConditionOperation -> {
-                    toolkit?.connection?.unsubscribe(this)
+                    step?.let { s ->
+                        val step = s as Condition
+                        step.unsubscribe(this)
+                    }
                     if (result.success) {
                         if (result.operation.result) {
                             callback?.onFinish(
@@ -59,7 +62,7 @@ class ConditionRecipe : InstallationStepRecipe() {
                 step?.let { s ->
                     val step = s as Condition
                     tools.connection?.let { conn ->
-                        conn.subscribe(operationCallback)
+                        step.subscribe(operationCallback)
                         step.execute(conn)
                     }
                 }
