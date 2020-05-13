@@ -39,6 +39,8 @@ class ConditionStepFlowTest : BaseTest() {
             }
         }
 
+        // TODO: Cover 4th case!
+
         var positiveFlow = InstallationStepFlow(toolkit)
         var definitions = getDefinitions(fails = false, alreadyInstalled = true)
         definitions.forEach { definition ->

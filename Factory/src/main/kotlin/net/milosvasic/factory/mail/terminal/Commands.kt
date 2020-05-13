@@ -81,5 +81,5 @@ object Commands {
         return result
     }
 
-    fun test(what: String) = "test -f $what"
+    fun test(what: String) = "test -e $what"
 }

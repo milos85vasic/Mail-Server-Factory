@@ -45,11 +45,13 @@ class DeployStepTest : BaseTest() {
         val toolkit = Toolkit(connection)
         val init = InstallationStepFlow(toolkit)
 
+        // FIXME: We need 2 types of condition - positive vs negative condition!
         registerRecipes(init)
         fun getPath(mock: String) = "build${File.separator}$mock"
         mocks.forEach { mock ->
             val path = getPath(mock)
-            init.width(conditionStep(Commands.test(path)))
+            val command = Commands.test(path)
+            init.width(conditionStep(command))
         }
         mocks.forEach { mock ->
             val path = getPath(mock)
