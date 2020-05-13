@@ -7,9 +7,11 @@ import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
+import net.milosvasic.factory.mail.component.installer.recipe.DeployRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
+import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
@@ -61,30 +63,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 unsubscribeFromItem(listener)
                 //checkResultAndTryNext(result)
             }
-
-            is DeployOperation -> {
-
-                unsubscribeFromItem(listener)
-                if (result.success) {
-                    tryNext()
-                } else {
-                    free(false)
-                }
-            }
-        }
-
-        private fun executeViaSSH(step: RemoteOperationInstallationStep<SSH>) {
-            if (entryPoint is SSH) {
-
-                command = String.EMPTY
-                step.subscribe(listener)
-                step.execute(entryPoint)
-            } else {
-
-                val clazz = entryPoint::class.simpleName
-                val msg = "${step::class.simpleName} installation step does not support $clazz connection"
-                throw IllegalArgumentException(msg)
-            }
         }
     }
 
@@ -92,11 +70,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     protected open fun handleNext(current: InstallationStep<*>): Boolean {
         when (current) {
             is Reboot -> {
-
-                executeViaSSH(current)
-                return true
-            }
-            is Deploy -> {
 
                 executeViaSSH(current)
                 return true
@@ -153,6 +126,12 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 flow.registerRecipe(
                         Condition::class,
                         ConditionRecipe::class
+                )
+            }
+            is Deploy -> {
+                flow.registerRecipe(
+                        Deploy::class,
+                        DeployRecipe::class
                 )
             }
         }
