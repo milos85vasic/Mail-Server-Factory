@@ -80,4 +80,6 @@ object Commands {
         }
         return result
     }
+
+    fun test(what: String) = "test -f $what"
 }

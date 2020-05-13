@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.test
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
@@ -18,6 +17,7 @@ import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.test.implementation.StubSSH
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
+import java.io.File
 
 class DeployStepTest : BaseTest() {
 
@@ -46,17 +46,23 @@ class DeployStepTest : BaseTest() {
         val init = InstallationStepFlow(toolkit)
 
         registerRecipes(init)
-                .width(conditionStep(mocksDeployed()))
-                .width(commandStep(mocksCleanup()))
-                .onFinish(flowCallback)
+        fun getPath(mock: String) = "build${File.separator}$mock"
+        mocks.forEach { mock ->
+            val path = getPath(mock)
+            init.width(conditionStep(Commands.test(path)))
+        }
+        mocks.forEach { mock ->
+            val path = getPath(mock)
+            init.width(commandStep(Commands.rm(path)))
+        }
 
-                .run()
+        init.onFinish(flowCallback).run()
 
-        while (finished < 2) {
+        while (finished < 1) {
             Thread.yield()
         }
 
-        Assertions.assertEquals(2, finished)
+        Assertions.assertEquals(1, finished)
 
         log.i("Deploy step flow test completed")
     }
@@ -91,30 +97,4 @@ class DeployStepTest : BaseTest() {
                             value = command
                     )
             )
-
-    private fun mocksDeployed(): String {
-        var command = ""
-        mocks.forEachIndexed { index, mock ->
-            command += if (index == 0) {
-                "test -f build/$mock"
-            } else {
-                " && test -f build/$mock"
-            }
-        }
-        assert(command != String.EMPTY)
-        return command
-    }
-
-    private fun mocksCleanup(): String {
-        var command = ""
-        mocks.forEachIndexed { index, mock ->
-            command += if (index == 0) {
-                Commands.rm("build/$mock")
-            } else {
-                " build/$mock"
-            }
-        }
-        assert(command != String.EMPTY)
-        return command
-    }
 }
