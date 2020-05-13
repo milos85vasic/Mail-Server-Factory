@@ -96,7 +96,7 @@ class DeployStepTest : BaseTest() {
             command += if (index == 0) {
                 "file build/$mock"
             } else {
-                " && file build/$mock"
+                " build/$mock"
             }
         }
         assert(command != String.EMPTY)
