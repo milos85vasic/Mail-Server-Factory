@@ -12,6 +12,7 @@ import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.test.implementation.StubConnection
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class ConditionStepFlowTest : BaseTest() {
@@ -21,40 +22,38 @@ class ConditionStepFlowTest : BaseTest() {
         initLogging()
         log.i("Condition step flow test started")
 
-        var finished = false
+        var failed = 1
+        var finished = 0
         val connection = StubConnection()
         val toolkit = Toolkit(connection)
         val factory = InstallationStepFactory()
-        var flow = InstallationStepFlow(toolkit)
 
         val flowCallback = object : FlowCallback<String> {
 
             override fun onFinish(success: Boolean, message: String, data: String?) {
-                if (!success) {
-                    log.e(message)
+                if (success) {
+                    finished++
+                } else {
+                    failed++
                 }
-                assert(success)
-                finished = true
             }
         }
 
-        val definitions = listOf(
-                InstallationStepDefinition(
-                        type = InstallationStepType.CONDITION.type,
-                        value = "echo 'Condition'"
-                ),
-                InstallationStepDefinition(
-                        type = InstallationStepType.COMMAND.type,
-                        value = "echo 'This one will not be executed'"
-                )
-        )
-
+        var positiveFlow = InstallationStepFlow(toolkit)
+        var definitions = getDefinitions(true)
         definitions.forEach { definition ->
             val installationStep = factory.obtain(definition)
-            flow = flow.width(installationStep)
+            positiveFlow = positiveFlow.width(installationStep)
         }
 
-        flow
+        var negativelow = InstallationStepFlow(toolkit)
+        definitions = getDefinitions(false)
+        definitions.forEach { definition ->
+            val installationStep = factory.obtain(definition)
+            negativelow = negativelow.width(installationStep)
+        }
+
+        negativelow
                 .registerRecipe(
                         CommandInstallationStep::class,
                         CommandInstallationStepRecipe::class
@@ -64,12 +63,52 @@ class ConditionStepFlowTest : BaseTest() {
                         ConditionRecipe::class
                 )
                 .onFinish(flowCallback)
+
+        positiveFlow
+                .registerRecipe(
+                        CommandInstallationStep::class,
+                        CommandInstallationStepRecipe::class
+                )
+                .registerRecipe(
+                        Condition::class,
+                        ConditionRecipe::class
+                )
+                .onFinish(flowCallback)
+                .connect(negativelow)
                 .run()
 
-        while (!finished) {
+        while (finished < 1 || failed < 1) {
             Thread.yield()
         }
 
+        Assertions.assertEquals(1, finished)
+        Assertions.assertEquals(1, failed)
         log.i("Condition step flow test completed")
+    }
+
+    private fun getDefinitions(alreadyInstalled: Boolean): List<InstallationStepDefinition> {
+        return if (alreadyInstalled) {
+            listOf(
+                    InstallationStepDefinition(
+                            type = InstallationStepType.CONDITION.type,
+                            value = "echo 'Condition'"
+                    ),
+                    InstallationStepDefinition(
+                            type = InstallationStepType.COMMAND.type,
+                            value = "echo 'This one will not be executed'"
+                    )
+            )
+        } else {
+            listOf(
+                    InstallationStepDefinition(
+                            type = InstallationStepType.CONDITION.type,
+                            value = "This one will fail"
+                    ),
+                    InstallationStepDefinition(
+                            type = InstallationStepType.COMMAND.type,
+                            value = "echo 'This one will be executed'"
+                    )
+            )
+        }
     }
 }

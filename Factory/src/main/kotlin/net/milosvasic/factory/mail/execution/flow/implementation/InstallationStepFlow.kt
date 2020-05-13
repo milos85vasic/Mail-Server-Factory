@@ -73,6 +73,9 @@ class InstallationStepFlow(private val toolkit: Toolkit) : FlowSimpleBuilder<Ins
                     finish(false, message)
                 }
             }
+            else -> {
+                super.tryNextSubject(success, message, data)
+            }
         }
     }
 }
