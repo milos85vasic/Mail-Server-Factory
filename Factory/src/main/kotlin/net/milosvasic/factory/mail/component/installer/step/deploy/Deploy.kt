@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.configuration.Variable
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
@@ -14,7 +15,7 @@ import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.io.File
 
-class Deploy(what: String, private val where: String) : RemoteOperationInstallationStep<SSH>() {
+open class Deploy(what: String, private val where: String) : RemoteOperationInstallationStep<SSH>() {
 
     companion object {
         const val delimiter = ":"
@@ -27,8 +28,8 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
     private val operation = DeployOperation()
     private val excludes = listOf("$prototypePrefix*")
     private val localPath = whatFile.parentFile.absolutePath
-    private val localTar = "$localPath${File.separator}${whatFile.name}${Commands.tarExtension}"
     private val remoteTar = "$where${File.separator}${whatFile.name}${Commands.tarExtension}"
+    protected val localTar = "$localPath${File.separator}${whatFile.name}${Commands.tarExtension}"
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
@@ -80,7 +81,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
                         finish(false, operation)
                     } else {
 
-                        command = Commands.scp(localTar, where, remote)
+                        command = getScp(remote)
                         try {
                             terminal?.execute(TerminalCommand(command))
                         } catch (e: IllegalArgumentException) {
@@ -225,6 +226,10 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
         super.finish(success, operation)
     }
 
+    protected open fun getScpCommand() = Commands.scp
+
+    protected open fun getScp(remote: Remote) = Commands.scp(localTar, where, remote)
+
     @Throws(IllegalStateException::class)
     private fun processFiles(directory: File) {
         val fileList = directory.listFiles()
@@ -291,7 +296,7 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
     private fun getName(file: File) = file.name.toLowerCase().replace(prototypePrefix, "")
 
     private fun isScp(operation: TerminalCommand) =
-            operation.command.startsWith(Commands.scp)
+            operation.command.startsWith(getScpCommand())
 
     private fun isTarDecompress(operation: TerminalCommand) =
             operation.command.contains(Commands.tarDecompress)

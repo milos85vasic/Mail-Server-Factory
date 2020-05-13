@@ -18,3 +18,13 @@ $ Tbd.
 # Hot to use
 
 TBD.
+
+# Running tests
+
+```
+$ ./gradlew test
+```
+
+## Requirements
+
+Tbd.
