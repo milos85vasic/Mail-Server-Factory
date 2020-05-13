@@ -12,11 +12,11 @@ import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.test.implementation.StubSSH
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
 class DeployStepTest : BaseTest() {
@@ -29,7 +29,7 @@ class DeployStepTest : BaseTest() {
         initLogging()
         log.i("Deploy step flow test started")
 
-        var finished = false
+        var finished = 0
         val flowCallback = object : FlowCallback<String> {
 
             override fun onFinish(success: Boolean, message: String, data: String?) {
@@ -37,7 +37,7 @@ class DeployStepTest : BaseTest() {
                 if (!success) {
                     log.w(message)
                 }
-                finished = true
+                finished++
             }
         }
 
@@ -52,9 +52,11 @@ class DeployStepTest : BaseTest() {
 
                 .run()
 
-        while (!finished) {
+        while (finished < 2) {
             Thread.yield()
         }
+
+        Assertions.assertEquals(2, finished)
 
         log.i("Deploy step flow test completed")
     }
@@ -94,9 +96,9 @@ class DeployStepTest : BaseTest() {
         var command = ""
         mocks.forEachIndexed { index, mock ->
             command += if (index == 0) {
-                "file build/$mock"
+                "test -f build/$mock"
             } else {
-                " build/$mock"
+                " && test -f build/$mock"
             }
         }
         assert(command != String.EMPTY)
