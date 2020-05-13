@@ -40,48 +40,49 @@ class ConditionStepFlowTest : BaseTest() {
         }
 
         var positiveFlow = InstallationStepFlow(toolkit)
-        var definitions = getDefinitions(false, true)
+        var definitions = getDefinitions(fails = false, alreadyInstalled = true)
         definitions.forEach { definition ->
             val installationStep = factory.obtain(definition)
             positiveFlow = positiveFlow.width(installationStep)
         }
 
+        var positiveNegativeFlow = InstallationStepFlow(toolkit)
+        definitions = getDefinitions(fails = false, alreadyInstalled = false)
+        definitions.forEach { definition ->
+            val installationStep = factory.obtain(definition)
+            positiveNegativeFlow = positiveNegativeFlow.width(installationStep)
+        }
+
         var negativelow = InstallationStepFlow(toolkit)
-        definitions = getDefinitions(false, false)
+        definitions = getDefinitions(fails = true, alreadyInstalled = false)
         definitions.forEach { definition ->
             val installationStep = factory.obtain(definition)
             negativelow = negativelow.width(installationStep)
         }
 
-        negativelow
-                .registerRecipe(
-                        CommandInstallationStep::class,
-                        CommandInstallationStepRecipe::class
-                )
-                .registerRecipe(
-                        Condition::class,
-                        ConditionRecipe::class
-                )
-                .onFinish(flowCallback)
+        listOf(positiveFlow, positiveNegativeFlow, negativelow).forEach { flow ->
+            flow
+                    .registerRecipe(
+                            CommandInstallationStep::class,
+                            CommandInstallationStepRecipe::class
+                    )
+                    .registerRecipe(
+                            Condition::class,
+                            ConditionRecipe::class
+                    )
+                    .onFinish(flowCallback)
+        }
 
         positiveFlow
-                .registerRecipe(
-                        CommandInstallationStep::class,
-                        CommandInstallationStepRecipe::class
-                )
-                .registerRecipe(
-                        Condition::class,
-                        ConditionRecipe::class
-                )
-                .onFinish(flowCallback)
+                .connect(positiveNegativeFlow)
                 .connect(negativelow)
                 .run()
 
-        while (finished < 1 || failed < 1) {
+        while (finished < 2 || failed < 1) {
             Thread.yield()
         }
 
-        Assertions.assertEquals(1, finished)
+        Assertions.assertEquals(2, finished)
         Assertions.assertEquals(1, failed)
         log.i("Condition step flow test completed")
     }
