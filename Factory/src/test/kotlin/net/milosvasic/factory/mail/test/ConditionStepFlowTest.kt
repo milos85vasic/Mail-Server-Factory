@@ -22,7 +22,7 @@ class ConditionStepFlowTest : BaseTest() {
         initLogging()
         log.i("Condition step flow test started")
 
-        var failed = 1
+        var failed = 0
         var finished = 0
         val connection = StubConnection()
         val toolkit = Toolkit(connection)
