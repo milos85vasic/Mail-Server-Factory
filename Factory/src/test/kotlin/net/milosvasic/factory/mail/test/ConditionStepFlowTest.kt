@@ -40,14 +40,14 @@ class ConditionStepFlowTest : BaseTest() {
         }
 
         var positiveFlow = InstallationStepFlow(toolkit)
-        var definitions = getDefinitions(true)
+        var definitions = getDefinitions(false, true)
         definitions.forEach { definition ->
             val installationStep = factory.obtain(definition)
             positiveFlow = positiveFlow.width(installationStep)
         }
 
         var negativelow = InstallationStepFlow(toolkit)
-        definitions = getDefinitions(false)
+        definitions = getDefinitions(false, false)
         definitions.forEach { definition ->
             val installationStep = factory.obtain(definition)
             negativelow = negativelow.width(installationStep)
@@ -86,19 +86,8 @@ class ConditionStepFlowTest : BaseTest() {
         log.i("Condition step flow test completed")
     }
 
-    private fun getDefinitions(alreadyInstalled: Boolean): List<InstallationStepDefinition> {
-        return if (alreadyInstalled) {
-            listOf(
-                    InstallationStepDefinition(
-                            type = InstallationStepType.CONDITION.type,
-                            value = "echo 'Condition'"
-                    ),
-                    InstallationStepDefinition(
-                            type = InstallationStepType.COMMAND.type,
-                            value = "echo 'This one will not be executed'"
-                    )
-            )
-        } else {
+    private fun getDefinitions(fails: Boolean, alreadyInstalled: Boolean): List<InstallationStepDefinition> {
+        return if (fails) {
             listOf(
                     InstallationStepDefinition(
                             type = InstallationStepType.CONDITION.type,
@@ -109,6 +98,30 @@ class ConditionStepFlowTest : BaseTest() {
                             value = "echo 'This one will be executed'"
                     )
             )
+        } else {
+            if (alreadyInstalled) {
+                listOf(
+                        InstallationStepDefinition(
+                                type = InstallationStepType.CONDITION.type,
+                                value = "echo 'Condition'"
+                        ),
+                        InstallationStepDefinition(
+                                type = InstallationStepType.COMMAND.type,
+                                value = "echo 'This one will not be executed'"
+                        )
+                )
+            } else {
+                listOf(
+                        InstallationStepDefinition(
+                                type = InstallationStepType.CONDITION.type,
+                                value = "which does_not_exist"
+                        ),
+                        InstallationStepDefinition(
+                                type = InstallationStepType.COMMAND.type,
+                                value = "echo 'This one will be executed'"
+                        )
+                )
+            }
         }
     }
 }
