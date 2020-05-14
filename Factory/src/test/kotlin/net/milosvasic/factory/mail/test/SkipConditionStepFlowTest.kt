@@ -90,11 +90,25 @@ open class SkipConditionStepFlowTest : BaseTest() {
                     .onFinish(flowCallback)
         }
 
-        positiveFlow
-                .connect(positiveNegativeFlow)
-                .connect(negativePositiveFlow)
-                .connect(negativeFlow)
-                .run()
+        positiveFlow.run()
+        while (positiveFlow.isBusy()) {
+            Thread.yield()
+        }
+
+        positiveNegativeFlow.run()
+        while (positiveNegativeFlow.isBusy()) {
+            Thread.yield()
+        }
+
+        negativePositiveFlow.run()
+        while (negativePositiveFlow.isBusy()) {
+            Thread.yield()
+        }
+
+        negativeFlow.run()
+        while (negativeFlow.isBusy()) {
+            Thread.yield()
+        }
 
         while (positiveFlow.isBusy()) {
             Thread.yield()
