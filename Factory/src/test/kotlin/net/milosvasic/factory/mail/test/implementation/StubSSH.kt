@@ -4,7 +4,6 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class StubSSH(
@@ -15,9 +14,9 @@ class StubSSH(
 
     companion object {
 
-        fun defaultExtension() = " && echo '${stubCommandMarker}'"
+        fun defaultExtension() = stubCommandMarker
 
-        val stubCommandMarker = StubSSH::class.simpleName.toString()
+        const val stubCommandMarker = "\t\t\t\t\t"
     }
 
     @Synchronized
