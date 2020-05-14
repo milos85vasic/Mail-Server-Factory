@@ -15,12 +15,12 @@ import net.milosvasic.factory.mail.test.implementation.StubConnection
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class ConditionStepFlowTest : BaseTest() {
+class SkipConditionStepFlowTest : BaseTest() {
 
     @Test
     fun testConditionStepFlow() {
         initLogging()
-        log.i("Condition step flow test started")
+        log.i("Skip condition step flow test started")
 
         var failed = 0
         var finished = 0
@@ -86,14 +86,14 @@ class ConditionStepFlowTest : BaseTest() {
 
         Assertions.assertEquals(2, finished)
         Assertions.assertEquals(1, failed)
-        log.i("Condition step flow test completed")
+        log.i("Skip condition step flow test completed")
     }
 
     private fun getDefinitions(fails: Boolean, alreadyInstalled: Boolean): List<InstallationStepDefinition> {
         return if (fails) {
             listOf(
                     InstallationStepDefinition(
-                            type = InstallationStepType.CONDITION.type,
+                            type = InstallationStepType.SKIP_CONDITION.type,
                             value = "This one will fail"
                     ),
                     InstallationStepDefinition(
@@ -105,7 +105,7 @@ class ConditionStepFlowTest : BaseTest() {
             if (alreadyInstalled) {
                 listOf(
                         InstallationStepDefinition(
-                                type = InstallationStepType.CONDITION.type,
+                                type = InstallationStepType.SKIP_CONDITION.type,
                                 value = "echo 'Condition'"
                         ),
                         InstallationStepDefinition(
@@ -116,7 +116,7 @@ class ConditionStepFlowTest : BaseTest() {
             } else {
                 listOf(
                         InstallationStepDefinition(
-                                type = InstallationStepType.CONDITION.type,
+                                type = InstallationStepType.SKIP_CONDITION.type,
                                 value = "which does_not_exist"
                         ),
                         InstallationStepDefinition(

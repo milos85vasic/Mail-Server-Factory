@@ -6,7 +6,7 @@
       "installationSteps": {
         "Ubuntu": [
           {
-            "type": "condition",
+            "type": "skipCondition",
             "value": "docker-compose --version"
           },
           {

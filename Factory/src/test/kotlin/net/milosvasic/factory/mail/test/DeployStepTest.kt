@@ -87,7 +87,7 @@ class DeployStepTest : BaseTest() {
     private fun conditionStep(command: String) =
             factory.obtain(
                     InstallationStepDefinition(
-                            type = InstallationStepType.CONDITION.type,
+                            type = InstallationStepType.SKIP_CONDITION.type,
                             value = command
                     )
             )

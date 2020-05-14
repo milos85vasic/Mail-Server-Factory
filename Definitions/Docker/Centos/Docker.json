@@ -6,7 +6,7 @@
       "installationSteps": {
         "CentOS": [
           {
-            "type": "condition",
+            "type": "skipCondition",
             "value": "docker --version"
           },
           {

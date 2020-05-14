@@ -45,7 +45,7 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
 
                 return Reboot(definition.getValue().toInt())
             }
-            InstallationStepType.CONDITION.type -> {
+            InstallationStepType.SKIP_CONDITION.type -> {
 
                 return Condition(definition.getValue())
             }
