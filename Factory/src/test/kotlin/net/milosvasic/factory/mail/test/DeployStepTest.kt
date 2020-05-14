@@ -7,6 +7,7 @@ import net.milosvasic.factory.mail.component.installer.recipe.DeployRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepFactory
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
+import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
@@ -45,7 +46,6 @@ class DeployStepTest : BaseTest() {
         val toolkit = Toolkit(connection)
         val init = InstallationStepFlow(toolkit)
 
-        // FIXME: We need 2 types of condition - positive vs negative condition!
         registerRecipes(init)
         fun getPath(mock: String) = "build${File.separator}$mock"
         mocks.forEach { mock ->
@@ -80,6 +80,10 @@ class DeployStepTest : BaseTest() {
                             ConditionRecipe::class
                     )
                     .registerRecipe(
+                            Condition::class,
+                            ConditionRecipe::class
+                    )
+                    .registerRecipe(
                             Deploy::class,
                             DeployRecipe::class
                     )
@@ -87,7 +91,7 @@ class DeployStepTest : BaseTest() {
     private fun conditionStep(command: String) =
             factory.obtain(
                     InstallationStepDefinition(
-                            type = InstallationStepType.SKIP_CONDITION.type,
+                            type = InstallationStepType.CONDITION.type,
                             value = command
                     )
             )
