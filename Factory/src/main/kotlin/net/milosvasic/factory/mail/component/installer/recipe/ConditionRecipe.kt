@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipConditionOperation
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
@@ -17,18 +18,27 @@ class ConditionRecipe : InstallationStepRecipe() {
                         val step = s as SkipCondition
                         step.unsubscribe(this)
                     }
+                    val positive = result.operation is ConditionOperation
                     if (result.success) {
                         if (result.operation.result) {
                             callback?.onFinish(
                                     result.success,
                                     getErrorMessage(result),
-                                    ConditionRecipeFlowProcessingData(true)
+                                    if (positive) {
+                                        ConditionRecipeFlowProcessingData(fallThrough = true)
+                                    } else {
+                                        ConditionRecipeFlowProcessingData(fallThrough = false)
+                                    }
                             )
                         } else {
                             callback?.onFinish(
                                     result.success,
                                     getErrorMessage(result),
-                                    ConditionRecipeFlowProcessingData(false)
+                                    if (positive) {
+                                        ConditionRecipeFlowProcessingData(fallThrough = false)
+                                    } else {
+                                        ConditionRecipeFlowProcessingData(fallThrough = true)
+                                    }
                             )
                         }
                     } else {
@@ -36,7 +46,11 @@ class ConditionRecipe : InstallationStepRecipe() {
                             callback?.onFinish(
                                     result.success,
                                     getErrorMessage(result),
-                                    ConditionRecipeFlowProcessingData(false)
+                                    if (positive) {
+                                        ConditionRecipeFlowProcessingData(fallThrough = false)
+                                    } else {
+                                        ConditionRecipeFlowProcessingData(fallThrough = true)
+                                    }
                             )
                         } else {
                             callback?.onFinish(false, String.EMPTY)

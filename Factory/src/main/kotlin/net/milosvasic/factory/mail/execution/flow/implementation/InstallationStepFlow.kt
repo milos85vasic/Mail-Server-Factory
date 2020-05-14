@@ -64,16 +64,16 @@ class InstallationStepFlow(private val toolkit: Toolkit) : FlowSimpleBuilder<Ins
         when (data) {
             is ConditionRecipeFlowProcessingData -> {
                 if (success) {
-                    if (data.skipSection) {
-                        finish(true, message)
-                    } else {
+                    if (data.fallThrough) {
                         super.tryNextSubject(success, message, data)
+                    } else {
+                        finish(true, message)
                     }
                 } else {
-                    if (data.skipSection) {
-                        finish(false, message)
-                    } else {
+                    if (data.fallThrough) {
                         super.tryNextSubject(true, message, data)
+                    } else {
+                        finish(false, message)
                     }
                 }
             }
