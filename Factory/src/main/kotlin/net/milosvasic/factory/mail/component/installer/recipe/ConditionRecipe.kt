@@ -1,7 +1,7 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.component.installer.step.condition.Condition
+import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -14,7 +14,7 @@ class ConditionRecipe : InstallationStepRecipe() {
             when (result.operation) {
                 is ConditionOperation -> {
                     step?.let { s ->
-                        val step = s as Condition
+                        val step = s as SkipCondition
                         step.unsubscribe(this)
                     }
                     if (result.success) {
@@ -52,7 +52,7 @@ class ConditionRecipe : InstallationStepRecipe() {
     override fun process(callback: FlowProcessingCallback) {
         super.process(callback)
         step?.let { s ->
-            if (s !is Condition) {
+            if (s !is SkipCondition) {
                 throw IllegalArgumentException("Unexpected installation step type: ${s::class.simpleName}")
             }
         }
@@ -60,7 +60,7 @@ class ConditionRecipe : InstallationStepRecipe() {
 
             toolkit?.let { tools ->
                 step?.let { s ->
-                    val step = s as Condition
+                    val step = s as SkipCondition
                     tools.connection?.let { conn ->
                         step.subscribe(operationCallback)
                         step.execute(conn)

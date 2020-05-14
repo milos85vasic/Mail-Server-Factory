@@ -5,7 +5,7 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
-open class Condition(protected val command: String) : RemoteOperationInstallationStep<Connection>() {
+open class SkipCondition(protected val command: String) : RemoteOperationInstallationStep<Connection>() {
 
     override fun handleResult(result: OperationResult) {
         when (result.operation) {

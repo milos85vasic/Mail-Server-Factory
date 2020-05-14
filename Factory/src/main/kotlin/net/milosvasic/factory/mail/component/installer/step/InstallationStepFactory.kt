@@ -3,10 +3,10 @@ package net.milosvasic.factory.mail.component.installer.step
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepType
 import net.milosvasic.factory.mail.component.docker.step.stack.Check
-import net.milosvasic.factory.mail.component.docker.step.stack.ConditionCheck
+import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionCheck
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
-import net.milosvasic.factory.mail.component.installer.step.condition.Condition
+import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.component.installer.step.deploy.DeployValidator
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
@@ -47,11 +47,11 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
             }
             InstallationStepType.SKIP_CONDITION.type -> {
 
-                return Condition(definition.getValue())
+                return SkipCondition(definition.getValue())
             }
             InstallationStepType.CONDITION_CHECK.type -> {
 
-                return ConditionCheck(definition.getValue())
+                return SkipConditionCheck(definition.getValue())
             }
             InstallationStepType.CHECK.type -> {
 
