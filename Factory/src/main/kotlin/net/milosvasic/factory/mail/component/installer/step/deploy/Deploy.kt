@@ -230,6 +230,9 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
 
     protected open fun getScp(remote: Remote) = Commands.scp(localTar, where, remote)
 
+    protected open fun isRemote(operation: TerminalCommand) =
+            operation.command.startsWith(Commands.ssh)
+
     @Throws(IllegalStateException::class)
     private fun processFiles(directory: File) {
         val fileList = directory.listFiles()
@@ -305,8 +308,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
             operation.command.startsWith(Commands.tarCompress)
 
     private fun isRmRemote(operation: TerminalCommand, file: String) =
-            isRm(operation, file) &&
-                    operation.command.startsWith(Commands.ssh)
+            isRm(operation, file) && isRemote(operation)
 
     private fun isRm(operation: TerminalCommand, file: String) =
             operation.command.contains(Commands.rm(file))

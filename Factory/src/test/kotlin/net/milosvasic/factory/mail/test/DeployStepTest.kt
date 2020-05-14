@@ -19,12 +19,12 @@ import net.milosvasic.factory.mail.test.implementation.StubDeploy
 import net.milosvasic.factory.mail.test.implementation.StubSSH
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
-import java.io.File
 
 class DeployStepTest : BaseTest() {
 
+    private val destination = "build/Mocks/Deploy"
     private val factory = InstallationStepFactory()
-    private val mocks = listOf("Anthem.txt", "proto.stub.txt")
+    private val mocks = listOf("Anthem.txt", "proto.stub.txt", "stub.txt")
 
     @Test
     fun testDeployStep() {
@@ -32,6 +32,7 @@ class DeployStepTest : BaseTest() {
         log.i("Deploy step flow test started")
 
         var finished = 0
+        val connection = StubSSH("")
         val flowCallback = object : FlowCallback<String> {
 
             override fun onFinish(success: Boolean, message: String, data: String?) {
@@ -39,16 +40,18 @@ class DeployStepTest : BaseTest() {
                 if (!success) {
                     log.w(message)
                 }
+                if (finished == 0) {
+                    connection.extension = StubSSH.defaultExtension()
+                }
                 finished++
             }
         }
 
-        val connection = StubSSH()
         val toolkit = Toolkit(connection)
         val init = InstallationStepFlow(toolkit)
 
         registerRecipes(init).onFinish(flowCallback)
-        fun getPath(mock: String) = "build${File.separator}$mock"
+        fun getPath(mock: String) = "$destination/$mock"
         mocks.forEach { mock ->
             val path = getPath(mock)
             val command = Commands.test(path)
@@ -116,5 +119,5 @@ class DeployStepTest : BaseTest() {
                     )
             )
 
-    private fun deployStep() = StubDeploy("Mocks/Deploy", "build/Mocks/Deploy")
+    private fun deployStep() = StubDeploy("Mocks/Deploy", destination)
 }
