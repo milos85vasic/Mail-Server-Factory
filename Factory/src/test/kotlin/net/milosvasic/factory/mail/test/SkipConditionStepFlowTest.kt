@@ -15,12 +15,12 @@ import net.milosvasic.factory.mail.test.implementation.StubConnection
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
-class SkipConditionStepFlowTest : BaseTest() {
+open class SkipConditionStepFlowTest : BaseTest() {
 
     @Test
     fun testConditionStepFlow() {
         initLogging()
-        log.i("Skip condition step flow test started")
+        log.i("${name()} step flow test started")
 
         var failed = 0
         var finished = 0
@@ -38,8 +38,6 @@ class SkipConditionStepFlowTest : BaseTest() {
                 }
             }
         }
-
-        // TODO: Cover 4th case!
 
         var positiveFlow = InstallationStepFlow(toolkit)
         var definitions = getDefinitions(fails = false, alreadyInstalled = true)
@@ -99,8 +97,10 @@ class SkipConditionStepFlowTest : BaseTest() {
 
         Assertions.assertEquals(3, finished)
         Assertions.assertEquals(1, failed)
-        log.i("Skip condition step flow test completed")
+        log.i("${name()} step flow test completed")
     }
+
+    protected open fun name() = "Skip condition"
 
     private fun getDefinitions(fails: Boolean, alreadyInstalled: Boolean): List<InstallationStepDefinition> {
         return if (fails) {
