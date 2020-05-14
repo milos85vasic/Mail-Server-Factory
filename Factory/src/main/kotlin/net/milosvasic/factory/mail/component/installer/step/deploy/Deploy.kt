@@ -27,7 +27,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
     private var terminal: Terminal? = null
     private val operation = DeployOperation()
     private val excludes = listOf("$prototypePrefix*")
-    private val localPath = whatFile.parentFile.absolutePath
+    private val localPath = localPath().absolutePath
     private val remoteTar = "$where${File.separator}${whatFile.name}${Commands.tarExtension}"
     protected val localTar = "$localPath${File.separator}${whatFile.name}${Commands.tarExtension}"
 
@@ -325,4 +325,11 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
 
     private fun isMkdir(operation: TerminalCommand) =
             operation.command.contains(Commands.mkdir)
+
+    private fun localPath(): File {
+        whatFile.parentFile?.let {
+            return it
+        }
+        return whatFile
+    }
 }

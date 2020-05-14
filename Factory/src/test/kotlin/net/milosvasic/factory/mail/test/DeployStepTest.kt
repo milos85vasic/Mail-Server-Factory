@@ -15,6 +15,7 @@ import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.test.implementation.StubDeploy
 import net.milosvasic.factory.mail.test.implementation.StubSSH
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -46,7 +47,7 @@ class DeployStepTest : BaseTest() {
         val toolkit = Toolkit(connection)
         val init = InstallationStepFlow(toolkit)
 
-        registerRecipes(init)
+        registerRecipes(init).onFinish(flowCallback)
         fun getPath(mock: String) = "build${File.separator}$mock"
         mocks.forEach { mock ->
             val path = getPath(mock)
@@ -58,13 +59,20 @@ class DeployStepTest : BaseTest() {
             init.width(commandStep(Commands.rm(path)))
         }
 
-        init.onFinish(flowCallback).run()
+        val flow = InstallationStepFlow(toolkit)
+        registerRecipes(flow)
+                .width(deployStep())
+                .onFinish(flowCallback)
+
+        init
+                .connect(flow)
+                .run()
 
         while (init.isBusy()) {
             Thread.yield()
         }
 
-        Assertions.assertEquals(1, finished)
+        Assertions.assertEquals(2, finished)
 
         log.i("Deploy step flow test completed")
     }
@@ -103,4 +111,6 @@ class DeployStepTest : BaseTest() {
                             value = command
                     )
             )
+
+    private fun deployStep() = StubDeploy("Mocks/Deploy", "build/Mocks/Deploy")
 }
