@@ -102,12 +102,14 @@ open class SkipConditionStepFlowTest : BaseTest() {
 
     protected open fun name() = "Skip condition"
 
+    protected open fun type() = InstallationStepType.SKIP_CONDITION.type
+
     private fun getDefinitions(fails: Boolean, alreadyInstalled: Boolean): List<InstallationStepDefinition> {
         return if (fails) {
             if (alreadyInstalled) {
                 listOf(
                         InstallationStepDefinition(
-                                type = InstallationStepType.SKIP_CONDITION.type,
+                                type = type(),
                                 value = "test -e ./not_existing_one"
                         ),
                         InstallationStepDefinition(
@@ -118,7 +120,7 @@ open class SkipConditionStepFlowTest : BaseTest() {
             } else {
                 listOf(
                         InstallationStepDefinition(
-                                type = InstallationStepType.SKIP_CONDITION.type,
+                                type = type(),
                                 value = "This one will fail"
                         ),
                         InstallationStepDefinition(
@@ -131,7 +133,7 @@ open class SkipConditionStepFlowTest : BaseTest() {
             if (alreadyInstalled) {
                 listOf(
                         InstallationStepDefinition(
-                                type = InstallationStepType.SKIP_CONDITION.type,
+                                type = type(),
                                 value = "echo 'Condition'"
                         ),
                         InstallationStepDefinition(
@@ -142,7 +144,7 @@ open class SkipConditionStepFlowTest : BaseTest() {
             } else {
                 listOf(
                         InstallationStepDefinition(
-                                type = InstallationStepType.SKIP_CONDITION.type,
+                                type = type(),
                                 value = "which does_not_exist"
                         ),
                         InstallationStepDefinition(
