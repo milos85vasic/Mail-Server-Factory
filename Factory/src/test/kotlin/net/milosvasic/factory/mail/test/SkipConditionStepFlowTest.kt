@@ -91,16 +91,29 @@ class SkipConditionStepFlowTest : BaseTest() {
 
     private fun getDefinitions(fails: Boolean, alreadyInstalled: Boolean): List<InstallationStepDefinition> {
         return if (fails) {
-            listOf(
-                    InstallationStepDefinition(
-                            type = InstallationStepType.SKIP_CONDITION.type,
-                            value = "This one will fail"
-                    ),
-                    InstallationStepDefinition(
-                            type = InstallationStepType.COMMAND.type,
-                            value = "echo 'This one will be executed'"
-                    )
-            )
+            if (alreadyInstalled) {
+                listOf(
+                        InstallationStepDefinition(
+                                type = InstallationStepType.SKIP_CONDITION.type,
+                                value = "test -e ./not_existing_one"
+                        ),
+                        InstallationStepDefinition(
+                                type = InstallationStepType.COMMAND.type,
+                                value = "echo 'This one will be executed'"
+                        )
+                )
+            } else {
+                listOf(
+                        InstallationStepDefinition(
+                                type = InstallationStepType.SKIP_CONDITION.type,
+                                value = "This one will fail"
+                        ),
+                        InstallationStepDefinition(
+                                type = InstallationStepType.COMMAND.type,
+                                value = "echo 'This one will be executed'"
+                        )
+                )
+            }
         } else {
             if (alreadyInstalled) {
                 listOf(
