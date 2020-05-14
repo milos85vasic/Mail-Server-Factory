@@ -11,4 +11,8 @@ class ConditionStepFlowTest : SkipConditionStepFlowTest() {
     override fun expectedPositives() = 1
 
     override fun expectedNegatives() = 3
+
+    override fun expectedTerminalCommandPositives() = 2
+
+    override fun expectedTerminalCommandNegatives() = expectedNegatives()
 }

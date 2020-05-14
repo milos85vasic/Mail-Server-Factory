@@ -12,6 +12,9 @@ import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import net.milosvasic.factory.mail.test.implementation.StubConnection
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -25,9 +28,25 @@ open class SkipConditionStepFlowTest : BaseTest() {
 
         var failed = 0
         var finished = 0
+        var failedTerminalCommands = 0
+        var finishedTerminalCommands = 0
         val connection = StubConnection()
         val toolkit = Toolkit(connection)
         val factory = InstallationStepFactory()
+
+        val operationNResultListener = object : OperationResultListener {
+            override fun onOperationPerformed(result: OperationResult) {
+                when (result.operation) {
+                    is TerminalCommand -> {
+                        if (result.success) {
+                            finishedTerminalCommands++
+                        } else {
+                            failedTerminalCommands++
+                        }
+                    }
+                }
+            }
+        }
 
         val flowCallback = object : FlowCallback<String> {
 
@@ -39,6 +58,8 @@ open class SkipConditionStepFlowTest : BaseTest() {
                 }
             }
         }
+
+        connection.terminal.subscribe(operationNResultListener)
 
         var positiveFlow = InstallationStepFlow(toolkit)
         var definitions = getDefinitions(fails = false, alreadyInstalled = true)
@@ -116,12 +137,18 @@ open class SkipConditionStepFlowTest : BaseTest() {
 
         Assertions.assertEquals(expectedPositives(), finished)
         Assertions.assertEquals(expectedNegatives(), failed)
+        Assertions.assertEquals(expectedTerminalCommandPositives(), finishedTerminalCommands)
+        Assertions.assertEquals(expectedTerminalCommandNegatives(), failedTerminalCommands)
         log.i("${name()} step flow test completed")
     }
 
     protected open fun expectedPositives() = 3
 
     protected open fun expectedNegatives() = 1
+
+    protected open fun expectedTerminalCommandPositives() = expectedPositives()
+
+    protected open fun expectedTerminalCommandNegatives() = expectedPositives()
 
     protected open fun name() = "Skip condition"
 
