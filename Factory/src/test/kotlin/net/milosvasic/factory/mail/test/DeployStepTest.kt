@@ -95,6 +95,10 @@ class DeployStepTest : BaseTest() {
                             Deploy::class,
                             DeployRecipe::class
                     )
+                    .registerRecipe(
+                            StubDeploy::class,
+                            DeployRecipe::class
+                    )
 
     private fun conditionStep(command: String) =
             factory.obtain(

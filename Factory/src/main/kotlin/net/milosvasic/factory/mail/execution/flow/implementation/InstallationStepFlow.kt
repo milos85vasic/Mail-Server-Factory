@@ -73,7 +73,7 @@ class InstallationStepFlow(private val toolkit: Toolkit) : FlowSimpleBuilder<Ins
                     if (data.fallThrough) {
                         super.tryNextSubject(true, message, data)
                     } else {
-                        finish(false, message)
+                        finish(true, message)
                     }
                 }
             }
