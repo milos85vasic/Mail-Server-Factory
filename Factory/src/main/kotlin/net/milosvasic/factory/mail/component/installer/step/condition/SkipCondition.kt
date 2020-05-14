@@ -25,7 +25,7 @@ open class SkipCondition(protected val command: String) : RemoteOperationInstall
     }
 
     private fun finish(success: Boolean, result: Boolean) {
-        val operation = ConditionOperation(result)
+        val operation = SkipConditionOperation(result)
         finish(success, operation)
     }
 }

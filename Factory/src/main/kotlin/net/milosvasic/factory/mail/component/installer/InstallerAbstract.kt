@@ -10,6 +10,7 @@ import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.DeployRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
@@ -125,6 +126,12 @@ abstract class InstallerAbstract(entryPoint: Connection) :
             is SkipCondition -> {
                 flow.registerRecipe(
                         SkipCondition::class,
+                        ConditionRecipe::class
+                )
+            }
+            is Condition -> {
+                flow.registerRecipe(
+                        Condition::class,
                         ConditionRecipe::class
                 )
             }

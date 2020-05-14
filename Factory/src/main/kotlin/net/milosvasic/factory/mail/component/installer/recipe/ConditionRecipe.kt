@@ -2,7 +2,7 @@ package net.milosvasic.factory.mail.component.installer.recipe
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
-import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
+import net.milosvasic.factory.mail.component.installer.step.condition.SkipConditionOperation
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -12,7 +12,7 @@ class ConditionRecipe : InstallationStepRecipe() {
     private val operationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
             when (result.operation) {
-                is ConditionOperation -> {
+                is SkipConditionOperation -> {
                     step?.let { s ->
                         val step = s as SkipCondition
                         step.unsubscribe(this)
