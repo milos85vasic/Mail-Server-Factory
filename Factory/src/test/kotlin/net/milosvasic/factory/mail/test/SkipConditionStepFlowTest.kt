@@ -55,14 +55,26 @@ class SkipConditionStepFlowTest : BaseTest() {
             positiveNegativeFlow = positiveNegativeFlow.width(installationStep)
         }
 
-        var negativelow = InstallationStepFlow(toolkit)
+        var negativePositiveFlow = InstallationStepFlow(toolkit)
+        definitions = getDefinitions(fails = true, alreadyInstalled = true)
+        definitions.forEach { definition ->
+            val installationStep = factory.obtain(definition)
+            negativePositiveFlow = negativePositiveFlow.width(installationStep)
+        }
+
+        var negativeFlow = InstallationStepFlow(toolkit)
         definitions = getDefinitions(fails = true, alreadyInstalled = false)
         definitions.forEach { definition ->
             val installationStep = factory.obtain(definition)
-            negativelow = negativelow.width(installationStep)
+            negativeFlow = negativeFlow.width(installationStep)
         }
 
-        listOf(positiveFlow, positiveNegativeFlow, negativelow).forEach { flow ->
+        listOf(
+                positiveFlow,
+                positiveNegativeFlow,
+                negativePositiveFlow,
+                negativeFlow
+        ).forEach { flow ->
             flow
                     .registerRecipe(
                             CommandInstallationStep::class,
@@ -77,14 +89,15 @@ class SkipConditionStepFlowTest : BaseTest() {
 
         positiveFlow
                 .connect(positiveNegativeFlow)
-                .connect(negativelow)
+                .connect(negativePositiveFlow)
+                .connect(negativeFlow)
                 .run()
 
-        while (finished < 2 || failed < 1) {
+        while (finished < 3 || failed < 1) {
             Thread.yield()
         }
 
-        Assertions.assertEquals(2, finished)
+        Assertions.assertEquals(3, finished)
         Assertions.assertEquals(1, failed)
         log.i("Skip condition step flow test completed")
     }
