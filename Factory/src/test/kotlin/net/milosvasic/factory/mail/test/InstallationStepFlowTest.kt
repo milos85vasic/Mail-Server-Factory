@@ -50,10 +50,11 @@ class InstallationStepFlowTest : BaseTest() {
                 .onFinish(flowCallback)
                 .run()
 
-        while (!finished) {
+        while (flow.isBusy()) {
             Thread.yield()
         }
 
+        assert(finished)
         log.i("Installation step flow test completed")
     }
 }

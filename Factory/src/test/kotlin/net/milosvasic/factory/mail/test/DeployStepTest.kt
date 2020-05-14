@@ -60,7 +60,7 @@ class DeployStepTest : BaseTest() {
 
         init.onFinish(flowCallback).run()
 
-        while (finished < 1) {
+        while (init.isBusy()) {
             Thread.yield()
         }
 

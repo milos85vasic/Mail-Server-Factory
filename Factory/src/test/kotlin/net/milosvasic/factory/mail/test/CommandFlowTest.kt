@@ -62,10 +62,11 @@ class CommandFlowTest : BaseTest() {
             .onFinish(flowCallback)
             .run()
 
-        while (!finished) {
+        while (flow.isBusy()) {
             Thread.yield()
         }
 
+        assert(finished)
         for (x in 1 until sum) {
             val expected = "$echo:$x"
             val compare = dataReceived[x - 1].replace("'", "")

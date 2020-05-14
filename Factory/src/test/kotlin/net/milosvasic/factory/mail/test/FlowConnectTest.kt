@@ -120,7 +120,7 @@ class FlowConnectTest : BaseTest() {
         }
         flow.run()
 
-        while (commandFlowExecuted < iterations + 1 || initializationFlowExecuted < iterations) {
+        while (flow.isBusy()) {
             Thread.yield()
         }
         Assertions.assertEquals(iterations + 1, commandFlowExecuted)
