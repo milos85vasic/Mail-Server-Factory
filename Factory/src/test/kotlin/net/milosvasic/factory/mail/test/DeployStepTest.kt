@@ -15,6 +15,7 @@ import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.test.implementation.StubConnection
 import net.milosvasic.factory.mail.test.implementation.StubDeploy
 import net.milosvasic.factory.mail.test.implementation.StubSSH
 import org.junit.jupiter.api.Assertions
@@ -32,7 +33,6 @@ class DeployStepTest : BaseTest() {
         log.i("Deploy step flow test started")
 
         var finished = 0
-        val connection = StubSSH("")
         val flowCallback = object : FlowCallback<String> {
 
             override fun onFinish(success: Boolean, message: String, data: String?) {
@@ -40,15 +40,15 @@ class DeployStepTest : BaseTest() {
                 if (!success) {
                     log.w(message)
                 }
-                if (finished == 0) {
-                    connection.extension = StubSSH.defaultExtension()
-                }
                 finished++
             }
         }
 
-        val toolkit = Toolkit(connection)
-        val init = InstallationStepFlow(toolkit)
+        val ssh = StubSSH()
+        val terminal = StubConnection()
+        val remoteToolkit = Toolkit(ssh)
+        val localToolkit = Toolkit(terminal)
+        val init = InstallationStepFlow(localToolkit)
 
         registerRecipes(init).onFinish(flowCallback)
         fun getPath(mock: String) = "$destination/$mock"
@@ -62,7 +62,7 @@ class DeployStepTest : BaseTest() {
             init.width(commandStep(Commands.rm(path)))
         }
 
-        val flow = InstallationStepFlow(toolkit)
+        val flow = InstallationStepFlow(remoteToolkit)
         registerRecipes(flow)
                 .width(deployStep())
                 .onFinish(flowCallback)
