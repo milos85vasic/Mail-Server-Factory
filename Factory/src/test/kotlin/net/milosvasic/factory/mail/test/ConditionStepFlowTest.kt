@@ -7,4 +7,8 @@ class ConditionStepFlowTest : SkipConditionStepFlowTest() {
     override fun name() = "Condition"
 
     override fun type() = InstallationStepType.CONDITION.type
+
+    override fun expectedPositives() = 1
+
+    override fun expectedNegatives() = 1
 }

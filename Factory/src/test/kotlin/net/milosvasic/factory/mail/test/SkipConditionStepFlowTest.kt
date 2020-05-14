@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepFactory
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
+import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
@@ -82,6 +83,10 @@ open class SkipConditionStepFlowTest : BaseTest() {
                             SkipCondition::class,
                             ConditionRecipe::class
                     )
+                    .registerRecipe(
+                            Condition::class,
+                            ConditionRecipe::class
+                    )
                     .onFinish(flowCallback)
         }
 
@@ -95,10 +100,14 @@ open class SkipConditionStepFlowTest : BaseTest() {
             Thread.yield()
         }
 
-        Assertions.assertEquals(3, finished)
-        Assertions.assertEquals(1, failed)
+        Assertions.assertEquals(expectedPositives(), finished)
+        Assertions.assertEquals(expectedNegatives(), failed)
         log.i("${name()} step flow test completed")
     }
+
+    protected open fun expectedPositives() = 3
+
+    protected open fun expectedNegatives() = 1
 
     protected open fun name() = "Skip condition"
 
