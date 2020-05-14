@@ -71,6 +71,17 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
         }
     }
 
+    fun isBusy(): Boolean {
+
+        var busy = busy.isBusy()
+        if (!busy) {
+            nextFlow?.let {
+                busy = it.isBusy()
+            }
+        }
+        return busy
+    }
+
     @Synchronized
     @Throws(BusyException::class)
     override fun busy() {
@@ -119,3 +130,5 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
 
     protected abstract fun insertSubject()
 }
+
+

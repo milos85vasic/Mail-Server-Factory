@@ -91,7 +91,7 @@ open class SkipConditionStepFlowTest : BaseTest() {
                 .connect(negativeFlow)
                 .run()
 
-        while (finished < 3 || failed < 1) {
+        while (positiveFlow.isBusy()) {
             Thread.yield()
         }
 
