@@ -44,40 +44,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         }
     }
 
-    // TODO: Goes into recipes - Start
-    /*
-    private val listener = object : OperationResultListener {
-        override fun onOperationPerformed(result: OperationResult) {
-            handleResultAndCatch(result)
-        }
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    fun handleResult(result: OperationResult) {
-        when (result.operation) {
-
-            is RebootOperation -> {
-
-                unsubscribeFromItem(listener)
-                //checkResultAndTryNext(result)
-            }
-        }
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    protected open fun handleNext(current: InstallationStep<*>): Boolean {
-        when (current) {
-            is Reboot -> {
-
-                executeViaSSH(current)
-                return true
-            }
-        }
-        return false
-    }
-    */
-    // TODO: Goes into recipes - End
-
     @Synchronized
     override fun install() {
 
