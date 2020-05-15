@@ -2,8 +2,11 @@ package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.Toolkit
+import net.milosvasic.factory.mail.component.docker.recipe.CheckRecipe
 import net.milosvasic.factory.mail.component.docker.recipe.StackRecipe
 import net.milosvasic.factory.mail.component.docker.recipe.VolumeRecipe
+import net.milosvasic.factory.mail.component.docker.step.stack.Check
+import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionCheck
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
@@ -66,6 +69,18 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
                 flow.registerRecipe(
                         Stack::class,
                         StackRecipe::class
+                )
+            }
+            is Check -> {
+                flow.registerRecipe(
+                        Check::class,
+                        CheckRecipe::class
+                )
+            }
+            is SkipConditionCheck -> {
+                flow.registerRecipe(
+                        SkipConditionCheck::class,
+                        CheckRecipe::class
                 )
             }
         }
