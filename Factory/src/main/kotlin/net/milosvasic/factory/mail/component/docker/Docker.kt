@@ -21,19 +21,6 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     // TODO: Goes into recipes - Start
     /*
 
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun handleResult(result: OperationResult) {
-        super.handleResult(result)
-        when (result.operation) {
-
-            is CheckOperation -> {
-
-                unsubscribeFromItem(listener)
-                //checkResultAndTryNext(result)
-            }
-        }
-    }
-
     override fun onCommandPerformed(result: OperationResult) {
         if (initialized.get()) {
             super.onCommandPerformed(result)
@@ -49,29 +36,6 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
                 free(false)
             }
-        }
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun handleNext(current: InstallationStep<*>): Boolean {
-        if (!super.handleNext(current)) {
-
-            when (current) {
-
-                is Stack -> {
-
-                    command = String.EMPTY
-                    current.subscribe(listener)
-                    current.execute(entryPoint)
-                    return true
-                }
-                else -> {
-                    throw IllegalStateException("Unsupported installation step: $current")
-                }
-            }
-        } else {
-
-            return true
         }
     }
      */
