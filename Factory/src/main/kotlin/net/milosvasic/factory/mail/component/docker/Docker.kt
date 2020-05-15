@@ -2,7 +2,9 @@ package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.Toolkit
+import net.milosvasic.factory.mail.component.docker.recipe.StackRecipe
 import net.milosvasic.factory.mail.component.docker.recipe.VolumeRecipe
+import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
@@ -18,12 +20,6 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
     // TODO: Goes into recipes - Start
     /*
-    private val listener = object : OperationResultListener {
-        override fun onOperationPerformed(result: OperationResult) {
-
-            handleResultAndCatch(result)
-        }
-    }
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun handleResult(result: OperationResult) {
@@ -100,6 +96,12 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
                 flow.registerRecipe(
                         Volume::class,
                         VolumeRecipe::class
+                )
+            }
+            is Stack -> {
+                flow.registerRecipe(
+                        Stack::class,
+                        StackRecipe::class
                 )
             }
         }
