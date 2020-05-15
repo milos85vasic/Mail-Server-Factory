@@ -10,8 +10,11 @@ import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionChec
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
+import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
+import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.atomic.AtomicBoolean
@@ -21,31 +24,24 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     private var command = String.EMPTY
     private val initialized = AtomicBoolean()
 
-    // TODO: Goes into recipes - Start
-    /*
+    private val listener = object : OperationResultListener {
+        override fun onOperationPerformed(result: OperationResult) {
+            when (result.operation) {
+                is TerminalCommand -> {
+                    entryPoint.unsubscribe(this)
 
-    override fun onCommandPerformed(result: OperationResult) {
-        if (initialized.get()) {
-            super.onCommandPerformed(result)
-        } else {
-            if (result.success) {
-
-                initialized.set(true)
-                free()
-                val dockerInitializationOperation = DockerInitializationOperation()
-                val operationResult = OperationResult(dockerInitializationOperation, result.success)
-                notify(operationResult)
-            } else {
-
-                free(false)
+                    free()
+                    val installerInitializationOperation = DockerInitializationOperation()
+                    val operationResult = OperationResult(installerInitializationOperation, result.success)
+                    notify(operationResult)
+                }
             }
         }
     }
-     */
-    // TODO: Goes into recipes - End
 
     override fun initialization() {
         command = "${DockerCommand.DOCKER.obtain()} ${DockerCommand.VERSION.obtain()}"
+        entryPoint.subscribe(listener)
         entryPoint.execute(TerminalCommand(command))
     }
 
