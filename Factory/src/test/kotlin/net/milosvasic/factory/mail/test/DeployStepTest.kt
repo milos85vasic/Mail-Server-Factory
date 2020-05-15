@@ -67,15 +67,25 @@ class DeployStepTest : BaseTest() {
                 .width(deployStep())
                 .onFinish(flowCallback)
 
+        val verification = InstallationStepFlow(localToolkit)
+        registerRecipes(verification).onFinish(flowCallback)
+
+        mocks.forEach { mock ->
+            val path = getPath(mock)
+            val command = Commands.test(path)
+            verification.width(conditionStep(command))
+        }
+
         init
                 .connect(flow)
+                .connect(verification)
                 .run()
 
         while (init.isBusy()) {
             Thread.yield()
         }
 
-        Assertions.assertEquals(2, finished)
+        Assertions.assertEquals(3, finished)
 
         log.i("Deploy step flow test completed")
     }
