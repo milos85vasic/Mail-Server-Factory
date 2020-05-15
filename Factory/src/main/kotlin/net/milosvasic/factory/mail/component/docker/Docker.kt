@@ -14,35 +14,20 @@ import net.milosvasic.factory.mail.component.installer.InstallerInitializationOp
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
-import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.atomic.AtomicBoolean
 
 class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
-    private var command = String.EMPTY
     private val initialized = AtomicBoolean()
 
-    private val listener = object : OperationResultListener {
-        override fun onOperationPerformed(result: OperationResult) {
-            when (result.operation) {
-                is TerminalCommand -> {
-                    entryPoint.unsubscribe(this)
-
-                    free()
-                    val installerInitializationOperation = DockerInitializationOperation()
-                    val operationResult = OperationResult(installerInitializationOperation, result.success)
-                    notify(operationResult)
-                }
-            }
-        }
-    }
-
     override fun initialization() {
-        command = "${DockerCommand.DOCKER.obtain()} ${DockerCommand.VERSION.obtain()}"
-        entryPoint.subscribe(listener)
-        entryPoint.execute(TerminalCommand(command))
+
+        initialized.set(true)
+        free()
+        val installerInitializationOperation = DockerInitializationOperation()
+        val operationResult = OperationResult(installerInitializationOperation, true)
+        notify(operationResult)
     }
 
     override fun termination() {
