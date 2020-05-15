@@ -2,7 +2,11 @@ package net.milosvasic.factory.mail.component.docker
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.Toolkit
+import net.milosvasic.factory.mail.component.docker.recipe.VolumeRecipe
+import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
+import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.atomic.AtomicBoolean
@@ -98,6 +102,18 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
     @Synchronized
     override fun isInitialized() = initialized.get()
+
+    override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) {
+        super.registerRecipes(step, flow)
+        when (step) {
+            is Volume -> {
+                flow.registerRecipe(
+                        Volume::class,
+                        VolumeRecipe::class
+                )
+            }
+        }
+    }
 
     override fun getEnvironmentName() = "Docker"
 
