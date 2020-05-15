@@ -56,6 +56,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     @Synchronized
     override fun isInitialized() = initialized.get()
 
+    @Throws(IllegalArgumentException::class)
     override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) {
         super.registerRecipes(step, flow)
         when (step) {

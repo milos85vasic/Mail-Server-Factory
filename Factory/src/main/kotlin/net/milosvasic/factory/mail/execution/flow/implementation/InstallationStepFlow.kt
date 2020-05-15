@@ -42,7 +42,10 @@ class InstallationStepFlow(private val toolkit: Toolkit) : FlowSimpleBuilder<Ins
 
         val existing = recipes[clazz]
         existing?.let {
-            throw IllegalArgumentException("Recipe for '${clazz.simpleName}' is already registered")
+            if (it != recipe) {
+                throw IllegalArgumentException("Recipe for '${clazz.simpleName}' is already registered")
+            }
+            return this
         }
         recipes[clazz] = recipe
         return this

@@ -78,6 +78,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         }
     }
 
+    @Throws(IllegalArgumentException::class)
     protected open fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) {
         when (step) {
             is CommandInstallationStep -> {

@@ -29,6 +29,7 @@ class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
         }
     }
 
+    @Throws(IllegalArgumentException::class)
     override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) {
         super.registerRecipes(step, flow)
         when (step) {
