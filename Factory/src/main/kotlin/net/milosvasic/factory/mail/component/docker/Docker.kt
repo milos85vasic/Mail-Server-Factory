@@ -1,8 +1,6 @@
 package net.milosvasic.factory.mail.component.docker
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.Toolkit
-import net.milosvasic.factory.mail.component.docker.recipe.CheckRecipe
 import net.milosvasic.factory.mail.component.docker.recipe.StackRecipe
 import net.milosvasic.factory.mail.component.docker.recipe.VolumeRecipe
 import net.milosvasic.factory.mail.component.docker.step.stack.Check
@@ -10,7 +8,7 @@ import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionChec
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
-import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
+import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -56,13 +54,13 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
             is Check -> {
                 flow.registerRecipe(
                         Check::class,
-                        CheckRecipe::class
+                        ConditionRecipe::class
                 )
             }
             is SkipConditionCheck -> {
                 flow.registerRecipe(
                         SkipConditionCheck::class,
-                        CheckRecipe::class
+                        ConditionRecipe::class
                 )
             }
         }
@@ -70,7 +68,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
     override fun getEnvironmentName() = "Docker"
 
-    override fun getNotifyOperation() = DockerOperation()
-
     override fun getToolkit() = Toolkit(entryPoint)
+
+    override fun getNotifyOperation() = DockerOperation()
 }
