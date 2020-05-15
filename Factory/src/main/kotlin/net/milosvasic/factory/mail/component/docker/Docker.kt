@@ -26,6 +26,11 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
         super.handleResult(result)
         when (result.operation) {
 
+            is CheckOperation -> {
+
+                unsubscribeFromItem(listener)
+                //checkResultAndTryNext(result)
+            }
             is DockerInstallationOperation -> {
                 unsubscribeFromItem(listener)
                 checkResultAndTryNext(result)

@@ -8,11 +8,13 @@ import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.DeployRecipe
+import net.milosvasic.factory.mail.component.installer.recipe.RebootRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
+import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
@@ -55,11 +57,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         when (result.operation) {
 
             is RebootOperation -> {
-
-                unsubscribeFromItem(listener)
-                //checkResultAndTryNext(result)
-            }
-            is CheckOperation -> {
 
                 unsubscribeFromItem(listener)
                 //checkResultAndTryNext(result)
@@ -139,6 +136,12 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                 flow.registerRecipe(
                         Deploy::class,
                         DeployRecipe::class
+                )
+            }
+            is Reboot -> {
+                flow.registerRecipe(
+                        Reboot::class,
+                        RebootRecipe::class
                 )
             }
         }
