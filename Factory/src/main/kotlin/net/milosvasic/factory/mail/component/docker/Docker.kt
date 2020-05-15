@@ -35,10 +35,6 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
                 unsubscribeFromItem(listener)
                 //checkResultAndTryNext(result)
             }
-            is DockerInstallationOperation -> {
-                unsubscribeFromItem(listener)
-                checkResultAndTryNext(result)
-            }
         }
     }
 
@@ -65,13 +61,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
         if (!super.handleNext(current)) {
 
             when (current) {
-                is Volume -> {
 
-                    command = String.EMPTY
-                    current.subscribe(listener)
-                    current.execute(entryPoint)
-                    return true
-                }
                 is Stack -> {
 
                     command = String.EMPTY
