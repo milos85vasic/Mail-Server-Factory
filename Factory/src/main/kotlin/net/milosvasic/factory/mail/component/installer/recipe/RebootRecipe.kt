@@ -33,15 +33,13 @@ class RebootRecipe : InstallationStepRecipe() {
         }
         try {
 
-            toolkit?.let { tools ->
-                step?.let { s ->
-                    val step = s as Reboot
-                    try {
-                        executeViaSSH(step, operationCallback)
-                    } catch (e: IllegalArgumentException) {
+            step?.let { s ->
+                val step = s as Reboot
+                try {
+                    executeViaSSH(step, operationCallback)
+                } catch (e: IllegalArgumentException) {
 
-                        fail(e)
-                    }
+                    fail(e)
                 }
             }
         } catch (e: IllegalStateException) {
