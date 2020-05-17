@@ -1,8 +1,6 @@
 package net.milosvasic.factory.mail.test.implementation
 
+import net.milosvasic.factory.mail.component.docker.step.stack.Check
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 
-class StubCheck : CommandInstallationStep(
-
-"echo 'stubCheck'"
-)
+class StubCheck : Check("Test", "echo 'stubCheck'")

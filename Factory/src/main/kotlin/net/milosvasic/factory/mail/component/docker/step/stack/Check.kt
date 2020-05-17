@@ -4,7 +4,8 @@ import net.milosvasic.factory.mail.component.docker.DockerCommand
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.terminal.Commands
 
-class Check(containerName: String) : CommandInstallationStep(
+open class Check(
+        containerName: String,
+        checkCommand: String = "${DockerCommand.DOCKER.obtain()} ${DockerCommand.PS.obtain()} -a --filter \"status=running\" | ${Commands.grep(containerName)}"
 
-        "${DockerCommand.DOCKER.obtain()} ${DockerCommand.PS.obtain()} -a --filter \"status=running\" | ${Commands.grep(containerName)}"
-)
+) : CommandInstallationStep(checkCommand)
