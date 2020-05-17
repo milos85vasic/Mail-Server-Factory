@@ -1,7 +1,5 @@
 package net.milosvasic.factory.mail.test
 
-import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
