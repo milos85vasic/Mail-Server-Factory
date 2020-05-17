@@ -40,7 +40,6 @@ class SkipConditionCheckStepTest : BaseTest() {
 
         val operationResultListener = object : OperationResultListener {
             override fun onOperationPerformed(result: OperationResult) {
-                assert(result.success)
                 executed++
             }
         }
@@ -74,19 +73,22 @@ class SkipConditionCheckStepTest : BaseTest() {
                 .onFinish(flowCallback)
 
         mainFlow
+                .registerRecipe(CommandInstallationStep::class, CommandInstallationStepRecipe::class)
                 .connect(positiveFlow)
                 .connect(negativeFlow)
                 .onFinish(flowCallback)
-                .run()
+
+        appendCommands(mainFlow)
+        mainFlow.run()
 
         while (mainFlow.isBusy()) {
             Thread.yield()
         }
 
         connection.terminal.unsubscribe(operationResultListener)
-        Assertions.assertEquals(2, finished)
-        Assertions.assertEquals(1, failed)
-        Assertions.assertEquals(iterations + 1, executed)
+        Assertions.assertEquals(3, finished)
+        Assertions.assertEquals(0, failed)
+        Assertions.assertEquals((iterations * 2) + 2, executed)
         log.i("Skip condition check step test completed")
     }
 
