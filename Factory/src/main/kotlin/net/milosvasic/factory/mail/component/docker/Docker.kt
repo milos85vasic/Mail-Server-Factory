@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionChec
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
+import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
@@ -54,7 +55,7 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
             is Check -> {
                 flow.registerRecipe(
                         Check::class,
-                        ConditionRecipe::class
+                        CommandInstallationStepRecipe::class
                 )
             }
             is SkipConditionCheck -> {
