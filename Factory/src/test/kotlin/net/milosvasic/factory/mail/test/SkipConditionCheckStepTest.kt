@@ -7,7 +7,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.test.implementation.StubConnection
 import org.junit.jupiter.api.Test
 
-class SkipConditionCheckTest : BaseTest() {
+class SkipConditionCheckStepTest : BaseTest() {
 
     private val iterations = 5
     private val connection = StubConnection()
