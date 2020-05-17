@@ -58,14 +58,14 @@ class SkipConditionCheckStepTest : BaseTest() {
             }
         }
 
-        positiveFlow.width(StubSkipConditionCheck(true))
+        positiveFlow.width(StubSkipConditionCheck(false))
         appendCommands("Positive", positiveFlow)
         positiveFlow
                 .registerRecipe(CommandInstallationStep::class, CommandInstallationStepRecipe::class)
                 .registerRecipe(StubSkipConditionCheck::class, ConditionRecipe::class)
                 .onFinish(flowCallback)
 
-        negativeFlow.width(StubSkipConditionCheck(false))
+        negativeFlow.width(StubSkipConditionCheck(true))
         appendCommands("Negative", negativeFlow)
         negativeFlow
                 .registerRecipe(CommandInstallationStep::class, CommandInstallationStepRecipe::class)
