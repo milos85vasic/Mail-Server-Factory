@@ -59,14 +59,14 @@ class SkipConditionCheckStepTest : BaseTest() {
         }
 
         positiveFlow.width(StubSkipConditionCheck(true))
-        appendCommands(positiveFlow)
+        appendCommands("Positive", positiveFlow)
         positiveFlow
                 .registerRecipe(CommandInstallationStep::class, CommandInstallationStepRecipe::class)
                 .registerRecipe(StubSkipConditionCheck::class, ConditionRecipe::class)
                 .onFinish(flowCallback)
 
         negativeFlow.width(StubSkipConditionCheck(false))
-        appendCommands(negativeFlow)
+        appendCommands("Negative", negativeFlow)
         negativeFlow
                 .registerRecipe(CommandInstallationStep::class, CommandInstallationStepRecipe::class)
                 .registerRecipe(StubSkipConditionCheck::class, ConditionRecipe::class)
@@ -78,7 +78,7 @@ class SkipConditionCheckStepTest : BaseTest() {
                 .connect(negativeFlow)
                 .onFinish(flowCallback)
 
-        appendCommands(mainFlow)
+        appendCommands("Main", mainFlow)
         mainFlow.run()
 
         while (mainFlow.isBusy()) {
@@ -92,12 +92,12 @@ class SkipConditionCheckStepTest : BaseTest() {
         log.i("Skip condition check step test completed")
     }
 
-    private fun appendCommands(flow: InstallationStepFlow) {
+    private fun appendCommands(prefix: String, flow: InstallationStepFlow) {
 
         for (x in 0 until iterations) {
             val definition = InstallationStepDefinition(
                     type = InstallationStepType.COMMAND.type,
-                    value = "echo 'Test: $x'"
+                    value = "echo 'Test :: $prefix :: $x'"
             )
             val installationStep = factory.obtain(definition)
             flow.width(installationStep)
