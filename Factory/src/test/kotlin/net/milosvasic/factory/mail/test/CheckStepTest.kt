@@ -11,6 +11,8 @@ import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.test.implementation.StubCheck
 import net.milosvasic.factory.mail.test.implementation.StubConnection
 import org.junit.jupiter.api.Assertions
@@ -29,16 +31,17 @@ class CheckStepTest : BaseTest() {
         initLogging()
         log.i("Check step test started")
 
+        var executed = 0
         var finished = false
 
-        val dataHandler = object : DataHandler<String> {
-            override fun onData(data: String?) {
-                log.v("Data: $data")
-                Assertions.assertNotNull(data)
-                assert(data != String.EMPTY)
-
+        val operationResultListener = object : OperationResultListener {
+            override fun onOperationPerformed(result: OperationResult) {
+                assert(result.success)
+                executed++
             }
         }
+
+        connection.terminal.subscribe(operationResultListener)
 
         val flowCallback = object : FlowCallback<String> {
 
@@ -64,7 +67,9 @@ class CheckStepTest : BaseTest() {
             Thread.yield()
         }
 
+        connection.terminal.unsubscribe(operationResultListener)
         assert(finished)
+        Assertions.assertEquals((iterations * 2) + 1, executed)
         log.i("Check step test completed")
     }
 
