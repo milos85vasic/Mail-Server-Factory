@@ -9,7 +9,6 @@ import net.milosvasic.factory.mail.component.installer.step.InstallationStepFact
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
-import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
@@ -103,10 +102,6 @@ class DeployStepTest : BaseTest() {
                     .registerRecipe(
                             Condition::class,
                             ConditionRecipe::class
-                    )
-                    .registerRecipe(
-                            Deploy::class,
-                            DeployRecipe::class
                     )
                     .registerRecipe(
                             StubDeploy::class,
