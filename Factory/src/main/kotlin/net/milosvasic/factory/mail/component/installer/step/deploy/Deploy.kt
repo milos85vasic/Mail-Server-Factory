@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInsta
 import net.milosvasic.factory.mail.configuration.Variable
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.security.Permission
@@ -30,9 +31,14 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
     private val remoteTar = "$where${File.separator}${whatFile.name}${Commands.tarExtension}"
     protected val localTar = "$localPath${File.separator}${whatFile.name}${Commands.tarExtension}"
 
-    private val onDirectoryCreated = object : DataHandler<String> {
-        override fun onData(data: String?) {
+    private val onDirectoryCreated = object : DataHandler<OperationResult> {
+        override fun onData(data: OperationResult?) {
 
+            if (data == null || !data.success) {
+
+                finish(false)
+                return
+            }
             if (whatFile.exists()) {
                 if (whatFile.isDirectory) {
                     try {

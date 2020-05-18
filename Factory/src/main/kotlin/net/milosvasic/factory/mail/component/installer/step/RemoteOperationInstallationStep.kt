@@ -23,20 +23,6 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
     protected var connection: T? = null
     private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
 
-    private val listener = object : FlowCallback<String> {
-        override fun onFinish(
-                success: Boolean,
-                message: String,
-                data: String?
-        ) {
-
-            if (!success) {
-                log.e(message)
-            }
-            finish(success)
-        }
-    }
-
     @Synchronized
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun execute(vararg params: T) {
@@ -48,7 +34,7 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
         if (connection == null) {
             throw IllegalArgumentException("Connection is null")
         }
-        getFlow().onFinish(listener).run()
+        getFlow().onFinish(getListener()).run()
     }
 
     @Synchronized
@@ -77,5 +63,15 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
         connection = null
         val operationResult = OperationResult(getOperation(), success)
         notify(operationResult)
+    }
+
+    protected open fun getListener() = object : FlowCallback<String> {
+        override fun onFinish(success: Boolean, message: String, data: String?) {
+
+            if (!success) {
+                log.e(message)
+            }
+            finish(success)
+        }
     }
 }

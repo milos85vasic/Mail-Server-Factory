@@ -137,8 +137,8 @@ open class SkipConditionStepFlowTest : BaseTest() {
 
         Assertions.assertEquals(expectedPositives(), finished)
         Assertions.assertEquals(expectedNegatives(), failed)
-        Assertions.assertEquals(expectedTerminalCommandPositives(), finishedTerminalCommands)
-        Assertions.assertEquals(expectedTerminalCommandNegatives(), failedTerminalCommands)
+        Assertions.assertEquals(expectedTerminalCommandPositives(), failedTerminalCommands)
+        Assertions.assertEquals(expectedTerminalCommandNegatives(), finishedTerminalCommands)
         log.i("${name()} step flow test completed")
     }
 

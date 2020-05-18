@@ -17,7 +17,7 @@ import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalCommand, String>() {
 
-    private val dataHandlers = mutableMapOf<TerminalCommand, DataHandler<String>>()
+    private val dataHandlers = mutableMapOf<TerminalCommand, DataHandler<OperationResult>>()
 
     @Throws(BusyException::class)
     override fun width(subject: Executor<TerminalCommand>): CommandFlow {
@@ -38,7 +38,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
     }
 
     @Throws(BusyException::class)
-    fun perform(what: TerminalCommand, dataHandler: DataHandler<String>): CommandFlow {
+    fun perform(what: TerminalCommand, dataHandler: DataHandler<OperationResult>): CommandFlow {
         what.configuration[CommandConfiguration.OBTAIN_RESULT] = true
         super.perform(what)
         dataHandlers[what] = dataHandler
@@ -46,7 +46,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
     }
 
     @Throws(BusyException::class)
-    fun perform(what: String, dataHandler: DataHandler<String>): CommandFlow {
+    fun perform(what: String, dataHandler: DataHandler<OperationResult>): CommandFlow {
         val command = TerminalCommand(what)
         command.configuration[CommandConfiguration.OBTAIN_RESULT] = true
         super.perform(command)
@@ -79,10 +79,8 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
                 override fun onOperationPerformed(result: OperationResult) {
 
                     subject.unsubscribe(this)
-                    if (result.success) {
-                        val dataHandler = dataHandlers[operation]
-                        dataHandler?.onData(result.data)
-                    }
+                    val dataHandler = dataHandlers[operation]
+                    dataHandler?.onData(result)
                     val message = if (result.success) {
                         String.EMPTY
                     } else {
