@@ -1,12 +1,15 @@
 package net.milosvasic.factory.mail.component.installer.step.condition
 
+import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
-import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.remote.Connection
-import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 open class SkipCondition(protected val command: String) : RemoteOperationInstallationStep<Connection>() {
 
+    var result = false
+
+    /* FIXME: Replaced with data handler:
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
             is TerminalCommand -> {
@@ -16,18 +19,27 @@ open class SkipCondition(protected val command: String) : RemoteOperationInstall
             }
         }
     }
+     */
 
-    @Synchronized
+    private val dataHandler = object : DataHandler<String> {
+        override fun onData(data: String?) {
+
+            data?.let {
+                result = true
+            }
+        }
+    }
+
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    override fun execute(vararg params: Connection) {
-        super.execute(*params)
-        connection?.execute(TerminalCommand(command))
+    override fun getFlow(): CommandFlow {
+        connection?.let { conn ->
+
+            return CommandFlow()
+                    .width(conn)
+                    .perform(command, dataHandler)
+        }
+        throw IllegalArgumentException("No connection provided")
     }
 
-    private fun finish(success: Boolean, result: Boolean) {
-        val operation = getOperation(result)
-        finish(success, operation)
-    }
-
-    protected open fun getOperation(result: Boolean) = SkipConditionOperation(result)
+    override fun getOperation() = SkipConditionOperation(result)
 }

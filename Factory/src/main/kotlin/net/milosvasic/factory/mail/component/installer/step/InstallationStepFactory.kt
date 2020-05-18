@@ -5,7 +5,6 @@ import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepT
 import net.milosvasic.factory.mail.component.docker.step.stack.Check
 import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionCheck
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
-import net.milosvasic.factory.mail.component.docker.step.volume.Volume
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
@@ -75,10 +74,6 @@ class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, I
 
                     throw IllegalArgumentException("Invalid deploy parameters")
                 }
-            }
-            DockerInstallationStepType.VOLUME.type -> {
-
-                return Volume(definition.getValue(), definition.name)
             }
             DockerInstallationStepType.STACK.type -> {
 
