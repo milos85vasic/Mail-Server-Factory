@@ -83,11 +83,11 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
                             .width(conn)
                             .perform(Commands.unTar(remoteTar, where))
                             .perform(Commands.rm(remoteTar))
-                            .perform(getExclude())
+                            .perform(getProtoCleanup())
                             .width(term)
                             .perform(Commands.rm(localTar))
                             .width(conn)
-                            .perform(getPermissionsChanges(rmt))
+                            .perform(getSecurityChanges(rmt))
                 }
             }
         }
@@ -187,7 +187,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
         return whatFile
     }
 
-    private fun getExclude(): String {
+    private fun getProtoCleanup(): String {
 
         var exclude = String.EMPTY
         excludes.forEach {
@@ -199,7 +199,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
         return exclude
     }
 
-    fun getPermissionsChanges(remote: Remote): String {
+    private fun getSecurityChanges(remote: Remote): String {
 
         val chown = Commands.chown(remote.account, where)
         val chgrp = Commands.chgrp(remote.account, where)
