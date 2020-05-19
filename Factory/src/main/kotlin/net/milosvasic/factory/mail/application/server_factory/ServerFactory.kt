@@ -14,6 +14,7 @@ import net.milosvasic.factory.mail.component.docker.DockerInitializationFlowCall
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.component.installer.InstallerInitializationFlowCallback
 import net.milosvasic.factory.mail.configuration.*
+import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.DieOnFailureCallback
 import net.milosvasic.factory.mail.execution.flow.callback.TerminationCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
@@ -177,8 +178,8 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
 
             val dockerFlow = getDockerFlow(docker)
             val dockerInitFlow = getDockerInitFlow(docker, dockerFlow)
-            val installFlow = getInstallationFlow(installer, dockerInitFlow)
-            val initFlow = getInitializationFlow(installer, installFlow)
+            val nextFlow = getInstallationFlow(installer, dockerInitFlow) ?: dockerInitFlow
+            val initFlow = getInitializationFlow(installer, nextFlow)
             val commandFlow = getCommandFlow(ssh, initFlow)
 
             commandFlow.run()
@@ -289,7 +290,10 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         notify(result)
     }
 
-    private fun getInstallationFlow(installer: Installer, dockerInitFlow: InitializationFlow): InstallationFlow {
+    private fun getInstallationFlow(installer: Installer, dockerInitFlow: InitializationFlow): InstallationFlow? {
+        if (softwareConfigurations.isEmpty()) {
+            return null
+        }
         val installFlow = InstallationFlow(installer)
         val dieCallback = DieOnFailureCallback<String>()
         softwareConfigurations.forEach {
@@ -319,7 +323,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                 .onFinish(initCallback)
     }
 
-    private fun getInitializationFlow(installer: Installer, installFlow: InstallationFlow): InitializationFlow {
+    private fun getInitializationFlow(installer: Installer, installFlow: FlowBuilder<*, *, *>): InitializationFlow {
 
         val initCallback = InstallerInitializationFlowCallback()
         return InitializationFlow()
