@@ -39,59 +39,6 @@ class PackageInstaller(entryPoint: Connection) :
         )
     }
 
-    /*
-    override fun handleResult(result: OperationResult) {
-        when (result.operation) {
-            is TerminalCommand -> {
-                val cmd = result.operation.command
-                if (command != String.EMPTY && cmd.endsWith(command)) {
-
-                    try {
-                        if (result.success) {
-                            onSuccessResult()
-                        } else {
-                            onFailedResult()
-                        }
-                    } catch (e: IllegalStateException) {
-                        onFailedResult(e)
-                    } catch (e: IllegalArgumentException) {
-                        onFailedResult(e)
-                    }
-                }
-            }
-            is PackageManagerOperation -> {
-                notify(result)
-            }
-            else -> {
-
-                log.e("Unexpected operation result: $result")
-                try {
-                    onFailedResult()
-                } catch (e: IllegalStateException) {
-                    onFailedResult(e)
-                } catch (e: IllegalArgumentException) {
-                    onFailedResult(e)
-                }
-            }
-        }
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun onSuccessResult() {
-        item?.let {
-            manager = it
-            attach(manager)
-            log.i("${it.applicationBinaryName.capitalize()} package manager is initialized")
-        }
-        tryNext()
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun onFailedResult() {
-        tryNext()
-    }
-    */
-
     val flowCallback = object : FlowCallback<String> {
         override fun onFinish(success: Boolean, message: String, data: String?) {
 
@@ -105,7 +52,7 @@ class PackageInstaller(entryPoint: Connection) :
         }
     }
 
-    private val terminalCallback = object : OperationResultListener {
+    private val operationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
 
             when (result.operation) {
@@ -117,9 +64,13 @@ class PackageInstaller(entryPoint: Connection) :
                             val name = packageManager::class.simpleName
                             log.i("Package installer has been initialized: $name")
                             manager = packageManager
+                            manager?.subscribe(this)
                             return@forEach
                         }
                     }
+                }
+                is PackageManagerOperation -> {
+                    notify(result)
                 }
             }
         }
@@ -131,7 +82,7 @@ class PackageInstaller(entryPoint: Connection) :
         checkInitialized()
         busy()
 
-        entryPoint.subscribe(terminalCallback)
+        entryPoint.subscribe(operationCallback)
         val toolkit = Toolkit(entryPoint)
         val flow = InstallationStepFlow(toolkit)
                 .onFinish(flowCallback)
@@ -150,7 +101,8 @@ class PackageInstaller(entryPoint: Connection) :
     @Throws(IllegalStateException::class)
     override fun terminate() {
         checkNotInitialized()
-        entryPoint.unsubscribe(terminalCallback)
+        manager?.unsubscribe(operationCallback)
+        entryPoint.unsubscribe(operationCallback)
     }
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
