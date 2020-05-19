@@ -199,7 +199,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
         return exclude
     }
 
-    private fun getSecurityChanges(remote: Remote): String {
+    protected  open fun getSecurityChanges(remote: Remote): String {
 
         val chown = Commands.chown(remote.account, where)
         val chgrp = Commands.chgrp(remote.account, where)
