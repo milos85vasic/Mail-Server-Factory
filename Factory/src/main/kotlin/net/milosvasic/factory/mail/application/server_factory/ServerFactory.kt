@@ -200,6 +200,8 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         LegacyBusyWorker.free(busy)
     }
 
+    fun isBusy() = busy.isBusy()
+
     @Synchronized
     @Throws(IllegalStateException::class)
     override fun checkInitialized() {
