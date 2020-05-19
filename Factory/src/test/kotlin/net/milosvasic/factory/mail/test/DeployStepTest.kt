@@ -25,6 +25,7 @@ class DeployStepTest : BaseTest() {
     private val destination = "build/Mocks/Deploy"
     private val factory = InstallationStepFactory()
     private val mocks = listOf("Anthem.txt", "proto.stub.txt", "stub.txt")
+    private val protos = listOf("proto.stub.txt")
 
     @Test
     fun testDeployStep() {
@@ -124,5 +125,5 @@ class DeployStepTest : BaseTest() {
                     )
             )
 
-    private fun deployStep() = StubDeploy("Mocks/Deploy", destination)
+    private fun deployStep() = StubDeploy("Mocks/Deploy", destination, protos)
 }

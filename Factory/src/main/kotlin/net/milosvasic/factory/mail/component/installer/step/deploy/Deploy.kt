@@ -187,7 +187,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
         return whatFile
     }
 
-    private fun getProtoCleanup(): String {
+    protected open fun getProtoCleanup(): String {
 
         var exclude = String.EMPTY
         excludes.forEach {
