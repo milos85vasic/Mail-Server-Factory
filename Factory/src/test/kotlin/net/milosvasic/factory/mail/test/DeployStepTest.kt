@@ -13,7 +13,10 @@ import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 import net.milosvasic.factory.mail.test.implementation.StubConnection
 import net.milosvasic.factory.mail.test.implementation.StubDeploy
 import net.milosvasic.factory.mail.test.implementation.StubSSH
@@ -33,8 +36,32 @@ class DeployStepTest : BaseTest() {
         log.i("Deploy step flow test started")
 
         var finished = 0
-        val flowCallback = object : FlowCallback<String> {
+        var commandsFailed = 0
+        var commandsExecuted = 0
 
+        val ssh = StubSSH()
+        val terminal = StubConnection()
+        val remoteToolkit = Toolkit(ssh)
+        val localToolkit = Toolkit(terminal)
+        val init = InstallationStepFlow(localToolkit)
+
+        val commandCallback = object : OperationResultListener {
+            override fun onOperationPerformed(result: OperationResult) {
+
+                when (result.operation) {
+                    is TerminalCommand -> {
+                        log.v("Executed: $result")
+                        if (result.success) {
+                            commandsExecuted++
+                        } else {
+                            commandsFailed++
+                        }
+                    }
+                }
+            }
+        }
+
+        val flowCallback = object : FlowCallback<String> {
             override fun onFinish(success: Boolean, message: String, data: String?) {
 
                 if (!success) {
@@ -44,13 +71,15 @@ class DeployStepTest : BaseTest() {
             }
         }
 
-        val ssh = StubSSH()
-        val terminal = StubConnection()
-        val remoteToolkit = Toolkit(ssh)
-        val localToolkit = Toolkit(terminal)
-        val init = InstallationStepFlow(localToolkit)
+        val initFlowCallback = object : FlowCallback<String> {
+            override fun onFinish(success: Boolean, message: String, data: String?) {
 
-        registerRecipes(init).onFinish(flowCallback)
+                flowCallback.onFinish(success, message, data)
+                terminal.subscribe(commandCallback)
+            }
+        }
+
+        registerRecipes(init).onFinish(initFlowCallback)
         fun getPath(mock: String) = "$destination/$mock"
         mocks.forEach { mock ->
             val path = getPath(mock)
@@ -70,6 +99,11 @@ class DeployStepTest : BaseTest() {
         val verification = InstallationStepFlow(localToolkit)
         registerRecipes(verification).onFinish(flowCallback)
 
+        protos.forEach {
+            val path = getPath(it)
+            val command = Commands.test(path)
+            verification.width(skipConditionStep(command))
+        }
         mocks.forEach { mock ->
             val path = getPath(mock)
             val command = Commands.test(path)
@@ -85,7 +119,12 @@ class DeployStepTest : BaseTest() {
             Thread.yield()
         }
 
+        terminal.unsubscribe(commandCallback)
         Assertions.assertEquals(3, finished)
+        log.v("Commands executed: $commandsExecuted")
+        log.v("Commands failed: $commandsFailed")
+        Assertions.assertEquals(2, commandsExecuted)
+        Assertions.assertEquals(1, commandsFailed)
 
         log.i("Deploy step flow test completed")
     }
@@ -113,6 +152,14 @@ class DeployStepTest : BaseTest() {
             factory.obtain(
                     InstallationStepDefinition(
                             type = InstallationStepType.CONDITION.type,
+                            value = command
+                    )
+            )
+
+    private fun skipConditionStep(command: String) =
+            factory.obtain(
+                    InstallationStepDefinition(
+                            type = InstallationStepType.SKIP_CONDITION.type,
                             value = command
                     )
             )
