@@ -24,11 +24,11 @@ class StubDeploy(
 
     override fun getProtoCleanup(): String {
         var command = ""
-        protoStubs.forEachIndexed { index, _ ->
+        protoStubs.forEachIndexed { index, it ->
             if (index > 0) {
                 command += " && "
             }
-            command += Commands.rm("$where/proto.stub.txt")
+            command += Commands.rm("$where/$it")
         }
         return command
     }
