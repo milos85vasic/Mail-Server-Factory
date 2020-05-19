@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.test
 
-import net.milosvasic.factory.mail.application.server_factory.ServerFactory
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow

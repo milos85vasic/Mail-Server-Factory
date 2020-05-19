@@ -10,7 +10,6 @@ import net.milosvasic.factory.mail.execution.flow.implementation.InstallationSte
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
-import net.milosvasic.factory.mail.remote.ssh.SSH
 
 class Installer(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
