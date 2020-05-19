@@ -17,7 +17,7 @@ class StackStepTest : BaseTest() {
     @Test
     fun testStackStep() {
         initLogging()
-        log.i("Deploy step flow test started")
+        log.i("Stack step flow test started")
 
         val ssh = StubSSH()
         var initialized = false
@@ -69,6 +69,6 @@ class StackStepTest : BaseTest() {
             Assertions.fail<String>()
         }
 
-        log.i("Deploy step flow test completed")
+        log.i("Stack step flow test completed")
     }
 }

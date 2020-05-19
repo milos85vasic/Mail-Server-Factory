@@ -1,25 +1,29 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.common.busy.LegacyBusyWorker
+import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initialization
+import net.milosvasic.factory.mail.common.initialization.Termination
+import net.milosvasic.factory.mail.component.Toolkit
+import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
+import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Packages
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.Commands
-import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class PackageInstaller(entryPoint: Connection) :
-        LegacyBusyWorker<PackageManager>(entryPoint),
+        BusyWorker<PackageManager>(entryPoint),
         PackageManagement<PackageManager>,
         PackageManagerSupport,
-        Initialization {
+        Initialization,
+        Termination {
 
-    private var item: PackageManager? = null
     private var manager: PackageManager? = null
     private val supportedPackageManagers = LinkedHashSet<PackageManager>()
 
@@ -33,6 +37,7 @@ class PackageInstaller(entryPoint: Connection) :
         )
     }
 
+    /*
     override fun handleResult(result: OperationResult) {
         when (result.operation) {
             is TerminalCommand -> {
@@ -69,23 +74,6 @@ class PackageInstaller(entryPoint: Connection) :
         }
     }
 
-    @Synchronized
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun initialize() {
-        checkInitialized()
-        busy()
-        iterator = supportedPackageManagers.iterator()
-        tryNext()
-    }
-
-    @Synchronized
-    @Throws(IllegalStateException::class)
-    override fun terminate() {
-        checkNotInitialized()
-        detach(manager)
-        super.terminate()
-    }
-
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun onSuccessResult() {
         item?.let {
@@ -100,28 +88,44 @@ class PackageInstaller(entryPoint: Connection) :
     override fun onFailedResult() {
         tryNext()
     }
+    */
 
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun tryNext() {
-        manager?.let {
-            free(true)
-            return
-        }
-        if (iterator == null) {
-            free(false)
-            return
-        }
-        iterator?.let {
-            if (it.hasNext()) {
-                item = it.next()
-                item?.let { current ->
-                    command = Commands.getApplicationInfo(current.applicationBinaryName)
-                    entryPoint.execute(TerminalCommand(command))
-                }
-            } else {
-                free(false)
+
+    val flowCallback = object : FlowCallback<String> {
+        override fun onFinish(success: Boolean, message: String, data: String?) {
+
+            if (!success) {
+                log.e(message)
             }
+            notify(success)
         }
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
+    override fun initialize() {
+        checkInitialized()
+        busy()
+
+        val toolkit = Toolkit(entryPoint)
+        val flow = InstallationStepFlow(toolkit)
+                .onFinish(flowCallback)
+                .registerRecipe(SkipCondition::class, ConditionRecipe::class)
+
+        supportedPackageManagers.forEach { packageManager ->
+
+            val app = packageManager.applicationBinaryName
+            val command = Commands.getApplicationInfo(app)
+            val skipCondition = SkipCondition(command)
+            flow.width(skipCondition)
+        }
+        flow.run()
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class)
+    override fun terminate() {
+        checkNotInitialized()
     }
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
@@ -202,5 +206,13 @@ class PackageInstaller(entryPoint: Connection) :
         if (manager == null) {
             throw IllegalStateException("Package installer has not been initialized")
         }
+    }
+
+    override fun onSuccessResult() {
+        free(true)
+    }
+
+    override fun onFailedResult() {
+        free(false)
     }
 }
