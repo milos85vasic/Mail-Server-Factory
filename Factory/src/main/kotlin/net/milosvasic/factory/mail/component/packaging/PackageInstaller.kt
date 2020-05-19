@@ -14,8 +14,10 @@ import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class PackageInstaller(entryPoint: Connection) :
         BusyWorker<PackageManager>(entryPoint),
@@ -90,14 +92,33 @@ class PackageInstaller(entryPoint: Connection) :
     }
     */
 
-
     val flowCallback = object : FlowCallback<String> {
         override fun onFinish(success: Boolean, message: String, data: String?) {
 
             if (!success) {
                 log.e(message)
             }
-            notify(success)
+            if (manager == null) {
+                log.e("No package manager has been initialized")
+            }
+            notify(success && manager != null)
+        }
+    }
+
+    private val terminalCallback = object : OperationResultListener {
+        override fun onOperationPerformed(result: OperationResult) {
+
+            when (result.operation) {
+                is TerminalCommand -> {
+                    val cmd = result.operation.command
+                    supportedPackageManagers.forEach { packageManager ->
+                        if (cmd.trim().endsWith(getPackageManagerCommand(packageManager))) {
+                            manager = packageManager
+                            return@forEach
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -107,6 +128,7 @@ class PackageInstaller(entryPoint: Connection) :
         checkInitialized()
         busy()
 
+        entryPoint.subscribe(terminalCallback)
         val toolkit = Toolkit(entryPoint)
         val flow = InstallationStepFlow(toolkit)
                 .onFinish(flowCallback)
@@ -114,8 +136,7 @@ class PackageInstaller(entryPoint: Connection) :
 
         supportedPackageManagers.forEach { packageManager ->
 
-            val app = packageManager.applicationBinaryName
-            val command = Commands.getApplicationInfo(app)
+            val command = getPackageManagerCommand(packageManager)
             val skipCondition = SkipCondition(command)
             flow.width(skipCondition)
         }
@@ -126,6 +147,7 @@ class PackageInstaller(entryPoint: Connection) :
     @Throws(IllegalStateException::class)
     override fun terminate() {
         checkNotInitialized()
+        entryPoint.unsubscribe(terminalCallback)
     }
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
@@ -214,5 +236,11 @@ class PackageInstaller(entryPoint: Connection) :
 
     override fun onFailedResult() {
         free(false)
+    }
+
+    private fun getPackageManagerCommand(packageManager: PackageManager): String {
+
+        val app = packageManager.applicationBinaryName
+        return Commands.getApplicationInfo(app)
     }
 }
