@@ -113,6 +113,9 @@ class PackageInstaller(entryPoint: Connection) :
                     val cmd = result.operation.command
                     supportedPackageManagers.forEach { packageManager ->
                         if (cmd.trim().endsWith(getPackageManagerCommand(packageManager))) {
+
+                            val name = packageManager::class.simpleName
+                            log.i("Package installer has been initialized: $name")
                             manager = packageManager
                             return@forEach
                         }
