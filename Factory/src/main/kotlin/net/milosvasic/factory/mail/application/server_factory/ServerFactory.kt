@@ -31,7 +31,7 @@ import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
+open class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
 
     private val busy = Busy()
     private var configuration: Configuration? = null
@@ -321,7 +321,7 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
 
         val host = ssh.getRemote().host
         val pingCommand = TerminalCommand(Commands.ping(host))
-        val hostInfoCommand = TerminalCommand(Commands.getHostInfo())
+        val hostInfoCommand = getHostInfoCommand()
         val testCommand = TerminalCommand(Commands.echo("Hello"))
         val terminal = ssh.getTerminal()
         val dieCallback = DieOnFailureCallback<String>()
@@ -334,4 +334,6 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                 .onFinish(dieCallback)
                 .connect(initFlow)
     }
+
+    protected open fun getHostInfoCommand() = TerminalCommand(Commands.getHostInfo())
 }

@@ -9,6 +9,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ConnectionProvider
 import net.milosvasic.factory.mail.test.implementation.StubSSH
+import net.milosvasic.factory.mail.test.implementation.StubServerFactory
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -29,7 +30,7 @@ class StackStepTest : BaseTest() {
             }
         }
 
-        val factory = ServerFactory(listOf(mocks))
+        val factory = StubServerFactory(listOf(mocks))
         factory.setConnectionProvider(connectionProvider)
 
         val callback = object : FlowCallback<String> {
