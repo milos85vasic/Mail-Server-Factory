@@ -39,7 +39,7 @@ class CheckStepTest : BaseTest() {
             }
         }
 
-        connection.terminal.subscribe(operationResultListener)
+        connection.getTerminal().subscribe(operationResultListener)
 
         val flowCallback = object : FlowCallback<String> {
 
@@ -65,7 +65,7 @@ class CheckStepTest : BaseTest() {
             Thread.yield()
         }
 
-        connection.terminal.unsubscribe(operationResultListener)
+        connection.getTerminal().unsubscribe(operationResultListener)
         assert(finished)
         Assertions.assertEquals((iterations * 2) + 1, executed)
         log.i("Check step test completed")

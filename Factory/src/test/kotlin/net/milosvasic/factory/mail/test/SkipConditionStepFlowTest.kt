@@ -59,7 +59,7 @@ open class SkipConditionStepFlowTest : BaseTest() {
             }
         }
 
-        connection.terminal.subscribe(operationNResultListener)
+        connection.getTerminal().subscribe(operationNResultListener)
 
         var positiveFlow = InstallationStepFlow(toolkit)
         var definitions = getDefinitions(fails = false, alreadyInstalled = true)

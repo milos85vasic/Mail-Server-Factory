@@ -24,6 +24,8 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.HostInfoDataHandler
+import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.remote.ConnectionProvider
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
@@ -39,6 +41,17 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
     private val initializationOperation = ServerFactoryInitializationOperation()
     private val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
     private val containersConfigurations = mutableListOf<SoftwareConfiguration>()
+
+    private var connectionProvider: ConnectionProvider = object : ConnectionProvider {
+
+        @Throws(IllegalArgumentException::class)
+        override fun obtain(): Connection {
+            configuration?.let { config ->
+                return SSH(config.remote)
+            }
+            throw IllegalArgumentException("No valid configuration available for creating a connection")
+        }
+    }
 
     @Throws(IllegalStateException::class)
     override fun initialize() {
@@ -154,23 +167,21 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         }
         log.i("Server factory started")
         try {
-            configuration?.let { config ->
 
-                val ssh = SSH(config.remote)
-                val docker = Docker(ssh)
-                val installer = Installer(ssh)
+            val ssh = connectionProvider.obtain()
+            val docker = Docker(ssh)
+            val installer = Installer(ssh)
 
-                terminators.add(docker)
-                terminators.add(installer)
+            terminators.add(docker)
+            terminators.add(installer)
 
-                val dockerFlow = getDockerFlow(docker)
-                val dockerInitFlow = getDockerInitFlow(docker, dockerFlow)
-                val installFlow = getInstallationFlow(installer, dockerInitFlow)
-                val initFlow = getInitializationFlow(installer, installFlow)
-                val commandFlow = getCommandFlow(ssh, initFlow)
+            val dockerFlow = getDockerFlow(docker)
+            val dockerInitFlow = getDockerInitFlow(docker, dockerFlow)
+            val installFlow = getInstallationFlow(installer, dockerInitFlow)
+            val initFlow = getInitializationFlow(installer, installFlow)
+            val commandFlow = getCommandFlow(ssh, initFlow)
 
-                commandFlow.run()
-            }
+            commandFlow.run()
         } catch (e: IllegalArgumentException) {
 
             fail(e)
@@ -235,6 +246,9 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         }
     }
 
+    fun setConnectionProvider(provider: ConnectionProvider) {
+        connectionProvider = provider
+    }
 
     private fun notifyInit(success: Boolean) {
         free()
@@ -303,13 +317,13 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
                 .onFinish(initCallback)
     }
 
-    private fun getCommandFlow(ssh: SSH, initFlow: InitializationFlow): CommandFlow {
+    private fun getCommandFlow(ssh: Connection, initFlow: InitializationFlow): CommandFlow {
 
         val host = ssh.getRemote().host
         val pingCommand = TerminalCommand(Commands.ping(host))
         val hostInfoCommand = TerminalCommand(Commands.getHostInfo())
         val testCommand = TerminalCommand(Commands.echo("Hello"))
-        val terminal = ssh.terminal
+        val terminal = ssh.getTerminal()
         val dieCallback = DieOnFailureCallback<String>()
         return CommandFlow()
                 .width(terminal)

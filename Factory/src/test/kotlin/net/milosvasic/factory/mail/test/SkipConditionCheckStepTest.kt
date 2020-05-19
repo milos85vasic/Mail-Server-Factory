@@ -42,7 +42,7 @@ class SkipConditionCheckStepTest : BaseTest() {
             }
         }
 
-        connection.terminal.subscribe(operationResultListener)
+        connection.getTerminal().subscribe(operationResultListener)
 
         val flowCallback = object : FlowCallback<String> {
 
@@ -83,7 +83,7 @@ class SkipConditionCheckStepTest : BaseTest() {
             Thread.yield()
         }
 
-        connection.terminal.unsubscribe(operationResultListener)
+        connection.getTerminal().unsubscribe(operationResultListener)
         Assertions.assertEquals(3, finished)
         Assertions.assertEquals(0, failed)
         Assertions.assertEquals((iterations * 2) + 2, executed)

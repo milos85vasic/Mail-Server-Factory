@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 class StubConnection : Connection, Notifying<OperationResult> {
 
-    val terminal = Terminal()
+    private val term = Terminal()
 
     private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
 
@@ -24,21 +24,23 @@ class StubConnection : Connection, Notifying<OperationResult> {
         }
     }
 
+    override fun getTerminal() = term
+
     init {
-        terminal.subscribe(listener)
+        term.subscribe(listener)
     }
 
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
-        terminal.execute(what)
+        term.execute(what)
     }
 
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     fun execute(data: TerminalCommand, obtainOutput: Boolean) {
         data.configuration[CommandConfiguration.OBTAIN_RESULT] = obtainOutput
-        terminal.execute(data)
+        term.execute(data)
     }
 
     override fun subscribe(what: OperationResultListener) {

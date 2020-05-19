@@ -1,13 +1,14 @@
 package net.milosvasic.factory.mail.test.implementation
 
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.localhost
 import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class StubSSH : SSH(
-        Remote(host = "stub", port = 0, account = "stub")
+        Remote(host = localhost, port = 0, account = System.getProperty("user.name"))
 ) {
 
     companion object {
@@ -19,7 +20,7 @@ class StubSSH : SSH(
     @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
         val command = TerminalCommand("${what.command}$stubCommandMarker", what.configuration)
-        terminal.execute(command)
+        getTerminal().execute(command)
     }
 
     @Synchronized
@@ -27,6 +28,6 @@ class StubSSH : SSH(
     override fun execute(data: TerminalCommand, obtainOutput: Boolean) {
         val command = TerminalCommand("${data.command}$stubCommandMarker")
         command.configuration[CommandConfiguration.OBTAIN_RESULT] = obtainOutput
-        terminal.execute(command)
+        getTerminal().execute(command)
     }
 }

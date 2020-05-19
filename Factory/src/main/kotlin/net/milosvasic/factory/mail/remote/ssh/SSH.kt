@@ -16,7 +16,7 @@ open class SSH(private val remote: Remote) :
     Connection,
     Notifying<OperationResult> {
 
-    val terminal = Terminal()
+    private val terminal = Terminal()
 
     private var operatingSystem = OperatingSystem()
     private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
@@ -30,6 +30,8 @@ open class SSH(private val remote: Remote) :
     init {
         terminal.subscribe(listener)
     }
+
+    override fun getTerminal() = terminal
 
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)

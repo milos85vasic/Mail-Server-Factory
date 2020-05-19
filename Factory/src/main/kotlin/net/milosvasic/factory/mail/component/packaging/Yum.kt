@@ -1,8 +1,8 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.remote.Connection
 
-open class Yum(entryPoint: SSH) : PackageManager(entryPoint) {
+open class Yum(entryPoint: Connection) : PackageManager(entryPoint) {
 
     override val applicationBinaryName: String
         get() = "yum"

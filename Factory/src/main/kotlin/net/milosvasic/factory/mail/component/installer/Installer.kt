@@ -9,9 +9,10 @@ import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializ
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSH
 
-class Installer(entryPoint: SSH) : InstallerAbstract(entryPoint) {
+class Installer(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
     private val installer = PackageInstaller(entryPoint)
 

@@ -24,7 +24,7 @@ class StubDeploy(
 
     override fun getProtoCleanup(): String {
         var command = ""
-        protoStubs.forEachIndexed { index, item ->
+        protoStubs.forEachIndexed { index, _ ->
             if (index > 0) {
                 command += " && "
             }

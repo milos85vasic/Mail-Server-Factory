@@ -6,6 +6,9 @@ import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.remote.ConnectionProvider
+import net.milosvasic.factory.mail.test.implementation.StubSSH
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -16,9 +19,18 @@ class StackStepTest : BaseTest() {
         initLogging()
         log.i("Deploy step flow test started")
 
+        val ssh = StubSSH()
         var initialized = false
         val mocks = "Mocks/Stack/Main.json"
+
+        val connectionProvider = object : ConnectionProvider {
+            override fun obtain(): Connection {
+                return ssh
+            }
+        }
+
         val factory = ServerFactory(listOf(mocks))
+        factory.setConnectionProvider(connectionProvider)
 
         val callback = object : FlowCallback<String> {
             override fun onFinish(success: Boolean, message: String, data: String?) {

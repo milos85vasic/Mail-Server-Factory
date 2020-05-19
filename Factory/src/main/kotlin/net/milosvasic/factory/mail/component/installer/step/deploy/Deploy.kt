@@ -68,7 +68,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
     override fun getFlow(): CommandFlow {
 
         connection?.let { conn ->
-            terminal = conn.terminal
+            terminal = conn.getTerminal()
             remote = connection?.getRemote()
 
             terminal?.let { term ->

@@ -78,7 +78,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
         }
 
         connection?.let { conn ->
-            terminal = conn.terminal
+            terminal = conn.getTerminal()
             remote = conn.getRemote()
 
             terminal?.let { term ->
