@@ -32,7 +32,7 @@ class StackStepTest : BaseTest() {
                     } catch (e: IllegalStateException) {
 
                         fail(e)
-                        Assertions.fail()
+                        Assertions.fail<String>()
                     }
                 }
             }
@@ -54,7 +54,7 @@ class StackStepTest : BaseTest() {
         } catch (e: BusyException) {
 
             fail(e)
-            Assertions.fail()
+            Assertions.fail<String>()
         }
 
         log.i("Deploy step flow test completed")
