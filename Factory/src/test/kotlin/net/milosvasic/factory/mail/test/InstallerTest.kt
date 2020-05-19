@@ -41,6 +41,7 @@ class InstallerTest : BaseTest() {
             Thread.yield()
         }
 
+        installer.terminate()
         assert(initialized)
         log.i("Installer test completed")
     }
