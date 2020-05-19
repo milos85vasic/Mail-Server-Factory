@@ -25,7 +25,10 @@ import org.junit.jupiter.api.Test
 
 class DeployStepTest : BaseTest() {
 
-    private val destination = "build/Mocks/Deploy"
+    private val archive = "Deploy.tar.gz"
+    private val mocksDirectory = "Mocks"
+    private val deployDirectory = "$mocksDirectory/Deploy"
+    private val destination = "build/$deployDirectory"
     private val factory = InstallationStepFactory()
     private val protos = listOf("proto.stub.txt")
     private val mocks = listOf("Anthem.txt", "stub.txt")
@@ -104,6 +107,11 @@ class DeployStepTest : BaseTest() {
             val command = Commands.test(path)
             verification.width(skipConditionStep(command))
         }
+
+        var cmd = Commands.test(getPath(archive))
+        verification.width(skipConditionStep(cmd))
+        cmd = Commands.test("$mocksDirectory/$archive")
+        verification.width(skipConditionStep(cmd))
         mocks.forEach { mock ->
             val path = getPath(mock)
             val command = Commands.test(path)
@@ -124,7 +132,7 @@ class DeployStepTest : BaseTest() {
         log.v("Commands executed: $commandsExecuted")
         log.v("Commands failed: $commandsFailed")
         Assertions.assertEquals(2, commandsExecuted)
-        Assertions.assertEquals(1, commandsFailed)
+        Assertions.assertEquals(3, commandsFailed)
 
         log.i("Deploy step flow test completed")
     }
