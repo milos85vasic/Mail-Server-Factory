@@ -6,12 +6,14 @@ import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
+import net.milosvasic.factory.mail.component.packaging.PackageManager
+import net.milosvasic.factory.mail.component.packaging.PackageManagerSupport
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 
-class Installer(entryPoint: Connection) : InstallerAbstract(entryPoint) {
+class Installer(entryPoint: Connection) : InstallerAbstract(entryPoint), PackageManagerSupport {
 
     private val installer = PackageInstaller(entryPoint)
 
@@ -50,6 +52,16 @@ class Installer(entryPoint: Connection) : InstallerAbstract(entryPoint) {
     override fun termination() {
         installer.unsubscribe(listener)
         installer.terminate()
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun addSupportedPackageManager(packageManager: PackageManager) {
+        installer.addSupportedPackageManager(packageManager)
+    }
+
+    @Throws(IllegalStateException::class)
+    override fun removeSupportedPackageManager(packageManager: PackageManager) {
+        installer.removeSupportedPackageManager(packageManager)
     }
 
     @Synchronized

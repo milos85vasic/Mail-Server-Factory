@@ -14,8 +14,9 @@ import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class PackageInstaller(entryPoint: Connection) :
-    LegacyBusyWorker<PackageManager>(entryPoint),
-    PackageManagement<PackageManager>,
+        LegacyBusyWorker<PackageManager>(entryPoint),
+        PackageManagement<PackageManager>,
+        PackageManagerSupport,
         Initialization {
 
     private var item: PackageManager? = null
@@ -24,11 +25,11 @@ class PackageInstaller(entryPoint: Connection) :
 
     init {
         supportedPackageManagers.addAll(
-            listOf(
-                Dnf(entryPoint),
-                Yum(entryPoint),
-                AptGet(entryPoint)
-            )
+                listOf(
+                        Dnf(entryPoint),
+                        Yum(entryPoint),
+                        AptGet(entryPoint)
+                )
         )
     }
 
@@ -161,13 +162,13 @@ class PackageInstaller(entryPoint: Connection) :
     }
 
     @Throws(IllegalStateException::class)
-    fun addSupportedPackageManager(packageManager: PackageManager) {
+    override fun addSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
         supportedPackageManagers.add(packageManager)
     }
 
     @Throws(IllegalStateException::class)
-    fun removeSupportedPackageManager(packageManager: PackageManager) {
+    override fun removeSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
         supportedPackageManagers.remove(packageManager)
     }

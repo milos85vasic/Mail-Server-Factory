@@ -168,9 +168,9 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         log.i("Server factory started")
         try {
 
-            val ssh = connectionProvider.obtain()
-            val docker = Docker(ssh)
-            val installer = Installer(ssh)
+            val ssh = getConnection()
+            val docker = instantiateDocker(ssh)
+            val installer = instantiateInstaller(ssh)
 
             terminators.add(docker)
             terminators.add(installer)
@@ -249,6 +249,17 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
     fun setConnectionProvider(provider: ConnectionProvider) {
         connectionProvider = provider
     }
+
+    @Throws(IllegalArgumentException::class)
+    protected fun getConnection(): Connection {
+        return connectionProvider.obtain()
+    }
+
+    protected open fun instantiateDocker(ssh: Connection) = Docker(ssh)
+
+    protected open fun instantiateInstaller(ssh: Connection) = Installer(ssh)
+
+    protected open fun getHostInfoCommand() = TerminalCommand(Commands.getHostInfo())
 
     private fun notifyInit(success: Boolean) {
         free()
@@ -334,6 +345,4 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                 .onFinish(dieCallback)
                 .connect(initFlow)
     }
-
-    protected open fun getHostInfoCommand() = TerminalCommand(Commands.getHostInfo())
 }
