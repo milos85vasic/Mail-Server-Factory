@@ -18,7 +18,7 @@
             "value": "Mocks/Stack:build/Mocks/Stack"
           },
           {
-            "type": "stack",
+            "type": "stubStack",
             "value": "build/Mocks/Stack"
           },
           {

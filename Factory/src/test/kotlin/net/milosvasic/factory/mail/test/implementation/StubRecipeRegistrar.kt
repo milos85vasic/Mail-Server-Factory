@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.test.implementation
 
+import net.milosvasic.factory.mail.component.docker.recipe.StackRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.DeployRecipe
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
@@ -13,6 +14,13 @@ class StubRecipeRegistrar : ProcessingRecipesRegistration {
                 flow.registerRecipe(
                         StubDeploy::class,
                         DeployRecipe::class
+                )
+                return true
+            }
+            StubStack::class -> {
+                flow.registerRecipe(
+                        StubStack::class,
+                        StackRecipe::class
                 )
                 return true
             }

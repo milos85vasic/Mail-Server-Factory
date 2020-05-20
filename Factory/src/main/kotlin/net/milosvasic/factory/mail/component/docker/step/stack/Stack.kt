@@ -9,8 +9,7 @@ import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.Commands
 import java.io.File
 
-
-class Stack(
+open class Stack(
         private val composeYmlPath: String,
         composeFileName: String = defaultComposeFileName,
         private val composeFileExtension: String = defaultComposeFileExtension
@@ -43,6 +42,11 @@ class Stack(
     }
 
     override fun getOperation() = DockerInstallationOperation()
+
+    protected open fun getScriptContent(command: String): String {
+        val bashHead = "#!/bin/sh"
+        return Commands.printf("$bashHead\\n$command")
+    }
 
     private fun getCompletionCommand(command: String): String {
 
@@ -99,8 +103,9 @@ class Stack(
     }
 
     private fun generate(command: String, script: String): String {
-        val bashHead = "#!/bin/sh"
         val chmod = "chmod u+x $script"
-        return "${Commands.printf("$bashHead\\n$command")} > $script; $chmod"
+        return "${getScriptContent(command)} > $script; $chmod"
     }
 }
+
+
