@@ -14,6 +14,8 @@ class StubServerFactory(arguments: List<String> = listOf()) : ServerFactory(argu
         val installer = super.instantiateInstaller(ssh)
         val stubPackageManager = StubPackageManager(getConnection())
         installer.addSupportedPackageManager(stubPackageManager)
+        val recipeRegistrar = StubRecipeRegistrar()
+        installer.addProcessingRecipesRegistrar(recipeRegistrar)
         return installer
     }
 }

@@ -155,6 +155,16 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         notify(result)
     }
 
+    fun addProcessingRecipesRegistrar(registrar: ProcessingRecipesRegistration) {
+        if (!recipeRegistrars.contains(registrar)) {
+            recipeRegistrars.add(registrar)
+        }
+    }
+
+    fun removeProcessingRecipesRegistrar(registrar: ProcessingRecipesRegistration) {
+        recipeRegistrars.remove(registrar)
+    }
+
     @Throws(IllegalStateException::class)
     protected abstract fun initialization()
 
