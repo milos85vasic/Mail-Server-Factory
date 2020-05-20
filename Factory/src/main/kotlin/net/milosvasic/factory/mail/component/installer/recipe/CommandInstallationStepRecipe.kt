@@ -18,7 +18,7 @@ class CommandInstallationStepRecipe : InstallationStepRecipe() {
                 is TerminalCommand -> {
 
                     val resultCommand = result.operation.command
-                    if (command != String.EMPTY && resultCommand.endsWith(command)) {
+                    if (command != String.EMPTY && resultCommand.trim().endsWith(command)) {
 
                         callback?.onFinish(result.success, getErrorMessage(result))
                         callback = null
