@@ -10,10 +10,6 @@
             "value": "docker --version"
           },
           {
-            "type": "conditionCheck",
-            "value": "hello-world"
-          },
-          {
             "type": "deploy",
             "value": "Mocks/Stack:build/Mocks/Stack"
           },
