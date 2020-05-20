@@ -11,10 +11,13 @@ class StackRecipe : InstallationStepRecipe() {
 
     private val operationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
-            toolkit?.connection?.unsubscribe(this)
             when (result.operation) {
                 is DockerInstallationOperation -> {
 
+                    step?.let { s ->
+                        val step = s as Stack
+                        step.unsubscribe(this)
+                    }
                     callback?.onFinish(result.success, getErrorMessage(result))
                     callback = null
                 }
@@ -36,7 +39,7 @@ class StackRecipe : InstallationStepRecipe() {
                 step?.let { s ->
                     val step = s as Stack
                     tools.connection?.let { conn ->
-                        conn.subscribe(operationCallback)
+                        step.subscribe(operationCallback)
                         step.execute(conn)
                     }
                 }

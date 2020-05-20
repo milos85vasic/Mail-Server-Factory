@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.docker
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.VariableContext
@@ -39,7 +40,12 @@ enum class DockerCommand : Obtain<String> {
             val dockerComposePath = VariableKey.DOCKER_COMPOSE_PATH.key
             val configuration = ConfigurationManager.getConfiguration()
             val key = "$context${VariableNode.contextSeparator}$dockerComposePath"
-            return "${configuration.getVariableParsed(key)}${File.separator}docker-compose"
+            val variable = configuration.getVariableParsed(key)
+            return if (variable != null && variable != String.EMPTY) {
+                "$variable${File.separator}docker-compose"
+            } else {
+                "docker-compose"
+            }
         }
     },
     START {
