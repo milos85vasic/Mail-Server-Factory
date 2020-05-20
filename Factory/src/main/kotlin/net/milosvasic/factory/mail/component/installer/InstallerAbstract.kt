@@ -86,30 +86,35 @@ abstract class InstallerAbstract(entryPoint: Connection) :
                         CommandInstallationStep::class,
                         CommandInstallationStepRecipe::class
                 )
-            }
-            is SkipCondition -> {
-                flow.registerRecipe(
-                        SkipCondition::class,
-                        ConditionRecipe::class
-                )
+                return
             }
             is Condition -> {
                 flow.registerRecipe(
                         Condition::class,
                         ConditionRecipe::class
                 )
+                return
+            }
+            is SkipCondition -> {
+                flow.registerRecipe(
+                        SkipCondition::class,
+                        ConditionRecipe::class
+                )
+                return
             }
             is Deploy -> {
                 flow.registerRecipe(
                         Deploy::class,
                         DeployRecipe::class
                 )
+                return
             }
             is Reboot -> {
                 flow.registerRecipe(
                         Reboot::class,
                         RebootRecipe::class
                 )
+                return
             }
         }
     }

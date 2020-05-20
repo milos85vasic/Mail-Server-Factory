@@ -36,27 +36,30 @@ class Docker(entryPoint: Connection) : InstallerAbstract(entryPoint) {
 
     @Throws(IllegalArgumentException::class)
     override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) {
-        super.registerRecipes(step, flow)
         when (step) {
             is Stack -> {
                 flow.registerRecipe(
                         Stack::class,
                         StackRecipe::class
                 )
+                return
             }
             is Check -> {
                 flow.registerRecipe(
                         Check::class,
                         CommandInstallationStepRecipe::class
                 )
+                return
             }
             is SkipConditionCheck -> {
                 flow.registerRecipe(
                         SkipConditionCheck::class,
                         ConditionRecipe::class
                 )
+                return
             }
         }
+        super.registerRecipes(step, flow)
     }
 
     override fun getEnvironmentName() = "Docker"
