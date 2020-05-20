@@ -31,8 +31,7 @@ class StackStepTest : BaseTest() {
             }
         }
 
-        val protos = listOf("proto.stub.txt")
-        val stepFactory = StubInstallationStepFactory(protos)
+        val stepFactory = StubInstallationStepFactory(listOf())
         InstallationStepFactories.addFactory(stepFactory)
         val factory = StubServerFactory(listOf(mocks))
         factory.setConnectionProvider(connectionProvider)

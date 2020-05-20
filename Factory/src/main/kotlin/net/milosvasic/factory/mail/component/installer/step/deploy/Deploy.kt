@@ -74,7 +74,8 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
             terminal?.let { term ->
                 remote?.let { rmt ->
 
-                    return CommandFlow()
+                    val protoCleanup = getProtoCleanup()
+                    val flow = CommandFlow()
                             .width(conn)
                             .perform(Commands.mkdir(where), onDirectoryCreated)
                             .width(term)
@@ -83,7 +84,11 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
                             .width(conn)
                             .perform(Commands.unTar(remoteTar, where))
                             .perform(Commands.rm(remoteTar))
-                            .perform(getProtoCleanup())
+
+                    if (protoCleanup != String.EMPTY) {
+                        flow.perform(protoCleanup)
+                    }
+                    return flow
                             .width(term)
                             .perform(Commands.rm(localTar))
                             .width(conn)
@@ -199,7 +204,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
         return exclude
     }
 
-    protected  open fun getSecurityChanges(remote: Remote): String {
+    protected open fun getSecurityChanges(remote: Remote): String {
 
         val chown = Commands.chown(remote.account, where)
         val chgrp = Commands.chgrp(remote.account, where)
