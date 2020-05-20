@@ -5,20 +5,13 @@ import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.Toolkit
-import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
-import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
-import net.milosvasic.factory.mail.component.installer.recipe.DeployRecipe
-import net.milosvasic.factory.mail.component.installer.recipe.RebootRecipe
-import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
+import net.milosvasic.factory.mail.component.installer.recipe.registration.MainRecipeRegistrar
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
-import net.milosvasic.factory.mail.component.installer.step.condition.Condition
-import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
-import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
-import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
+import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipesRegistration
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -29,10 +22,13 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         Initializer,
         Termination,
         ConfigurableSoftware,
-        Installation {
+        Installation,
+        ProcessingRecipesRegistration {
 
     private var config: SoftwareConfiguration? = null
+    private val mainRecipeRegistrar = MainRecipeRegistrar()
     private lateinit var steps: Map<String, List<InstallationStep<*>>>
+    protected val recipeRegistrars = mutableListOf<ProcessingRecipesRegistration>(mainRecipeRegistrar)
 
     private val flowCallback = object : FlowCallback<String> {
 
@@ -79,44 +75,14 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     }
 
     @Throws(IllegalArgumentException::class)
-    protected open fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) {
-        when (step) {
-            is CommandInstallationStep -> {
-                flow.registerRecipe(
-                        CommandInstallationStep::class,
-                        CommandInstallationStepRecipe::class
-                )
-                return
-            }
-            is Condition -> {
-                flow.registerRecipe(
-                        Condition::class,
-                        ConditionRecipe::class
-                )
-                return
-            }
-            is SkipCondition -> {
-                flow.registerRecipe(
-                        SkipCondition::class,
-                        ConditionRecipe::class
-                )
-                return
-            }
-            is Deploy -> {
-                flow.registerRecipe(
-                        Deploy::class,
-                        DeployRecipe::class
-                )
-                return
-            }
-            is Reboot -> {
-                flow.registerRecipe(
-                        Reboot::class,
-                        RebootRecipe::class
-                )
-                return
+    override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow): Boolean {
+
+        recipeRegistrars.forEach { registrar ->
+            if (registrar.registerRecipes(step, flow)) {
+                return true
             }
         }
+        return false
     }
 
     @Synchronized

@@ -1,14 +1,11 @@
 package net.milosvasic.factory.mail.component.installer
 
 import net.milosvasic.factory.mail.component.Toolkit
-import net.milosvasic.factory.mail.component.installer.recipe.PackageManagerInstallationStepRecipe
-import net.milosvasic.factory.mail.component.installer.step.InstallationStep
-import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
+import net.milosvasic.factory.mail.component.installer.recipe.registration.InstallerRecipeRegistrar
 import net.milosvasic.factory.mail.component.packaging.PackageInstaller
 import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
 import net.milosvasic.factory.mail.component.packaging.PackageManager
 import net.milosvasic.factory.mail.component.packaging.PackageManagerSupport
-import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
@@ -16,6 +13,11 @@ import net.milosvasic.factory.mail.remote.Connection
 class Installer(entryPoint: Connection) : InstallerAbstract(entryPoint), PackageManagerSupport {
 
     private val installer = PackageInstaller(entryPoint)
+    private val recipeRegistrar = InstallerRecipeRegistrar()
+
+    init {
+        recipeRegistrars.add(recipeRegistrar)
+    }
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
@@ -27,19 +29,6 @@ class Installer(entryPoint: Connection) : InstallerAbstract(entryPoint), Package
                     val operationResult = OperationResult(installerInitializationOperation, result.success)
                     notify(operationResult)
                 }
-            }
-        }
-    }
-
-    @Throws(IllegalArgumentException::class)
-    override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) {
-        super.registerRecipes(step, flow)
-        when (step) {
-            is PackageManagerInstallationStep -> {
-                flow.registerRecipe(
-                        PackageManagerInstallationStep::class,
-                        PackageManagerInstallationStepRecipe::class
-                )
             }
         }
     }
