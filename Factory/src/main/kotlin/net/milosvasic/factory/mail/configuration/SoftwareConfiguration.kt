@@ -5,7 +5,7 @@ import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
-import net.milosvasic.factory.mail.component.installer.step.InstallationStepFactory
+import net.milosvasic.factory.mail.component.installer.step.factory.InstallationStepFactories
 import net.milosvasic.factory.mail.validation.Validator
 import java.io.File
 
@@ -51,14 +51,14 @@ data class SoftwareConfiguration(
 
         Validator.Arguments.validateSingle(param)
         val os = param[0]
-        val factory = InstallationStepFactory()
+        val factories = InstallationStepFactories
         val installationSteps = mutableMapOf<String, List<InstallationStep<*>>>()
         software.forEach {
             val steps = it.installationSteps[os]
             steps?.let { recipe ->
                 val items = mutableListOf<InstallationStep<*>>()
                 recipe.forEach { definition ->
-                    items.add(factory.obtain(definition))
+                    items.add(factories.obtain(definition))
                 }
                 installationSteps[it.name] = items
             }

@@ -10,7 +10,7 @@
             "value": "docker --version"
           },
           {
-            "type": "deploy",
+            "type": "studDeploy",
             "value": "Mocks/Stack:build/Mocks/Stack"
           },
           {

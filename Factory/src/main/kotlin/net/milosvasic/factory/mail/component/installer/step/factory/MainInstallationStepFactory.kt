@@ -1,10 +1,13 @@
-package net.milosvasic.factory.mail.component.installer.step
+package net.milosvasic.factory.mail.component.installer.step.factory
 
-import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepType
 import net.milosvasic.factory.mail.component.docker.step.stack.Check
 import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionCheck
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
+import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
+import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
+import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
@@ -15,7 +18,7 @@ import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.validation.Validator
 
-class InstallationStepFactory : ObtainParametrized<InstallationStepDefinition, InstallationStep<*>> {
+class MainInstallationStepFactory : InstallationStepFactory {
 
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun obtain(vararg param: InstallationStepDefinition): InstallationStep<*> {

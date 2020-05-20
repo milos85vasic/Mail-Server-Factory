@@ -1,12 +1,14 @@
 package net.milosvasic.factory.mail.test
 
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.component.installer.step.factory.InstallationStepFactories
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ConnectionProvider
+import net.milosvasic.factory.mail.test.implementation.StubInstallationStepFactory
 import net.milosvasic.factory.mail.test.implementation.StubSSH
 import net.milosvasic.factory.mail.test.implementation.StubServerFactory
 import org.junit.jupiter.api.Assertions
@@ -29,6 +31,9 @@ class StackStepTest : BaseTest() {
             }
         }
 
+        val protos = listOf("proto.stub.txt")
+        val stepFactory = StubInstallationStepFactory(protos)
+        InstallationStepFactories.addFactory(stepFactory)
         val factory = StubServerFactory(listOf(mocks))
         factory.setConnectionProvider(connectionProvider)
 

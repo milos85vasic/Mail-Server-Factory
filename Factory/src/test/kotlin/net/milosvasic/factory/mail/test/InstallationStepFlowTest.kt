@@ -3,8 +3,8 @@ package net.milosvasic.factory.mail.test
 import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
-import net.milosvasic.factory.mail.component.installer.step.InstallationStepFactory
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
+import net.milosvasic.factory.mail.component.installer.step.factory.InstallationStepFactories
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
@@ -23,7 +23,7 @@ class InstallationStepFlowTest : BaseTest() {
         var finished = false
         val connection = StubConnection()
         val toolkit = Toolkit(connection)
-        val factory = InstallationStepFactory()
+        val factory = InstallationStepFactories
         var flow = InstallationStepFlow(toolkit)
 
         val flowCallback = object : FlowCallback<String> {
