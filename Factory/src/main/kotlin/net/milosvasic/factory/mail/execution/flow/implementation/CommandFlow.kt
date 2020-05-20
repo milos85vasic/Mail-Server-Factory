@@ -4,10 +4,12 @@ import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.execution.Executor
+import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowPerformBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
+import net.milosvasic.factory.mail.getMessage
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.operation.command.CommandConfiguration
@@ -15,7 +17,7 @@ import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalCommand, String>() {
 
-    private val dataHandlers = mutableMapOf<TerminalCommand, DataHandler<String>>()
+    private val dataHandlers = mutableMapOf<TerminalCommand, DataHandler<OperationResult>>()
 
     @Throws(BusyException::class)
     override fun width(subject: Executor<TerminalCommand>): CommandFlow {
@@ -36,7 +38,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
     }
 
     @Throws(BusyException::class)
-    fun perform(what: TerminalCommand, dataHandler: DataHandler<String>): CommandFlow {
+    fun perform(what: TerminalCommand, dataHandler: DataHandler<OperationResult>): CommandFlow {
         what.configuration[CommandConfiguration.OBTAIN_RESULT] = true
         super.perform(what)
         dataHandlers[what] = dataHandler
@@ -44,7 +46,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
     }
 
     @Throws(BusyException::class)
-    fun perform(what: String, dataHandler: DataHandler<String>): CommandFlow {
+    fun perform(what: String, dataHandler: DataHandler<OperationResult>): CommandFlow {
         val command = TerminalCommand(what)
         command.configuration[CommandConfiguration.OBTAIN_RESULT] = true
         super.perform(command)
@@ -58,9 +60,15 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
         return this
     }
 
+    @Throws(BusyException::class)
+    override fun connect(flow: FlowBuilder<*, *, *>): CommandFlow {
+        super.connect(flow)
+        return this
+    }
+
+    @Throws(IllegalArgumentException::class)
     override fun getProcessingRecipe(
-            subject: Executor<TerminalCommand>,
-            operation: TerminalCommand
+            subject: Executor<TerminalCommand>, operation: TerminalCommand
     ): ProcessingRecipe {
 
         return object : ProcessingRecipe {
@@ -69,11 +77,10 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
 
             private val operationCallback = object : OperationResultListener {
                 override fun onOperationPerformed(result: OperationResult) {
+
                     subject.unsubscribe(this)
-                    if (result.success) {
-                        val dataHandler = dataHandlers[operation]
-                        dataHandler?.onData(result.data)
-                    }
+                    val dataHandler = dataHandlers[operation]
+                    dataHandler?.onData(result)
                     val message = if (result.success) {
                         String.EMPTY
                     } else {
@@ -91,7 +98,13 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
             override fun process(callback: FlowProcessingCallback) {
                 this.callback = callback
                 subject.subscribe(operationCallback)
-                subject.execute(operation)
+                try {
+                    subject.execute(operation)
+                } catch (e: Exception) {
+
+                    subject.unsubscribe(operationCallback)
+                    callback.onFinish(false, e.getMessage())
+                }
             }
         }
     }

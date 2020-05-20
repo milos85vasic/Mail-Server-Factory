@@ -8,6 +8,7 @@ object Commands {
 
     const val rm = "rm"
     const val here = "."
+    const val cp = "cp -R"
     const val find = "find "
     const val ssh = "ssh -p"
     const val scp = "scp -P"
@@ -44,6 +45,11 @@ object Commands {
         return "$scp ${remote.port} $what ${remote.account}@${remote.host}:$where"
     }
 
+    fun cp(what: String, where: String): String {
+
+        return "$cp $what $where"
+    }
+
     fun find(what: String, where: String) = "$find$where -name \"$what\""
 
     fun tar(what: String, where: String): String {
@@ -74,4 +80,6 @@ object Commands {
         }
         return result
     }
+
+    fun test(what: String) = "test -e $what"
 }

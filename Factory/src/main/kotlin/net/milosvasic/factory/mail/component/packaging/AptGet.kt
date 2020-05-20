@@ -1,8 +1,8 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.remote.Connection
 
-class AptGet(entryPoint: SSH) : PackageManager(entryPoint) {
+class AptGet(entryPoint: Connection) : PackageManager(entryPoint) {
 
     override val applicationBinaryName: String
         get() = "apt-get"

@@ -3,6 +3,7 @@ package net.milosvasic.factory.mail.execution.flow
 import net.milosvasic.factory.mail.common.CollectionWrapper
 import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
+import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingData
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 
 abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T>>>() {
@@ -14,25 +15,8 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
 
     override val processingCallback: FlowProcessingCallback
         get() = object : FlowProcessingCallback {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
-
-                subjectsIterator?.let { sIterator ->
-                    if (!sIterator.hasNext()) {
-                        finish(true)
-                    } else {
-                        if (success) {
-                            try {
-                                tryNext()
-                            } catch (e: IllegalArgumentException) {
-                                finish(e)
-                            } catch (e: IllegalStateException) {
-                                finish(e)
-                            }
-                        } else {
-                            finish(false, message)
-                        }
-                    }
-                }
+            override fun onFinish(success: Boolean, message: String, data: FlowProcessingData?) {
+                tryNextSubject(success, message, data)
             }
         }
 
@@ -61,7 +45,7 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
         process()
     }
 
-    @Throws(IllegalStateException::class)
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun process() {
         if (currentSubject == null) {
             throw IllegalStateException("Current subject is null")
@@ -72,5 +56,30 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
         }
     }
 
+    @Throws(IllegalArgumentException::class)
     protected abstract fun getProcessingRecipe(subject: T): ProcessingRecipe
+
+    protected open fun tryNextSubject(
+            success: Boolean,
+            message: String,
+            data: FlowProcessingData?
+    ) {
+        subjectsIterator?.let { sIterator ->
+            if (!sIterator.hasNext()) {
+                finish(success)
+            } else {
+                if (success) {
+                    try {
+                        tryNext()
+                    } catch (e: IllegalArgumentException) {
+                        finish(e)
+                    } catch (e: IllegalStateException) {
+                        finish(e)
+                    }
+                } else {
+                    finish(false, message)
+                }
+            }
+        }
+    }
 }

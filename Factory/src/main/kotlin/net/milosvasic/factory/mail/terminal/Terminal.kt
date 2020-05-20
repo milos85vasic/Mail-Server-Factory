@@ -3,7 +3,7 @@ package net.milosvasic.factory.mail.terminal
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.busy.BusyWorker
+import net.milosvasic.factory.mail.common.busy.LegacyBusyWorker
 import net.milosvasic.factory.mail.common.execution.Executor
 import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
@@ -27,7 +27,7 @@ class Terminal : Executor<TerminalCommand> {
         if (what.command == String.EMPTY) {
             throw IllegalArgumentException("Empty terminal command")
         }
-        BusyWorker.busy(busy)
+        LegacyBusyWorker.busy(busy)
         val action = Runnable {
             try {
                 var logCommand = false
@@ -67,12 +67,12 @@ class Terminal : Executor<TerminalCommand> {
                 }
                 val success = exitValue == 0
                 val result = OperationResult(what, success, inData + errData)
-                BusyWorker.free(busy)
+                LegacyBusyWorker.free(busy)
                 notify(result)
             } catch (e: Exception) {
 
                 log.e(e)
-                BusyWorker.free(busy)
+                LegacyBusyWorker.free(busy)
                 val result = OperationResult(what, false, String.EMPTY, e)
                 notify(result)
             }

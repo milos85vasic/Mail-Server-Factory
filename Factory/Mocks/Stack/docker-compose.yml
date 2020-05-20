@@ -1,0 +1,11 @@
+version: "3.7"
+
+services:
+  postgres_database:
+    image: library/hello-world
+    container_name: hello-world
+    restart: always
+
+
+
+

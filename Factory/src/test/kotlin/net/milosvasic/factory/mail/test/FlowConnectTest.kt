@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InitializationHandler
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.test.implementation.SimpleInitializer
@@ -32,13 +33,14 @@ class FlowConnectTest : BaseTest() {
 
         fun getEcho(parent: Int) = Commands.echo("$echo $parent :: ${++count}")
 
-        val dataHandler = object : DataHandler<String> {
-            override fun onData(data: String?) {
+        val dataHandler = object : DataHandler<OperationResult> {
+            override fun onData(data: OperationResult?) {
                 log.v("Data: $data")
                 Assertions.assertNotNull(data)
-                assert(data != String.EMPTY)
+                Assertions.assertNotNull(data?.data)
+                assert(data?.data != String.EMPTY)
                 data?.let {
-                    dataReceived.add(it)
+                    dataReceived.add(it.data)
                 }
             }
         }
@@ -120,7 +122,7 @@ class FlowConnectTest : BaseTest() {
         }
         flow.run()
 
-        while (commandFlowExecuted < iterations + 1 || initializationFlowExecuted < iterations) {
+        while (flow.isBusy()) {
             Thread.yield()
         }
         Assertions.assertEquals(iterations + 1, commandFlowExecuted)

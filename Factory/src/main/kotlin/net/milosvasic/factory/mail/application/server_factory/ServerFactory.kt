@@ -6,38 +6,53 @@ import net.milosvasic.factory.mail.common.Application
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.busy.BusyWorker
+import net.milosvasic.factory.mail.common.busy.LegacyBusyWorker
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
+import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.docker.Docker
-import net.milosvasic.factory.mail.component.docker.DockerInitializationOperation
-import net.milosvasic.factory.mail.component.docker.DockerOperation
+import net.milosvasic.factory.mail.component.docker.DockerInitializationFlowCallback
 import net.milosvasic.factory.mail.component.installer.Installer
-import net.milosvasic.factory.mail.component.installer.InstallerAbstract
-import net.milosvasic.factory.mail.component.installer.InstallerInitializationOperation
-import net.milosvasic.factory.mail.component.installer.InstallerOperation
+import net.milosvasic.factory.mail.component.installer.InstallerInitializationFlowCallback
 import net.milosvasic.factory.mail.configuration.*
-import net.milosvasic.factory.mail.error.ERROR
-import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.FlowBuilder
+import net.milosvasic.factory.mail.execution.flow.callback.DieOnFailureCallback
+import net.milosvasic.factory.mail.execution.flow.callback.TerminationCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.InstallationFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.HostInfoDataHandler
+import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.remote.ConnectionProvider
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
+open class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
 
     private val busy = Busy()
     private var configuration: Configuration? = null
+    private val terminators = mutableListOf<Termination>()
     private val terminationOperation = ServerFactoryTerminationOperation()
     private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
     private val initializationOperation = ServerFactoryInitializationOperation()
     private val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
     private val containersConfigurations = mutableListOf<SoftwareConfiguration>()
+
+    private var connectionProvider: ConnectionProvider = object : ConnectionProvider {
+
+        @Throws(IllegalArgumentException::class)
+        override fun obtain(): Connection {
+            configuration?.let { config ->
+                return SSH(config.remote)
+            }
+            throw IllegalArgumentException("No valid configuration available for creating a connection")
+        }
+    }
 
     @Throws(IllegalStateException::class)
     override fun initialize() {
@@ -120,10 +135,17 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         if (!busy.isBusy()) {
             throw IllegalStateException("Server factory is not running")
         }
-        configuration = null
-        softwareConfigurations.clear()
-        containersConfigurations.clear()
-        notifyTerm(true)
+        try {
+            terminators.forEach {
+                it.terminate()
+            }
+            configuration = null
+            softwareConfigurations.clear()
+            containersConfigurations.clear()
+            notifyTerm()
+        } catch (e: IllegalStateException) {
+            notifyTerm(e)
+        }
     }
 
     @Synchronized
@@ -146,150 +168,21 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         }
         log.i("Server factory started")
         try {
-            configuration?.let { config ->
 
-                val host = config.remote.host
-                val ssh = SSH(config.remote)
-                val docker = Docker(ssh)
-                val terminal = ssh.terminal
-                val installer = Installer(ssh)
-                val pingCommand = TerminalCommand(Commands.ping(host))
-                val hostInfoCommand = TerminalCommand(Commands.getHostInfo())
-                val testCommand = TerminalCommand(Commands.echo("Hello"))
-                var softwareConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
-                var containerConfigurationsIterator: Iterator<SoftwareConfiguration>? = null
+            val ssh = getConnection()
+            val docker = instantiateDocker(ssh)
+            val installer = instantiateInstaller(ssh)
 
-                fun tryNext(iterator: Iterator<SoftwareConfiguration>, installer: InstallerAbstract): Boolean {
-                    if (iterator.hasNext()) {
-                        val softwareConfiguration = iterator.next()
-                        try {
-                            installer.setConfiguration(softwareConfiguration)
-                            installer.install()
-                        } catch (e: BusyException) {
+            terminators.add(docker)
+            terminators.add(installer)
 
-                            fail(e)
-                        }
-                    } else {
-                        return false
-                    }
-                    return true
-                }
+            val dockerFlow = getDockerFlow(docker)
+            val dockerInitFlow = getDockerInitFlow(docker, dockerFlow)
+            val nextFlow = getInstallationFlow(installer, dockerInitFlow) ?: dockerInitFlow
+            val initFlow = getInitializationFlow(installer, nextFlow)
+            val commandFlow = getCommandFlow(ssh, initFlow)
 
-                fun tryNextContainerConfiguration(): Boolean {
-                    var result = false
-                    containerConfigurationsIterator?.let {
-                        result = tryNext(it, docker)
-                        if (!result) {
-                            onStop()
-                        }
-                    }
-                    return result
-                }
-
-                fun tryNextSoftwareConfiguration(): Boolean {
-                    var result = false
-                    softwareConfigurationsIterator?.let {
-                        result = tryNext(it, installer)
-                        if (!result) {
-                            installer.terminate()
-                        }
-                    }
-                    return result
-                }
-
-                val listener = object : OperationResultListener {
-                    override fun onOperationPerformed(result: OperationResult) {
-                        when (result.operation) {
-                            is InstallerInitializationOperation -> {
-
-                                if (result.success) {
-
-                                    log.i("Installer is ready")
-                                    softwareConfigurationsIterator = softwareConfigurations.iterator()
-                                    nextSoftwareConfiguration()
-                                } else {
-
-                                    log.e("Could not initialize installer")
-                                    fail(ERROR.COMPONENT_INITIALIZATION_FAILURE)
-                                }
-                            }
-                            is DockerInitializationOperation -> {
-
-                                if (result.success) {
-
-                                    log.i("Docker is ready")
-                                    containerConfigurationsIterator = containersConfigurations.iterator()
-                                    nextContainerConfiguration()
-                                } else {
-
-                                    log.e("Could not initialize Docker")
-                                    fail(ERROR.COMPONENT_INITIALIZATION_FAILURE)
-                                }
-                            }
-                            is InstallerOperation -> {
-
-                                if (result.success) {
-                                    nextSoftwareConfiguration()
-                                } else {
-
-                                    log.e("Could not perform installation")
-                                    fail(ERROR.INSTALLATION_FAILURE)
-                                }
-                            }
-                            is DockerOperation -> {
-
-                                if (result.success) {
-                                    nextContainerConfiguration()
-                                } else {
-
-                                    log.e("Could not perform docker operation")
-                                    fail(ERROR.INSTALLATION_FAILURE)
-                                }
-                            }
-                        }
-                    }
-
-                    private fun nextSoftwareConfiguration() {
-                        if (!tryNextSoftwareConfiguration()) {
-                            docker.subscribe(this)
-                            docker.initialize()
-                        }
-                    }
-
-                    private fun nextContainerConfiguration() {
-                        if (!tryNextContainerConfiguration()) {
-                            docker.unsubscribe(this)
-                            docker.terminate()
-                        }
-                    }
-                }
-
-                val flowCallback = object : FlowCallback<String> {
-                    override fun onFinish(success: Boolean, message: String, data: String?) {
-
-                        if (success) {
-                            ssh.subscribe(listener)
-                            installer.subscribe(listener)
-                            installer.initialize()
-                        } else {
-                            log.e(message)
-                            fail(ERROR.RUNTIME_ERROR)
-                        }
-                    }
-                }
-
-                CommandFlow()
-                        .width(terminal)
-                        .perform(pingCommand)
-                        .width(ssh)
-                        .perform(testCommand)
-                        .perform(
-                                hostInfoCommand,
-                                HostInfoDataHandler(ssh.getRemoteOS())
-                        )
-                        .onFinish(flowCallback)
-                        .run()
-            }
+            commandFlow.run()
         } catch (e: IllegalArgumentException) {
 
             fail(e)
@@ -304,7 +197,6 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         try {
             terminate()
         } catch (e: IllegalStateException) {
-
             log.e(e)
         }
     }
@@ -312,13 +204,15 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
     @Synchronized
     @Throws(BusyException::class)
     override fun busy() {
-        BusyWorker.busy(busy)
+        LegacyBusyWorker.busy(busy)
     }
 
     @Synchronized
     override fun free() {
-        BusyWorker.free(busy)
+        LegacyBusyWorker.free(busy)
     }
+
+    fun isBusy() = busy.isBusy()
 
     @Synchronized
     @Throws(IllegalStateException::class)
@@ -353,6 +247,20 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         }
     }
 
+    fun setConnectionProvider(provider: ConnectionProvider) {
+        connectionProvider = provider
+    }
+
+    @Throws(IllegalArgumentException::class)
+    protected fun getConnection(): Connection {
+        return connectionProvider.obtain()
+    }
+
+    protected open fun instantiateDocker(ssh: Connection) = Docker(ssh)
+
+    protected open fun instantiateInstaller(ssh: Connection) = Installer(ssh)
+
+    protected open fun getHostInfoCommand() = TerminalCommand(Commands.getHostInfo())
 
     private fun notifyInit(success: Boolean) {
         free()
@@ -360,9 +268,9 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         notify(result)
     }
 
-    private fun notifyTerm(success: Boolean) {
+    private fun notifyTerm() {
         free()
-        val result = OperationResult(terminationOperation, success)
+        val result = OperationResult(terminationOperation, true)
         notify(result)
     }
 
@@ -380,5 +288,65 @@ class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyD
         log.e(e)
         val result = OperationResult(terminationOperation, false)
         notify(result)
+    }
+
+    private fun getInstallationFlow(installer: Installer, dockerInitFlow: InitializationFlow): InstallationFlow? {
+        if (softwareConfigurations.isEmpty()) {
+            return null
+        }
+        val installFlow = InstallationFlow(installer)
+        val dieCallback = DieOnFailureCallback<String>()
+        softwareConfigurations.forEach {
+            installFlow.width(it)
+        }
+        return installFlow
+                .connect(dockerInitFlow)
+                .onFinish(dieCallback)
+    }
+
+    private fun getDockerFlow(docker: Docker): InstallationFlow {
+
+        val dockerFlow = InstallationFlow(docker)
+        containersConfigurations.forEach {
+            dockerFlow.width(it)
+        }
+        dockerFlow.onFinish(TerminationCallback(this))
+        return dockerFlow
+    }
+
+    private fun getDockerInitFlow(docker: Docker, dockerFlow: InstallationFlow): InitializationFlow {
+
+        val initCallback = DockerInitializationFlowCallback()
+        return InitializationFlow()
+                .width(docker)
+                .connect(dockerFlow)
+                .onFinish(initCallback)
+    }
+
+    private fun getInitializationFlow(installer: Installer, installFlow: FlowBuilder<*, *, *>): InitializationFlow {
+
+        val initCallback = InstallerInitializationFlowCallback()
+        return InitializationFlow()
+                .width(installer)
+                .connect(installFlow)
+                .onFinish(initCallback)
+    }
+
+    private fun getCommandFlow(ssh: Connection, initFlow: InitializationFlow): CommandFlow {
+
+        val host = ssh.getRemote().host
+        val pingCommand = TerminalCommand(Commands.ping(host))
+        val hostInfoCommand = getHostInfoCommand()
+        val testCommand = TerminalCommand(Commands.echo("Hello"))
+        val terminal = ssh.getTerminal()
+        val dieCallback = DieOnFailureCallback<String>()
+        return CommandFlow()
+                .width(terminal)
+                .perform(pingCommand)
+                .width(ssh)
+                .perform(testCommand)
+                .perform(hostInfoCommand, HostInfoDataHandler(ssh.getRemoteOS()))
+                .onFinish(dieCallback)
+                .connect(initFlow)
     }
 }

@@ -2,15 +2,13 @@ package net.milosvasic.factory.mail.os
 
 import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
 
-class HostInfoDataHandler(private val os: OperatingSystem) : DataHandler<String> {
+class HostInfoDataHandler(private val os: OperatingSystem) : DataHandler<OperationResult> {
 
-    override fun onData(data: String?) {
-
-        // log.w("> > > > > $data")
-
-        if (data != null) {
-            os.parseAndSetSystemInfo(data)
+    override fun onData(data: OperationResult?) {
+        data?.let {
+            os.parseAndSetSystemInfo(it.data)
             if (os.getType() == OSType.UNKNOWN) {
                 log.w("Host operating system is unknown")
             } else {

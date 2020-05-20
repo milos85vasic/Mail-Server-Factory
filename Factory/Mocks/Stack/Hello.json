@@ -1,0 +1,36 @@
+{
+  "software": [
+    {
+      "name": "Hello world",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "condition",
+            "value": "docker --version"
+          },
+          {
+            "type": "condition",
+            "value": "docker-compose --version"
+          },
+          {
+            "type": "stubDeploy",
+            "value": "Mocks/Stack:build/Mocks/Stack"
+          },
+          {
+            "type": "stubStack",
+            "value": "build/Mocks/Stack"
+          },
+          {
+            "type": "command",
+            "value": "docker container stop hello-world"
+          },
+          {
+            "type": "command",
+            "value": "docker container rm hello-world"
+          }
+        ]
+      }
+    }
+  ]
+}

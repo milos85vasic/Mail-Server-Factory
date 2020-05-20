@@ -7,7 +7,6 @@ enum class DockerInstallationStepType(
 ) {
 
     UNKNOWN(InstallationStepType.UNKNOWN.type),
-    VOLUME("volume"),
     STACK("stack");
 
     companion object {

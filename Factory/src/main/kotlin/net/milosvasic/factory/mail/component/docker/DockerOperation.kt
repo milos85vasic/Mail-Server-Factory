@@ -1,5 +1,5 @@
 package net.milosvasic.factory.mail.component.docker
 
-import net.milosvasic.factory.mail.operation.Operation
+import net.milosvasic.factory.mail.component.installer.InstallerOperation
 
-class DockerOperation : Operation()
+class DockerOperation : InstallerOperation()

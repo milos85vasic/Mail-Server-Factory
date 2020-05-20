@@ -1,11 +1,13 @@
 package net.milosvasic.factory.mail.component.installer.step.deploy
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.configuration.Variable
+import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
@@ -14,7 +16,7 @@ import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.io.File
 
-class Deploy(what: String, private val where: String) : RemoteOperationInstallationStep<SSH>() {
+open class Deploy(what: String, private val where: String) : RemoteOperationInstallationStep<SSH>() {
 
     companion object {
         const val delimiter = ":"
@@ -22,208 +24,101 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
     }
 
     private val whatFile = File(what)
-    private var command = String.EMPTY
+    private var remote: Remote? = null
     private var terminal: Terminal? = null
-    private val operation = DeployOperation()
     private val excludes = listOf("$prototypePrefix*")
-    private val localPath = whatFile.parentFile.absolutePath
-    private val localTar = "$localPath${File.separator}${whatFile.name}${Commands.tarExtension}"
+    private val localPath = localPath().absolutePath
     private val remoteTar = "$where${File.separator}${whatFile.name}${Commands.tarExtension}"
+    protected val localTar = "$localPath${File.separator}${whatFile.name}${Commands.tarExtension}"
 
-    override fun handleResult(result: OperationResult) {
-        when (result.operation) {
-            is TerminalCommand -> {
-                if (isMkdir(result.operation)) {
+    private val onDirectoryCreated = object : DataHandler<OperationResult> {
+        override fun onData(data: OperationResult?) {
 
-                    terminal = connection?.terminal
-                    if (terminal == null) {
+            if (data == null || !data.success) {
 
-                        log.e("No terminal for deployment")
-                        finish(false, operation)
-                    } else {
-
-                        if (whatFile.exists()) {
-                            if (whatFile.isDirectory) {
-
-                                try {
-                                    processFiles(whatFile)
-                                    command = Commands.tar(whatFile.absolutePath, localTar)
-                                    terminal?.execute(TerminalCommand(command))
-                                } catch (e: IllegalStateException) {
-
-                                    log.e(e)
-                                    finish(false, operation)
-                                } catch (e: IllegalArgumentException) {
-
-                                    log.e(e)
-                                    finish(false, operation)
-                                }
-                            } else {
-
-                                log.e("${whatFile.absolutePath} is not directory")
-                                finish(false, operation)
-                            }
-                        } else {
-
-                            log.e("File does not exist: ${whatFile.absolutePath}")
-                            finish(false, operation)
-                        }
-                    }
-                    return
-                }
-                if (isTarCompress(result.operation)) {
-
-                    val remote = connection?.getRemote()
-                    if (remote == null) {
-
-                        log.e("No remote available")
-                        finish(false, operation)
-                    } else {
-
-                        command = Commands.scp(localTar, where, remote)
-                        try {
-                            terminal?.execute(TerminalCommand(command))
-                        } catch (e: IllegalArgumentException) {
-
-                            log.e(e)
-                            finish(false, operation)
-                        } catch (e: IllegalStateException) {
-
-                            log.e(e)
-                            finish(false, operation)
-                        }
-                    }
-                    return
-                }
-                if (isScp(result.operation)) {
-
-                    command = Commands.unTar(remoteTar, where)
+                finish(false)
+                return
+            }
+            if (whatFile.exists()) {
+                if (whatFile.isDirectory) {
                     try {
-                        connection?.execute(TerminalCommand(command))
-                    } catch (e: IllegalArgumentException) {
 
-                        log.e(e)
-                        finish(false, operation)
+                        processFiles(whatFile)
                     } catch (e: IllegalStateException) {
 
                         log.e(e)
-                        finish(false, operation)
-                    }
-                    return
-                }
-                if (isTarDecompress(result.operation)) {
-
-                    command = Commands.rm(remoteTar)
-                    try {
-                        connection?.execute(TerminalCommand(command))
-                    } catch (e: IllegalStateException) {
-
-                        log.e(e)
-                        finish(false, operation)
+                        finish(false)
                     } catch (e: IllegalArgumentException) {
 
                         log.e(e)
-                        finish(false, operation)
+                        finish(false)
                     }
-                    return
+                } else {
+
+                    log.e("${whatFile.absolutePath} is not directory")
+                    finish(false)
                 }
-                if (isRmRemote(result.operation, remoteTar)) {
-
-                    var exclude = String.EMPTY
-                    excludes.forEach {
-                        if (exclude.isNotEmpty() && !exclude.isBlank()) {
-                            exclude += ";"
-                        }
-                        exclude += "${Commands.find(it, Commands.here)} -exec ${Commands.rm} {} \\;"
-                    }
-                    try {
-
-                        if (exclude != String.EMPTY) {
-
-                            command = exclude
-                            connection?.execute(TerminalCommand(command))
-                        } else {
-
-                            command = Commands.rm(localTar)
-                            terminal?.execute(TerminalCommand(command))
-                        }
-                    } catch (e: IllegalStateException) {
-
-                        log.e(e)
-                        finish(false, operation)
-                    } catch (e: IllegalArgumentException) {
-
-                        log.e(e)
-                        finish(false, operation)
-                    }
-                    return
-                }
-                if (isFind(result.operation)) {
-
-                    command = Commands.rm(localTar)
-                    try {
-                        terminal?.execute(TerminalCommand(command))
-                    } catch (e: IllegalArgumentException) {
-
-                        log.e(e)
-                        finish(false, operation)
-                    } catch (e: IllegalStateException) {
-
-                        log.e(e)
-                        finish(false, operation)
-                    }
-                    return
-                }
-                if (isRm(result.operation, localTar)) {
-
-                    val remote = connection?.getRemote()
-                    if (remote == null) {
-
-                        log.e("No remote available")
-                        finish(false, operation)
-                    } else {
-
-                        val chown = Commands.chown(remote.account, where)
-                        val chgrp = Commands.chgrp(remote.account, where)
-                        val permissions = Permissions(Permission.ALL, Permission.NONE, Permission.NONE)
-
-                        try {
-                            val chmod = Commands.chmod(where, permissions.obtain())
-                            command = Commands.concatenate(chown, chgrp, chmod)
-                            connection?.execute(TerminalCommand(command))
-                        } catch (e: IllegalArgumentException) {
-
-                            log.e(e)
-                            finish(false, operation)
-                        } catch (e: IllegalStateException) {
-
-                            log.e(e)
-                            finish(false, operation)
-                        }
-                    }
-                    return
-                }
-                if (isChown(result.operation) && isChgrp(result.operation) && isChmod(result.operation)) {
-
-                    finish(result.success, operation)
-                    return
-                }
+            } else {
+                log.e("File does not exist: ${whatFile.absolutePath}")
+                finish(false)
             }
         }
     }
 
-    @Synchronized
-    @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    override fun execute(vararg params: SSH) {
-        super.execute(*params)
-        command = Commands.mkdir(where)
-        connection?.execute(TerminalCommand(command))
+    override fun getFlow(): CommandFlow {
+
+        connection?.let { conn ->
+            terminal = conn.getTerminal()
+            remote = connection?.getRemote()
+
+            terminal?.let { term ->
+                remote?.let { rmt ->
+
+                    val protoCleanup = getProtoCleanup()
+                    val flow = CommandFlow()
+                            .width(conn)
+                            .perform(Commands.mkdir(where), onDirectoryCreated)
+                            .width(term)
+                            .perform(Commands.tar(whatFile.absolutePath, localTar))
+                            .perform(getScp(rmt))
+                            .width(conn)
+                            .perform(Commands.unTar(remoteTar, where))
+                            .perform(Commands.rm(remoteTar))
+
+                    if (protoCleanup != String.EMPTY) {
+                        flow.perform(protoCleanup)
+                    }
+                    return flow
+                            .width(term)
+                            .perform(Commands.rm(localTar))
+                            .width(conn)
+                            .perform(getSecurityChanges(rmt))
+                }
+            }
+        }
+        throw IllegalArgumentException("No proper connection provided")
     }
 
-    override fun finish(success: Boolean, operation: Operation) {
-        cleanupFiles(whatFile)
-        super.finish(success, operation)
+    override fun finish(success: Boolean) {
+        try {
+
+            cleanupFiles(whatFile)
+            super.finish(success)
+        } catch (e: IllegalStateException) {
+
+            log.e(e)
+            super.finish(false)
+        }
     }
+
+    override fun getOperation() = DeployOperation()
+
+    protected open fun getScpCommand() = Commands.scp
+
+    protected open fun getScp(remote: Remote) = Commands.scp(localTar, where, remote)
+
+    protected open fun isRemote(operation: TerminalCommand) =
+            operation.command.startsWith(Commands.ssh)
 
     @Throws(IllegalStateException::class)
     private fun processFiles(directory: File) {
@@ -290,34 +185,31 @@ class Deploy(what: String, private val where: String) : RemoteOperationInstallat
 
     private fun getName(file: File) = file.name.toLowerCase().replace(prototypePrefix, "")
 
-    private fun isScp(operation: TerminalCommand) =
-            operation.command.startsWith(Commands.scp)
+    private fun localPath(): File {
+        whatFile.parentFile?.let {
+            return it
+        }
+        return whatFile
+    }
 
-    private fun isTarDecompress(operation: TerminalCommand) =
-            operation.command.contains(Commands.tarDecompress)
+    protected open fun getProtoCleanup(): String {
 
-    private fun isTarCompress(operation: TerminalCommand) =
-            operation.command.startsWith(Commands.tarCompress)
+        var exclude = String.EMPTY
+        excludes.forEach {
+            if (exclude.isNotEmpty() && !exclude.isBlank()) {
+                exclude += ";"
+            }
+            exclude += "${Commands.find(it, Commands.here)} -exec ${Commands.rm} {} \\;"
+        }
+        return exclude
+    }
 
-    private fun isRmRemote(operation: TerminalCommand, file: String) =
-            isRm(operation, file) &&
-                    operation.command.startsWith(Commands.ssh)
+    protected open fun getSecurityChanges(remote: Remote): String {
 
-    private fun isRm(operation: TerminalCommand, file: String) =
-            operation.command.contains(Commands.rm(file))
-
-    private fun isFind(operation: TerminalCommand) =
-            operation.command.contains(Commands.find)
-
-    private fun isChown(operation: TerminalCommand) =
-            operation.command.contains(Commands.chown)
-
-    private fun isChgrp(operation: TerminalCommand) =
-            operation.command.contains(Commands.chgrp)
-
-    private fun isChmod(operation: TerminalCommand) =
-            operation.command.contains(Commands.chmod)
-
-    private fun isMkdir(operation: TerminalCommand) =
-            operation.command.contains(Commands.mkdir)
+        val chown = Commands.chown(remote.account, where)
+        val chgrp = Commands.chgrp(remote.account, where)
+        val permissions = Permissions(Permission.ALL, Permission.NONE, Permission.NONE)
+        val chmod = Commands.chmod(where, permissions.obtain())
+        return Commands.concatenate(chown, chgrp, chmod)
+    }
 }

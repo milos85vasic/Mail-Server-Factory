@@ -5,10 +5,12 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.initialization.InitializationOperation
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.TerminationOperation
+import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
+import net.milosvasic.factory.mail.getMessage
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -42,6 +44,13 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
         return this
     }
 
+    @Throws(BusyException::class)
+    override fun connect(flow: FlowBuilder<*, *, *>): InitializationFlow {
+        super.connect(flow)
+        return this
+    }
+
+    @Throws(IllegalArgumentException::class)
     override fun getProcessingRecipe(subject: Initializer): ProcessingRecipe {
 
         return object : ProcessingRecipe {
@@ -80,7 +89,13 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
             override fun process(callback: FlowProcessingCallback) {
                 this.callback = callback
                 subject.subscribe(operationCallback)
-                subject.initialize()
+                try {
+                    subject.initialize()
+                } catch (e: Exception) {
+
+                    subject.unsubscribe(operationCallback)
+                    callback.onFinish(false, e.getMessage())
+                }
             }
         }
     }

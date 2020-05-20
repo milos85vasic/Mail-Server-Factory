@@ -1,118 +1,43 @@
 package net.milosvasic.factory.mail.component.installer
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
-import net.milosvasic.factory.mail.common.initialization.Initialization
-import net.milosvasic.factory.mail.component.docker.step.stack.CheckOperation
-import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
+import net.milosvasic.factory.mail.common.initialization.Initializer
+import net.milosvasic.factory.mail.common.initialization.Termination
+import net.milosvasic.factory.mail.component.Toolkit
+import net.milosvasic.factory.mail.component.installer.recipe.registration.MainRecipeRegistrar
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
-import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
-import net.milosvasic.factory.mail.component.installer.step.condition.Condition
-import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
-import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
-import net.milosvasic.factory.mail.component.installer.step.deploy.DeployOperation
-import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
-import net.milosvasic.factory.mail.component.installer.step.reboot.RebootOperation
-import net.milosvasic.factory.mail.component.packaging.PackageInstallerInitializationOperation
-import net.milosvasic.factory.mail.component.packaging.PackageManagerOperation
 import net.milosvasic.factory.mail.configuration.ConfigurableSoftware
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
+import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipesRegistration
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
-import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 abstract class InstallerAbstract(entryPoint: Connection) :
         BusyWorker<InstallationStep<*>>(entryPoint),
+        Initializer,
+        Termination,
         ConfigurableSoftware,
         Installation,
-        Initialization {
-
-    protected var item: InstallationStep<*>? = null
+        ProcessingRecipesRegistration {
 
     private var config: SoftwareConfiguration? = null
-    private var sectionIterator: Iterator<String>? = null
+    private val mainRecipeRegistrar = MainRecipeRegistrar()
     private lateinit var steps: Map<String, List<InstallationStep<*>>>
+    protected val recipeRegistrars = mutableListOf<ProcessingRecipesRegistration>(mainRecipeRegistrar)
 
-    private val listener = object : OperationResultListener {
-        override fun onOperationPerformed(result: OperationResult) {
-            handleResultAndCatch(result)
+    private val flowCallback = object : FlowCallback<String> {
+
+        override fun onFinish(success: Boolean, message: String, data: String?) {
+            if (!success) {
+                log.e(message)
+            }
+            free(success)
         }
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun handleResult(result: OperationResult) {
-        when (result.operation) {
-            is PackageInstallerInitializationOperation -> {
-
-                free()
-                val installerInitializationOperation = InstallerInitializationOperation()
-                val operationResult = OperationResult(installerInitializationOperation, result.success)
-                notify(operationResult)
-            }
-            is PackageManagerOperation -> {
-
-                checkResultAndTryNext(result)
-            }
-            is RebootOperation -> {
-
-                unsubscribeFromItem(listener)
-                checkResultAndTryNext(result)
-            }
-            is CheckOperation -> {
-
-                unsubscribeFromItem(listener)
-                checkResultAndTryNext(result)
-            }
-            is ConditionOperation -> {
-
-                unsubscribeFromItem(listener)
-                if (result.success) {
-                    if (result.operation.result) {
-                        tryNextSection()
-                    } else {
-                        tryNext()
-                    }
-                } else {
-                    if (result.operation.result) {
-                        tryNext()
-                    } else {
-                        free(false)
-                    }
-                }
-            }
-            is DeployOperation -> {
-
-                unsubscribeFromItem(listener)
-                if (result.success) {
-                    tryNext()
-                } else {
-                    free(false)
-                }
-            }
-            is TerminalCommand -> {
-
-                if (command != String.EMPTY && result.operation.command.endsWith(command)) {
-                    onCommandPerformed(result)
-                }
-            }
-        }
-    }
-
-    protected fun checkResultAndTryNext(result: OperationResult) {
-        if (result.success) {
-            tryNextOrFail()
-        } else {
-            free(false)
-        }
-    }
-
-    protected open fun onCommandPerformed(result: OperationResult) {
-        checkResultAndTryNext(result)
     }
 
     @Synchronized
@@ -125,23 +50,19 @@ abstract class InstallerAbstract(entryPoint: Connection) :
             return
         } else {
 
-            config?.let {
+            config?.let { softwareConfiguration ->
                 try {
-                    steps = it.obtain(getEnvironmentName())
+                    steps = softwareConfiguration.obtain(getEnvironmentName())
                     busy()
-                    sectionIterator = steps.keys.iterator()
-                    sectionIterator?.let { secIt ->
-
-                        if (secIt.hasNext()) {
-                            iterator = steps[secIt.next()]?.iterator()
-                            tryNext()
-                        } else {
-
-                            log.e("No section to iterate")
-                            free(false)
-                            return
+                    val flow = InstallationStepFlow(getToolkit())
+                    steps.keys.forEach { key ->
+                        val values = steps[key]
+                        values?.forEach { step ->
+                            flow.width(step)
+                            registerRecipes(step, flow)
                         }
                     }
+                    flow.onFinish(flowCallback).run()
                 } catch (e: IllegalArgumentException) {
 
                     onFailedResult(e)
@@ -153,56 +74,11 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         }
     }
 
-    @Synchronized
-    @Throws(UnsupportedOperationException::class)
-    override fun uninstall() {
-        throw UnsupportedOperationException("Not implemented yet")
-    }
+    @Throws(IllegalArgumentException::class)
+    override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow): Boolean {
 
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun tryNext() {
-
-        if (iterator == null) {
-            free(false)
-            return
-        }
-        iterator?.let {
-            if (it.hasNext()) {
-                item = it.next()
-                item?.let { current ->
-                    handleNext(current)
-                }
-            } else {
-
-                tryNextSection()
-            }
-        }
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    protected open fun handleNext(current: InstallationStep<*>): Boolean {
-        when (current) {
-            is CommandInstallationStep -> {
-
-                command = current.command
-                current.execute(entryPoint)
-                return true
-            }
-            is Condition -> {
-
-                command = String.EMPTY
-                current.subscribe(listener)
-                current.execute(entryPoint)
-                return true
-            }
-            is Reboot -> {
-
-                executeViaSSH(current)
-                return true
-            }
-            is Deploy -> {
-
-                executeViaSSH(current)
+        recipeRegistrars.forEach { registrar ->
+            if (registrar.registerRecipes(step, flow)) {
                 return true
             }
         }
@@ -210,18 +86,26 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     }
 
     @Synchronized
-    @Throws(IllegalStateException::class)
-    override fun initialize() {
-        checkInitialized()
-        busy()
+    @Throws(UnsupportedOperationException::class)
+    override fun uninstall() {
+        throw UnsupportedOperationException("Not implemented yet")
     }
 
     @Synchronized
     @Throws(IllegalStateException::class)
-    override fun terminate() {
+    final override fun initialize() {
+        checkInitialized()
+        busy()
+        initialization()
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class)
+    final override fun terminate() {
         checkNotInitialized()
         clearConfiguration()
-        super.terminate()
+        log.v("Shutting down: $this")
+        termination()
     }
 
     @Synchronized
@@ -256,9 +140,8 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         free()
     }
 
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun onSuccessResult() {
-        tryNext()
+        free(true)
     }
 
     override fun onFailedResult() {
@@ -272,64 +155,25 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         notify(result)
     }
 
-    abstract fun getEnvironmentName(): String
-
-    abstract fun getNotifyOperation(): Operation
-
-    protected fun unsubscribeFromItem(listener: OperationResultListener) {
-        item?.let { current ->
-            when (current) {
-                is RemoteOperationInstallationStep -> {
-                    current.unsubscribe(listener)
-                }
-            }
+    fun addProcessingRecipesRegistrar(registrar: ProcessingRecipesRegistration) {
+        if (!recipeRegistrars.contains(registrar)) {
+            recipeRegistrars.add(registrar)
         }
     }
 
-    protected fun handleResultAndCatch(result: OperationResult) {
-        try {
-            handleResult(result)
-        } catch (e: IllegalStateException) {
-            onFailedResult(e)
-        } catch (e: IllegalArgumentException) {
-            onFailedResult(e)
-        }
+    fun removeProcessingRecipesRegistrar(registrar: ProcessingRecipesRegistration) {
+        recipeRegistrars.remove(registrar)
     }
 
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    private fun tryNextSection() {
-        sectionIterator?.let { secIt ->
+    @Throws(IllegalStateException::class)
+    protected abstract fun initialization()
 
-            if (secIt.hasNext()) {
-                iterator = steps[secIt.next()]?.iterator()
-                tryNext()
-            } else {
-                free(true)
-            }
-        }
-    }
+    @Throws(IllegalStateException::class)
+    protected abstract fun termination()
 
-    private fun tryNextOrFail() {
-        try {
-            tryNext()
-        } catch (e: IllegalStateException) {
-            onFailedResult(e)
-        } catch (e: IllegalArgumentException) {
-            onFailedResult(e)
-        }
-    }
+    protected abstract fun getEnvironmentName(): String
 
-    private fun executeViaSSH(step: RemoteOperationInstallationStep<SSH>) {
-        if (entryPoint is SSH) {
+    protected abstract fun getNotifyOperation(): Operation
 
-            command = String.EMPTY
-            step.subscribe(listener)
-            step.execute(entryPoint)
-        } else {
-
-            val clazz = entryPoint::class.simpleName
-            val msg = "${step::class.simpleName} installation step does not support $clazz connection"
-            throw IllegalArgumentException(msg)
-        }
-    }
+    protected abstract fun getToolkit(): Toolkit
 }

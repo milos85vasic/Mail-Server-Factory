@@ -5,6 +5,7 @@ import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
@@ -25,13 +26,14 @@ class CommandFlowTest : BaseTest() {
 
         fun getEcho() = Commands.echo("$echo:${++count}")
 
-        val dataHandler = object : DataHandler<String> {
-            override fun onData(data: String?) {
-                log.v("Data: $data")
+        val dataHandler = object : DataHandler<OperationResult> {
+            override fun onData(data: OperationResult?) {
+                log.v("Data: ${data?.data}")
                 Assertions.assertNotNull(data)
-                assert(data != String.EMPTY)
+                Assertions.assertNotNull(data?.data)
+                assert(data?.data != String.EMPTY)
                 data?.let {
-                    dataReceived.add(it)
+                    dataReceived.add(it.data)
                 }
             }
         }
@@ -62,10 +64,11 @@ class CommandFlowTest : BaseTest() {
             .onFinish(flowCallback)
             .run()
 
-        while (!finished) {
+        while (flow.isBusy()) {
             Thread.yield()
         }
 
+        assert(finished)
         for (x in 1 until sum) {
             val expected = "$echo:$x"
             val compare = dataReceived[x - 1].replace("'", "")

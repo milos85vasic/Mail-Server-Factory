@@ -64,4 +64,16 @@ fun fail(e: Exception) {
 val String.Companion.EMPTY: String
     get() = ""
 
+fun Exception.getMessage(): String {
+
+    var message = String.EMPTY
+    this::class.simpleName?.let {
+        message = it
+    }
+    this.message?.let {
+        message = it
+    }
+    return message
+}
+
 

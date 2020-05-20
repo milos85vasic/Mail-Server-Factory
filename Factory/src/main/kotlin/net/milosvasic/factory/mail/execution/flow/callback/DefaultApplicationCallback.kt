@@ -2,7 +2,7 @@ package net.milosvasic.factory.mail.execution.flow.callback
 
 import net.milosvasic.factory.mail.log
 
-class DefaultFlowCallback<T> : FlowCallback<T> {
+class DefaultApplicationCallback<T> : FlowCallback<T> {
 
     override fun onFinish(success: Boolean, message: String, data: T?) {
 

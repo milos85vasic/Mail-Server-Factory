@@ -12,11 +12,11 @@ import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class SSH(private val remote: Remote) :
+open class SSH(private val remote: Remote) :
     Connection,
     Notifying<OperationResult> {
 
-    val terminal = Terminal()
+    private val terminal = Terminal()
 
     private var operatingSystem = OperatingSystem()
     private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
@@ -31,6 +31,8 @@ class SSH(private val remote: Remote) :
         terminal.subscribe(listener)
     }
 
+    override fun getTerminal() = terminal
+
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
@@ -40,7 +42,7 @@ class SSH(private val remote: Remote) :
 
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
-    fun execute(data: TerminalCommand, obtainOutput: Boolean) {
+    open fun execute(data: TerminalCommand, obtainOutput: Boolean) {
         val command = TerminalCommand(SSHCommand(remote, data).getCommand())
             command.configuration[CommandConfiguration.OBTAIN_RESULT] = obtainOutput
         terminal.execute(command)

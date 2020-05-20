@@ -6,52 +6,43 @@ import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.VariableContext
 import net.milosvasic.factory.mail.configuration.VariableKey
 import net.milosvasic.factory.mail.configuration.VariableNode
+import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallationStep<SSH>() {
 
     private var pingCount = 0
     private val rebootScheduleTime = 3
-    private val defaultCommand = Commands.reboot(rebootScheduleTime)
-    private var command = defaultCommand
-    private val operation = RebootOperation()
+    private var remote: Remote? = null
+    private var terminal: Terminal? = null
     private var pingCommand: String = String.EMPTY
 
-    override fun handleResult(result: OperationResult) {
-        when (result.operation) {
-            is TerminalCommand -> {
-                val cmd = result.operation.command
-                when {
-                    isReboot(cmd) -> {
+    private val pingCallback = object : OperationResultListener {
+        override fun onOperationPerformed(result: OperationResult) {
 
-                        try {
-                            Thread.sleep(3000)
-                        } catch (e: InterruptedException) {
-
-                            log.e(e)
-                            finish(false, operation)
-                        }
-                        if (result.success) {
-                            ping()
-                        } else {
-                            finish(false, operation)
-                        }
-                    }
-                    isPing(cmd) -> {
-                        if (result.success) {
-                            finish(true, operation)
-                        } else {
-
-                            if (pingCount <= timeoutInSeconds) {
-                                ping()
+            when (result.operation) {
+                is TerminalCommand -> {
+                    val cmd = result.operation.command
+                    when {
+                        isPing(cmd) -> {
+                            if (result.success) {
+                                finish(true)
                             } else {
 
-                                log.e("Reboot timeout exceeded")
-                                finish(false, operation)
+                                if (pingCount <= timeoutInSeconds) {
+                                    ping()
+                                } else {
+
+                                    log.e("Reboot timeout exceeded")
+                                    finish(false)
+                                }
                             }
                         }
                     }
@@ -60,10 +51,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
         }
     }
 
-    @Synchronized
-    @Throws(IllegalArgumentException::class, IllegalStateException::class)
-    override fun execute(vararg params: SSH) {
-        super.execute(*params)
+    override fun getFlow(): CommandFlow {
         var rebootAllowed = false
         try {
             val configuration = ConfigurationManager.getConfiguration()
@@ -79,62 +67,91 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
                     }
                     else -> {
                         log.e("Cannot use 'reboot allowed' setting with value of: $it")
-                        finish(true, operation)
+                        finish(true)
                     }
                 }
             }
         } catch (e: IllegalStateException) {
 
             log.e(e)
-            finish(false, operation)
+            finish(false)
         }
-        if (!rebootAllowed) {
-            log.w("Reboot is not allowed by configuration")
-            finish(true, operation)
-            return
+
+        connection?.let { conn ->
+            terminal = conn.getTerminal()
+            remote = conn.getRemote()
+
+            terminal?.let { term ->
+                remote?.let { _ ->
+
+                    return if (!rebootAllowed) {
+
+                        CommandFlow()
+                                .width(term)
+                                .perform(Commands.echo("Reboot is not allowed by configuration"))
+                    } else {
+
+                        log.v("Reboot timeout in seconds: $timeoutInSeconds")
+                        pingCount = 0
+                        term.subscribe(pingCallback)
+
+                        CommandFlow()
+                                .width(conn)
+                                .perform(Commands.reboot(rebootScheduleTime))
+                    }
+                }
+            }
         }
-        log.v("Reboot timeout in seconds: $timeoutInSeconds")
-        pingCount = 0
-        command = defaultCommand
-        connection?.execute(TerminalCommand(command))
+        throw IllegalArgumentException("No proper connection provided")
     }
+
+    override fun getOperation() = RebootOperation()
+
+    override fun finish(success: Boolean) {
+        if (success && pingCount == 0) {
+
+            try {
+                Thread.sleep(3000)
+                ping()
+            } catch (e: InterruptedException) {
+
+                log.e(e)
+                finish(false)
+            }
+        } else {
+
+            terminal?.unsubscribe(pingCallback)
+            super.finish(success)
+        }
+    }
+
+    private fun isPing(cmd: String) = pingCommand != String.EMPTY && cmd.endsWith(pingCommand)
 
     private fun ping() {
 
         pingCount++
         log.v("Ping no. $pingCount")
-        val host = connection?.getRemote()?.host
+        val host = remote?.host
         if (host == null) {
 
             log.e("No host to ping provided")
-            finish(false, operation)
+            finish(false)
         } else {
 
-            val terminal = connection?.terminal
-            if (terminal == null) {
-
-                log.e("No terminal for pinging provided")
-                finish(false, operation)
-            } else {
-
+            terminal?.let { term ->
                 pingCommand = Commands.ping(host, 1)
-                command = pingCommand
                 try {
-                    terminal.execute(TerminalCommand(command))
+                    term.execute(TerminalCommand(pingCommand))
                 } catch (e: IllegalStateException) {
 
                     log.e(e)
-                    finish(false, operation)
+                    finish(false)
                 } catch (e: IllegalArgumentException) {
 
                     log.e(e)
-                    finish(false, operation)
+                    finish(false)
                 }
             }
         }
     }
-
-    private fun isReboot(cmd: String) = cmd.endsWith(defaultCommand)
-
-    private fun isPing(cmd: String) = pingCommand != String.EMPTY && cmd.endsWith(pingCommand)
 }

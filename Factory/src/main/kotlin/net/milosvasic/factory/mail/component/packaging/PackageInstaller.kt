@@ -1,68 +1,79 @@
 package net.milosvasic.factory.mail.component.packaging
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initialization
+import net.milosvasic.factory.mail.common.initialization.Termination
+import net.milosvasic.factory.mail.component.Toolkit
+import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
+import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.InstallationItem
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Packages
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.operation.OperationResultListener
+import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
-class PackageInstaller(entryPoint: SSH) :
-    BusyWorker<PackageManager>(entryPoint),
-    PackageManagement<PackageManager>,
-        Initialization {
+class PackageInstaller(entryPoint: Connection) :
+        BusyWorker<PackageManager>(entryPoint),
+        PackageManagement<PackageManager>,
+        PackageManagerSupport,
+        Initialization,
+        Termination {
 
-    private var item: PackageManager? = null
     private var manager: PackageManager? = null
     private val supportedPackageManagers = LinkedHashSet<PackageManager>()
 
     init {
         supportedPackageManagers.addAll(
-            listOf(
-                Dnf(entryPoint),
-                Yum(entryPoint),
-                AptGet(entryPoint)
-            )
+                listOf(
+                        Dnf(entryPoint),
+                        Yum(entryPoint),
+                        AptGet(entryPoint)
+                )
         )
     }
 
-    override fun handleResult(result: OperationResult) {
-        when (result.operation) {
-            is TerminalCommand -> {
-                val cmd = result.operation.command
-                if (command != String.EMPTY && cmd.endsWith(command)) {
+    val flowCallback = object : FlowCallback<String> {
+        override fun onFinish(success: Boolean, message: String, data: String?) {
 
-                    try {
-                        if (result.success) {
-                            onSuccessResult()
-                        } else {
-                            onFailedResult()
+            if (!success) {
+                log.e(message)
+            }
+            if (manager == null) {
+                log.e("No package manager has been initialized")
+            }
+            notify(success && manager != null)
+        }
+    }
+
+    private val operationCallback = object : OperationResultListener {
+        override fun onOperationPerformed(result: OperationResult) {
+
+            when (result.operation) {
+                is TerminalCommand -> {
+
+                    if (result.success) {
+                        val cmd = result.operation.command
+                        supportedPackageManagers.forEach { packageManager ->
+                            if (cmd.trim().endsWith(getPackageManagerCommand(packageManager))) {
+
+                                val name = packageManager::class.simpleName
+                                log.i("Package installer has been initialized: $name")
+                                manager = packageManager
+                                manager?.subscribe(this)
+                                return@forEach
+                            }
                         }
-                    } catch (e: IllegalStateException) {
-                        onFailedResult(e)
-                    } catch (e: IllegalArgumentException) {
-                        onFailedResult(e)
                     }
                 }
-            }
-            is PackageManagerOperation -> {
-                notify(result)
-            }
-            else -> {
-
-                log.e("Unexpected operation result: $result")
-                try {
-                    onFailedResult()
-                } catch (e: IllegalStateException) {
-                    onFailedResult(e)
-                } catch (e: IllegalArgumentException) {
-                    onFailedResult(e)
+                is PackageManagerOperation -> {
+                    notify(result)
                 }
             }
         }
@@ -73,55 +84,28 @@ class PackageInstaller(entryPoint: SSH) :
     override fun initialize() {
         checkInitialized()
         busy()
-        iterator = supportedPackageManagers.iterator()
-        tryNext()
+
+        entryPoint.subscribe(operationCallback)
+        val toolkit = Toolkit(entryPoint)
+        val flow = InstallationStepFlow(toolkit)
+                .onFinish(flowCallback)
+                .registerRecipe(SkipCondition::class, ConditionRecipe::class)
+
+        supportedPackageManagers.forEach { packageManager ->
+
+            val command = getPackageManagerCommand(packageManager)
+            val skipCondition = SkipCondition(command)
+            flow.width(skipCondition)
+        }
+        flow.run()
     }
 
     @Synchronized
     @Throws(IllegalStateException::class)
     override fun terminate() {
         checkNotInitialized()
-        detach(manager)
-        manager?.terminate()
-        super.terminate()
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun onSuccessResult() {
-        item?.let {
-            manager = it
-            attach(manager)
-            log.i("${it.applicationBinaryName.capitalize()} package manager is initialized")
-        }
-        tryNext()
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun onFailedResult() {
-        tryNext()
-    }
-
-    @Throws(IllegalStateException::class, IllegalArgumentException::class)
-    override fun tryNext() {
-        manager?.let {
-            free(true)
-            return
-        }
-        if (iterator == null) {
-            free(false)
-            return
-        }
-        iterator?.let {
-            if (it.hasNext()) {
-                item = it.next()
-                item?.let { current ->
-                    command = Commands.getApplicationInfo(current.applicationBinaryName)
-                    entryPoint.execute(TerminalCommand(command))
-                }
-            } else {
-                free(false)
-            }
-        }
+        manager?.unsubscribe(operationCallback)
+        entryPoint.unsubscribe(operationCallback)
     }
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
@@ -162,13 +146,13 @@ class PackageInstaller(entryPoint: SSH) :
     }
 
     @Throws(IllegalStateException::class)
-    fun addSupportedPackageManager(packageManager: PackageManager) {
+    override fun addSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
         supportedPackageManagers.add(packageManager)
     }
 
     @Throws(IllegalStateException::class)
-    fun removeSupportedPackageManager(packageManager: PackageManager) {
+    override fun removeSupportedPackageManager(packageManager: PackageManager) {
         checkInitialized()
         supportedPackageManagers.remove(packageManager)
     }
@@ -202,5 +186,19 @@ class PackageInstaller(entryPoint: SSH) :
         if (manager == null) {
             throw IllegalStateException("Package installer has not been initialized")
         }
+    }
+
+    override fun onSuccessResult() {
+        free(true)
+    }
+
+    override fun onFailedResult() {
+        free(false)
+    }
+
+    private fun getPackageManagerCommand(packageManager: PackageManager): String {
+
+        val app = packageManager.applicationBinaryName
+        return Commands.getApplicationInfo(app)
     }
 }

@@ -93,7 +93,7 @@ class FlowConnectTestWithFailure : BaseTest() {
         }
         flow.run()
 
-        while (commandFlowExecuted < 1 || initializationFlowExecuted < 1 || commandFlowFailed < 1) {
+        while (flow.isBusy()) {
             Thread.yield()
         }
 
