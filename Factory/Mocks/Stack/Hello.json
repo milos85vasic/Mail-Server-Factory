@@ -22,12 +22,12 @@
             "value": "build/Mocks/Stack"
           },
           {
-            "type": "check",
-            "value": "hello-world"
+            "type": "command",
+            "value": "docker container stop hello-world"
           },
           {
             "type": "command",
-            "value": "echo 'Stack test completed with success!'"
+            "value": "docker container rm hello-world"
           }
         ]
       }
