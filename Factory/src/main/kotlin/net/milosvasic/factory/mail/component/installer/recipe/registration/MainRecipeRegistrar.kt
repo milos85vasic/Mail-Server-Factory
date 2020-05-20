@@ -16,36 +16,36 @@ import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipesRe
 class MainRecipeRegistrar : ProcessingRecipesRegistration {
 
     override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow): Boolean {
-        when (step) {
-            is CommandInstallationStep -> {
+        when (step::class) {
+            CommandInstallationStep::class -> {
                 flow.registerRecipe(
                         CommandInstallationStep::class,
                         CommandInstallationStepRecipe::class
                 )
                 return true
             }
-            is Condition -> {
+            Condition::class -> {
                 flow.registerRecipe(
                         Condition::class,
                         ConditionRecipe::class
                 )
                 return true
             }
-            is SkipCondition -> {
+            SkipCondition::class -> {
                 flow.registerRecipe(
                         SkipCondition::class,
                         ConditionRecipe::class
                 )
                 return true
             }
-            is Deploy -> {
+            Deploy::class -> {
                 flow.registerRecipe(
                         Deploy::class,
                         DeployRecipe::class
                 )
                 return true
             }
-            is Reboot -> {
+            Reboot::class -> {
                 flow.registerRecipe(
                         Reboot::class,
                         RebootRecipe::class

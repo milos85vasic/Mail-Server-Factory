@@ -12,22 +12,22 @@ import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipesRe
 class DockerRecipeRegistrar : ProcessingRecipesRegistration {
 
     override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow) : Boolean {
-        when (step) {
-            is Stack -> {
+        when (step::class) {
+            Stack::class -> {
                 flow.registerRecipe(
                         Stack::class,
                         StackRecipe::class
                 )
                 return true
             }
-            is Check -> {
+            Check::class -> {
                 flow.registerRecipe(
                         Check::class,
                         CommandInstallationStepRecipe::class
                 )
                 return true
             }
-            is SkipConditionCheck -> {
+            SkipConditionCheck::class -> {
                 flow.registerRecipe(
                         SkipConditionCheck::class,
                         ConditionRecipe::class

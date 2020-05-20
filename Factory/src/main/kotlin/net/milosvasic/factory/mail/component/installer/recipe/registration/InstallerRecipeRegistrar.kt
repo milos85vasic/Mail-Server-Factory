@@ -9,8 +9,8 @@ import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipesRe
 class InstallerRecipeRegistrar : ProcessingRecipesRegistration {
 
     override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow): Boolean {
-        when (step) {
-            is PackageManagerInstallationStep -> {
+        when (step::class) {
+            PackageManagerInstallationStep::class -> {
                 flow.registerRecipe(
                         PackageManagerInstallationStep::class,
                         PackageManagerInstallationStepRecipe::class

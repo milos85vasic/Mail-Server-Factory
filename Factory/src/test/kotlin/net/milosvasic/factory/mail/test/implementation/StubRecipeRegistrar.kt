@@ -8,8 +8,8 @@ import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipesRe
 class StubRecipeRegistrar : ProcessingRecipesRegistration {
 
     override fun registerRecipes(step: InstallationStep<*>, flow: InstallationStepFlow): Boolean {
-        when (step) {
-            is StubDeploy -> {
+        when (step::class) {
+            StubDeploy::class -> {
                 flow.registerRecipe(
                         StubDeploy::class,
                         DeployRecipe::class
