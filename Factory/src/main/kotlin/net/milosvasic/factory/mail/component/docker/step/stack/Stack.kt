@@ -2,11 +2,14 @@ package net.milosvasic.factory.mail.component.docker.step.stack
 
 import net.milosvasic.factory.mail.component.docker.DockerCommand
 import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
+import net.milosvasic.factory.mail.component.docker.command.DockerComposeUp
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
-import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.Commands
+import net.milosvasic.factory.mail.terminal.command.ConcatenateCommand
 import java.io.File
 
 open class Stack(
@@ -31,7 +34,7 @@ open class Stack(
         connection?.let { conn ->
 
             val path = getYmlPath()
-            val command = "${DockerCommand.COMPOSE.obtain()} -f $path ${DockerCommand.UP.obtain()} $flags"
+            val command = DockerComposeUp(path, flags)
 
             return CommandFlow()
                     .width(conn)
@@ -48,7 +51,7 @@ open class Stack(
         return Commands.printf("$bashHead\\n$command")
     }
 
-    private fun getCompletionCommand(command: String): String {
+    private fun getCompletionCommand(command: TerminalCommand): ConcatenateCommand {
 
         val stop = "stop.sh"
         val start = "start.sh"
@@ -60,11 +63,11 @@ open class Stack(
         val startShellScript = "$directory${File.separator}$start"
         val restartShellScript = "$directory${File.separator}$restart"
         val restartCmd = "sh stop.sh;\\nsh start.sh;"
-        val stopCmd = command
+        val stopCmd = command.command
                 .replace(DockerCommand.UP.obtain(), DockerCommand.DOWN.obtain())
                 .replace(flags, "")
 
-        val startGenerate = generate(command, startShellScript)
+        val startGenerate = generate(command.command, startShellScript)
         val stopGenerate = generate(stopCmd, stopShellScript)
         val restartGenerate = generate(restartCmd, restartShellScript)
 
@@ -72,7 +75,7 @@ open class Stack(
         val ownershipAndPermissionsStop = getOwnershipAndPermissions(stopShellScript)
         val ownershipAndPermissionsRestart = getOwnershipAndPermissions(restartShellScript)
 
-        return Commands.concatenate(
+        return ConcatenateCommand(
                 startGenerate,
                 stopGenerate,
                 restartGenerate,

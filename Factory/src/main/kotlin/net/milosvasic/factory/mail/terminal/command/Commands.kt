@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.terminal
+package net.milosvasic.factory.mail.terminal.command
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.localhost
@@ -12,6 +12,7 @@ object Commands {
     const val find = "find "
     const val ssh = "ssh -p"
     const val scp = "scp -P"
+    const val uname = "uname"
     const val mkdir = "mkdir -p"
     const val chmod = "chmod -R"
     const val chgrp = "chgrp -R"

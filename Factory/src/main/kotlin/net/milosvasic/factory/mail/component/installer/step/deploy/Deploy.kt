@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.installer.step.deploy
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.configuration.Variable
@@ -11,9 +10,9 @@ import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
-import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.*
 import java.io.File
 
 open class Deploy(what: String, private val where: String) : RemoteOperationInstallationStep<SSH>() {
@@ -74,23 +73,27 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
             terminal?.let { term ->
                 remote?.let { rmt ->
 
-                    val protoCleanup = getProtoCleanup()
                     val flow = CommandFlow()
                             .width(conn)
-                            .perform(Commands.mkdir(where), onDirectoryCreated)
+                            .perform(MkdirCommand(where), onDirectoryCreated)
                             .width(term)
-                            .perform(Commands.tar(whatFile.absolutePath, localTar))
+                            .perform(TarCommand(whatFile.absolutePath, localTar))
                             .perform(getScp(rmt))
                             .width(conn)
-                            .perform(Commands.unTar(remoteTar, where))
-                            .perform(Commands.rm(remoteTar))
+                            .perform(UnTarCommand(remoteTar, where))
+                            .perform(RmCommand(remoteTar))
 
-                    if (protoCleanup != String.EMPTY) {
+                    try {
+                        val protoCleanup = getProtoCleanup()
                         flow.perform(protoCleanup)
+                    } catch (e: IllegalArgumentException) {
+
+                        log.w(e)
                     }
+
                     return flow
                             .width(term)
-                            .perform(Commands.rm(localTar))
+                            .perform(RmCommand(localTar))
                             .width(conn)
                             .perform(getSecurityChanges(rmt))
                 }
@@ -115,10 +118,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
 
     protected open fun getScpCommand() = Commands.scp
 
-    protected open fun getScp(remote: Remote) = Commands.scp(localTar, where, remote)
-
-    protected open fun isRemote(operation: TerminalCommand) =
-            operation.command.startsWith(Commands.ssh)
+    protected open fun getScp(remote: Remote): TerminalCommand = ScpCommand(localTar, where, remote)
 
     @Throws(IllegalStateException::class)
     private fun processFiles(directory: File) {
@@ -192,24 +192,26 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
         return whatFile
     }
 
-    protected open fun getProtoCleanup(): String {
+    @Throws(IllegalArgumentException::class)
+    protected open fun getProtoCleanup(): TerminalCommand {
 
-        var exclude = String.EMPTY
-        excludes.forEach {
-            if (exclude.isNotEmpty() && !exclude.isBlank()) {
-                exclude += ";"
-            }
-            exclude += "${Commands.find(it, Commands.here)} -exec ${Commands.rm} {} \\;"
+        if (excludes.isEmpty()) {
+            throw IllegalArgumentException("No excludes available")
         }
-        return exclude
+        val excluded = mutableListOf<String>()
+        excludes.forEach {
+            val exclude = FindAndRemoveCommand(it, Commands.here)
+            excluded.add(exclude.command)
+        }
+        return ConcatenateCommand(*excluded.toTypedArray())
     }
 
-    protected open fun getSecurityChanges(remote: Remote): String {
+    protected open fun getSecurityChanges(remote: Remote): TerminalCommand {
 
         val chown = Commands.chown(remote.account, where)
         val chgrp = Commands.chgrp(remote.account, where)
         val permissions = Permissions(Permission.ALL, Permission.NONE, Permission.NONE)
         val chmod = Commands.chmod(where, permissions.obtain())
-        return Commands.concatenate(chown, chgrp, chmod)
+        return ConcatenateCommand(chown, chgrp, chmod)
     }
 }

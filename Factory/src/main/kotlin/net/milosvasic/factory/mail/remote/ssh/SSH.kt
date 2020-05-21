@@ -10,11 +10,12 @@ import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.terminal.Terminal
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.WrappedTerminalCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
 open class SSH(private val remote: Remote) :
-    Connection,
-    Notifying<OperationResult> {
+        Connection,
+        Notifying<OperationResult> {
 
     private val terminal = Terminal()
 
@@ -23,7 +24,28 @@ open class SSH(private val remote: Remote) :
 
     private val listener = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
-            notify(result)
+            if (result.operation is SSHCommand) {
+
+                val remoteCommand = result.operation.remoteCommand
+                val sshResult = if (remoteCommand is WrappedTerminalCommand) {
+
+                    OperationResult(
+                            remoteCommand.wrappedCommand,
+                            result.success,
+                            result.data,
+                            result.exception
+                    )
+                } else {
+
+                    OperationResult(
+                            remoteCommand,
+                            result.success,
+                            result.data,
+                            result.exception
+                    )
+                }
+                notify(sshResult)
+            }
         }
     }
 
@@ -36,15 +58,15 @@ open class SSH(private val remote: Remote) :
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
-        val command = TerminalCommand(SSHCommand(remote, what).getCommand(), what.configuration)
+        val command = SSHCommand(remote, what, what.configuration)
         terminal.execute(command)
     }
 
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     open fun execute(data: TerminalCommand, obtainOutput: Boolean) {
-        val command = TerminalCommand(SSHCommand(remote, data).getCommand())
-            command.configuration[CommandConfiguration.OBTAIN_RESULT] = obtainOutput
+        val command = SSHCommand(remote, data)
+        command.configuration[CommandConfiguration.OBTAIN_RESULT] = obtainOutput
         terminal.execute(command)
     }
 

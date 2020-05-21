@@ -6,8 +6,9 @@ import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.terminal.TerminalCommand
 
-open class SkipCondition(protected val command: String) : RemoteOperationInstallationStep<Connection>() {
+open class SkipCondition(protected val command: TerminalCommand) : RemoteOperationInstallationStep<Connection>() {
 
     protected var exception: Exception? = null
 

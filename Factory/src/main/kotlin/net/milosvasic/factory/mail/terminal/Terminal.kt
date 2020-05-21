@@ -90,10 +90,21 @@ class Terminal : Executor<TerminalCommand> {
 
     @Synchronized
     override fun notify(data: OperationResult) {
+        val result = if (data.operation is WrappedTerminalCommand) {
+
+            OperationResult(
+                    data.operation.wrappedCommand,
+                    data.success,
+                    data.data,
+                    data.exception
+            )
+        } else {
+            data
+        }
         val iterator = subscribers.iterator()
         while (iterator.hasNext()) {
             val listener = iterator.next()
-            listener.onOperationPerformed(data)
+            listener.onOperationPerformed(result)
         }
     }
 

@@ -1,7 +1,7 @@
 package net.milosvasic.factory.mail.test.implementation
 
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
-import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.command.Commands
 
 class StubStack(composeYmlPath: String) : Stack(composeYmlPath) {
 

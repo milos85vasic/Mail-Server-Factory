@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -9,20 +8,15 @@ import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class CommandInstallationStepRecipe : InstallationStepRecipe() {
 
-    private var command = String.EMPTY
+    private var command: TerminalCommand? = null
 
     private val operationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
             toolkit?.connection?.unsubscribe(this)
-            when (result.operation) {
-                is TerminalCommand -> {
-
-                    val resultCommand = result.operation.command
-                    if (command != String.EMPTY && resultCommand.trim().endsWith(command)) {
-
-                        callback?.onFinish(result.success, getErrorMessage(result))
-                        callback = null
-                    }
+            command?.let {
+                if (result.operation == it) {
+                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback = null
                 }
             }
         }

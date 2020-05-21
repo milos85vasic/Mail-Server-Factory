@@ -4,8 +4,11 @@ import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
-import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.ChmodCommand
+import net.milosvasic.factory.mail.terminal.command.Commands
+import net.milosvasic.factory.mail.terminal.command.CpCommand
+import net.milosvasic.factory.mail.terminal.command.RawTerminalCommand
 
 class StubDeploy(
         what: String,
@@ -13,16 +16,16 @@ class StubDeploy(
         private val protoStubs: List<String>
 ) : Deploy(what, where) {
 
-    override fun getScp(remote: Remote): String {
-        return Commands.cp(localTar, where)
-    }
+    override fun getScp(remote: Remote) = CpCommand(localTar, where)
 
     override fun getScpCommand() = Commands.cp
 
-    override fun isRemote(operation: TerminalCommand) =
-            operation.command.contains(StubSSH.stubCommandMarker)
+    @Throws(IllegalArgumentException::class)
+    override fun getProtoCleanup(): TerminalCommand {
 
-    override fun getProtoCleanup(): String {
+        if (protoStubs.isEmpty()) {
+            throw IllegalArgumentException("No proto stubs available")
+        }
         var command = ""
         protoStubs.forEachIndexed { index, it ->
             if (index > 0) {
@@ -30,12 +33,12 @@ class StubDeploy(
             }
             command += Commands.rm("$where/$it")
         }
-        return command
+        return RawTerminalCommand(command)
     }
 
-    override fun getSecurityChanges(remote: Remote): String {
+    override fun getSecurityChanges(remote: Remote): TerminalCommand {
 
         val permissions = Permissions(Permission.ALL, Permission.NONE, Permission.NONE)
-        return Commands.chmod(where, permissions.obtain())
+        return ChmodCommand(where, permissions.obtain())
     }
 }

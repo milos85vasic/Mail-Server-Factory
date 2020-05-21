@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.installer.step.reboot
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.configuration.ConfigurationManager
 import net.milosvasic.factory.mail.configuration.VariableContext
@@ -12,9 +11,10 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
-import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.EchoCommand
+import net.milosvasic.factory.mail.terminal.command.PingCommand
+import net.milosvasic.factory.mail.terminal.command.RebootCommand
 
 class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallationStep<SSH>() {
 
@@ -22,28 +22,22 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
     private val rebootScheduleTime = 3
     private var remote: Remote? = null
     private var terminal: Terminal? = null
-    private var pingCommand: String = String.EMPTY
 
     private val pingCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
 
             when (result.operation) {
-                is TerminalCommand -> {
-                    val cmd = result.operation.command
-                    when {
-                        isPing(cmd) -> {
-                            if (result.success) {
-                                finish(true)
-                            } else {
+                is PingCommand -> {
+                    if (result.success) {
+                        finish(true)
+                    } else {
 
-                                if (pingCount <= timeoutInSeconds) {
-                                    ping()
-                                } else {
+                        if (pingCount <= timeoutInSeconds) {
+                            ping()
+                        } else {
 
-                                    log.e("Reboot timeout exceeded")
-                                    finish(false)
-                                }
-                            }
+                            log.e("Reboot timeout exceeded")
+                            finish(false)
                         }
                     }
                 }
@@ -88,7 +82,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
 
                         CommandFlow()
                                 .width(term)
-                                .perform(Commands.echo("Reboot is not allowed by configuration"))
+                                .perform(EchoCommand("Reboot is not allowed by configuration"))
                     } else {
 
                         log.v("Reboot timeout in seconds: $timeoutInSeconds")
@@ -97,7 +91,7 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
 
                         CommandFlow()
                                 .width(conn)
-                                .perform(Commands.reboot(rebootScheduleTime))
+                                .perform(RebootCommand(rebootScheduleTime))
                     }
                 }
             }
@@ -125,8 +119,6 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
         }
     }
 
-    private fun isPing(cmd: String) = pingCommand != String.EMPTY && cmd.endsWith(pingCommand)
-
     private fun ping() {
 
         pingCount++
@@ -139,9 +131,8 @@ class Reboot(private val timeoutInSeconds: Int = 120) : RemoteOperationInstallat
         } else {
 
             terminal?.let { term ->
-                pingCommand = Commands.ping(host, 1)
                 try {
-                    term.execute(TerminalCommand(pingCommand))
+                    term.execute(PingCommand(host, 1))
                 } catch (e: IllegalStateException) {
 
                     log.e(e)

@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.PackageManagerCommand
 import kotlin.reflect.KClass
 
 abstract class PackageManager(entryPoint: Connection) :
@@ -141,10 +142,10 @@ abstract class PackageManager(entryPoint: Connection) :
     private fun getCommand(item: InstallationItem): TerminalCommand {
         return when (item) {
             is Package -> {
-                TerminalCommand("${installCommand()} ${item.value}")
+                PackageManagerCommand(installCommand(), item.value)
             }
             is Group -> {
-                TerminalCommand("${groupInstallCommand()} \"${item.value}\"")
+                PackageManagerCommand(groupInstallCommand(), item.value)
             }
             else -> {
                 throw IllegalArgumentException("Unsupported installation type: ${item::class.simpleName}")

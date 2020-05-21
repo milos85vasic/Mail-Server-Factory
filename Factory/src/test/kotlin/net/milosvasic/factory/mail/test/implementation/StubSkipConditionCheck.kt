@@ -1,12 +1,14 @@
 package net.milosvasic.factory.mail.test.implementation
 
 import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionCheck
+import net.milosvasic.factory.mail.terminal.command.EchoCommand
+import net.milosvasic.factory.mail.terminal.command.TestCommand
 
 class StubSkipConditionCheck(positive: Boolean) : SkipConditionCheck(
         "Test",
         if (positive) {
-            "echo 'stubConditionCheck'"
+            EchoCommand("stubConditionCheck")
         } else {
-            "test -e ./stubConditionCheck_FileDoesNotExist"
+            TestCommand("./stubConditionCheck_FileDoesNotExist")
         }
 )
