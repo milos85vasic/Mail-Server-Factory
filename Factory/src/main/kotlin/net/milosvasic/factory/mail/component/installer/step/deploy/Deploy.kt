@@ -120,9 +120,6 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
 
     protected open fun getScp(remote: Remote): TerminalCommand = ScpCommand(localTar, where, remote)
 
-    protected open fun isRemote(operation: TerminalCommand) =
-            operation.command.startsWith(Commands.ssh)
-
     @Throws(IllegalStateException::class)
     private fun processFiles(directory: File) {
         val fileList = directory.listFiles()

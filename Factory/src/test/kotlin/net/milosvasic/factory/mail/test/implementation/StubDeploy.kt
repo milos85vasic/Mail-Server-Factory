@@ -20,9 +20,6 @@ class StubDeploy(
 
     override fun getScpCommand() = Commands.cp
 
-    override fun isRemote(operation: TerminalCommand) =
-            operation.command.contains(StubSSH.stubCommandMarker)
-
     @Throws(IllegalArgumentException::class)
     override fun getProtoCleanup(): TerminalCommand {
 
