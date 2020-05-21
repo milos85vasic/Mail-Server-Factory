@@ -26,12 +26,6 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
     }
 
     @Throws(BusyException::class)
-    fun perform(what: String): CommandFlow {
-        perform(TerminalCommand(what))
-        return this
-    }
-
-    @Throws(BusyException::class)
     override fun perform(what: TerminalCommand): CommandFlow {
         super.perform(what)
         return this
@@ -42,15 +36,6 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
         what.configuration[CommandConfiguration.OBTAIN_RESULT] = true
         super.perform(what)
         dataHandlers[what] = dataHandler
-        return this
-    }
-
-    @Throws(BusyException::class)
-    fun perform(what: String, dataHandler: DataHandler<OperationResult>): CommandFlow {
-        val command = TerminalCommand(what)
-        command.configuration[CommandConfiguration.OBTAIN_RESULT] = true
-        super.perform(command)
-        dataHandlers[command] = dataHandler
         return this
     }
 

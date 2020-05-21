@@ -9,8 +9,8 @@ import net.milosvasic.factory.mail.execution.flow.implementation.InitializationF
 import net.milosvasic.factory.mail.execution.flow.implementation.InitializationHandler
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.Terminal
+import net.milosvasic.factory.mail.terminal.command.EchoCommand
 import net.milosvasic.factory.mail.test.implementation.SimpleInitializer
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -31,7 +31,7 @@ class FlowConnectTest : BaseTest() {
         var initialized = 0
         val dataReceived = mutableListOf<String>()
 
-        fun getEcho(parent: Int) = Commands.echo("$echo $parent :: ${++count}")
+        fun getEcho(parent: Int) = EchoCommand("$echo $parent :: ${++count}")
 
         val dataHandler = object : DataHandler<OperationResult> {
             override fun onData(data: OperationResult?) {

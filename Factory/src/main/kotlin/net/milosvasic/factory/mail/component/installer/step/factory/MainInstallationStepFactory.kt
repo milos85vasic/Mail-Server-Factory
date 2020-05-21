@@ -16,6 +16,7 @@ import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
+import net.milosvasic.factory.mail.terminal.command.RawTerminalCommand
 import net.milosvasic.factory.mail.validation.Validator
 
 class MainInstallationStepFactory : InstallationStepFactory {
@@ -42,7 +43,7 @@ class MainInstallationStepFactory : InstallationStepFactory {
             }
             InstallationStepType.COMMAND.type -> {
 
-                return CommandInstallationStep(definition.getValue())
+                return CommandInstallationStep(RawTerminalCommand(definition.getValue()))
             }
             InstallationStepType.REBOOT.type -> {
 
@@ -50,11 +51,11 @@ class MainInstallationStepFactory : InstallationStepFactory {
             }
             InstallationStepType.CONDITION.type -> {
 
-                return Condition(definition.getValue())
+                return Condition(RawTerminalCommand(definition.getValue()))
             }
             InstallationStepType.SKIP_CONDITION.type -> {
 
-                return SkipCondition(definition.getValue())
+                return SkipCondition(RawTerminalCommand(definition.getValue()))
             }
             InstallationStepType.CONDITION_CHECK.type -> {
 

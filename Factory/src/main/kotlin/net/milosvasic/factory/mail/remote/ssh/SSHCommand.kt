@@ -1,22 +1,22 @@
 package net.milosvasic.factory.mail.remote.ssh
 
-import net.milosvasic.factory.mail.operation.command.Command
+import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.remote.Remote
-import net.milosvasic.factory.mail.terminal.Commands
+import net.milosvasic.factory.mail.terminal.command.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 open class SSHCommand(
-    remote: Remote,
-    val command: TerminalCommand
-) : Command(
+        remote: Remote,
+        command: TerminalCommand,
+        configuration: MutableMap<CommandConfiguration, Boolean> = CommandConfiguration.DEFAULT.toMutableMap()
 
-    Commands.ssh(
-        remote.account,
-        command.command,
-        remote.port,
-        remote.host
-    )
-) {
+) : TerminalCommand(
 
-    fun getCommand() = toExecute
-}
+        Commands.ssh(
+                remote.account,
+                command.command,
+                remote.port,
+                remote.host
+        ),
+        configuration
+)

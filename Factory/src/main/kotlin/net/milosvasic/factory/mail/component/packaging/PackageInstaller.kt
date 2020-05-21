@@ -16,8 +16,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
-import net.milosvasic.factory.mail.terminal.Commands
-import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.ApplicationInfoCommand
 
 class PackageInstaller(entryPoint: Connection) :
         BusyWorker<PackageManager>(entryPoint),
@@ -56,12 +55,12 @@ class PackageInstaller(entryPoint: Connection) :
         override fun onOperationPerformed(result: OperationResult) {
 
             when (result.operation) {
-                is TerminalCommand -> {
+                is ApplicationInfoCommand -> {
 
                     if (result.success) {
-                        val cmd = result.operation.command
+                        val app = result.operation.application
                         supportedPackageManagers.forEach { packageManager ->
-                            if (cmd.trim().endsWith(getPackageManagerCommand(packageManager))) {
+                            if (app == packageManager.applicationBinaryName) {
 
                                 val name = packageManager::class.simpleName
                                 log.i("Package installer has been initialized: $name")
@@ -196,9 +195,9 @@ class PackageInstaller(entryPoint: Connection) :
         free(false)
     }
 
-    private fun getPackageManagerCommand(packageManager: PackageManager): String {
+    private fun getPackageManagerCommand(packageManager: PackageManager): ApplicationInfoCommand {
 
         val app = packageManager.applicationBinaryName
-        return Commands.getApplicationInfo(app)
+        return ApplicationInfoCommand(app)
     }
 }

@@ -4,7 +4,7 @@ import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import net.milosvasic.factory.mail.validation.Validator
 
-open class CommandInstallationStep(val command: String) : InstallationStep<Connection>() {
+open class CommandInstallationStep(val command: TerminalCommand) : InstallationStep<Connection>() {
 
     @Synchronized
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
@@ -12,6 +12,6 @@ open class CommandInstallationStep(val command: String) : InstallationStep<Conne
 
         Validator.Arguments.validateSingle(params)
         val connection = params[0]
-        connection.execute(TerminalCommand(command))
+        connection.execute(command)
     }
 }

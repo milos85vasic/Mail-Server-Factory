@@ -25,8 +25,10 @@ import net.milosvasic.factory.mail.os.HostInfoDataHandler
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ConnectionProvider
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.terminal.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.EchoCommand
+import net.milosvasic.factory.mail.terminal.command.HostInfoCommand
+import net.milosvasic.factory.mail.terminal.command.PingCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
 open class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
@@ -253,11 +255,11 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         return connectionProvider.obtain()
     }
 
+    protected open fun getHostInfoCommand(): TerminalCommand = HostInfoCommand()
+
     protected open fun instantiateDocker(ssh: Connection) = Docker(ssh)
 
     protected open fun instantiateInstaller(ssh: Connection) = Installer(ssh)
-
-    protected open fun getHostInfoCommand() = TerminalCommand(Commands.getHostInfo())
 
     private fun notifyInit(success: Boolean) {
         free()
@@ -340,9 +342,9 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
     private fun getCommandFlow(ssh: Connection, initFlow: InitializationFlow): CommandFlow {
 
         val host = ssh.getRemote().host
-        val pingCommand = TerminalCommand(Commands.ping(host))
+        val pingCommand = PingCommand(host)
         val hostInfoCommand = getHostInfoCommand()
-        val testCommand = TerminalCommand(Commands.echo("Hello"))
+        val testCommand = EchoCommand("Hello")
         val terminal = ssh.getTerminal()
         val dieCallback = DieOnFailureCallback<String>()
         return CommandFlow()

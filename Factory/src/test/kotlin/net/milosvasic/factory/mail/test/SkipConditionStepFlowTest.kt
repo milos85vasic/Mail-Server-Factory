@@ -36,6 +36,7 @@ open class SkipConditionStepFlowTest : BaseTest() {
 
         val operationNResultListener = object : OperationResultListener {
             override fun onOperationPerformed(result: OperationResult) {
+
                 when (result.operation) {
                     is TerminalCommand -> {
                         if (result.success) {

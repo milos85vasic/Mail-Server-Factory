@@ -5,12 +5,13 @@ import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.UnameCommand
 
 class StubServerFactory(arguments: List<String> = listOf()) : ServerFactory(arguments) {
 
     private val recipeRegistrar = StubRecipeRegistrar()
 
-    override fun getHostInfoCommand() = TerminalCommand("uname")
+    override fun getHostInfoCommand() = UnameCommand()
 
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun instantiateInstaller(ssh: Connection): Installer {
