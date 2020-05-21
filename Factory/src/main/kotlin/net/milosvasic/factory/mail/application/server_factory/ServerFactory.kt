@@ -3,10 +3,7 @@ package net.milosvasic.factory.mail.application.server_factory
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.application.ArgumentsValidator
 import net.milosvasic.factory.mail.common.Application
-import net.milosvasic.factory.mail.common.busy.Busy
-import net.milosvasic.factory.mail.common.busy.BusyDelegation
-import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.busy.LegacyBusyWorker
+import net.milosvasic.factory.mail.common.busy.*
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.docker.Docker
@@ -204,12 +201,12 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
     @Synchronized
     @Throws(BusyException::class)
     override fun busy() {
-        LegacyBusyWorker.busy(busy)
+        BusyWorker.busy(busy)
     }
 
     @Synchronized
     override fun free() {
-        LegacyBusyWorker.free(busy)
+        BusyWorker.free(busy)
     }
 
     fun isBusy() = busy.isBusy()
