@@ -15,8 +15,8 @@ import net.milosvasic.factory.mail.execution.flow.implementation.InstallationSte
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
-import net.milosvasic.factory.mail.terminal.command.Commands
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.Commands
 import net.milosvasic.factory.mail.test.implementation.StubConnection
 import net.milosvasic.factory.mail.test.implementation.StubDeploy
 import net.milosvasic.factory.mail.test.implementation.StubSSH

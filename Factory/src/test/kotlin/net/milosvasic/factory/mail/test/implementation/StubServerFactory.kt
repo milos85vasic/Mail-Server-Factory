@@ -4,7 +4,6 @@ import net.milosvasic.factory.mail.application.server_factory.ServerFactory
 import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.remote.Connection
-import net.milosvasic.factory.mail.terminal.TerminalCommand
 import net.milosvasic.factory.mail.terminal.command.UnameCommand
 
 class StubServerFactory(arguments: List<String> = listOf()) : ServerFactory(arguments) {

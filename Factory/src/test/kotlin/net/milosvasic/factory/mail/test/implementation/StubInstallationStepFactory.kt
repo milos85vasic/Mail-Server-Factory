@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.test.implementation
 
-import net.milosvasic.factory.mail.component.docker.step.stack.Stack
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.component.installer.step.deploy.DeployValidator

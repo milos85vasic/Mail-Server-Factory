@@ -3,7 +3,6 @@ package net.milosvasic.factory.mail.terminal.command
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.localhost
 import net.milosvasic.factory.mail.remote.Remote
-import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 object Commands {
 

@@ -5,7 +5,10 @@ import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.TerminalCommand
-import net.milosvasic.factory.mail.terminal.command.*
+import net.milosvasic.factory.mail.terminal.command.ChmodCommand
+import net.milosvasic.factory.mail.terminal.command.Commands
+import net.milosvasic.factory.mail.terminal.command.CpCommand
+import net.milosvasic.factory.mail.terminal.command.RawTerminalCommand
 
 class StubDeploy(
         what: String,
