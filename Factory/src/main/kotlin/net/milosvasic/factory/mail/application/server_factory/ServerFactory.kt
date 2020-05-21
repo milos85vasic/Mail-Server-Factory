@@ -307,8 +307,16 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
     private fun getDockerFlow(docker: Docker): InstallationFlow {
 
         val dockerFlow = InstallationFlow(docker)
-        containersConfigurations.forEach {
-            dockerFlow.width(it)
+        containersConfigurations.forEach { softwareConfiguration ->
+            softwareConfiguration.software.forEach { software ->
+                dockerFlow.width(
+                        SoftwareConfiguration(
+                                softwareConfiguration.configuration,
+                                mutableListOf(software),
+                                softwareConfiguration.includes
+                        )
+                )
+            }
         }
         dockerFlow.onFinish(TerminationCallback(this))
         return dockerFlow
