@@ -1,10 +1,8 @@
 package net.milosvasic.factory.mail.test.implementation
 
-import net.milosvasic.factory.mail.operation.command.CommandConfiguration
+import net.milosvasic.factory.mail.remote.Remote
+import net.milosvasic.factory.mail.remote.ssh.SSHCommand
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
-class StubSSHCommand(
-        command: String,
-        configuration: MutableMap<CommandConfiguration, Boolean> = CommandConfiguration.DEFAULT.toMutableMap()
-
-) : TerminalCommand(command, configuration)
+class StubSSHCommand(remote: Remote, command: TerminalCommand) :
+        SSHCommand(remote, command, sshCommand = command.command)

@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.TerminalCommand
+import net.milosvasic.factory.mail.terminal.command.RawTerminalCommand
 
 class StubSSH : SSH(
         Remote(host = localhost, port = 0, account = System.getProperty("user.name"))
@@ -19,14 +20,20 @@ class StubSSH : SSH(
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
-        val command = StubSSHCommand("${what.command}$stubCommandMarker", what.configuration)
+        val command = StubSSHCommand(
+                getRemote(),
+                StubSSHWrappedCommand(what, "${what.command}$stubCommandMarker")
+        )
         getTerminal().execute(command)
     }
 
     @Synchronized
     @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(data: TerminalCommand, obtainOutput: Boolean) {
-        val command = StubSSHCommand("${data.command}$stubCommandMarker")
+        val command = StubSSHCommand(getRemote(), StubSSHWrappedCommand(
+                data,
+                "${data.command}$stubCommandMarker")
+        )
         command.configuration[CommandConfiguration.OBTAIN_RESULT] = obtainOutput
         getTerminal().execute(command)
     }

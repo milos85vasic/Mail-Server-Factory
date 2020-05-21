@@ -92,7 +92,7 @@ class PackageInstaller(entryPoint: Connection) :
 
         supportedPackageManagers.forEach { packageManager ->
 
-            val command = getPackageManagerCommand(packageManager)
+            val command = getChallengeCommand(packageManager)
             val skipCondition = SkipCondition(command)
             flow.width(skipCondition)
         }
@@ -195,7 +195,7 @@ class PackageInstaller(entryPoint: Connection) :
         free(false)
     }
 
-    private fun getPackageManagerCommand(packageManager: PackageManager): ApplicationInfoCommand {
+    private fun getChallengeCommand(packageManager: PackageManager): ApplicationInfoCommand {
 
         val app = packageManager.applicationBinaryName
         return ApplicationInfoCommand(app)

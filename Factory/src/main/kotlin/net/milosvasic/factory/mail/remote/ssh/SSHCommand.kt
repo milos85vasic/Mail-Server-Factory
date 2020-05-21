@@ -7,16 +7,13 @@ import net.milosvasic.factory.mail.terminal.command.Commands
 
 open class SSHCommand(
         remote: Remote,
-        command: TerminalCommand,
-        configuration: MutableMap<CommandConfiguration, Boolean> = CommandConfiguration.DEFAULT.toMutableMap()
+        val remoteCommand: TerminalCommand,
+        configuration: MutableMap<CommandConfiguration, Boolean> = CommandConfiguration.DEFAULT.toMutableMap(),
 
-) : TerminalCommand(
-
-        Commands.ssh(
+        sshCommand: String = Commands.ssh(
                 remote.account,
-                command.command,
+                remoteCommand.command,
                 remote.port,
                 remote.host
-        ),
-        configuration
-)
+        )
+) : TerminalCommand(sshCommand, configuration)
