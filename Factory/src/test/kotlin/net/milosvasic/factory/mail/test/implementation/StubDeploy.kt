@@ -25,6 +25,10 @@ class StubDeploy(
 
     @Throws(IllegalArgumentException::class)
     override fun getProtoCleanup(): TerminalCommand {
+
+        if (protoStubs.isEmpty()) {
+            throw IllegalArgumentException("No proto stubs available")
+        }
         var command = ""
         protoStubs.forEachIndexed { index, it ->
             if (index > 0) {
