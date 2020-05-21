@@ -3,7 +3,7 @@ package net.milosvasic.factory.mail.configuration
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.busy.LegacyBusyWorker
+import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initialization
 import java.io.File
 
@@ -16,10 +16,10 @@ object ConfigurationManager : Initialization {
     @Throws(IllegalArgumentException::class, BusyException::class, IllegalStateException::class)
     override fun initialize() {
         checkInitialized()
-        LegacyBusyWorker.busy(busy)
+        BusyWorker.busy(busy)
         val file = File(configurationPath)
         configuration = Configuration.obtain(file)
-        LegacyBusyWorker.free(busy)
+        BusyWorker.free(busy)
     }
 
     @Throws(IllegalStateException::class)

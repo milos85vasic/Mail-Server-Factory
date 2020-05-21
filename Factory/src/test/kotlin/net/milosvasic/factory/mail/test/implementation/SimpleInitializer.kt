@@ -1,10 +1,7 @@
 package net.milosvasic.factory.mail.test.implementation
 
 import net.milosvasic.factory.mail.common.Application
-import net.milosvasic.factory.mail.common.busy.Busy
-import net.milosvasic.factory.mail.common.busy.BusyDelegation
-import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.busy.LegacyBusyWorker
+import net.milosvasic.factory.mail.common.busy.*
 import net.milosvasic.factory.mail.execution.TaskExecutor
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -71,12 +68,12 @@ class SimpleInitializer(
     @Synchronized
     @Throws(BusyException::class)
     override fun busy() {
-        LegacyBusyWorker.busy(busy)
+        BusyWorker.busy(busy)
     }
 
     @Synchronized
     override fun free() {
-        LegacyBusyWorker.free(busy)
+        BusyWorker.free(busy)
     }
 
     @Synchronized
