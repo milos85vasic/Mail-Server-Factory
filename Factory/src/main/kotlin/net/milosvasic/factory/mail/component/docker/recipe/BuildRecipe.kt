@@ -21,9 +21,6 @@ class BuildRecipe : InstallationStepRecipe() {
                         step.unsubscribe(this)
                     }
                     val errMsg = getErrorMessage(result)
-                    if (errMsg != String.EMPTY) {
-                        log.e(errMsg)
-                    }
                     callback?.onFinish(result.success, errMsg)
                     callback = null
                 }

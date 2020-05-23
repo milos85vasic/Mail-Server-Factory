@@ -66,7 +66,7 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
     ) {
         subjectsIterator?.let { sIterator ->
             if (!sIterator.hasNext()) {
-                finish(success)
+                finish(success, message)
             } else {
                 if (success) {
                     try {
