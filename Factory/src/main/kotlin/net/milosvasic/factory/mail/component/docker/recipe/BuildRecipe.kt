@@ -1,9 +1,11 @@
 package net.milosvasic.factory.mail.component.docker.recipe
 
-import net.milosvasic.factory.mail.component.docker.DockerInstallationOperation
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.docker.step.dockerfile.Build
+import net.milosvasic.factory.mail.component.docker.step.dockerfile.BuildOperation
 import net.milosvasic.factory.mail.component.installer.recipe.InstallationStepRecipe
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -12,13 +14,17 @@ class BuildRecipe : InstallationStepRecipe() {
     private val operationCallback = object : OperationResultListener {
         override fun onOperationPerformed(result: OperationResult) {
             when (result.operation) {
-                is DockerInstallationOperation -> {
+                is BuildOperation -> {
 
                     step?.let { s ->
                         val step = s as Build
                         step.unsubscribe(this)
                     }
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    val errMsg = getErrorMessage(result)
+                    if (errMsg != String.EMPTY) {
+                        log.e(errMsg)
+                    }
+                    callback?.onFinish(result.success, errMsg)
                     callback = null
                 }
             }
@@ -51,5 +57,11 @@ class BuildRecipe : InstallationStepRecipe() {
 
             fail(e)
         }
+    }
+
+    override fun getErrorMessage(result: OperationResult) = if (result.success) {
+        String.EMPTY
+    } else {
+        "Could not build Docker image"
     }
 }

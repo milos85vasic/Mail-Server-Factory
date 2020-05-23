@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.installer.step
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.Busy
@@ -69,7 +70,12 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
         override fun onFinish(success: Boolean, message: String, data: String?) {
 
             if (!success) {
-                log.e(message)
+                if (message != String.EMPTY) {
+                    log.e(message)
+                } else {
+                    val what = this@RemoteOperationInstallationStep::class.simpleName
+                    log.e("Remote operation installation step failed: $what")
+                }
             }
             finish(success)
         }
