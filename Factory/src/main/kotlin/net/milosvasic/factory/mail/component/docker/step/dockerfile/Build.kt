@@ -6,6 +6,11 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 
 class Build(what: String) : RemoteOperationInstallationStep<SSH>() {
 
+    companion object {
+
+        private const val defaultDockerfileName: String = "Dockerfile"
+    }
+
     override fun getFlow(): CommandFlow {
         TODO("Not yet implemented")
     }
