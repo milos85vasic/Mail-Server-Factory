@@ -2,7 +2,6 @@
 
 echo "Starting Postfix on `hostname`"
 
-# TODO: Tbd.
-
+systemctl start rsyslog
 postfix start && postfix check
-# TODO: tail -f /var/log/maillog
+tail -f /var/log/maillog
