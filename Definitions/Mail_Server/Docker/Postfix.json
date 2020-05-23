@@ -11,7 +11,7 @@
           },
           {
             "type": "build",
-            "value": "{{DOCKER.DOCKER_HOME}}/Postfix"
+            "value": "{{DOCKER.DOCKER_HOME}}/Postfix:postfix_service:1"
           }
         ]
       }
