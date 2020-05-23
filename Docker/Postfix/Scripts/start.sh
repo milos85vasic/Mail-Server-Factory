@@ -2,6 +2,6 @@
 
 echo "Starting Postfix on `hostname`"
 
-systemctl start rsyslog
+rsyslogd
 postfix start && postfix check
 tail -f /var/log/maillog

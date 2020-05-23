@@ -7,5 +7,4 @@ chmod -R +w /run/dovecot
 
 rsyslogd
 dovecot
-# TODO: Re-enable:
-# tail -f /var/log/maillog
+tail -f /var/log/maillog
