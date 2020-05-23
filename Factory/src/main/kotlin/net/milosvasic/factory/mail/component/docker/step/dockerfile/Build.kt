@@ -7,11 +7,6 @@ import net.milosvasic.factory.mail.remote.ssh.SSH
 
 class Build(private val what: String) : RemoteOperationInstallationStep<SSH>() {
 
-    companion object {
-
-        private const val defaultDockerfileName: String = "Dockerfile"
-    }
-
     private val validator = BuildValidator()
 
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
