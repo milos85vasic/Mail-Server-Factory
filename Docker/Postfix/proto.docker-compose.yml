@@ -1,0 +1,14 @@
+version: "3.7"
+
+services:
+  postgres_database:
+    image: postfix_service:1
+    container_name: postfix_service
+    restart: always
+    ports:
+      - 25:25
+      - 587:587
+    volumes:
+      - {{SERVER.SERVER_HOME}}/Server/Postfix/Etc:/etc/postfix
+      - {{SERVER.SERVER_HOME}}/Server/Postfix/Log:/var/log/maillog
+      - {{SERVER.SERVER_HOME}}/Server/Postfix/Mail:/usr/local/vmail
