@@ -39,7 +39,7 @@ class Build(private val what: String) : DockerInstallationStep() {
 
         if (validator.validate(what)) {
 
-            return "${what.split(":")[0]}:${what.split(":")[1]}"
+            return "${what.split(":")[1]}:${what.split(":")[2]}"
         } else {
 
             throw IllegalArgumentException("Invalid build parameters: $what")
