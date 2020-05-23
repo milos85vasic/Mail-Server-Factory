@@ -1,11 +1,10 @@
 package net.milosvasic.factory.mail.component.docker.step.dockerfile
 
 import net.milosvasic.factory.mail.component.docker.command.BuildImage
-import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
+import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
-import net.milosvasic.factory.mail.remote.ssh.SSH
 
-class Build(private val what: String) : RemoteOperationInstallationStep<SSH>() {
+class Build(private val what: String) : DockerInstallationStep() {
 
     private val validator = BuildValidator()
 

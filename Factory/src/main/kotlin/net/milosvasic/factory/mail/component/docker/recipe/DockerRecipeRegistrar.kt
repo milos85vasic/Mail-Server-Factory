@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.docker.recipe
 
+import net.milosvasic.factory.mail.component.docker.step.dockerfile.Build
 import net.milosvasic.factory.mail.component.docker.step.stack.Check
 import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionCheck
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
@@ -17,6 +18,13 @@ class DockerRecipeRegistrar : ProcessingRecipesRegistration {
                 flow.registerRecipe(
                         Stack::class,
                         StackRecipe::class
+                )
+                return true
+            }
+            Build::class -> {
+                flow.registerRecipe(
+                        Build::class,
+                        BuildRecipe::class
                 )
                 return true
             }
