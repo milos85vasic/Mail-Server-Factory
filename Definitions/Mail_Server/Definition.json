@@ -1,7 +1,9 @@
 {
   "includes": [
+    "Definitions/Mail_Server/Docker/Postfix.json"
+  ],
+  "includes_commented_out": [
     "Definitions/Mail_Server/Docker/Database.json",
-    "Definitions/Mail_Server/Docker/Postfix.json",
     "Definitions/Mail_Server/Docker/Dovecot.json"
   ]
 }
