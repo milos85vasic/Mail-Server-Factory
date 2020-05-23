@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.installer.step.factory
 
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepType
+import net.milosvasic.factory.mail.component.docker.step.dockerfile.Build
 import net.milosvasic.factory.mail.component.docker.step.stack.Check
 import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionCheck
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
@@ -82,6 +83,10 @@ class MainInstallationStepFactory : InstallationStepFactory {
             DockerInstallationStepType.STACK.type -> {
 
                 return Stack(definition.getValue())
+            }
+            DockerInstallationStepType.BUILD.type -> {
+
+                return Build(definition.getValue())
             }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")
