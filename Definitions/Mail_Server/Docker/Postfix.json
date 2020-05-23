@@ -8,6 +8,10 @@
           {
             "type": "deploy",
             "value": "Docker/Postfix:{{DOCKER.DOCKER_HOME}}/Postfix"
+          },
+          {
+            "type": "build",
+            "value": "{{DOCKER.DOCKER_HOME}}/Postfix"
           }
         ]
       }
