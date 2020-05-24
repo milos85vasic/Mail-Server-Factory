@@ -2,7 +2,6 @@
   "software": [
     {
       "name": "Postgres",
-      "version": "9.2.24",
       "installationSteps": {
         "CentOS": [
           {
