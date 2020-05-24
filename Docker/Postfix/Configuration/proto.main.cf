@@ -24,11 +24,7 @@ virtual_mailbox_domains = {{SERVER.DOMAINS}}
 
 virtual_mailbox_base = /usr/local/vmail
 
-# TODO: Probably not needed. Maps mails to local sys. accounts.
-# info@ora.com helene@localhost
-# info@oreilly.com frank@localhost
-# kdent@oreilly.com kyle.dent@onlamp.com
-# virtual_alias_maps = pgsql:/path
+virtual_alias_maps = pgsql:/etc/postfix/virtual-alias-maps.cf, pgsql:/etc/postfix/email2email.cf
 
 # TODO:
 # virtual_mailbox_maps = pgsql:/path
