@@ -66,7 +66,7 @@ class Terminal : Executor<TerminalCommand> {
                     }
                 }
                 val success = exitValue == 0
-                val result = OperationResult(what, success, inData + errData)
+                val result = OperationResult(what, success, inData, errorData = errData)
                 BusyWorker.free(busy)
                 notify(result)
             } catch (e: Exception) {

@@ -25,12 +25,14 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.HostInfoDataHandler
+import net.milosvasic.factory.mail.os.HostNameDataHandler
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ConnectionProvider
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import net.milosvasic.factory.mail.terminal.command.EchoCommand
 import net.milosvasic.factory.mail.terminal.command.HostInfoCommand
+import net.milosvasic.factory.mail.terminal.command.HostNameCommand
 import net.milosvasic.factory.mail.terminal.command.PingCommand
 import java.util.concurrent.ConcurrentLinkedQueue
 
@@ -344,18 +346,22 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
 
     private fun getCommandFlow(ssh: Connection, initFlow: InitializationFlow): CommandFlow {
 
+        val os = ssh.getRemoteOS()
         val host = ssh.getRemote().host
+        val terminal = ssh.getTerminal()
         val pingCommand = PingCommand(host)
+        val hostNameCommand = HostNameCommand()
         val hostInfoCommand = getHostInfoCommand()
         val testCommand = EchoCommand("Hello")
-        val terminal = ssh.getTerminal()
         val dieCallback = DieOnFailureCallback<String>()
+
         return CommandFlow()
                 .width(terminal)
                 .perform(pingCommand)
                 .width(ssh)
                 .perform(testCommand)
-                .perform(hostInfoCommand, HostInfoDataHandler(ssh.getRemoteOS()))
+                .perform(hostInfoCommand, HostInfoDataHandler(os))
+                .perform(hostNameCommand, HostNameDataHandler(os))
                 .onFinish(dieCallback)
                 .connect(initFlow)
     }
