@@ -7,7 +7,7 @@ import java.lang.reflect.Type
 
 data class VariableNode(
         val name: String = String.EMPTY,
-        val value: Any = String.EMPTY,
+        val value: Any? = null,
         val children: MutableList<VariableNode> = mutableListOf()
 ) {
 
@@ -158,6 +158,9 @@ data class VariableNode(
                 return null
             }
         }
-        return node.value.toString()
+        node.value?.let {
+            return it.toString()
+        }
+        return null
     }
 }

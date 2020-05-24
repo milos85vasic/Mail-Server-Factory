@@ -10,8 +10,7 @@ mail_owner = postfix
 
 myhostname = {{SERVER.HOSTNAME}}
 
-# TODO: Main domain
-mydomain = postfix.dev
+mydomain = {{SERVER.DOMAIN}}
 
 myorigin = $mydomain
 
