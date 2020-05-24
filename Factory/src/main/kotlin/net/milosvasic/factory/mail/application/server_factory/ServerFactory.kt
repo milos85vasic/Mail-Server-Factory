@@ -344,6 +344,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
     private fun getCommandFlow(ssh: Connection, initFlow: InitializationFlow): CommandFlow {
 
         val os = ssh.getRemoteOS()
+        val hostname = getHostname()
         val host = ssh.getRemote().host
         val terminal = ssh.getTerminal()
         val pingCommand = PingCommand(host)
@@ -351,21 +352,6 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         val hostInfoCommand = getHostInfoCommand()
         val testCommand = EchoCommand("Hello")
         val dieCallback = DieOnFailureCallback<String>()
-
-        var hostname = String.EMPTY
-        configuration?.let {
-
-            try {
-
-                val key = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.HOSTNAME.key}"
-                it.getVariableParsed(key)?.let { hName ->
-                    hostname = hName as String
-                }
-            } catch (e: IllegalStateException) {
-
-                log.w(e)
-            }
-        }
 
         val flow = CommandFlow()
                 .width(terminal)
@@ -383,5 +369,23 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         return flow
                 .onFinish(dieCallback)
                 .connect(initFlow)
+    }
+
+    private fun getHostname(): String {
+        var hostname = String.EMPTY
+        configuration?.let {
+
+            try {
+
+                val key = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.HOSTNAME.key}"
+                it.getVariableParsed(key)?.let { hName ->
+                    hostname = hName as String
+                }
+            } catch (e: IllegalStateException) {
+
+                log.w(e)
+            }
+        }
+        return hostname
     }
 }
