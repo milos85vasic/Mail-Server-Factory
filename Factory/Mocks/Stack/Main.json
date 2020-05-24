@@ -5,6 +5,11 @@
     "user": "stub",
     "host": "127.0.0.1"
   },
+  "variables": {
+    "SERVER": {
+      "HOSTNAME": "test.local"
+    }
+  },
   "containers": [
     "Mocks/Stack/Docker.json"
   ]

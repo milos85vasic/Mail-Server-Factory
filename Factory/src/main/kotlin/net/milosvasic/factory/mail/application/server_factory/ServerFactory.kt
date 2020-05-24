@@ -263,6 +263,8 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
 
     protected open fun instantiateInstaller(ssh: Connection) = Installer(ssh)
 
+    protected open fun getHostNameSetCommand(hostname: String): TerminalCommand = HostNameSetCommand(hostname)
+
     private fun notifyInit(success: Boolean) {
         free()
         val result = OperationResult(initializationOperation, success)
@@ -364,7 +366,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
 
         if (hostname != String.EMPTY) {
 
-            flow.perform(HostNameSetCommand(hostname), HostNameDataHandler(os, hostname))
+            flow.perform(getHostNameSetCommand(hostname), HostNameDataHandler(os, hostname))
         }
 
         return flow
