@@ -341,6 +341,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                 .onFinish(initCallback)
     }
 
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
     private fun getCommandFlow(ssh: Connection, initFlow: InitializationFlow): CommandFlow {
 
         val os = ssh.getRemoteOS()
@@ -371,20 +372,19 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                 .connect(initFlow)
     }
 
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
     private fun getHostname(): String {
         var hostname = String.EMPTY
         configuration?.let {
 
-            try {
-
-                val key = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.HOSTNAME.key}"
-                it.getVariableParsed(key)?.let { hName ->
-                    hostname = hName as String
-                }
-            } catch (e: IllegalStateException) {
-
-                log.w(e)
+            val key = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.HOSTNAME.key}"
+            it.getVariableParsed(key)?.let { hName ->
+                hostname = hName as String
             }
+        }
+        if (hostname == String.EMPTY) {
+
+            throw IllegalArgumentException("Empty hostname obtained for the server")
         }
         return hostname
     }
