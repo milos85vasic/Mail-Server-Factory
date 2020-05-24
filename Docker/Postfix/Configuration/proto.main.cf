@@ -8,8 +8,7 @@ data_directory = /var/lib/postfix
 
 mail_owner = postfix
 
-# TODO: Main host name
-myhostname = local.postfix.dev
+myhostname = {{SERVER.HOSTNAME}}
 
 # TODO: Main domain
 mydomain = postfix.dev
@@ -18,7 +17,6 @@ myorigin = $mydomain
 
 inet_interfaces = localhost
 
-# Enable IPv4, and IPv6 if supported
 inet_protocols = ipv4
 
 # The proxy_interfaces parameter specifies the network interface

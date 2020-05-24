@@ -1,0 +1,9 @@
+{
+  "variables": {
+    "SERVER": {
+      "HOSTNAME": "postmaster.local",
+      "SERVER_HOME": "/root",
+      "REBOOT_ALLOWED": true
+    }
+  }
+}
