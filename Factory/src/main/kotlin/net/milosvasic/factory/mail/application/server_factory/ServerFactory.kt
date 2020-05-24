@@ -30,10 +30,7 @@ import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ConnectionProvider
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.TerminalCommand
-import net.milosvasic.factory.mail.terminal.command.EchoCommand
-import net.milosvasic.factory.mail.terminal.command.HostInfoCommand
-import net.milosvasic.factory.mail.terminal.command.HostNameCommand
-import net.milosvasic.factory.mail.terminal.command.PingCommand
+import net.milosvasic.factory.mail.terminal.command.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 open class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
@@ -355,13 +352,35 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         val testCommand = EchoCommand("Hello")
         val dieCallback = DieOnFailureCallback<String>()
 
-        return CommandFlow()
+        var hostname = String.EMPTY
+        configuration?.let {
+
+            try {
+
+                val key = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.HOSTNAME.key}"
+                it.getVariableParsed(key)?.let { hName ->
+                    hostname = hName as String
+                }
+            } catch (e: IllegalStateException) {
+
+                log.w(e)
+            }
+        }
+
+        val flow = CommandFlow()
                 .width(terminal)
                 .perform(pingCommand)
                 .width(ssh)
                 .perform(testCommand)
                 .perform(hostInfoCommand, HostInfoDataHandler(os))
                 .perform(hostNameCommand, HostNameDataHandler(os))
+
+        if (hostname != String.EMPTY) {
+
+            flow.perform(HostNameSetCommand(hostname), HostNameDataHandler(os, hostname))
+        }
+
+        return flow
                 .onFinish(dieCallback)
                 .connect(initFlow)
     }
