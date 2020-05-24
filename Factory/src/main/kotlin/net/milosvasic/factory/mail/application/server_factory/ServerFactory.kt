@@ -257,11 +257,11 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         return connectionProvider.obtain()
     }
 
-    protected open fun getHostInfoCommand(): TerminalCommand = HostInfoCommand()
-
     protected open fun instantiateDocker(ssh: Connection) = Docker(ssh)
 
     protected open fun instantiateInstaller(ssh: Connection) = Installer(ssh)
+
+    protected open fun getHostInfoCommand(): TerminalCommand = HostInfoCommand()
 
     protected open fun getHostNameSetCommand(hostname: String): TerminalCommand = HostNameSetCommand(hostname)
 
