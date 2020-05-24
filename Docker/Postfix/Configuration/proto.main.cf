@@ -18,64 +18,16 @@ inet_interfaces = localhost
 
 inet_protocols = ipv4
 
-# The proxy_interfaces parameter specifies the network interface
-# addresses that this mail system receives mail on by way of a
-# proxy or network address translation unit. This setting extends
-# the address list specified with the inet_interfaces parameter.
-#
-# You must specify your proxy/NAT addresses when your system is a
-# backup MX host for other domains, otherwise mail delivery loops
-# will happen when the primary MX host is down.
-#
-#proxy_interfaces =
-#proxy_interfaces = 1.2.3.4
-
-# The mydestination parameter specifies the list of domains that this
-# machine considers itself the final destination for.
-#
-# These domains are routed to the delivery agent specified with the
-# local_transport parameter setting. By default, that is the UNIX
-# compatible delivery agent that lookups all recipients in /etc/passwd
-# and /etc/aliases or their equivalent.
-#
-# The default is $myhostname + localhost.$mydomain.  On a mail domain
-# gateway, you should also include $mydomain.
-#
-# Do not specify the names of virtual domains - those domains are
-# specified elsewhere (see VIRTUAL_README).
-#
-# Do not specify the names of domains that this machine is backup MX
-# host for. Specify those names via the relay_domains settings for
-# the SMTP server, or use permit_mx_backup if you are lazy (see
-# STANDARD_CONFIGURATION_README).
-#
-# The local machine is always the final destination for mail addressed
-# to user@[the.net.work.address] of an interface that the mail system
-# receives mail on (see the inet_interfaces parameter).
-#
-# Specify a list of host or domain names, /file/name or type:table
-# patterns, separated by commas and/or whitespace. A /file/name
-# pattern is replaced by its contents; a type:table is matched when
-# a name matches a lookup key (the right-hand side is ignored).
-# Continue long lines by starting the next line with whitespace.
-#
-# See also below, section "REJECTING MAIL FOR UNKNOWN LOCAL USERS".
-#
-# mydestination = $myhostname, localhost.$mydomain, localhost
-# mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain
-# mydestination = $myhostname, localhost.$mydomain, localhost, $mydomain,
-
-# TODO: Only main domain
 mydestination = $myhostname, localhost.$mydomain, $mydomain
+
+# TODO: __DOMAIN_NAMES__ --- All domains, separated
+# virtual_mailbox_domains = domain, domain, domain ...
 
 # TODO: Probably not needed. Maps mails to local sys. accounts.
 # info@ora.com helene@localhost
 # info@oreilly.com frank@localhost
 # kdent@oreilly.com kyle.dent@onlamp.com
 # virtual_alias_maps = pgsql:/path
-
-# TODO: __DOMAIN_NAMES__ --- All domains, separated
-# virtual_mailbox_domains = domain, domain, domain ...
 
 # TODO: Path!
 virtual_mailbox_base = /usr/local/vmail
