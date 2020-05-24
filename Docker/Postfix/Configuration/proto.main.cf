@@ -1,69 +1,12 @@
-# Global Postfix configuration file. This file lists only a subset
-# of all parameters. For the syntax, and for a complete parameter
-# list, see the postconf(5) manual page (command: "man 5 postconf").
-#
-# For common configuration examples, see BASIC_CONFIGURATION_README
-# and STANDARD_CONFIGURATION_README. To find these documents, use
-# the command "postconf html_directory readme_directory", or go to
-# http://www.postfix.org/.
-#
-# For best results, change no more than 2-3 parameters at a time,
-# and test if Postfix still works after every change.
-
-# SOFT BOUNCE
-#
-# The soft_bounce parameter provides a limited safety net for
-# testing.  When soft_bounce is enabled, mail will remain queued that
-# would otherwise bounce. This parameter disables locally-generated
-# bounces, and prevents the SMTP server from rejecting mail permanently
-# (by changing 5xx replies into 4xx replies). However, soft_bounce
-# is no cure for address rewriting mistakes or mail routing mistakes.
-#
-#soft_bounce = no
-
-# LOCAL PATHNAME INFORMATION
-#
-# The queue_directory specifies the location of the Postfix queue.
-# This is also the root directory of Postfix daemons that run chrooted.
-# See the files in examples/chroot-setup for setting up Postfix chroot
-# environments on different UNIX systems.
-#
 queue_directory = /var/spool/postfix
 
-# The command_directory parameter specifies the location of all
-# postXXX commands.
-#
 command_directory = /usr/sbin
 
-# The daemon_directory parameter specifies the location of all Postfix
-# daemon programs (i.e. programs listed in the master.cf file). This
-# directory must be owned by root.
-#
 daemon_directory = /usr/libexec/postfix
 
-# The data_directory parameter specifies the location of Postfix-writable
-# data files (caches, random numbers). This directory must be owned
-# by the mail_owner account (see below).
-#
 data_directory = /var/lib/postfix
 
-# QUEUE AND PROCESS OWNERSHIP
-#
-# The mail_owner parameter specifies the owner of the Postfix queue
-# and of most Postfix daemon processes.  Specify the name of a user
-# account THAT DOES NOT SHARE ITS USER OR GROUP ID WITH OTHER ACCOUNTS
-# AND THAT OWNS NO OTHER FILES OR PROCESSES ON THE SYSTEM.  In
-# particular, don't specify nobody or daemon. PLEASE USE A DEDICATED
-# USER.
-#
 mail_owner = postfix
-
-# The default_privs parameter specifies the default rights used by
-# the local delivery agent for delivery to external file or command.
-# These rights are used in the absence of a recipient user context.
-# DO NOT SPECIFY A PRIVILEGED USER OR THE POSTFIX OWNER.
-#
-#default_privs = nobody
 
 # TODO: Main host name
 myhostname = local.postfix.dev

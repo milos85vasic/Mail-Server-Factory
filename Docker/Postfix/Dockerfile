@@ -9,12 +9,10 @@ RUN chgrp postfix /etc/postfix/*
 
 ADD Scripts/start.sh /start.sh
 
-# TODO: Env
 EXPOSE 25
 EXPOSE 587
 
 RUN newaliases
-# TODO: Use Postgres
 RUN postalias /etc/aliases
 # TODO: Mapping virtual with system accounts, probably we will need this:
 # RUN postmap virtual_alias && postmap canonical
