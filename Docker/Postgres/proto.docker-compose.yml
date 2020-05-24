@@ -8,7 +8,7 @@ services:
     ports:
     - {{DB.DB_PORT}}:5432
     environment:
-      POSTGRES_USER: postgres
+      POSTGRES_USER: {{DB.DB_USER}}
       POSTGRES_PASSWORD: {{DB.DB_PASSWORD}}
       PGDATA: /Server/Postgres/Database
     volumes:

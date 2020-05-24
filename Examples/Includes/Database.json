@@ -2,6 +2,7 @@
   "variables": {
     "DB": {
       "DB_PORT": "35432",
+      "DB_USER": "postgres",
       "DB_PASSWORD": "Postgres123"
     }
   }

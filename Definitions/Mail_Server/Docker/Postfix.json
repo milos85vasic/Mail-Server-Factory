@@ -10,6 +10,10 @@
             "value": "Docker/Postfix:{{DOCKER.DOCKER_HOME}}/Postfix"
           },
           {
+            "type": "database",
+            "value": "{{DOCKER.DOCKER_HOME}}/Postfix/Database"
+          },
+          {
             "type": "build",
             "value": "{{DOCKER.DOCKER_HOME}}/Postfix:postfix_service:1.0"
           }

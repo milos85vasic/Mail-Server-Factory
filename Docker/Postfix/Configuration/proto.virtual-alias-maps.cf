@@ -1,4 +1,4 @@
-user = postgres
+user = {{DB.DB_USER}}
 password = {{DB.DB_PASSWORD}}
 hosts = 127.0.0.1
 port = {{DB.DB_PORT}}
