@@ -3,6 +3,7 @@
     "SERVER": {
       "HOSTNAME": "postmaster.dev.local",
       "DOMAIN": "dev.local",
+      "DOMAINS": "dev.local, test.local",
       "SERVER_HOME": "/root",
       "REBOOT_ALLOWED": true
     }

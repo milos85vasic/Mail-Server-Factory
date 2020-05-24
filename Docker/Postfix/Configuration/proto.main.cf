@@ -20,8 +20,7 @@ inet_protocols = ipv4
 
 mydestination = $myhostname, localhost.$mydomain, $mydomain
 
-# TODO: __DOMAIN_NAMES__ --- All domains, separated
-# virtual_mailbox_domains = domain, domain, domain ...
+virtual_mailbox_domains = {{SERVER.DOMAINS}}
 
 # TODO: Probably not needed. Maps mails to local sys. accounts.
 # info@ora.com helene@localhost
