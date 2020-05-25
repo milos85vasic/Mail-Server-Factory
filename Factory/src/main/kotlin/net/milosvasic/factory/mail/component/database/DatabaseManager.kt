@@ -26,7 +26,7 @@ object DatabaseManager :
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun unregister(what: DatabaseRegistration) {
+    override fun unRegister(what: DatabaseRegistration) {
         val type = what.database.type
         if (databases[type] == what.database) {
             databases.remove(type)?.terminate()
@@ -39,10 +39,6 @@ object DatabaseManager :
             val result = OperationResult(DatabaseOperation(), false)
             what.callback.onOperationPerformed(result)
         }
-    }
-
-    fun unregister(type: Type) {
-        databases.remove(type)?.terminate()
     }
 
     @Throws(IllegalArgumentException::class)
@@ -61,7 +57,7 @@ object DatabaseManager :
     override fun terminate() {
         busy()
         databases.keys.forEach { key ->
-            unregister(key)
+            unRegister(key)
         }
         free()
     }
@@ -75,5 +71,9 @@ object DatabaseManager :
     @Synchronized
     private fun free() {
         BusyWorker.free(busy)
+    }
+
+    private fun unRegister(type: Type) {
+        databases.remove(type)?.terminate()
     }
 }
