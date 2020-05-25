@@ -1,4 +1,4 @@
-package net.milosvasic.factory.mail.execution.flow.implementation
+package net.milosvasic.factory.mail.execution.flow.implementation.initialization
 
 import net.milosvasic.factory.mail.common.initialization.Initializer
 

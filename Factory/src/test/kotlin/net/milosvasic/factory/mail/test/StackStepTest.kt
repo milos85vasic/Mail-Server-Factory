@@ -3,7 +3,7 @@ package net.milosvasic.factory.mail.test
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.installer.step.factory.InstallationStepFactories
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.remote.Connection

@@ -2,7 +2,7 @@ package net.milosvasic.factory.mail.test
 
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.test.implementation.StubPackageManager
 import net.milosvasic.factory.mail.test.implementation.StubSSH

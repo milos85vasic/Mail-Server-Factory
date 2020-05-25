@@ -6,7 +6,7 @@ import net.milosvasic.factory.mail.application.DefaultInitializationHandler
 import net.milosvasic.factory.mail.application.server_factory.ServerFactory
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File

@@ -86,4 +86,6 @@ object Commands {
     fun test(what: String) = "test -e $what"
 
     fun setHostName(hostname: String) = "hostnamectl set-hostname $hostname"
+
+    fun cat(what: String) = "cat $what"
 }

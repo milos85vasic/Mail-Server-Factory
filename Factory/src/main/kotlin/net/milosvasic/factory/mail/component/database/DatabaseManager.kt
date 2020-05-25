@@ -8,7 +8,7 @@ import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.validation.Validator

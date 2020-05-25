@@ -3,17 +3,18 @@ package net.milosvasic.factory.mail.execution.flow
 import net.milosvasic.factory.mail.common.CollectionWrapper
 import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingData
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 
-abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrapper<T>, MutableList<M>>>(), FlowPerform<T, M, D> {
+abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrapper<T>, MutableList<Obtain<M>>>>(), FlowPerform<T, M, D> {
 
-    private var currentOperation: M? = null
-    private var operationsIterator: Iterator<M>? = null
-    private val collectionWrapper = CollectionWrapper<MutableMap<Wrapper<T>, MutableList<M>>>(mutableMapOf())
+    private var currentOperation: Obtain<M>? = null
+    private var operationsIterator: Iterator<Obtain<M>>? = null
+    private val collectionWrapper = CollectionWrapper<MutableMap<Wrapper<T>, MutableList<Obtain<M>>>>(mutableMapOf())
 
-    override val subjects: CollectionWrapper<MutableMap<Wrapper<T>, MutableList<M>>>
+    override val subjects: CollectionWrapper<MutableMap<Wrapper<T>, MutableList<Obtain<M>>>>
         get() = collectionWrapper
 
     override val processingCallback: FlowProcessingCallback
@@ -51,6 +52,21 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
 
     @Throws(BusyException::class)
     override fun perform(what: M): Flow<T, D> {
+        if (busy.isBusy()) {
+            throw BusyException()
+        }
+        subjects.get()[currentSubject]?.add(
+                object : Obtain<M> {
+                    override fun obtain(): M {
+                        return what
+                    }
+                }
+        )
+        return this
+    }
+
+    @Throws(BusyException::class)
+    override fun perform(what: Obtain<M>): Flow<T, D> {
         if (busy.isBusy()) {
             throw BusyException()
         }
@@ -129,7 +145,7 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
         }
         currentSubject?.let { subject ->
             currentOperation?.let { operation ->
-                val recipe = getProcessingRecipe(subject.content, operation)
+                val recipe = getProcessingRecipe(subject.content, operation.obtain())
                 recipe.process(processingCallback)
             }
         }
