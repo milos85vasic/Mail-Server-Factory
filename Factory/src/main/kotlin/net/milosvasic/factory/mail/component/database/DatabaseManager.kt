@@ -105,6 +105,7 @@ object DatabaseManager :
     @Throws(IllegalStateException::class)
     override fun terminate() {
         busy()
+        log.v("Shutting down: $this")
         databases.keys.forEach { type ->
             databases[type]?.keys?.forEach {name ->
                 unRegister(type, name)
