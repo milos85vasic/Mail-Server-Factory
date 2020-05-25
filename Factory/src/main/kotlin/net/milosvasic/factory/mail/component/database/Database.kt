@@ -73,5 +73,5 @@ abstract class Database(val name: String, entryPoint: Connection) :
     @Throws(IllegalStateException::class)
     protected abstract fun termination()
 
-    private fun getNotifyOperation() = DatabaseOperation()
+    private fun getNotifyOperation() = DatabaseInitializationOperation()
 }
