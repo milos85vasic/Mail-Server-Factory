@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.common.Registration
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
+import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -11,7 +12,8 @@ import net.milosvasic.factory.mail.validation.Validator
 
 object DatabaseManager :
         ObtainParametrized<Type, Database>,
-        Registration<DatabaseRegistration> {
+        Registration<DatabaseRegistration>,
+        Termination {
 
     private val busy = Busy()
     private val databases = mutableMapOf<Type, Database>()
@@ -52,6 +54,16 @@ object DatabaseManager :
             return it
         }
         throw IllegalArgumentException("No database registered for the type: ${type.type}")
+    }
+
+    @Synchronized
+    @Throws(IllegalStateException::class)
+    override fun terminate() {
+        busy()
+        databases.keys.forEach { key ->
+            unregister(key)
+        }
+        free()
     }
 
     @Synchronized
