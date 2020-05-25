@@ -5,7 +5,6 @@ import net.milosvasic.factory.mail.component.docker.step.dockerfile.Build
 import net.milosvasic.factory.mail.component.docker.step.dockerfile.BuildOperation
 import net.milosvasic.factory.mail.component.installer.recipe.InstallationStepRecipe
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
-import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 

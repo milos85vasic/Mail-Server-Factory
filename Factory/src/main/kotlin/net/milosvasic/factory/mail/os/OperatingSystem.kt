@@ -1,7 +1,6 @@
 package net.milosvasic.factory.mail.os
 
 import net.milosvasic.factory.mail.EMPTY
-import net.milosvasic.factory.mail.LINE_BREAK
 
 data class OperatingSystem(
         private var name: String = "System unknown",

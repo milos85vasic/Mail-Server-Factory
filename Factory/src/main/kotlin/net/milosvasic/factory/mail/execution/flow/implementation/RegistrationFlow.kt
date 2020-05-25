@@ -3,7 +3,6 @@ package net.milosvasic.factory.mail.execution.flow.implementation
 import net.milosvasic.factory.mail.common.Registration
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.obtain.Obtain
-import net.milosvasic.factory.mail.execution.flow.Flow
 import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowPerformBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback

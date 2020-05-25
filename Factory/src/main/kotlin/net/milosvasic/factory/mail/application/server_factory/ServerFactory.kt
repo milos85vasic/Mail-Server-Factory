@@ -19,8 +19,8 @@ import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.DieOnFailureCallback
 import net.milosvasic.factory.mail.execution.flow.callback.TerminationCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
-import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult

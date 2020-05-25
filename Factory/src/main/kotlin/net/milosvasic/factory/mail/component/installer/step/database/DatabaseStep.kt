@@ -86,17 +86,20 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
             val type = Type.getType(it.type)
             val factory = DatabaseFactory(type, it.name, connection)
             val database = factory.build()
-            return DatabaseRegistration(
-                    database,
-                    object : OperationResultListener {
-                        override fun onOperationPerformed(result: OperationResult) {
-                            log.e("> > > > $result")
-                            if (result.success) {
 
+            val callback = object : OperationResultListener {
+                override fun onOperationPerformed(result: OperationResult) {
+                    when (result.operation) {
+                        is DatabaseRegistrationOperation -> {
+                            if (!result.success) {
+                                log.e("Database registration failed: $database")
                             }
                         }
                     }
-            )
+                }
+            }
+
+            return DatabaseRegistration(database, callback)
         }
         throw IllegalArgumentException("Proper database configuration unavailable")
     }
