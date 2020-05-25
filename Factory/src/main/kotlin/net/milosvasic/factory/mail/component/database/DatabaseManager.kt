@@ -28,8 +28,8 @@ object DatabaseManager :
 
             registration?.let {
 
-                val name = it.name
                 val db = it.database
+                val name = db.name
                 val type = db.type
 
                 if (success) {
@@ -73,9 +73,10 @@ object DatabaseManager :
     @Throws(IllegalArgumentException::class)
     override fun unRegister(what: DatabaseRegistration) {
 
-        val name = what.name
         val db = what.database
+        val name = db.name
         val type = db.type
+
         if (databases[type]?.get(name) == what.database) {
             databases[type]?.remove(name)?.terminate()
 

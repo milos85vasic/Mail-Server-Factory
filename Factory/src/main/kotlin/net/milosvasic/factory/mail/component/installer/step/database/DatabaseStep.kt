@@ -28,7 +28,6 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
 
             // TODO: Instantiate registration
             val registration = DatabaseRegistration(
-                    "Test", // TODO: Use from DB
                     Postgres("Test", conn),
                     object : OperationResultListener {
                         override fun onOperationPerformed(result: OperationResult) {
