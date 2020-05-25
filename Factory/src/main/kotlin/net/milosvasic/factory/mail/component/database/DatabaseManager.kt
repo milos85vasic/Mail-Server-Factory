@@ -40,6 +40,7 @@ object DatabaseManager :
                         databases[type] = dbs
                     }
                     dbs[name] = it.database
+                    log.i("$type database initialized: '$name'")
                 } else {
 
                     if (message == String.EMPTY) {
