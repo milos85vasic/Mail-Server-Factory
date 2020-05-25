@@ -12,11 +12,5 @@ class Postgres(entryPoint: Connection) : Database(entryPoint) {
         TODO("Not yet implemented")
     }
 
-    override fun termination() {
-        TODO("Not yet implemented")
-    }
-
-    override fun getNotifyOperation(): Operation {
-        TODO("Not yet implemented")
-    }
+    override fun termination() = initialized.set(false)
 }

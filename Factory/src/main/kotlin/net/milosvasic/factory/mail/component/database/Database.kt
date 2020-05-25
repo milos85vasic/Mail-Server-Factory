@@ -5,7 +5,6 @@ import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import java.util.concurrent.atomic.AtomicBoolean
@@ -71,5 +70,5 @@ abstract class Database(entryPoint: Connection) :
     @Throws(IllegalStateException::class)
     protected abstract fun termination()
 
-    protected abstract fun getNotifyOperation(): Operation
+    private fun getNotifyOperation() = DatabaseOperation()
 }
