@@ -9,8 +9,11 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class Database(entryPoint: Connection) :
-        BusyWorker<InstallationStep<*>>(entryPoint), Initializer, Termination {
+abstract class Database(val name: String, entryPoint: Connection) :
+
+        BusyWorker<InstallationStep<*>>(entryPoint),
+        Initializer,
+        Termination {
 
     abstract val type: Type
     protected val initialized = AtomicBoolean()
