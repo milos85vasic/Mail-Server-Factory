@@ -79,8 +79,14 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                                 } else {
                                     " "
                                 }
-                                val nodeValue = Variable.parse(node.value.toString())
-                                log.v("Configuration variable:$printablePrefix${node.name} -> $nodeValue")
+                                node.value?.let { value ->
+                                    val nodeValue = Variable.parse(value.toString())
+                                    node.name?.let { name ->
+                                        if (name != String.EMPTY) {
+                                            log.v("Configuration variable:$printablePrefix${node.name} -> $nodeValue")
+                                        }
+                                    }
+                                }
                             }
                             node.children.forEach { child ->
                                 var nextPrefix = prefix

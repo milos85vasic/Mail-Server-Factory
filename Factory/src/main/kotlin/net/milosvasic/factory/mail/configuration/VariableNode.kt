@@ -6,7 +6,7 @@ import net.milosvasic.factory.mail.common.GsonDeserialization
 import java.lang.reflect.Type
 
 data class VariableNode(
-        val name: String = String.EMPTY,
+        val name: String? = null,
         val value: Any? = null,
         val children: MutableList<VariableNode> = mutableListOf()
 ) {
