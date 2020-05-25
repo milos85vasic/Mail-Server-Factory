@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.database
 
+import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.remote.Connection
 
 class Postgres(entryPoint: Connection) : Database(entryPoint) {
@@ -15,28 +16,7 @@ class Postgres(entryPoint: Connection) : Database(entryPoint) {
         TODO("Not yet implemented")
     }
 
-    override fun notify(success: Boolean) {
+    override fun getNotifyOperation(): Operation {
         TODO("Not yet implemented")
     }
-
-    override fun onFailedResult() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onSuccessResult() {
-        TODO("Not yet implemented")
-    }
-
-    override fun isInitialized(): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun checkInitialized() {
-        TODO("Not yet implemented")
-    }
-
-    override fun checkNotInitialized() {
-        TODO("Not yet implemented")
-    }
-
 }
