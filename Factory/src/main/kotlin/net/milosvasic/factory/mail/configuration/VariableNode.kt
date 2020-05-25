@@ -6,8 +6,8 @@ import net.milosvasic.factory.mail.common.GsonDeserialization
 import java.lang.reflect.Type
 
 data class VariableNode(
-        val name: String? = null,
-        val value: Any? = null,
+        val name: String = String.EMPTY,
+        val value: Any = String.EMPTY,
         val children: MutableList<VariableNode> = mutableListOf()
 ) {
 
@@ -158,9 +158,6 @@ data class VariableNode(
                 return null
             }
         }
-        node.value?.let {
-            return it.toString()
-        }
-        return null
+        return node.value.toString()
     }
 }
