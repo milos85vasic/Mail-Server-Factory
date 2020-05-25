@@ -5,6 +5,7 @@ import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
+import net.milosvasic.factory.mail.validation.Validator
 
 object DatabaseManager :
         ObtainParametrized<Type, Database>,
@@ -35,8 +36,15 @@ object DatabaseManager :
         databases.remove(type)?.terminate()
     }
 
+    @Throws(IllegalArgumentException::class)
     override fun obtain(vararg param: Type): Database {
-        TODO("Not yet implemented")
+
+        Validator.Arguments.validateSingle(param)
+        val type = param[0]
+        databases[type]?.let {
+            return it
+        }
+        throw IllegalArgumentException("No database registered for the type: ${type.type}")
     }
 
     @Synchronized
