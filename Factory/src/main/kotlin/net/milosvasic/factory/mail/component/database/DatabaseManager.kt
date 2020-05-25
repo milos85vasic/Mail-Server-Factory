@@ -5,30 +5,37 @@ import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
+import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.validation.Validator
 
 object DatabaseManager :
         ObtainParametrized<Type, Database>,
-        Registration<Database> {
+        Registration<DatabaseRegistration> {
 
     private val busy = Busy()
     private val databases = mutableMapOf<Type, Database>()
 
     @Synchronized
     @Throws(IllegalStateException::class)
-    override fun register(what: Database) {
+    override fun register(what: DatabaseRegistration) {
         busy()
 
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun unregister(what: Database) {
-        val type = what.type
-        if (databases[type] == what) {
+    override fun unregister(what: DatabaseRegistration) {
+        val type = what.database.type
+        if (databases[type] == what.database) {
             databases.remove(type)?.terminate()
+
+            val result = OperationResult(DatabaseOperation(), true)
+            what.callback.onOperationPerformed(result)
         } else {
 
-            throw IllegalArgumentException("Database instance is not register: $databases")
+            log.e("Database instance is not registered: $databases")
+            val result = OperationResult(DatabaseOperation(), false)
+            what.callback.onOperationPerformed(result)
         }
     }
 
