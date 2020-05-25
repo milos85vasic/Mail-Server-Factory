@@ -14,23 +14,36 @@ import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.validation.Validator
 
 object DatabaseManager :
-        ObtainParametrized<Type, Database>,
+        ObtainParametrized<DatabaseRequest, Database>,
         Registration<DatabaseRegistration>,
         Termination {
 
     private val busy = Busy()
-    private val databases = mutableMapOf<Type, Database>()
     private var registration: DatabaseRegistration? = null
     private val operation = DatabaseRegistrationOperation()
+    private val databases = mutableMapOf<Type, MutableMap<String, Database>>()
 
     private val initFlowCallback = object : FlowCallback<String> {
         override fun onFinish(success: Boolean, message: String, data: String?) {
 
             registration?.let {
 
-                if (!success) {
+                val name = it.name
+                val db = it.database
+                val type = db.type
+
+                if (success) {
+
+                    var dbs = databases[type]
+                    if (dbs == null) {
+                        dbs = mutableMapOf()
+                        databases[type] = dbs
+                    }
+                    dbs[name] = it.database
+                } else {
+
                     if (message == String.EMPTY) {
-                        log.e("Database initialization failed for ${it.database.type.type} database")
+                        log.e("Database initialization failed for ${type.type} database")
                     } else {
                         log.e(message)
                     }
@@ -58,9 +71,12 @@ object DatabaseManager :
 
     @Throws(IllegalArgumentException::class)
     override fun unRegister(what: DatabaseRegistration) {
-        val type = what.database.type
-        if (databases[type] == what.database) {
-            databases.remove(type)?.terminate()
+
+        val name = what.name
+        val db = what.database
+        val type = db.type
+        if (databases[type]?.get(name) == what.database) {
+            databases[type]?.remove(name)?.terminate()
 
             val result = OperationResult(operation, true)
             what.callback.onOperationPerformed(result)
@@ -73,11 +89,13 @@ object DatabaseManager :
     }
 
     @Throws(IllegalArgumentException::class)
-    override fun obtain(vararg param: Type): Database {
+    override fun obtain(vararg param: DatabaseRequest): Database {
 
         Validator.Arguments.validateSingle(param)
-        val type = param[0]
-        databases[type]?.let {
+        val request = param[0]
+        val type = request.type
+        val name = request.name
+        databases[type]?.get(name)?.let {
             return it
         }
         throw IllegalArgumentException("No database registered for the type: ${type.type}")
@@ -87,8 +105,10 @@ object DatabaseManager :
     @Throws(IllegalStateException::class)
     override fun terminate() {
         busy()
-        databases.keys.forEach { key ->
-            unRegister(key)
+        databases.keys.forEach { type ->
+            databases[type]?.keys?.forEach {name ->
+                unRegister(type, name)
+            }
         }
         free()
     }
@@ -104,7 +124,7 @@ object DatabaseManager :
         BusyWorker.free(busy)
     }
 
-    private fun unRegister(type: Type) {
-        databases.remove(type)?.terminate()
+    private fun unRegister(type: Type, name: String) {
+        databases[type]?.remove(name)?.terminate()
     }
 }
