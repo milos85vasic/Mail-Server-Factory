@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
+import net.milosvasic.factory.mail.component.installer.step.database.DatabaseStep
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.component.installer.step.deploy.DeployValidator
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
@@ -79,6 +80,10 @@ class MainInstallationStepFactory : InstallationStepFactory {
 
                     throw IllegalArgumentException("Invalid deploy parameters")
                 }
+            }
+            InstallationStepType.DATABASE.type -> {
+
+                return DatabaseStep(definition.getValue())
             }
             DockerInstallationStepType.STACK.type -> {
 

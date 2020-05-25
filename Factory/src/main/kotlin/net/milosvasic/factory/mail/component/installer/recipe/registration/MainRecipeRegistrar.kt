@@ -1,13 +1,11 @@
 package net.milosvasic.factory.mail.component.installer.recipe.registration
 
-import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
-import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
-import net.milosvasic.factory.mail.component.installer.recipe.DeployRecipe
-import net.milosvasic.factory.mail.component.installer.recipe.RebootRecipe
+import net.milosvasic.factory.mail.component.installer.recipe.*
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
+import net.milosvasic.factory.mail.component.installer.step.database.DatabaseStep
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
@@ -42,6 +40,13 @@ class MainRecipeRegistrar : ProcessingRecipesRegistration {
                 flow.registerRecipe(
                         Deploy::class,
                         DeployRecipe::class
+                )
+                return true
+            }
+            DatabaseStep::class -> {
+                flow.registerRecipe(
+                        DatabaseStep::class,
+                        DatabaseStepRecipe::class
                 )
                 return true
             }
