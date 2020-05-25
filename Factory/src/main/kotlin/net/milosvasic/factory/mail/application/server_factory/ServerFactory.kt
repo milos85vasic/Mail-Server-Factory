@@ -9,6 +9,7 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.common.initialization.Termination
+import net.milosvasic.factory.mail.component.database.DatabaseManager
 import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.component.docker.DockerInitializationFlowCallback
 import net.milosvasic.factory.mail.component.installer.Installer
@@ -176,6 +177,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
 
             terminators.add(docker)
             terminators.add(installer)
+            terminators.add(DatabaseManager)
 
             val dockerFlow = getDockerFlow(docker)
             val dockerInitFlow = getDockerInitFlow(docker, dockerFlow)
