@@ -7,6 +7,14 @@ class Postgres(entryPoint: Connection) : Database(entryPoint) {
     override val type: Type
         get() = Type.Postgres
 
+    override fun initialization() {
+        TODO("Not yet implemented")
+    }
+
+    override fun termination() {
+        TODO("Not yet implemented")
+    }
+
     override fun notify(success: Boolean) {
         TODO("Not yet implemented")
     }
@@ -16,10 +24,6 @@ class Postgres(entryPoint: Connection) : Database(entryPoint) {
     }
 
     override fun onSuccessResult() {
-        TODO("Not yet implemented")
-    }
-
-    override fun initialize() {
         TODO("Not yet implemented")
     }
 
@@ -34,10 +38,5 @@ class Postgres(entryPoint: Connection) : Database(entryPoint) {
     override fun checkNotInitialized() {
         TODO("Not yet implemented")
     }
-
-    override fun terminate() {
-        TODO("Not yet implemented")
-    }
-
 
 }
