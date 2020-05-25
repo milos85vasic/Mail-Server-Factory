@@ -1,11 +1,14 @@
 package net.milosvasic.factory.mail.component.database
 
+import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Registration
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.validation.Validator
@@ -17,12 +20,40 @@ object DatabaseManager :
 
     private val busy = Busy()
     private val databases = mutableMapOf<Type, Database>()
+    private var registration: DatabaseRegistration? = null
+    private val operation = DatabaseRegistrationOperation()
+
+    private val initFlowCallback = object : FlowCallback<String> {
+        override fun onFinish(success: Boolean, message: String, data: String?) {
+
+            registration?.let {
+
+                if (!success) {
+                    if (message == String.EMPTY) {
+                        log.e("Database initialization failed for ${it.database.type.type} database")
+                    } else {
+                        log.e(message)
+                    }
+                }
+                val result = OperationResult(operation, success, data ?: String.EMPTY)
+                it.callback.onOperationPerformed(result)
+            }
+            registration = null
+            free()
+        }
+    }
 
     @Synchronized
     @Throws(IllegalStateException::class)
     override fun register(what: DatabaseRegistration) {
         busy()
 
+        registration = what
+        val db = what.database
+        InitializationFlow()
+                .width(db)
+                .onFinish(initFlowCallback)
+                .run()
     }
 
     @Throws(IllegalArgumentException::class)
@@ -31,12 +62,12 @@ object DatabaseManager :
         if (databases[type] == what.database) {
             databases.remove(type)?.terminate()
 
-            val result = OperationResult(DatabaseOperation(), true)
+            val result = OperationResult(operation, true)
             what.callback.onOperationPerformed(result)
         } else {
 
             log.e("Database instance is not registered: $databases")
-            val result = OperationResult(DatabaseOperation(), false)
+            val result = OperationResult(operation, false)
             what.callback.onOperationPerformed(result)
         }
     }
