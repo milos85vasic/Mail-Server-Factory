@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.database
 
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.Operation
 import net.milosvasic.factory.mail.remote.Connection
 
@@ -9,7 +10,9 @@ class Postgres(name: String, entryPoint: Connection) : Database(name, entryPoint
         get() = Type.Postgres
 
     override fun initialization() {
-        TODO("Not yet implemented")
+
+        log.e("Not implemented !!!")
+        onFailedResult()
     }
 
     override fun termination() = initialized.set(false)
