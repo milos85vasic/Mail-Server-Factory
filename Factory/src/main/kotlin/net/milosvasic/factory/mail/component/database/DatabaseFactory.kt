@@ -1,12 +1,13 @@
 package net.milosvasic.factory.mail.component.database
 
 import net.milosvasic.factory.mail.common.Build
+import net.milosvasic.factory.mail.component.database.postgres.Postgres
 import net.milosvasic.factory.mail.remote.Connection
 
 class DatabaseFactory(
         val type: Type,
         val name: String,
-        val connection: Connection
+        val connection: DatabaseConnection
 
 ) : Build<Database> {
 

@@ -7,6 +7,7 @@ import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyDelegate
 import net.milosvasic.factory.mail.common.busy.BusyDelegation
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.execution.flow.callback.DefaultApplicationCallback
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
@@ -21,7 +22,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     protected var currentSubject: Wrapper<T>? = null
     protected var subjectsIterator: Iterator<Wrapper<T>>? = null
 
-    private var nextFlow: FlowBuilder<*, *, *>? = null
+    protected var nextFlow: Obtain<FlowBuilder<*, *, *>?>? = null
     private var callback: FlowCallback<D> = DefaultApplicationCallback()
 
     @Throws(BusyException::class)
@@ -46,14 +47,37 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     @Throws(BusyException::class)
     open fun connect(flow: FlowBuilder<*, *, *>): FlowBuilder<T, D, C> {
 
-        if (nextFlow == null) {
-            nextFlow = flow
-        } else {
-            var flowToConnectTo = nextFlow
-            while (flowToConnectTo?.nextFlow != null) {
-                flowToConnectTo = flowToConnectTo.nextFlow
+        if (busy.isBusy()) {
+            throw BusyException()
+        }
+        if (nextFlow?.obtain() == null) {
+            nextFlow = object : Obtain<FlowBuilder<*, *, *>> {
+                override fun obtain(): FlowBuilder<*, *, *> {
+                    return flow
+                }
             }
-            flowToConnectTo?.nextFlow = flow
+        } else {
+            val flowToConnectTo = getFlowToConnectTo()
+            flowToConnectTo.obtain()?.nextFlow = object : Obtain<FlowBuilder<*, *, *>?>{
+                override fun obtain(): FlowBuilder<*, *, *>? {
+                    return flow
+                }
+            }
+        }
+        return this
+    }
+
+    @Throws(BusyException::class)
+    open fun connect(provider: Obtain<FlowBuilder<*, *, *>>): FlowBuilder<T, D, C> {
+
+        if (busy.isBusy()) {
+            throw BusyException()
+        }
+        if (nextFlow?.obtain() == null) {
+            nextFlow = provider
+        } else {
+            val flowToConnectTo = getFlowToConnectTo()
+            flowToConnectTo.obtain()?.nextFlow = provider
         }
         return this
     }
@@ -75,7 +99,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
 
         var busy = busy.isBusy()
         if (!busy) {
-            nextFlow?.let {
+            nextFlow?.obtain()?.let {
                 busy = it.isBusy()
             }
         }
@@ -97,7 +121,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
         cleanupStates()
         if (success) {
             try {
-                nextFlow?.run()
+                nextFlow?.obtain()?.run()
             } catch (e: Exception) {
                 log.e(e)
             }
@@ -129,6 +153,20 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     protected abstract fun process()
 
     protected abstract fun insertSubject()
+
+    private fun getFlowToConnectTo(): Obtain<FlowBuilder<*, *, *>?> {
+        var flowToConnectTo: Obtain<FlowBuilder<*, *, *>?> = object : Obtain<FlowBuilder<*, *, *>?> {
+            override fun obtain(): FlowBuilder<*, *, *>? {
+                return nextFlow?.obtain()
+            }
+        }
+        while (flowToConnectTo.obtain()?.nextFlow?.obtain() != null) {
+            flowToConnectTo.obtain()?.nextFlow?.let {
+                flowToConnectTo = it
+            }
+        }
+        return flowToConnectTo
+    }
 }
 
 

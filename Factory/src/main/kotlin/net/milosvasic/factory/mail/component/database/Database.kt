@@ -4,14 +4,14 @@ import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.Termination
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
-import net.milosvasic.factory.mail.remote.Connection
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class Database(val name: String, entryPoint: Connection) :
+abstract class Database(val name: String, connection: DatabaseConnection) :
 
-        BusyWorker<InstallationStep<*>>(entryPoint),
+        BusyWorker<InstallationStep<*>>(connection.entryPoint),
         Initializer,
         Termination {
 
@@ -72,6 +72,8 @@ abstract class Database(val name: String, entryPoint: Connection) :
 
     @Throws(IllegalStateException::class)
     protected abstract fun termination()
+
+    abstract fun getInstallation(): InstallationStepFlow
 
     private fun getNotifyOperation() = DatabaseInitializationOperation()
 }

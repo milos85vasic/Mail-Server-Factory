@@ -7,6 +7,7 @@ import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.component.database.*
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.RegistrationFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -14,6 +15,7 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.command.CatCommand
+import net.milosvasic.factory.mail.terminal.command.EchoCommand
 import net.milosvasic.factory.mail.terminal.command.TestCommand
 import java.io.File
 
@@ -64,11 +66,24 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
                     .width(manager)
                     .perform(databaseRegistrationProvider)
 
+            val databaseFlow = object : Obtain<InstallationStepFlow> {
+                override fun obtain(): InstallationStepFlow {
+                    val db = databaseRegistrationProvider.obtain().database
+                    return db.getInstallation()
+                }
+            }
+
+            val cmdFlw = CommandFlow()
+                    .width(conn)
+                    .perform(EchoCommand("z z z z z z z z z z"))
+
             return CommandFlow()
                     .width(conn)
                     .perform(TestCommand(configurationFile))
                     .perform(CatCommand(configurationFile), configurationDataHandler)
+                    .connect(cmdFlw)
                     .connect(registrationFlow)
+                    .connect(databaseFlow)
         }
         throw IllegalArgumentException("No proper connection provided")
     }
@@ -84,7 +99,14 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
         configuration?.let {
 
             val type = Type.getType(it.type)
-            val factory = DatabaseFactory(type, it.name, connection)
+            val dbConnection = DatabaseConnection(
+                    it.host,
+                    it.getPort(),
+                    it.user,
+                    it.password,
+                    connection
+            )
+            val factory = DatabaseFactory(type, it.name, dbConnection)
             val database = factory.build()
 
             val callback = object : OperationResultListener {

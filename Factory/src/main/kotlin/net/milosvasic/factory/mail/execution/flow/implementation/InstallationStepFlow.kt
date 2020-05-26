@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.execution.flow.implementation
 
 import net.milosvasic.factory.mail.common.busy.BusyException
+import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipeFlowProcessingData
 import net.milosvasic.factory.mail.component.installer.recipe.InstallationStepRecipe
@@ -32,6 +33,12 @@ class InstallationStepFlow(private val toolkit: Toolkit) : FlowSimpleBuilder<Ins
     @Throws(BusyException::class)
     override fun connect(flow: FlowBuilder<*, *, *>): InstallationStepFlow {
         super.connect(flow)
+        return this
+    }
+
+    @Throws(BusyException::class)
+    override fun connect(provider: Obtain<FlowBuilder<*, *, *>>): InstallationStepFlow {
+        super.connect(provider)
         return this
     }
 

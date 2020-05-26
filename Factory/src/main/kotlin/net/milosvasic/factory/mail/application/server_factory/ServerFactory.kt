@@ -79,9 +79,9 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                                 } else {
                                     " "
                                 }
-                                node.value?.let { value ->
+                                node.value.let { value ->
                                     val nodeValue = Variable.parse(value.toString())
-                                    node.name?.let { name ->
+                                    node.name.let { name ->
                                         if (name != String.EMPTY) {
                                             log.v("Configuration variable:$printablePrefix$name -> $nodeValue")
                                         }

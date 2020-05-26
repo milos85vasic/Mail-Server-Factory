@@ -5,6 +5,7 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.initialization.InitializationOperation
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.TerminationOperation
+import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
@@ -47,6 +48,12 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
     @Throws(BusyException::class)
     override fun connect(flow: FlowBuilder<*, *, *>): InitializationFlow {
         super.connect(flow)
+        return this
+    }
+
+    @Throws(BusyException::class)
+    override fun connect(provider: Obtain<FlowBuilder<*, *, *>>): InitializationFlow {
+        super.connect(provider)
         return this
     }
 

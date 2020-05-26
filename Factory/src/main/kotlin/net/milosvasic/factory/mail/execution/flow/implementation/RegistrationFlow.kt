@@ -41,40 +41,21 @@ class RegistrationFlow<T> : FlowPerformBuilder<Registration<T>, T, String>() {
         return this
     }
 
+    @Throws(BusyException::class)
+    override fun connect(provider: Obtain<FlowBuilder<*, *, *>>): RegistrationFlow<T> {
+        super.connect(provider)
+        return this
+    }
+
     @Throws(IllegalArgumentException::class)
     override fun getProcessingRecipe(subject: Registration<T>, operation: T): ProcessingRecipe {
 
         return object : ProcessingRecipe {
 
-            private var callback: FlowProcessingCallback? = null
-
-//            private val operationCallback = object : OperationResultListener {
-//                override fun onOperationPerformed(result: OperationResult) {
-//
-//                    subject.unsubscribe(this)
-//
-//                    val message = if (result.success) {
-//                        String.EMPTY
-//                    } else {
-//                        if (result.operation is TerminalCommand) {
-//                            "Registration failed: ${result.operation.command}"
-//                        } else {
-//                            "Registration failed: ${result.operation}"
-//                        }
-//                    }
-//                    callback?.onFinish(result.success, message)
-//                    callback = null
-//                }
-//            }
-
             override fun process(callback: FlowProcessingCallback) {
-                this.callback = callback
-                // subject.subscribe(operationCallback)
                 try {
                     subject.register(operation)
                 } catch (e: Exception) {
-
-                    // subject.unsubscribe(operationCallback)
                     callback.onFinish(false, e.getMessage())
                 }
             }
