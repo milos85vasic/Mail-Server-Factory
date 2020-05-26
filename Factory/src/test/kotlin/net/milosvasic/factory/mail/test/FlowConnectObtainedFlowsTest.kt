@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.ObtainableFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationHandler
 import net.milosvasic.factory.mail.log
@@ -83,50 +84,50 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
 
         var commandFlows = 0
         var commandFlowsExpectedCount = 0
-        fun getCommandFlow(parent: Int): Obtain<CommandFlow> {
+        fun getCommandFlow(parent: Int) = ObtainableFlow<String>().width(
+                object : Obtain<CommandFlow> {
+                    override fun obtain(): CommandFlow {
 
-            return object : Obtain<CommandFlow> {
-                override fun obtain(): CommandFlow {
-
-                    var flow = CommandFlow()
-                    val terminal = Terminal()
-                    for (x in 0 until iterations) {
-                        flow = flow.width(terminal)
-                        for (y in 0..x) {
-                            commandFlowsExpectedCount++
-                            flow = flow.perform(getEcho(parent), dataHandler)
+                        var flow = CommandFlow()
+                        val terminal = Terminal()
+                        for (x in 0 until iterations) {
+                            flow = flow.width(terminal)
+                            for (y in 0..x) {
+                                commandFlowsExpectedCount++
+                                flow = flow.perform(getEcho(parent), dataHandler)
+                            }
                         }
+                        flow.onFinish(commandFlowCallback)
+                        return flow
                     }
-                    flow.onFinish(commandFlowCallback)
-                    return flow
                 }
-            }
-        }
+        )
+
 
         var initFlows = 0
         var initFlowsExpectedCount = 0
-        fun getInitFlow(parent: Int): Obtain<InitializationFlow> {
+        fun getInitFlow(parent: Int) = ObtainableFlow<String>().width(
+                object : Obtain<InitializationFlow> {
+                    override fun obtain(): InitializationFlow {
 
-            return object : Obtain<InitializationFlow> {
-                override fun obtain(): InitializationFlow {
-
-                    val initializers = mutableListOf<Initializer>()
-                    for (x in 0 until iterations) {
-                        val initializer = SimpleInitializer("Initializer $parent :: ${x + 1}")
-                        initializers.add(initializer)
+                        val initializers = mutableListOf<Initializer>()
+                        for (x in 0 until iterations) {
+                            val initializer = SimpleInitializer("Initializer $parent :: ${x + 1}")
+                            initializers.add(initializer)
+                        }
+                        var initFlow = InitializationFlow()
+                        initializers.forEach {
+                            initFlowsExpectedCount++
+                            initFlow = initFlow.width(it, initHandler)
+                        }
+                        initFlow.onFinish(initializationFlowCallback)
+                        return initFlow
                     }
-                    var initFlow = InitializationFlow()
-                    initializers.forEach {
-                        initFlowsExpectedCount++
-                        initFlow = initFlow.width(it, initHandler)
-                    }
-                    initFlow.onFinish(initializationFlowCallback)
-                    return initFlow
                 }
-            }
-        }
+        )
 
-        val flow = getCommandFlow(++commandFlows).obtain()
+
+        val flow = getCommandFlow(++commandFlows)
         for (x in 0 until iterations) {
             flow
                     .connect(getInitFlow(++initFlows))
@@ -137,6 +138,7 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
         while (flow.isBusy()) {
             Thread.yield()
         }
+
         Assertions.assertEquals(iterations + 1, commandFlowExecuted)
         Assertions.assertEquals(iterations, initializationFlowExecuted)
         Assertions.assertEquals(commandFlowsExpectedCount, dataReceived.size)

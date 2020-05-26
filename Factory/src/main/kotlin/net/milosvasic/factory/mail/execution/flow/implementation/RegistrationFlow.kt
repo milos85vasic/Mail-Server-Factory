@@ -41,12 +41,6 @@ class RegistrationFlow<T> : FlowPerformBuilder<Registration<T>, T, String>() {
         return this
     }
 
-    @Throws(BusyException::class)
-    override fun connect(provider: Obtain<FlowBuilder<*, *, *>>): RegistrationFlow<T> {
-        super.connect(provider)
-        return this
-    }
-
     @Throws(IllegalArgumentException::class)
     override fun getProcessingRecipe(subject: Registration<T>, operation: T): ProcessingRecipe {
 

@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.component.database.*
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.ObtainableFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.RegistrationFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -66,12 +67,14 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
                     .width(manager)
                     .perform(databaseRegistrationProvider)
 
-            val databaseFlow = object : Obtain<InstallationStepFlow> {
-                override fun obtain(): InstallationStepFlow {
-                    val db = databaseRegistrationProvider.obtain().database
-                    return db.getInstallation()
-                }
-            }
+            val databaseFlow = ObtainableFlow<String>().width(
+                    object : Obtain<InstallationStepFlow> {
+                        override fun obtain(): InstallationStepFlow {
+                            val db = databaseRegistrationProvider.obtain().database
+                            return db.getInstallation()
+                        }
+                    }
+            )
 
             val cmdFlw = CommandFlow()
                     .width(conn)

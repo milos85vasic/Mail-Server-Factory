@@ -2,7 +2,6 @@ package net.milosvasic.factory.mail.execution.flow.implementation
 
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.component.installer.InstallerAbstract
 import net.milosvasic.factory.mail.component.installer.InstallerOperation
 import net.milosvasic.factory.mail.configuration.SoftwareConfiguration
@@ -32,12 +31,6 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
     @Throws(BusyException::class)
     override fun connect(flow: FlowBuilder<*, *, *>): InstallationFlow {
         super.connect(flow)
-        return this
-    }
-
-    @Throws(BusyException::class)
-    override fun connect(provider: Obtain<FlowBuilder<*, *, *>>): InstallationFlow {
-        super.connect(provider)
         return this
     }
 
