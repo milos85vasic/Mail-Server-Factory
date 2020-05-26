@@ -76,15 +76,10 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
                     }
             )
 
-            val cmdFlw = CommandFlow()
-                    .width(conn)
-                    .perform(EchoCommand("z z z z z z z z z z"))
-
             return CommandFlow()
                     .width(conn)
                     .perform(TestCommand(configurationFile))
                     .perform(CatCommand(configurationFile), configurationDataHandler)
-                    .connect(cmdFlw)
                     .connect(registrationFlow)
                     .connect(databaseFlow)
         }
