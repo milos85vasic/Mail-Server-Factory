@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.execution.flow.implementation
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.execution.flow.FlowBuilder
@@ -9,8 +8,6 @@ import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import net.milosvasic.factory.mail.getMessage
-import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.terminal.TerminalCommand
 
 class ObtainableFlow<D> : FlowSimpleBuilder<Obtain<FlowBuilder<*, D, *>>, String>() {
 
