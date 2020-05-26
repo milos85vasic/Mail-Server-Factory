@@ -23,8 +23,8 @@ object DatabaseManager :
     private val operation = DatabaseRegistrationOperation()
     private val databases = mutableMapOf<Type, MutableMap<String, Database>>()
 
-    private val initFlowCallback = object : FlowCallback<String> {
-        override fun onFinish(success: Boolean, message: String, data: String?) {
+    private val initFlowCallback = object : FlowCallback {
+        override fun onFinish(success: Boolean, message: String) {
 
             registration?.let {
 
@@ -49,7 +49,7 @@ object DatabaseManager :
                         log.e(message)
                     }
                 }
-                val result = OperationResult(operation, success, data ?: String.EMPTY)
+                val result = OperationResult(operation, success)
                 it.callback.onOperationPerformed(result)
             }
             registration = null

@@ -9,10 +9,10 @@ import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallb
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import net.milosvasic.factory.mail.getMessage
 
-class ObtainableFlow<D> : FlowSimpleBuilder<Obtain<FlowBuilder<*, D, *>>, String>() {
+class ObtainableFlow : FlowSimpleBuilder<Obtain<FlowBuilder<*, *, *>>, String>() {
 
     @Throws(BusyException::class, IllegalArgumentException::class)
-    override fun width(subject: Obtain<FlowBuilder<*, D, *>>): ObtainableFlow<D> {
+    override fun width(subject: Obtain<FlowBuilder<*, *, *>>): ObtainableFlow {
         if (subjects.get().isEmpty()) {
             super.width(subject)
             return this
@@ -22,26 +22,25 @@ class ObtainableFlow<D> : FlowSimpleBuilder<Obtain<FlowBuilder<*, D, *>>, String
         }
     }
 
-    @Throws(BusyException::class)
-    override fun onFinish(callback: FlowCallback<String>): ObtainableFlow<D> {
+    override fun onFinish(callback: FlowCallback): ObtainableFlow {
         super.onFinish(callback)
         return this
     }
 
     @Throws(BusyException::class)
-    override fun connect(flow: FlowBuilder<*, *, *>): ObtainableFlow<D> {
+    override fun connect(flow: FlowBuilder<*, *, *>): ObtainableFlow {
         super.connect(flow)
         return this
     }
 
-    override fun getProcessingRecipe(subject: Obtain<FlowBuilder<*, D, *>>): ProcessingRecipe {
+    override fun getProcessingRecipe(subject: Obtain<FlowBuilder<*, *, *>>): ProcessingRecipe {
 
         return object : ProcessingRecipe {
 
             private var callback: FlowProcessingCallback? = null
 
-            private val flowCallback = object : FlowCallback<D> {
-                override fun onFinish(success: Boolean, message: String, data: D?) {
+            private val flowCallback = object : FlowCallback {
+                override fun onFinish(success: Boolean, message: String) {
 
                     callback?.onFinish(success, message)
                     callback = null
@@ -51,16 +50,17 @@ class ObtainableFlow<D> : FlowSimpleBuilder<Obtain<FlowBuilder<*, D, *>>, String
             override fun process(callback: FlowProcessingCallback) {
                 this.callback = callback
                 try {
-                    subject
-                            .obtain()
+                    subject.obtain()
                             .onFinish(flowCallback)
                             .run()
                 } catch (e: IllegalArgumentException) {
 
                     callback.onFinish(false, e.getMessage())
+                    this.callback = null
                 } catch (e: IllegalStateException) {
 
                     callback.onFinish(false, e.getMessage())
+                    this.callback = null
                 }
             }
         }

@@ -36,8 +36,8 @@ class StackStepTest : BaseTest() {
         val factory = StubServerFactory(listOf(mocks))
         factory.setConnectionProvider(connectionProvider)
 
-        val callback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val callback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
 
                 assert(success)
                 initialized = success

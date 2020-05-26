@@ -16,8 +16,8 @@ fun main(args: Array<String>) {
     initLogging()
     val factory = ServerFactory(args.toList())
 
-    val callback = object : FlowCallback<String> {
-        override fun onFinish(success: Boolean, message: String, data: String?) {
+    val callback = object : FlowCallback {
+        override fun onFinish(success: Boolean, message: String) {
 
             if (success) {
                 try {

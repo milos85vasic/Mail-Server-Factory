@@ -64,8 +64,8 @@ class DeployStepTest : BaseTest() {
             }
         }
 
-        val flowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val flowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
 
                 if (!success) {
                     log.w(message)
@@ -74,10 +74,10 @@ class DeployStepTest : BaseTest() {
             }
         }
 
-        val initFlowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val initFlowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
 
-                flowCallback.onFinish(success, message, data)
+                flowCallback.onFinish(success, message)
                 terminal.subscribe(commandCallback)
             }
         }
@@ -131,6 +131,8 @@ class DeployStepTest : BaseTest() {
         Assertions.assertEquals(3, finished)
         log.v("Commands executed: $commandsExecuted")
         log.v("Commands failed: $commandsFailed")
+
+        // FIXME:
         Assertions.assertEquals(2, commandsExecuted)
         Assertions.assertEquals(3, commandsFailed)
 

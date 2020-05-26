@@ -5,9 +5,9 @@ import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 
-open class DieOnFailureCallback<T> : FlowCallback<T> {
+open class DieOnFailureCallback : FlowCallback {
 
-    override fun onFinish(success: Boolean, message: String, data: T?) {
+    override fun onFinish(success: Boolean, message: String) {
         if (!success) {
             if (message != String.EMPTY) {
                 die(message)

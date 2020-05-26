@@ -58,8 +58,8 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
             }
         }
 
-        val commandFlowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val commandFlowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
                 if (success) {
                     log.i("Command flow finished")
                 } else {
@@ -70,8 +70,8 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
             }
         }
 
-        val initializationFlowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val initializationFlowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
                 if (success) {
                     log.i("Initialization flow finished")
                 } else {
@@ -84,7 +84,7 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
 
         var commandFlows = 0
         var commandFlowsExpectedCount = 0
-        fun getCommandFlow(parent: Int) = ObtainableFlow<String>()
+        fun getCommandFlow(parent: Int) = ObtainableFlow()
                 .width(
                         object : Obtain<CommandFlow> {
                             override fun obtain(): CommandFlow {
@@ -98,6 +98,7 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
                                         flow = flow.perform(getEcho(parent), dataHandler)
                                     }
                                 }
+                                flow.onFinish(commandFlowCallback)
                                 return flow
                             }
                         }
@@ -107,7 +108,7 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
 
         var initFlows = 0
         var initFlowsExpectedCount = 0
-        fun getInitFlow(parent: Int) = ObtainableFlow<String>()
+        fun getInitFlow(parent: Int) = ObtainableFlow()
                 .width(
                         object : Obtain<InitializationFlow> {
                             override fun obtain(): InitializationFlow {
@@ -122,6 +123,7 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
                                     initFlowsExpectedCount++
                                     initFlow = initFlow.width(it, initHandler)
                                 }
+                                initFlow.onFinish(initializationFlowCallback)
                                 return initFlow
                             }
                         }
@@ -141,8 +143,8 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
             Thread.yield()
         }
 
-        Assertions.assertEquals(iterations + 1, commandFlowExecuted)
-        Assertions.assertEquals(iterations, initializationFlowExecuted)
+        Assertions.assertEquals((iterations + 1) * 2, commandFlowExecuted)
+        Assertions.assertEquals(iterations * 2, initializationFlowExecuted)
         Assertions.assertEquals(commandFlowsExpectedCount, dataReceived.size)
         Assertions.assertEquals(initFlowsExpectedCount, initialized)
 

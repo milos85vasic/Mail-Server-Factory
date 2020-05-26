@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.execution.flow.processing
 
-import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
+interface FlowProcessingCallback {
 
-interface FlowProcessingCallback : FlowCallback<FlowProcessingData>
+    fun onFinish(success: Boolean, message: String, data: FlowProcessingData? = null)
+}

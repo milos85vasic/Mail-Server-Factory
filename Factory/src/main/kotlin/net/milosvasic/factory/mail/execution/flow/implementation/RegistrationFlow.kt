@@ -25,13 +25,14 @@ class RegistrationFlow<T> : FlowPerformBuilder<Registration<T>, T, String>() {
         return this
     }
 
+    @Throws(BusyException::class)
     override fun perform(what: Obtain<T>): RegistrationFlow<T> {
         super.perform(what)
         return this
     }
 
     @Throws(BusyException::class)
-    override fun onFinish(callback: FlowCallback<String>): RegistrationFlow<T> {
+    override fun onFinish(callback: FlowCallback): RegistrationFlow<T> {
         super.onFinish(callback)
         return this
     }
@@ -52,6 +53,7 @@ class RegistrationFlow<T> : FlowPerformBuilder<Registration<T>, T, String>() {
                     subject.register(operation)
                     callback.onFinish(true, String.EMPTY)
                 } catch (e: Exception) {
+
                     callback.onFinish(false, e.getMessage())
                 }
             }

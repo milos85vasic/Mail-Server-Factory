@@ -2,16 +2,11 @@ package net.milosvasic.factory.mail.execution.flow.callback
 
 import net.milosvasic.factory.mail.log
 
-class DefaultApplicationCallback<T> : FlowCallback<T> {
+class DefaultApplicationCallback : FlowCallback {
 
-    override fun onFinish(success: Boolean, message: String, data: T?) {
+    override fun onFinish(success: Boolean, message: String) {
 
-        if (success) {
-            log.v("Flow finished")
-            data?.let {
-                log.v("data=('$data')")
-            }
-        } else {
+        if (!success) {
             log.w(message)
         }
     }

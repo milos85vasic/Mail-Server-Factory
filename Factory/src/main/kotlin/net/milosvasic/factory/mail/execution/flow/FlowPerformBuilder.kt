@@ -24,7 +24,7 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
                 subjectsIterator?.let { sIterator ->
                     operationsIterator?.let { oIterator ->
                         if (!sIterator.hasNext() && !oIterator.hasNext()) {
-                            finish(success)
+                            finish(success, message)
                         } else {
                             if (success) {
                                 currentOperation = null

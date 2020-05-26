@@ -37,9 +37,9 @@ class CommandFlowTest : BaseTest() {
             }
         }
 
-        val flowCallback = object : FlowCallback<String> {
+        val flowCallback = object : FlowCallback {
 
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+            override fun onFinish(success: Boolean, message: String) {
                 if (!success) {
                     log.e(message)
                 }

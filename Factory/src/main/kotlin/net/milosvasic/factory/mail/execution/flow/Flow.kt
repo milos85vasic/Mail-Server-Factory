@@ -6,5 +6,5 @@ interface Flow<T, D> : Runnable {
 
     fun width(subject: T): Flow<T, D>
 
-    fun onFinish(callback: FlowCallback<D>): Flow<T, D>
+    fun onFinish(callback: FlowCallback): Flow<T, D>
 }

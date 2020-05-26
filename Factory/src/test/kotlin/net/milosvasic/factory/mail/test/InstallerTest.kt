@@ -21,8 +21,8 @@ class InstallerTest : BaseTest() {
         val stubPackageManager = StubPackageManager(ssh)
         installer.addSupportedPackageManager(stubPackageManager)
 
-        val flowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val flowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
 
                 if (!success) {
                     log.w(message)

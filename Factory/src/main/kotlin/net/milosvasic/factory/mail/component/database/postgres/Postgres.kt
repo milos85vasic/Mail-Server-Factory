@@ -5,8 +5,13 @@ import net.milosvasic.factory.mail.component.database.Database
 import net.milosvasic.factory.mail.component.database.DatabaseConnection
 import net.milosvasic.factory.mail.component.database.Type
 import net.milosvasic.factory.mail.component.installer.recipe.registration.MainRecipeRegistrar
+import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
+import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
+import net.milosvasic.factory.mail.log
+import net.milosvasic.factory.mail.operation.OperationResult
+import net.milosvasic.factory.mail.terminal.command.EchoCommand
 
 class Postgres(name: String, val connection: DatabaseConnection) : Database(name, connection) {
 
@@ -23,14 +28,13 @@ class Postgres(name: String, val connection: DatabaseConnection) : Database(name
 
     override fun getInstallation(): InstallationStepFlow {
 
-        val toolkit = Toolkit(connection)
+        val toolkit = Toolkit(connection.entryPoint)
         val flow = InstallationStepFlow(toolkit)
         val recipeRegistrar = MainRecipeRegistrar()
         val checkDb = SkipCondition(PostgresDatabaseCheckCommand(this))
 
         recipeRegistrar.registerRecipes(checkDb, flow)
 
-        return flow
-                .width(checkDb)
+        return flow.width(checkDb)
     }
 }

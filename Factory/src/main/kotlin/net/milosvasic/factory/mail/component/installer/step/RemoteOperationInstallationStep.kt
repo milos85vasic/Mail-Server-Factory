@@ -66,8 +66,8 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
         notify(operationResult)
     }
 
-    protected open fun getListener() = object : FlowCallback<String> {
-        override fun onFinish(success: Boolean, message: String, data: String?) {
+    protected open fun getListener() = object : FlowCallback {
+        override fun onFinish(success: Boolean, message: String) {
 
             if (!success) {
                 if (message != String.EMPTY) {

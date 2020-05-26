@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.component.database
 
 import net.milosvasic.factory.mail.component.database.command.DatabaseCommand
+import net.milosvasic.factory.mail.component.database.command.DatabaseTerminalCommand
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
@@ -25,14 +26,21 @@ class DatabaseConnection(
     @Throws(IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
 
-        if (what is DatabaseCommand) {
+        when (what) {
+            is DatabaseTerminalCommand -> {
 
-            what.execute(this)
-        } else {
+                entryPoint.execute(what)
+            }
+            is DatabaseCommand -> {
 
-            val name = DatabaseCommand::class.simpleName
-            val thisName = this::class.simpleName
-            throw IllegalArgumentException("Only $name is supported by $thisName")
+                what.execute(this)
+            }
+            else -> {
+
+                val name = DatabaseTerminalCommand::class.simpleName
+                val thisName = this::class.simpleName
+                throw IllegalArgumentException("Only $name is supported by $thisName")
+            }
         }
     }
 

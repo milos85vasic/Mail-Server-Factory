@@ -24,7 +24,7 @@ class InstallationStepFlow(private val toolkit: Toolkit) : FlowSimpleBuilder<Ins
     }
 
     @Throws(BusyException::class)
-    override fun onFinish(callback: FlowCallback<String>): InstallationStepFlow {
+    override fun onFinish(callback: FlowCallback): InstallationStepFlow {
         super.onFinish(callback)
         return this
     }

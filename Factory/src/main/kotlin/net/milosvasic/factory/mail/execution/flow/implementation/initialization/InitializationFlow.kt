@@ -39,7 +39,7 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
     }
 
     @Throws(BusyException::class)
-    override fun onFinish(callback: FlowCallback<String>): InitializationFlow {
+    override fun onFinish(callback: FlowCallback): InitializationFlow {
         super.onFinish(callback)
         return this
     }
@@ -95,6 +95,7 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
 
                     subject.unsubscribe(operationCallback)
                     callback.onFinish(false, e.getMessage())
+                    this.callback = null
                 }
             }
         }

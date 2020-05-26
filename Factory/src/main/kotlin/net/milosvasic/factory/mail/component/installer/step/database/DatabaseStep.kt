@@ -16,7 +16,6 @@ import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.command.CatCommand
-import net.milosvasic.factory.mail.terminal.command.EchoCommand
 import net.milosvasic.factory.mail.terminal.command.TestCommand
 import java.io.File
 
@@ -67,7 +66,7 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
                     .width(manager)
                     .perform(databaseRegistrationProvider)
 
-            val databaseFlow = ObtainableFlow<String>().width(
+            val databaseFlow = ObtainableFlow().width(
                     object : Obtain<InstallationStepFlow> {
                         override fun obtain(): InstallationStepFlow {
                             val db = databaseRegistrationProvider.obtain().database

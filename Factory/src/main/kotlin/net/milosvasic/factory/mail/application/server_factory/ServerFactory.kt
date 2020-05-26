@@ -306,7 +306,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
             return null
         }
         val installFlow = InstallationFlow(installer)
-        val dieCallback = DieOnFailureCallback<String>()
+        val dieCallback = DieOnFailureCallback()
         softwareConfigurations.forEach {
             installFlow.width(it)
         }
@@ -362,7 +362,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         val hostNameCommand = HostNameCommand()
         val hostInfoCommand = getHostInfoCommand()
         val testCommand = EchoCommand("Hello")
-        val dieCallback = DieOnFailureCallback<String>()
+        val dieCallback = DieOnFailureCallback()
 
         val flow = CommandFlow()
                 .width(terminal)
