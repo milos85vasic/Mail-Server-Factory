@@ -84,47 +84,49 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
 
         var commandFlows = 0
         var commandFlowsExpectedCount = 0
-        fun getCommandFlow(parent: Int) = ObtainableFlow<String>().width(
-                object : Obtain<CommandFlow> {
-                    override fun obtain(): CommandFlow {
+        fun getCommandFlow(parent: Int) = ObtainableFlow<String>()
+                .width(
+                        object : Obtain<CommandFlow> {
+                            override fun obtain(): CommandFlow {
 
-                        var flow = CommandFlow()
-                        val terminal = Terminal()
-                        for (x in 0 until iterations) {
-                            flow = flow.width(terminal)
-                            for (y in 0..x) {
-                                commandFlowsExpectedCount++
-                                flow = flow.perform(getEcho(parent), dataHandler)
+                                var flow = CommandFlow()
+                                val terminal = Terminal()
+                                for (x in 0 until iterations) {
+                                    flow = flow.width(terminal)
+                                    for (y in 0..x) {
+                                        commandFlowsExpectedCount++
+                                        flow = flow.perform(getEcho(parent), dataHandler)
+                                    }
+                                }
+                                return flow
                             }
                         }
-                        flow.onFinish(commandFlowCallback)
-                        return flow
-                    }
-                }
-        )
+                )
+                .onFinish(commandFlowCallback)
 
 
         var initFlows = 0
         var initFlowsExpectedCount = 0
-        fun getInitFlow(parent: Int) = ObtainableFlow<String>().width(
-                object : Obtain<InitializationFlow> {
-                    override fun obtain(): InitializationFlow {
+        fun getInitFlow(parent: Int) = ObtainableFlow<String>()
+                .width(
+                        object : Obtain<InitializationFlow> {
+                            override fun obtain(): InitializationFlow {
 
-                        val initializers = mutableListOf<Initializer>()
-                        for (x in 0 until iterations) {
-                            val initializer = SimpleInitializer("Initializer $parent :: ${x + 1}")
-                            initializers.add(initializer)
+                                val initializers = mutableListOf<Initializer>()
+                                for (x in 0 until iterations) {
+                                    val initializer = SimpleInitializer("Initializer $parent :: ${x + 1}")
+                                    initializers.add(initializer)
+                                }
+                                var initFlow = InitializationFlow()
+                                initializers.forEach {
+                                    initFlowsExpectedCount++
+                                    initFlow = initFlow.width(it, initHandler)
+                                }
+                                return initFlow
+                            }
                         }
-                        var initFlow = InitializationFlow()
-                        initializers.forEach {
-                            initFlowsExpectedCount++
-                            initFlow = initFlow.width(it, initHandler)
-                        }
-                        initFlow.onFinish(initializationFlowCallback)
-                        return initFlow
-                    }
-                }
-        )
+                )
+                .onFinish(initializationFlowCallback)
 
 
         val flow = getCommandFlow(++commandFlows)
