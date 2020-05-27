@@ -32,7 +32,8 @@ class Postgres(name: String, val connection: DatabaseConnection) : Database(name
 
         val steps = listOf<InstallationStep<*>>(
                 SkipCondition(checkCommand()),
-                CommandInstallationStep(createCommand())
+                CommandInstallationStep(createCommand()),
+                CommandInstallationStep(checkCommand())
         )
 
         steps.forEach {

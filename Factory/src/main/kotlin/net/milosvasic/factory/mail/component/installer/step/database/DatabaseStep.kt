@@ -69,8 +69,18 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
             val databaseFlow = ObtainableFlow().width(
                     object : Obtain<InstallationStepFlow> {
                         override fun obtain(): InstallationStepFlow {
+
                             val db = databaseRegistrationProvider.obtain().database
-                            return db.getInstallation()
+                            val installation = db.getInstallation()
+                            // TODO:
+//                            config?.let { conf ->
+//                                val sqlFlow = CommandFlow().width(conn)
+//                                conf.sqls.forEach { sql ->
+//
+//                                }
+//                                installation.connect(sqlFlow)
+//                            }
+                            return installation
                         }
                     }
             )
