@@ -90,6 +90,18 @@ class Configuration(
         }
     }
 
+    fun mergeVariables(variables: VariableNode?) {
+        variables?.let { toAppend ->
+            if (this.variables == null) {
+                this.variables = toAppend
+            } else {
+                toAppend.children.forEach { child ->
+                    this.variables?.append(child)
+                }
+            }
+        }
+    }
+
     @Throws(IllegalStateException::class)
     fun getVariableParsed(key: String): Any? {
 

@@ -77,29 +77,15 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                         config.software?.forEach {
                             val path = Configuration.getConfigurationFilePath(it)
                             val softwareConfiguration = SoftwareConfiguration.obtain(path)
-                            softwareConfiguration.variables?.let { toAppend ->
-                                if (config.variables == null) {
-                                    config.variables = toAppend
-                                } else {
-                                    toAppend.children.forEach { child ->
-                                        config.variables?.append(child)
-                                    }
-                                }
-                            }
+                            val variables = softwareConfiguration.variables
+                            config.mergeVariables(variables)
                             softwareConfigurations.add(softwareConfiguration)
                         }
                         config.containers?.forEach {
                             val path = Configuration.getConfigurationFilePath(it)
                             val containerConfiguration = SoftwareConfiguration.obtain(path)
-                            containerConfiguration.variables?.let { toAppend ->
-                                if (config.variables == null) {
-                                    config.variables = toAppend
-                                } else {
-                                    toAppend.children.forEach { child ->
-                                        config.variables?.append(child)
-                                    }
-                                }
-                            }
+                            val variables = containerConfiguration.variables
+                            config.mergeVariables(variables)
                             containersConfigurations.add(containerConfiguration)
                         }
 
