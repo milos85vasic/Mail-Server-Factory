@@ -26,8 +26,7 @@ virtual_mailbox_base = /usr/local/vmail
 
 virtual_alias_maps = pgsql:/etc/postfix/virtual-alias-maps.cf, pgsql:/etc/postfix/email2email.cf
 
-# TODO:
-# virtual_mailbox_maps = pgsql:/path
+virtual_mailbox_maps = pgsql:/etc/postfix/virtual-mailbox-maps.cf
 
 # TODO: Provide real account and group IDs via Postgres
 virtual_uid_maps = pgsql:/path
