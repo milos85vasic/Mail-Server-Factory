@@ -12,7 +12,7 @@ import java.io.File
 
 data class SoftwareConfiguration(
         var configuration: String = String.EMPTY,
-        val variables: VariableNode = VariableNode(),
+        var variables: VariableNode? = null,
         val software: MutableList<SoftwareConfigurationItem> = mutableListOf(),
         val includes: MutableList<String> = mutableListOf()
 ) : ObtainParametrized<String, Map<String, List<InstallationStep<*>>>> {
@@ -79,7 +79,13 @@ data class SoftwareConfiguration(
 
     fun merge(configuration: SoftwareConfiguration) {
 
-        variables.append(configuration.variables)
+        configuration.variables?.let { toAppend ->
+            if (variables == null) {
+                variables = toAppend
+            } else {
+                variables?.append(toAppend)
+            }
+        }
         software.addAll(configuration.software)
         includes.addAll(configuration.includes)
     }
