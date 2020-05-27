@@ -1,4 +1,11 @@
 {
+  "variables": {
+    "SERVER": {
+      "POSTFIX": {
+        "DBNAME": "postfix_service"
+      }
+    }
+  },
   "software": [
     {
       "name": "Mail server stack: Postfix",

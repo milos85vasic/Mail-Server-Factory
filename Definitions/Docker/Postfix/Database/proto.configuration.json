@@ -4,7 +4,7 @@
   "PORT": "{{DB.DB_PORT}}",
   "USER": "{{DB.DB_USER}}",
   "PASSWORD": "{{DB.DB_PASSWORD}}",
-  "NAME": "postfix_service",
+  "NAME": "{{SERVER.POSTFIX.DBNAME}}",
   "SQL": [
     "init.sql"
   ]
