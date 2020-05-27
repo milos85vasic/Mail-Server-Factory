@@ -1,6 +1,6 @@
 {
   "TYPE": "Postgres",
-  "HOST": "127.0.0.1",
+  "HOST": "{{SERVER.POSTFIX.DBHOST}}",
   "PORT": "{{DB.DB_PORT}}",
   "USER": "{{DB.DB_USER}}",
   "PASSWORD": "{{DB.DB_PASSWORD}}",

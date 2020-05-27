@@ -1,6 +1,6 @@
 user = {{DB.DB_USER}}
 password = {{DB.DB_PASSWORD}}
-hosts = 127.0.0.1
+hosts = {{SERVER.POSTFIX.DBHOST}}
 port = {{DB.DB_PORT}}
 dbname = {{SERVER.POSTFIX.DBNAME}}
 query = SELECT 1 FROM mail_virtual_domains WHERE name='%s'
