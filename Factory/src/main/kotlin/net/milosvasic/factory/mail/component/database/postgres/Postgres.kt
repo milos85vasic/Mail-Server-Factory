@@ -31,7 +31,8 @@ class Postgres(name: String, val connection: DatabaseConnection) : Database(name
         val recipeRegistrar = MainRecipeRegistrar()
 
         val steps = listOf<InstallationStep<*>>(
-                SkipCondition(PostgresDatabaseCheckCommand(this, connection))
+                SkipCondition(checkCommand()),
+                CommandInstallationStep(createCommand())
         )
 
         steps.forEach {
@@ -41,4 +42,8 @@ class Postgres(name: String, val connection: DatabaseConnection) : Database(name
 
         return flow
     }
+
+    private fun checkCommand() = PostgresDatabaseCheckCommand(this, connection)
+
+    private fun createCommand() = PostgresDatabaseCreateCommand(this, connection)
 }
