@@ -6,6 +6,7 @@ import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.factory.InstallationStepFactories
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.validation.Validator
 import java.io.File
 
@@ -23,6 +24,7 @@ data class SoftwareConfiguration(
             Validator.Arguments.validateSingle(param)
             val configurationName = param[0]
             val configurationFile = File(configurationName)
+            log.v("Configuration file: ${configurationFile.absolutePath}")
             if (configurationFile.exists()) {
 
                 val json = configurationFile.readText()

@@ -69,41 +69,10 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                     ConfigurationManager.initialize()
 
                     configuration = ConfigurationManager.getConfiguration()
-
-                    fun printVariableNode(variableNode: VariableNode?, prefix: String = String.EMPTY) {
-                        val prefixEnd = "-> "
-                        variableNode?.let { node ->
-                            if (node.value != String.EMPTY) {
-                                val printablePrefix = if (prefix != String.EMPTY) {
-                                    " $prefix $prefixEnd"
-                                } else {
-                                    " "
-                                }
-                                node.value.let { value ->
-                                    val nodeValue = Variable.parse(value.toString())
-                                    node.name.let { name ->
-                                        if (name != String.EMPTY) {
-                                            log.v("Configuration variable:$printablePrefix$name -> $nodeValue")
-                                        }
-                                    }
-                                }
-                            }
-                            node.children.forEach { child ->
-                                var nextPrefix = prefix
-                                if (nextPrefix != String.EMPTY && !nextPrefix.endsWith(prefixEnd)) {
-                                    nextPrefix += " $prefixEnd"
-                                }
-                                nextPrefix += node.name
-                                printVariableNode(child, nextPrefix)
-                            }
-                        }
-                    }
                     if (configuration == null) {
                         throw IllegalStateException("Configuration is null")
                     }
                     configuration?.let { config ->
-                        printVariableNode(config.variables)
-
                         config.software?.forEach {
                             val path = Configuration.getConfigurationFilePath(it)
                             val softwareConfiguration = SoftwareConfiguration.obtain(path)
@@ -115,6 +84,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                             containersConfigurations.add(containerConfiguration)
                         }
 
+                        printVariableNode(config.variables)
                         log.v(config.name)
                         notifyInit(true)
                     }
@@ -399,5 +369,34 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
             throw IllegalArgumentException("Empty hostname obtained for the server")
         }
         return hostname
+    }
+
+    private fun printVariableNode(variableNode: VariableNode?, prefix: String = String.EMPTY) {
+        val prefixEnd = "-> "
+        variableNode?.let { node ->
+            if (node.value != String.EMPTY) {
+                val printablePrefix = if (prefix != String.EMPTY) {
+                    " $prefix $prefixEnd"
+                } else {
+                    " "
+                }
+                node.value.let { value ->
+                    val nodeValue = Variable.parse(value.toString())
+                    node.name.let { name ->
+                        if (name != String.EMPTY) {
+                            log.v("Configuration variable:$printablePrefix$name -> $nodeValue")
+                        }
+                    }
+                }
+            }
+            node.children.forEach { child ->
+                var nextPrefix = prefix
+                if (nextPrefix != String.EMPTY && !nextPrefix.endsWith(prefixEnd)) {
+                    nextPrefix += " $prefixEnd"
+                }
+                nextPrefix += node.name
+                printVariableNode(child, nextPrefix)
+            }
+        }
     }
 }
