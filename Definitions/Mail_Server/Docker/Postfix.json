@@ -16,15 +16,15 @@
           {
             "type": "build",
             "value": "{{DOCKER.DOCKER_HOME}}/Postfix:postfix_service:1.0"
-          },
-          {
-            "commentedOut": {
-              "type": "stack",
-              "value": "{{DOCKER.DOCKER_HOME}}/Postfix"
-            }
           }
         ]
-      }
+      },
+      "commentedOut": [
+        {
+          "type": "stack",
+          "value": "{{DOCKER.DOCKER_HOME}}/Postfix"
+        }
+      ]
     }
   ]
 }
