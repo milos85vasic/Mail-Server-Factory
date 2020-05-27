@@ -72,15 +72,18 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                     if (configuration == null) {
                         throw IllegalStateException("Configuration is null")
                     }
+                    // TODO: Obtain configurations merged:
                     configuration?.let { config ->
                         config.software?.forEach {
                             val path = Configuration.getConfigurationFilePath(it)
                             val softwareConfiguration = SoftwareConfiguration.obtain(path)
+                            config.variables.append(softwareConfiguration.variables)
                             softwareConfigurations.add(softwareConfiguration)
                         }
                         config.containers?.forEach {
                             val path = Configuration.getConfigurationFilePath(it)
                             val containerConfiguration = SoftwareConfiguration.obtain(path)
+                            config.variables.append(containerConfiguration.variables)
                             containersConfigurations.add(containerConfiguration)
                         }
 

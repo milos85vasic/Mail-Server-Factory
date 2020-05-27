@@ -16,7 +16,7 @@ class Configuration(
         includes: MutableList<String>?,
         software: MutableList<String>?,
         containers: MutableList<String>?,
-        variables: VariableNode?
+        variables: VariableNode = VariableNode()
 
 ) : ConfigurationInclude(
 

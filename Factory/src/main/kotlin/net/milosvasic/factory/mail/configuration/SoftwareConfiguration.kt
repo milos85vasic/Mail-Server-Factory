@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.configuration
 
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.EMPTY
@@ -13,7 +12,7 @@ import java.io.File
 
 data class SoftwareConfiguration(
         var configuration: String = String.EMPTY,
-        val variables: VariableNode? = null,
+        val variables: VariableNode = VariableNode(),
         val software: MutableList<SoftwareConfigurationItem> = mutableListOf(),
         val includes: MutableList<String> = mutableListOf()
 ) : ObtainParametrized<String, Map<String, List<InstallationStep<*>>>> {
@@ -80,6 +79,7 @@ data class SoftwareConfiguration(
 
     fun merge(configuration: SoftwareConfiguration) {
 
+        variables.append(configuration.variables)
         software.addAll(configuration.software)
         includes.addAll(configuration.includes)
     }
