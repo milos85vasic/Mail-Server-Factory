@@ -12,10 +12,10 @@
     "host": "192.168.100.101"
   },
   "software": [
-    "Definitions/Software/Docker/Definition.json",
-    "Definitions/Software/Postgres/Definition.json"
+    "Definitions/Software/Docker",
+    "Definitions/Software/Postgres"
   ],
   "containers": [
-    "Definitions/Mail_Server/Definition.json"
+    "Definitions/Mail_Server"
   ]
 }

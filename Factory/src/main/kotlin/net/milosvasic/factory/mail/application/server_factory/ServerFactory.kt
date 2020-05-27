@@ -105,11 +105,13 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                         printVariableNode(config.variables)
 
                         config.software?.forEach {
-                            val softwareConfiguration = SoftwareConfiguration.obtain(it)
+                            val path = Configuration.getConfigurationFilePath(it)
+                            val softwareConfiguration = SoftwareConfiguration.obtain(path)
                             softwareConfigurations.add(softwareConfiguration)
                         }
                         config.containers?.forEach {
-                            val containerConfiguration = SoftwareConfiguration.obtain(it)
+                            val path = Configuration.getConfigurationFilePath(it)
+                            val containerConfiguration = SoftwareConfiguration.obtain(path)
                             containersConfigurations.add(containerConfiguration)
                         }
 
