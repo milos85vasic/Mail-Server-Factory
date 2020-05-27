@@ -17,6 +17,7 @@ object Commands {
     const val chmod = "chmod -R"
     const val chgrp = "chgrp -R"
     const val chown = "chown -R"
+    const val hostname = "hostname"
     const val tarCompress = "tar -cjf"
     const val tarDecompress = "tar -xvf"
     const val tarExtension = ".tar.gz"
@@ -83,4 +84,8 @@ object Commands {
     }
 
     fun test(what: String) = "test -e $what"
+
+    fun setHostName(hostname: String) = "hostnamectl set-hostname $hostname"
+
+    fun cat(what: String) = "cat $what"
 }

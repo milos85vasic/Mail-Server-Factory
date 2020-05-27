@@ -2,7 +2,7 @@ package net.milosvasic.factory.mail.test
 
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.test.implementation.SimpleInitializer
 import org.junit.jupiter.api.Test
@@ -22,9 +22,9 @@ class InitializationFlowTest : BaseTest() {
         }
 
         var finished = false
-        val flowCallback = object : FlowCallback<String> {
+        val flowCallback = object : FlowCallback {
 
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+            override fun onFinish(success: Boolean, message: String) {
                 if (!success) {
                     log.e(message)
                 }

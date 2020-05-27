@@ -1,0 +1,180 @@
+queue_directory = /var/spool/postfix
+
+command_directory = /usr/sbin
+
+daemon_directory = /usr/libexec/postfix
+
+data_directory = /var/lib/postfix
+
+mail_owner = postfix
+
+myhostname = {{SERVER.HOSTNAME}}
+
+mydomain = {{SERVER.DOMAIN}}
+
+myorigin = $mydomain
+
+inet_interfaces = localhost
+
+inet_protocols = ipv4
+
+mydestination = $myhostname, localhost.$mydomain, $mydomain
+
+virtual_mailbox_domains = {{SERVER.DOMAINS}}
+
+virtual_mailbox_base = /usr/local/vmail
+
+virtual_alias_maps = pgsql:/etc/postfix/virtual-alias-maps.cf, pgsql:/etc/postfix/email2email.cf
+
+# TODO:
+# virtual_mailbox_maps = pgsql:/path
+
+# TODO: Provide real account and group IDs via Postgres
+virtual_uid_maps = pgsql:/path
+virtual_gid_maps = pgsql:/path
+
+unknown_local_recipient_reject_code = 550
+
+mynetworks_style = host
+
+# TODO: alias_maps = pgsql:/path
+alias_maps = hash:/etc/aliases
+
+# TODO: alias_database = pgsql:/path
+alias_database = hash:/etc/aliases
+
+recipient_delimiter = +
+
+home_mailbox = Maildir/
+
+mail_spool_directory = /var/spool/mail/
+
+#mailbox_command = /some/where/procmail
+#mailbox_command = /some/where/procmail -a "$EXTENSION"
+
+#mailbox_transport = lmtp:unix:/var/lib/imap/socket/lmtp
+#mailbox_transport = cyrus
+
+# TODO:
+# header_checks = regexp:/etc/postfix/header_checks
+
+debug_peer_level = 2
+
+#debug_peer_list = 127.0.0.1
+#debug_peer_list = some.domain
+
+debugger_command =
+	 PATH=/bin:/usr/bin:/usr/local/bin:/usr/X11R6/bin
+	 ddd $daemon_directory/$process_name $process_id & sleep 5
+
+sendmail_path = /usr/sbin/sendmail.postfix
+
+newaliases_path = /usr/bin/newaliases.postfix
+
+mailq_path = /usr/bin/mailq.postfix
+
+setgid_group = postdrop
+
+html_directory = no
+
+manpage_directory = /usr/share/man
+
+sample_directory = /usr/share/doc/postfix-2.10.1/samples
+
+readme_directory = /usr/share/doc/postfix-2.10.1/README_FILES
+
+# TODO:
+# default_database_type = pgsql
+# canonical_maps = pgsql:/path
+
+# TODO:
+# transport_maps = pgsql:/path
+
+# TODO:
+# relocated_maps = pgsql:/path
+
+# Set to 100MB:
+message_size_limit = 102400000
+
+# Set to 1MB:
+bounce_size_limit = 1024000
+
+maximal_queue_lifetime = 2d
+
+append_at_myorigin = no
+append_dot_mydomain = no
+
+# Any address whose fully qualified hostname matches the domain portion is stripped down to just the domain name:
+# TODO:
+# masquerade_domains = {{SERVER.DOMAIN}}
+
+# TODO:
+# body_checks = regexp:/etc/postfix/re_body_checks
+# body_checks_size_limit = 51200
+
+virtual_transport = dovecot
+
+# Anti-spam configuration:
+smtpd_recipient_restrictions =
+    permit_sasl_authenticated
+    permit_mynetworks
+    # TODO: Replace 'imap.example.com' with proper host address
+    check_policy_service inet:imap.example.com:12340
+    reject_unverified_recipient
+    reject_unauth_destination
+    reject_non_fqdn_recipient
+    reject_invalid_hostname
+    reject_unknown_sender_domain
+    reject_unknown_recipient_domain
+
+smtpd_helo_restrictions =
+    reject_invalid_hostname
+
+smtpd_sender_restrictions =
+    reject_non_fqdn_sender
+    reject_unknown_sender_domain
+
+# TODO:
+# smtpd_client_restrictions
+# smtpd_helo_restrictions
+# smtpd_sender_restrictions
+# smtpd_recipient_restrictions
+# smtpd_data_restrictions
+
+smtpd_delay_reject = no
+smtpd_helo_required = yes
+
+smtpd_client_message_rate_limit = 5
+
+# SASL:
+smtpd_sasl_type = dovecot
+smtpd_sasl_auth_enable = yes
+# TODO: Path ---> proto.10-master.conf, service auth { ... inet_listener !!!
+smtpd_sasl_path = private/auth
+smtpd_tls_auth_only = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
+
+# TLS:
+smtp_use_tls = yes
+# TODO: Points to the file containing your server's private key
+# smtpd_tls_key_file = /etc/postfix/private.pem
+# TODO: Points to the file containing your server's signed certificate
+# smtpd_tls_cert_file = /etc/postfix/signed.pem
+# TODO: Points to the file containing the public certificates identifying Certificate Authorities you trust
+# smtpd_tls_CAfile = /etc/postfix/public.pem
+# TODO: Points to a directory of files each containing a public certificate for a Certificate Authority you trust
+# smtpd_tls_CApath = /etc/postfix/certs/
+
+# Content filtering:
+# TODO: Pass to ClamAV instance (proper IP instead of loopback)
+# content_filter = chkmsg:[127.0.0.1]:10025
+
+address_verify_map = btree:$data_directory/verify_cache
+address_verify_negative_expire_time = 3d
+address_verify_negative_refresh_time = 3h
+address_verify_positive_expire_time = 31d
+address_verify_positive_refresh_time = 7d
+unverified_recipient_reject_code = 577
+
+

@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.test
 
+import net.milosvasic.factory.mail.common.Registration
 import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.recipe.CommandInstallationStepRecipe
 import net.milosvasic.factory.mail.component.installer.recipe.ConditionRecipe
@@ -12,6 +13,7 @@ import net.milosvasic.factory.mail.component.installer.step.factory.Installation
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.RegistrationFlow
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
@@ -64,8 +66,8 @@ class DeployStepTest : BaseTest() {
             }
         }
 
-        val flowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val flowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
 
                 if (!success) {
                     log.w(message)
@@ -74,13 +76,26 @@ class DeployStepTest : BaseTest() {
             }
         }
 
-        val initFlowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val initFlowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
 
-                flowCallback.onFinish(success, message, data)
-                terminal.subscribe(commandCallback)
+                flowCallback.onFinish(success, message)
             }
         }
+
+        val registration = object : Registration<OperationResultListener> {
+            override fun register(what: OperationResultListener) {
+                terminal.subscribe(what)
+            }
+
+            override fun unRegister(what: OperationResultListener) {
+                terminal.unsubscribe(what)
+            }
+        }
+
+        val register = RegistrationFlow<OperationResultListener>()
+                .width(registration)
+                .perform(commandCallback)
 
         registerRecipes(init).onFinish(initFlowCallback)
         fun getPath(mock: String) = "$destination/$mock"
@@ -120,6 +135,7 @@ class DeployStepTest : BaseTest() {
 
         init
                 .connect(flow)
+                .connect(register)
                 .connect(verification)
                 .run()
 
@@ -131,6 +147,7 @@ class DeployStepTest : BaseTest() {
         Assertions.assertEquals(3, finished)
         log.v("Commands executed: $commandsExecuted")
         log.v("Commands failed: $commandsFailed")
+
         Assertions.assertEquals(2, commandsExecuted)
         Assertions.assertEquals(3, commandsFailed)
 

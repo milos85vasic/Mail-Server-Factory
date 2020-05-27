@@ -27,9 +27,9 @@ abstract class PackageManager(entryPoint: Connection) :
 
     private var operationType = PackageManagerOperationType.UNKNOWN
 
-    private val flowCallback = object : FlowCallback<String> {
+    private val flowCallback = object : FlowCallback {
 
-        override fun onFinish(success: Boolean, message: String, data: String?) {
+        override fun onFinish(success: Boolean, message: String) {
             if (success) {
                 onSuccessResult()
             } else {

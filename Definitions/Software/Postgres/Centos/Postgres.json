@@ -1,0 +1,23 @@
+{
+  "software": [
+    {
+      "name": "Postgres",
+      "installationSteps": {
+        "CentOS": [
+          {
+            "type": "skipCondition",
+            "value": "psql --version"
+          },
+          {
+            "type": "packages",
+            "value": "postgresql"
+          },
+          {
+            "type": "command",
+            "value": "psql --version"
+          }
+        ]
+      }
+    }
+  ]
+}

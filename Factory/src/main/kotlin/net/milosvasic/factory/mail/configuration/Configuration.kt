@@ -28,6 +28,16 @@ class Configuration(
 
     companion object : ObtainParametrized<File, Configuration> {
 
+        fun getConfigurationFilePath(path: String): String {
+
+            var fullPath = path
+            val defaultConfigurationFile = "Definition.json"
+            if (!path.endsWith(".json")) {
+                fullPath += "${File.separator}$defaultConfigurationFile"
+            }
+            return fullPath
+        }
+
         @Throws(IllegalArgumentException::class)
         override fun obtain(vararg param: File): Configuration {
 

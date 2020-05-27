@@ -5,8 +5,8 @@ import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
-import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
-import net.milosvasic.factory.mail.execution.flow.implementation.InitializationHandler
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationHandler
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.terminal.Terminal
@@ -57,8 +57,8 @@ class FlowConnectTest : BaseTest() {
             }
         }
 
-        val commandFlowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val commandFlowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
                 if (success) {
                     log.i("Command flow finished")
                 } else {
@@ -69,8 +69,8 @@ class FlowConnectTest : BaseTest() {
             }
         }
 
-        val initializationFlowCallback = object : FlowCallback<String> {
-            override fun onFinish(success: Boolean, message: String, data: String?) {
+        val initializationFlowCallback = object : FlowCallback {
+            override fun onFinish(success: Boolean, message: String) {
                 if (success) {
                     log.i("Initialization flow finished")
                 } else {

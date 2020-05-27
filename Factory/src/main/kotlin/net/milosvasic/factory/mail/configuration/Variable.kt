@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.configuration
 
+import net.milosvasic.factory.mail.EMPTY
 import java.util.regex.Pattern
 
 object Variable {
@@ -32,6 +33,9 @@ object Variable {
                 } else {
                     val rawVariable = variables.get(match) ?: noVariable(match)
                     val variable = parse(rawVariable.toString())
+                    if (variable == String.EMPTY) {
+                        noVariable(match)
+                    }
                     result = result.replace("$open$match$close", variable)
                 }
             }

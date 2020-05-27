@@ -1,10 +1,26 @@
 package net.milosvasic.factory.mail.os
 
+import net.milosvasic.factory.mail.EMPTY
+
 data class OperatingSystem(
-    private var name: String = "System unknown",
-    private var type: OSType = OSType.UNKNOWN,
-    private var architecture: Architecture = Architecture.UNKNOWN
+        private var name: String = "System unknown",
+        private var type: OSType = OSType.UNKNOWN,
+        private var architecture: Architecture = Architecture.UNKNOWN,
+        private var hostname: String = String.EMPTY
 ) {
+
+    @Throws(IllegalArgumentException::class)
+    fun setHostname(data: String) {
+
+        val validator = HostNameValidator()
+        if (validator.validate(data)) {
+
+            hostname = data
+        } else {
+
+            throw IllegalArgumentException("Invalid hostname: $data")
+        }
+    }
 
     fun parseAndSetSystemInfo(data: String) {
         val osLineString = "Operating System:"
@@ -31,13 +47,13 @@ data class OperatingSystem(
             }
             if (it.contains(archLineString)) {
                 val arch = it.replace(archLineString, "")
-                    .replace("-", "")
-                    .replace("_", "")
-                    .trim()
-                    .toLowerCase()
+                        .replace("-", "")
+                        .replace("_", "")
+                        .trim()
+                        .toLowerCase()
 
-                when  {
-                    arch.startsWith("x8664")  -> {
+                when {
+                    arch.startsWith("x8664") -> {
                         architecture = Architecture.X86_64
                     }
                     arch.startsWith(Architecture.X86_64.arch) -> {
@@ -63,6 +79,8 @@ data class OperatingSystem(
     fun getName() = name
 
     fun getType() = type
+
+    fun getHostname() = hostname
 
     fun getArchitecture() = architecture
 }

@@ -1,0 +1,6 @@
+user = {{DB.DB_USER}}
+password = {{DB.DB_PASSWORD}}
+hosts = 127.0.0.1
+port = {{DB.DB_PORT}}
+dbname = postfix_service
+query = SELECT email FROM mail_view_users WHERE email='%s'

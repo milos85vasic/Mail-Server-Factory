@@ -1,6 +1,6 @@
 package net.milosvasic.factory.mail.execution.flow.callback
 
-interface FlowCallback<T> {
+interface FlowCallback {
 
-    fun onFinish(success: Boolean, message: String, data: T? = null)
+    fun onFinish(success: Boolean, message: String)
 }

@@ -40,7 +40,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
     }
 
     @Throws(BusyException::class)
-    override fun onFinish(callback: FlowCallback<String>): CommandFlow {
+    override fun onFinish(callback: FlowCallback): CommandFlow {
         super.onFinish(callback)
         return this
     }
@@ -89,6 +89,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
 
                     subject.unsubscribe(operationCallback)
                     callback.onFinish(false, e.getMessage())
+                    this.callback = null
                 }
             }
         }

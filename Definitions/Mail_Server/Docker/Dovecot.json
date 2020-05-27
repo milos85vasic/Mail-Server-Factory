@@ -7,7 +7,7 @@
         "Docker": [
           {
             "type": "deploy",
-            "value": "Docker/Dovecot:{{DOCKER.DOCKER_HOME}}/Dovecot"
+            "value": "Definitions/Docker/Dovecot:{{DOCKER.DOCKER_HOME}}/Dovecot"
           }
         ]
       }

@@ -53,7 +53,7 @@ abstract class InstallationStepRecipe : ProcessingRecipe {
         callback?.onFinish(false, e.getMessage())
     }
 
-    protected fun getErrorMessage(result: OperationResult) = if (result.success) {
+    protected open fun getErrorMessage(result: OperationResult) = if (result.success) {
         String.EMPTY
     } else {
         "Installation step failed: $step"

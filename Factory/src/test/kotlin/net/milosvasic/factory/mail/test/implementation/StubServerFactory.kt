@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.application.server_factory.ServerFactory
 import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.component.installer.Installer
 import net.milosvasic.factory.mail.remote.Connection
+import net.milosvasic.factory.mail.terminal.command.EchoCommand
 import net.milosvasic.factory.mail.terminal.command.UnameCommand
 
 class StubServerFactory(arguments: List<String> = listOf()) : ServerFactory(arguments) {
@@ -29,4 +30,6 @@ class StubServerFactory(arguments: List<String> = listOf()) : ServerFactory(argu
         docker.addProcessingRecipesRegistrar(recipeRegistrar)
         return docker
     }
+
+    override fun getHostNameSetCommand(hostname: String) = EchoCommand(hostname)
 }

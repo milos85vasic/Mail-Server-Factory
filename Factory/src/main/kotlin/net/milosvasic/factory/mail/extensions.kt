@@ -64,6 +64,9 @@ fun fail(e: Exception) {
 val String.Companion.EMPTY: String
     get() = ""
 
+val String.Companion.LINE_BREAK: String
+    get() = "\n"
+
 fun Exception.getMessage(): String {
 
     var message = String.EMPTY

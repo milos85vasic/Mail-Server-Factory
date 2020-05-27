@@ -1,0 +1,8 @@
+{
+  "includes": [
+    "Definitions/Software/Docker/Centos/Docker.json",
+    "Definitions/Software/Docker/Centos/Compose.json",
+    "Definitions/Software/Docker/Ubuntu/Docker.json",
+    "Definitions/Software/Docker/Ubuntu/Compose.json"
+  ]
+}

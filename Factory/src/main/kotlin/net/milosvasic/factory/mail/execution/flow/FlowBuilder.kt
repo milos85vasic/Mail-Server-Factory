@@ -22,7 +22,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     protected var subjectsIterator: Iterator<Wrapper<T>>? = null
 
     private var nextFlow: FlowBuilder<*, *, *>? = null
-    private var callback: FlowCallback<D> = DefaultApplicationCallback()
+    private var callbacks: MutableSet<FlowCallback> = mutableSetOf(DefaultApplicationCallback())
 
     @Throws(BusyException::class)
     override fun width(subject: T): Flow<T, D> {
@@ -34,18 +34,21 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
         return this
     }
 
-    @Throws(BusyException::class, IllegalStateException::class)
-    override fun onFinish(callback: FlowCallback<D>): Flow<T, D> {
+    @Throws(BusyException::class)
+    override fun onFinish(callback: FlowCallback): Flow<T, D> {
         if (busy.isBusy()) {
             throw BusyException()
         }
-        this.callback = callback
+        callbacks.add(callback)
         return this
     }
 
     @Throws(BusyException::class)
     open fun connect(flow: FlowBuilder<*, *, *>): FlowBuilder<T, D, C> {
 
+        if (busy.isBusy()) {
+            throw BusyException()
+        }
         if (nextFlow == null) {
             nextFlow = flow
         } else {
@@ -95,15 +98,37 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
 
     protected fun finish(success: Boolean, message: String = String.EMPTY) {
         cleanupStates()
-        if (success) {
-            try {
-                nextFlow?.run()
-            } catch (e: Exception) {
-                log.e(e)
+
+        fun finish(success: Boolean) {
+            val iterator = callbacks.iterator()
+            while (iterator.hasNext()) {
+                val callback = iterator.next()
+                callback.onFinish(success, message)
             }
+            free()
         }
-        callback.onFinish(success, message)
-        free()
+
+        if (success) {
+            if (nextFlow == null) {
+                finish(success)
+            } else {
+
+                try {
+                    nextFlow?.let {
+                        val callback = object : FlowCallback {
+                            override fun onFinish(success: Boolean, message: String) {
+                                finish(true)
+                            }
+                        }
+                        it.onFinish(callback).run()
+                    }
+                } catch (e: Exception) {
+                    log.e(e)
+                }
+            }
+        } else {
+            finish(success)
+        }
     }
 
     protected fun finish(e: Exception) {

@@ -23,7 +23,7 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
     }
 
     @Throws(BusyException::class)
-    override fun onFinish(callback: FlowCallback<String>): InstallationFlow {
+    override fun onFinish(callback: FlowCallback): InstallationFlow {
         super.onFinish(callback)
         return this
     }
@@ -69,6 +69,7 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
 
                     installer.unsubscribe(operationCallback)
                     callback.onFinish(false, e.getMessage())
+                    this.callback = null
                 }
             }
         }

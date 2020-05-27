@@ -30,9 +30,9 @@ abstract class InstallerAbstract(entryPoint: Connection) :
     private lateinit var steps: Map<String, List<InstallationStep<*>>>
     protected val recipeRegistrars = mutableListOf<ProcessingRecipesRegistration>(mainRecipeRegistrar)
 
-    private val flowCallback = object : FlowCallback<String> {
+    private val flowCallback = object : FlowCallback {
 
-        override fun onFinish(success: Boolean, message: String, data: String?) {
+        override fun onFinish(success: Boolean, message: String) {
             if (!success) {
                 log.e(message)
             }
@@ -159,10 +159,6 @@ abstract class InstallerAbstract(entryPoint: Connection) :
         if (!recipeRegistrars.contains(registrar)) {
             recipeRegistrars.add(registrar)
         }
-    }
-
-    fun removeProcessingRecipesRegistrar(registrar: ProcessingRecipesRegistration) {
-        recipeRegistrars.remove(registrar)
     }
 
     @Throws(IllegalStateException::class)

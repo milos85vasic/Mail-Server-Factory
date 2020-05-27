@@ -9,6 +9,7 @@ import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.exception.EmptyDataException
 import net.milosvasic.factory.mail.common.initialization.Termination
+import net.milosvasic.factory.mail.component.database.DatabaseManager
 import net.milosvasic.factory.mail.component.docker.Docker
 import net.milosvasic.factory.mail.component.docker.DockerInitializationFlowCallback
 import net.milosvasic.factory.mail.component.installer.Installer
@@ -18,20 +19,19 @@ import net.milosvasic.factory.mail.execution.flow.FlowBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.DieOnFailureCallback
 import net.milosvasic.factory.mail.execution.flow.callback.TerminationCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
-import net.milosvasic.factory.mail.execution.flow.implementation.InitializationFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationFlow
+import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.os.HostInfoDataHandler
+import net.milosvasic.factory.mail.os.HostNameDataHandler
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.remote.ConnectionProvider
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.TerminalCommand
-import net.milosvasic.factory.mail.terminal.command.EchoCommand
-import net.milosvasic.factory.mail.terminal.command.HostInfoCommand
-import net.milosvasic.factory.mail.terminal.command.PingCommand
+import net.milosvasic.factory.mail.terminal.command.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
 open class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
@@ -79,8 +79,14 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                                 } else {
                                     " "
                                 }
-                                val nodeValue = Variable.parse(node.value.toString())
-                                log.v("Configuration variable:$printablePrefix${node.name} -> $nodeValue")
+                                node.value.let { value ->
+                                    val nodeValue = Variable.parse(value.toString())
+                                    node.name.let { name ->
+                                        if (name != String.EMPTY) {
+                                            log.v("Configuration variable:$printablePrefix$name -> $nodeValue")
+                                        }
+                                    }
+                                }
                             }
                             node.children.forEach { child ->
                                 var nextPrefix = prefix
@@ -99,11 +105,13 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                         printVariableNode(config.variables)
 
                         config.software?.forEach {
-                            val softwareConfiguration = SoftwareConfiguration.obtain(it)
+                            val path = Configuration.getConfigurationFilePath(it)
+                            val softwareConfiguration = SoftwareConfiguration.obtain(path)
                             softwareConfigurations.add(softwareConfiguration)
                         }
                         config.containers?.forEach {
-                            val containerConfiguration = SoftwareConfiguration.obtain(it)
+                            val path = Configuration.getConfigurationFilePath(it)
+                            val containerConfiguration = SoftwareConfiguration.obtain(path)
                             containersConfigurations.add(containerConfiguration)
                         }
 
@@ -177,6 +185,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
 
             terminators.add(docker)
             terminators.add(installer)
+            terminators.add(DatabaseManager)
 
             val dockerFlow = getDockerFlow(docker)
             val dockerInitFlow = getDockerInitFlow(docker, dockerFlow)
@@ -258,11 +267,13 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
         return connectionProvider.obtain()
     }
 
-    protected open fun getHostInfoCommand(): TerminalCommand = HostInfoCommand()
-
     protected open fun instantiateDocker(ssh: Connection) = Docker(ssh)
 
     protected open fun instantiateInstaller(ssh: Connection) = Installer(ssh)
+
+    protected open fun getHostInfoCommand(): TerminalCommand = HostInfoCommand()
+
+    protected open fun getHostNameSetCommand(hostname: String): TerminalCommand = HostNameSetCommand(hostname)
 
     private fun notifyInit(success: Boolean) {
         free()
@@ -297,7 +308,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
             return null
         }
         val installFlow = InstallationFlow(installer)
-        val dieCallback = DieOnFailureCallback<String>()
+        val dieCallback = DieOnFailureCallback()
         softwareConfigurations.forEach {
             installFlow.width(it)
         }
@@ -342,21 +353,51 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                 .onFinish(initCallback)
     }
 
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
     private fun getCommandFlow(ssh: Connection, initFlow: InitializationFlow): CommandFlow {
 
+        val os = ssh.getRemoteOS()
+        val hostname = getHostname()
         val host = ssh.getRemote().host
+        val terminal = ssh.getTerminal()
         val pingCommand = PingCommand(host)
+        val hostNameCommand = HostNameCommand()
         val hostInfoCommand = getHostInfoCommand()
         val testCommand = EchoCommand("Hello")
-        val terminal = ssh.getTerminal()
-        val dieCallback = DieOnFailureCallback<String>()
-        return CommandFlow()
+        val dieCallback = DieOnFailureCallback()
+
+        val flow = CommandFlow()
                 .width(terminal)
                 .perform(pingCommand)
                 .width(ssh)
                 .perform(testCommand)
-                .perform(hostInfoCommand, HostInfoDataHandler(ssh.getRemoteOS()))
+                .perform(hostInfoCommand, HostInfoDataHandler(os))
+                .perform(hostNameCommand, HostNameDataHandler(os))
+
+        if (hostname != String.EMPTY) {
+
+            flow.perform(getHostNameSetCommand(hostname), HostNameDataHandler(os, hostname))
+        }
+
+        return flow
                 .onFinish(dieCallback)
                 .connect(initFlow)
+    }
+
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
+    private fun getHostname(): String {
+        var hostname = String.EMPTY
+        configuration?.let {
+
+            val key = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.HOSTNAME.key}"
+            it.getVariableParsed(key)?.let { hName ->
+                hostname = hName as String
+            }
+        }
+        if (hostname == String.EMPTY) {
+
+            throw IllegalArgumentException("Empty hostname obtained for the server")
+        }
+        return hostname
     }
 }

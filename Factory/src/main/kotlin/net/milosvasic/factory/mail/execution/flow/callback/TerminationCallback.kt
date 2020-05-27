@@ -3,10 +3,10 @@ package net.milosvasic.factory.mail.execution.flow.callback
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.initialization.Termination
 
-class TerminationCallback<T>(private val termination: Termination) : DieOnFailureCallback<T>() {
+class TerminationCallback(private val termination: Termination) : DieOnFailureCallback() {
 
-    override fun onFinish(success: Boolean, message: String, data: T?) {
-        super.onFinish(success, message, data)
+    override fun onFinish(success: Boolean, message: String) {
+        super.onFinish(success, message)
         if (success) {
             try {
                 termination.terminate()

@@ -1,24 +1,21 @@
 {
   "name": "Mail server configuration",
   "includes": [
+    "Examples/Includes/Server.json",
     "Examples/Includes/Database.json",
     "Examples/Includes/Docker.json"
   ],
-  "variables": {
-    "SERVER": {
-      "SERVER_HOME": "/root",
-      "REBOOT_ALLOWED": true
-    }
-  },
+  "variables": {},
   "remote": {
     "port": 22,
     "user": "root",
     "host": "192.168.100.101"
   },
   "software": [
-    "Definitions/Docker/Definition.json"
+    "Definitions/Software/Docker",
+    "Definitions/Software/Postgres"
   ],
   "containers": [
-    "Definitions/Mail_Server/Definition.json"
+    "Definitions/Mail_Server"
   ]
 }
