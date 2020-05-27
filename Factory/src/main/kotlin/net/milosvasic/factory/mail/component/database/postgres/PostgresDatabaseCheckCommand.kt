@@ -7,8 +7,8 @@ class PostgresDatabaseCheckCommand(database: Postgres, connection: DatabaseConne
         DatabaseCheckCommand(database, connection) {
 
     override fun getDatabaseCommand() =
-            StringBuilder("PGPASSWORD=${connection.password} psql --host=${connection.host}")
-                    .append(" --port=${connection.port} --user=${connection.user}")
+            StringBuilder("PGPASSWORD=${connection.password} ${PostgresCommand.PSQL.obtain()}")
+                    .append(" --host=${connection.host} --port=${connection.port} --user=${connection.user}")
                     .append(" --list | grep ${database.name}")
                     .toString()
 }

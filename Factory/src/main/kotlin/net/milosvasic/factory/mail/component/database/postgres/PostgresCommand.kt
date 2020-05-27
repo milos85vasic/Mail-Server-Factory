@@ -12,7 +12,7 @@ enum class PostgresCommand : ObtainParametrized<DatabaseBundle, String> {
         @Throws(NoArgumentsExpectedException::class)
         override fun obtain(vararg param: DatabaseBundle): String {
 
-            Validator.Arguments.validateEmpty(param)
+            Validator.Arguments.validateEmpty(*param)
             return "psql"
         }
     }
