@@ -7,7 +7,7 @@
         "Docker": [
           {
             "type": "deploy",
-            "value": "Docker/Postfix:{{DOCKER.DOCKER_HOME}}/Postfix"
+            "value": "Definitions/Docker/Postfix:{{DOCKER.DOCKER_HOME}}/Postfix"
           },
           {
             "type": "database",

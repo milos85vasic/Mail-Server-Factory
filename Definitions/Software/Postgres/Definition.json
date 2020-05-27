@@ -1,0 +1,6 @@
+{
+  "includes": [
+    "Definitions/Software/Postgres/Centos/Postgres.json",
+    "Definitions/Software/Postgres/Ubuntu/Postgres.json"
+  ]
+}
