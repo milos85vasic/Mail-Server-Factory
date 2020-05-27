@@ -28,19 +28,18 @@ virtual_alias_maps = pgsql:/etc/postfix/virtual-alias-maps.cf, pgsql:/etc/postfi
 
 virtual_mailbox_maps = pgsql:/etc/postfix/virtual-mailbox-maps.cf
 
-# TODO: Provide real account and group IDs via Postgres
-virtual_uid_maps = pgsql:/path
-virtual_gid_maps = pgsql:/path
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
 
 unknown_local_recipient_reject_code = 550
 
 mynetworks_style = host
 
 # TODO: alias_maps = pgsql:/path
-alias_maps = hash:/etc/aliases
+# alias_maps = hash:/etc/aliases # TODO: To be removed
 
 # TODO: alias_database = pgsql:/path
-alias_database = hash:/etc/aliases
+# alias_database = hash:/etc/aliases # TODO: To be removed
 
 recipient_delimiter = +
 
