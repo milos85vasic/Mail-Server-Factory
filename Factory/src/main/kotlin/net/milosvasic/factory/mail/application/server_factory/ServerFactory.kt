@@ -77,13 +77,16 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                         config.software?.forEach {
                             val path = Configuration.getConfigurationFilePath(it)
                             val softwareConfiguration = SoftwareConfiguration.obtain(path)
-                            softwareConfiguration.variables?.let { toAppend ->
-                                if (config.variables == null) {
-                                    config.variables = toAppend
-                                } else {
-                                    config.variables?.append(toAppend)
-                                }
-                            }
+                            // TODO:
+//                            softwareConfiguration.variables?.let { toAppend ->
+//                                if (config.variables == null) {
+//                                    config.variables = toAppend
+//                                } else {
+//                                    toAppend.children.forEach { child ->
+//                                        config.variables?.append(child)
+//                                    }
+//                                }
+//                            }
                             softwareConfigurations.add(softwareConfiguration)
                         }
                         config.containers?.forEach {
@@ -93,7 +96,9 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                                 if (config.variables == null) {
                                     config.variables = toAppend
                                 } else {
-                                    config.variables?.append(toAppend)
+                                    toAppend.children.forEach { child ->
+                                        config.variables?.append(child)
+                                    }
                                 }
                             }
                             containersConfigurations.add(containerConfiguration)
