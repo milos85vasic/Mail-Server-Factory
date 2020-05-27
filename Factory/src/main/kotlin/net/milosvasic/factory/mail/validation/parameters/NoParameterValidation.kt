@@ -2,11 +2,11 @@ package net.milosvasic.factory.mail.validation.parameters
 
 class NoParameterValidation<T> : ParametersValidation<T> {
 
-    @Throws(IllegalArgumentException::class)
+    @Throws(NoArgumentsExpectedException::class)
     override fun validate(vararg what: T): Boolean {
 
         if (what.isNotEmpty()) {
-            throw IllegalArgumentException("Expected no arguments")
+            throw NoArgumentsExpectedException()
         }
         return true
     }
