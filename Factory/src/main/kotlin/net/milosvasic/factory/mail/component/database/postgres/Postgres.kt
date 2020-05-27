@@ -9,9 +9,8 @@ import net.milosvasic.factory.mail.component.installer.step.CommandInstallationS
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
-import net.milosvasic.factory.mail.terminal.command.EchoCommand
 
-class Postgres(name: String, val connection: DatabaseConnection) : Database(name, connection) {
+class Postgres(name: String, connection: DatabaseConnection) : Database(name, connection) {
 
     override val type: Type
         get() = Type.Postgres
@@ -44,7 +43,7 @@ class Postgres(name: String, val connection: DatabaseConnection) : Database(name
         return flow
     }
 
-    private fun checkCommand() = PostgresDatabaseCheckCommand(this, connection)
+    private fun checkCommand() = PostgresDatabaseCheckCommand(this)
 
-    private fun createCommand() = PostgresDatabaseCreateCommand(this, connection)
+    private fun createCommand() = PostgresDatabaseCreateCommand(this)
 }

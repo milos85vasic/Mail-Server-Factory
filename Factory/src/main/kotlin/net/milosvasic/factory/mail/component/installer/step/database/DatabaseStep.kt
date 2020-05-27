@@ -5,6 +5,7 @@ import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.common.obtain.Obtain
 import net.milosvasic.factory.mail.component.database.*
+import net.milosvasic.factory.mail.component.database.command.DatabaseSqlCommand
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
@@ -77,7 +78,7 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
                                 conf.sqls.forEach { sql ->
                                     val sqlPath = "$path${File.separator}$sql"
                                     log.v("SQL: $sqlPath")
-
+                                    val sqlCommand = DatabaseSqlCommand(db, sql)
                                 }
                                 installation.connect(sqlFlow)
                             }

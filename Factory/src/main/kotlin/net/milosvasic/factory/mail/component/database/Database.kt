@@ -9,7 +9,7 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class Database(val name: String, connection: DatabaseConnection) :
+abstract class Database(val name: String, val connection: DatabaseConnection) :
 
         BusyWorker<InstallationStep<*>>(connection.entryPoint),
         Initializer,
