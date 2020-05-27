@@ -66,16 +66,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
                     subject.unsubscribe(this)
                     val dataHandler = dataHandlers[operation]
                     dataHandler?.onData(result)
-                    val message = if (result.success) {
-                        String.EMPTY
-                    } else {
-                        if (result.operation is TerminalCommand) {
-                            "Command failed: ${result.operation.command}"
-                        } else {
-                            "Command failed: ${result.operation}"
-                        }
-                    }
-                    callback?.onFinish(result.success, message)
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }

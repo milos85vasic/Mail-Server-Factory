@@ -4,7 +4,7 @@ import net.milosvasic.factory.mail.operation.command.Command
 import net.milosvasic.factory.mail.operation.command.CommandConfiguration
 
 abstract class TerminalCommand(
-        val command: String,
+        open val command: String,
         val configuration: MutableMap<CommandConfiguration, Boolean> = CommandConfiguration.DEFAULT.toMutableMap()
 
 ) : Command(command)

@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.component.database
 
+import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.component.database.command.DatabaseCommand
 import net.milosvasic.factory.mail.component.database.command.DatabaseTerminalCommand
 import net.milosvasic.factory.mail.operation.OperationResult
@@ -17,31 +18,10 @@ class DatabaseConnection(
 
 ) : Connection {
 
-    override fun getRemote() = entryPoint.getRemote()
-
-    override fun getRemoteOS() = entryPoint.getRemoteOS()
-
-    override fun getTerminal(): Terminal = entryPoint.getTerminal()
-
-    @Throws(IllegalArgumentException::class)
+    @Synchronized
+    @Throws(BusyException::class, IllegalArgumentException::class)
     override fun execute(what: TerminalCommand) {
-
-        when (what) {
-            is DatabaseTerminalCommand -> {
-
-                entryPoint.execute(what)
-            }
-            is DatabaseCommand -> {
-
-                what.execute(this)
-            }
-            else -> {
-
-                val name = DatabaseTerminalCommand::class.simpleName
-                val thisName = this::class.simpleName
-                throw IllegalArgumentException("Only $name is supported by $thisName")
-            }
-        }
+        entryPoint.execute(what)
     }
 
     override fun subscribe(what: OperationResultListener) {
@@ -55,4 +35,10 @@ class DatabaseConnection(
     override fun notify(data: OperationResult) {
         entryPoint.notify(data)
     }
+
+    override fun getRemote() = entryPoint.getRemote()
+
+    override fun getRemoteOS() = entryPoint.getRemoteOS()
+
+    override fun getTerminal(): Terminal = entryPoint.getTerminal()
 }
