@@ -295,6 +295,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                 dockerFlow.width(
                         SoftwareConfiguration(
                                 softwareConfiguration.configuration,
+                                softwareConfiguration.variables,
                                 mutableListOf(software),
                                 softwareConfiguration.includes
                         )

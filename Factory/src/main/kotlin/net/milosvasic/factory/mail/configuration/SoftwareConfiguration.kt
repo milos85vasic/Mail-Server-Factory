@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.configuration
 
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
@@ -12,6 +13,7 @@ import java.io.File
 
 data class SoftwareConfiguration(
         var configuration: String = String.EMPTY,
+        val variables: VariableNode? = null,
         val software: MutableList<SoftwareConfigurationItem> = mutableListOf(),
         val includes: MutableList<String> = mutableListOf()
 ) : ObtainParametrized<String, Map<String, List<InstallationStep<*>>>> {
@@ -28,7 +30,11 @@ data class SoftwareConfiguration(
             if (configurationFile.exists()) {
 
                 val json = configurationFile.readText()
-                val gson = Gson()
+                val gsonBuilder = GsonBuilder()
+                val variablesDeserializer = VariableNode.getDeserializer()
+                gsonBuilder.registerTypeAdapter(VariableNode::class.java, variablesDeserializer)
+                val gson = gsonBuilder.create()
+
                 val instance = gson.fromJson(json, SoftwareConfiguration::class.java)
                 instance.configuration = configurationName
                 val included = mutableListOf<SoftwareConfiguration>()
@@ -38,6 +44,7 @@ data class SoftwareConfiguration(
                 included.forEach { config ->
                     instance.merge(config)
                 }
+                // TODO: Handle vars.
                 return instance
             } else {
 
