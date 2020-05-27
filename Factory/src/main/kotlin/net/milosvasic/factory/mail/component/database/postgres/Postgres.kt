@@ -4,6 +4,7 @@ import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.database.Database
 import net.milosvasic.factory.mail.component.database.DatabaseConnection
 import net.milosvasic.factory.mail.component.database.Type
+import net.milosvasic.factory.mail.component.database.command.DatabaseSqlCommand
 import net.milosvasic.factory.mail.component.installer.recipe.registration.MainRecipeRegistrar
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
@@ -42,6 +43,8 @@ class Postgres(name: String, connection: DatabaseConnection) : Database(name, co
 
         return flow
     }
+
+    override fun getSqlCommand(sql: String) = PostgresDatabaseSqlCommand(this, sql)
 
     private fun checkCommand() = PostgresDatabaseCheckCommand(this)
 

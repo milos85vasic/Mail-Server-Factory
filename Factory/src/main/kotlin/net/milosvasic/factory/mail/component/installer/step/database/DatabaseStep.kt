@@ -74,13 +74,16 @@ class DatabaseStep(val path: String) : RemoteOperationInstallationStep<SSH>() {
                             val db = databaseRegistrationProvider.obtain().database
                             val installation = db.getInstallation()
                             config?.let { conf ->
-                                val sqlFlow = CommandFlow().width(conn)
-                                conf.sqls.forEach { sql ->
-                                    val sqlPath = "$path${File.separator}$sql"
-                                    log.v("SQL: $sqlPath")
-                                    val sqlCommand = DatabaseSqlCommand(db, sql)
+                                if (conf.sqls.isNotEmpty()) {
+                                    val sqlFlow = CommandFlow().width(conn)
+                                    conf.sqls.forEach { sql ->
+                                        val sqlPath = "$path${File.separator}$sql"
+                                        log.v("SQL: $sqlPath")
+                                        val sqlCommand = db.getSqlCommand(sqlPath)
+                                        sqlFlow.perform(sqlCommand)
+                                    }
+                                    installation.connect(sqlFlow)
                                 }
-                                installation.connect(sqlFlow)
                             }
                             return installation
                         }

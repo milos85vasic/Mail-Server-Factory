@@ -3,6 +3,7 @@ package net.milosvasic.factory.mail.component.database
 import net.milosvasic.factory.mail.common.busy.BusyWorker
 import net.milosvasic.factory.mail.common.initialization.Initializer
 import net.milosvasic.factory.mail.common.initialization.Termination
+import net.milosvasic.factory.mail.component.database.command.DatabaseSqlCommand
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.log
@@ -74,6 +75,8 @@ abstract class Database(val name: String, val connection: DatabaseConnection) :
     protected abstract fun termination()
 
     abstract fun getInstallation(): InstallationStepFlow
+
+    abstract fun getSqlCommand(sql: String): DatabaseSqlCommand
 
     private fun getNotifyOperation() = DatabaseInitializationOperation()
 }
