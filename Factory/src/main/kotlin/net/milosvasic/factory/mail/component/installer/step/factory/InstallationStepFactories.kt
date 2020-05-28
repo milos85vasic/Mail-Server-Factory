@@ -2,6 +2,7 @@ package net.milosvasic.factory.mail.component.installer.step.factory
 
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.configuration.InstallationStepDefinition
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.validation.Validator
 
 object InstallationStepFactories : InstallationStepFactory {
@@ -21,8 +22,10 @@ object InstallationStepFactories : InstallationStepFactory {
 
             } catch (e: IllegalArgumentException) {
 
+                log.e(e)
             } catch (e: IllegalStateException) {
 
+                log.e(e)
             }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")

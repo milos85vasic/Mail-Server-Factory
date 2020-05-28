@@ -14,6 +14,10 @@
         "ORGANISATION": "Milos Vasic",
         "EMAIL": "test@tdev.local",
         "DEPARTMENT": "IT Department"
+      },
+
+      "CERTIFICATION": {
+        "PASSPHRASE": "Test12345@@@aaa"
       }
     }
   }
