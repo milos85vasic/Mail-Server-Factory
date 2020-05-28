@@ -1,0 +1,13 @@
+{
+  "software": [
+    {
+      "name": "Certification Authority",
+      "version": "1.0",
+      "installationSteps": {
+        "Ubuntu": [
+
+        ]
+      }
+    }
+  ]
+}

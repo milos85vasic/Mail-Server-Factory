@@ -1,0 +1,36 @@
+{
+  "software": [
+    {
+      "name": "Certification Authority",
+      "version": "1.0",
+      "installationSteps": {
+        "CentOS": [
+          {
+            "type": "skipCondition",
+            "value": "test -e {{SERVER.SERVER_HOME}}/Server/Ca"
+          },
+          {
+            "type": "packages",
+            "value": "epel-release, easy-rsa"
+          },
+          {
+            "type": "command",
+            "value": "mkdir -p {{SERVER.SERVER_HOME}}/Server/Ca"
+          },
+          {
+            "type": "command",
+            "value": "chmod 700 {{SERVER.SERVER_HOME}}/Server/Ca"
+          },
+          {
+            "type": "command",
+            "value": "ln -s /usr/share/easy-rsa/3/* {{SERVER.SERVER_HOME}}/Server/Ca"
+          },
+          {
+            "type": "command",
+            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && ./easyrsa init-pki"
+          }
+        ]
+      }
+    }
+  ]
+}
