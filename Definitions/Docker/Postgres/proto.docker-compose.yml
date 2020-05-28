@@ -4,6 +4,7 @@ services:
   postgres_database:
     image: library/postgres:12
     container_name: postgres_database
+    hostname: postgres.{{SERVER.DOMAIN}}
     restart: always
     ports:
     - {{DB.DB_PORT}}:5432
