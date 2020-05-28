@@ -156,17 +156,9 @@ smtpd_client_message_rate_limit = 5
 # smtpd_sasl_security_options = noanonymous
 # smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 
-# TODO:
 # TLS:
-# smtp_use_tls = yes
-# TODO: Points to the file containing your server's private key
-# smtpd_tls_key_file = /etc/postfix/private.pem
-# TODO: Points to the file containing your server's signed certificate
-# smtpd_tls_cert_file = /etc/postfix/signed.pem
-# TODO: Points to the file containing the public certificates identifying Certificate Authorities you trust
-# smtpd_tls_CAfile = /etc/postfix/public.pem
-# TODO: Points to a directory of files each containing a public certificate for a Certificate Authority you trust
-# smtpd_tls_CApath = /etc/postfix/certs/
+smtp_use_tls = yes
+smtpd_tls_CApath = /etc/postfix/certs/
 
 # TODO:
 # Content filtering:
