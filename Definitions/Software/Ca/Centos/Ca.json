@@ -55,7 +55,7 @@
           },
           {
             "type": "command",
-            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && ./easyrsa build-ca"
+            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && printf \"\n\r\" | ./easyrsa build-ca"
           }
         ]
       }
