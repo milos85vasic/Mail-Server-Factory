@@ -1,4 +1,16 @@
 {
+  "variables": {
+    "SERVER": {
+      "CERTIFICATION": {
+        "COUNTRY": "{{SERVER.INFO.COUNTRY}}",
+        "PROVINCE": "{{SERVER.INFO.PROVINCE}}",
+        "CITY": "{{SERVER.INFO.CITY}}",
+        "ORGANISATION": "{{SERVER.INFO.ORGANISATION}}",
+        "EMAIL": "{{SERVER.INFO.EMAIL}}",
+        "DEPARTMENT": "{{SERVER.INFO.DEPARTMENT}}"
+      }
+    }
+  },
   "software": [
     {
       "name": "Certification Authority",
@@ -28,6 +40,10 @@
           {
             "type": "command",
             "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && ./easyrsa init-pki"
+          },
+          {
+            "type": "deploy",
+            "value": "Definitions/Software/Ca/Configuration:{{SERVER.SERVER_HOME}}/Server/Ca"
           }
         ]
       }
