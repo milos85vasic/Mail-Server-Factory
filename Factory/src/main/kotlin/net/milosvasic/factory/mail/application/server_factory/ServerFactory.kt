@@ -72,24 +72,10 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                     if (configuration == null) {
                         throw IllegalStateException("Configuration is null")
                     }
-                    // TODO: Obtain configurations merged:
                     configuration?.let { config ->
-                        config.software?.forEach {
-                            val path = Configuration.getConfigurationFilePath(it)
-                            val softwareConfiguration = SoftwareConfiguration.obtain(path)
-                            val variables = softwareConfiguration.variables
-                            config.mergeVariables(variables)
-                            softwareConfigurations.add(softwareConfiguration)
-                        }
-                        config.containers?.forEach {
-                            val path = Configuration.getConfigurationFilePath(it)
-                            val containerConfiguration = SoftwareConfiguration.obtain(path)
-                            val variables = containerConfiguration.variables
-                            config.mergeVariables(variables)
-                            containersConfigurations.add(containerConfiguration)
-                        }
 
-                        printVariableNode(config.variables)
+                        softwareConfigurations.addAll(ConfigurationManager.getSoftwareConfiguration())
+                        containersConfigurations.addAll(ConfigurationManager.getContainerConfiguration())
                         log.v(config.name)
                         notifyInit(true)
                     }
@@ -375,34 +361,5 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
             throw IllegalArgumentException("Empty hostname obtained for the server")
         }
         return hostname
-    }
-
-    private fun printVariableNode(variableNode: VariableNode?, prefix: String = String.EMPTY) {
-        val prefixEnd = "-> "
-        variableNode?.let { node ->
-            if (node.value != String.EMPTY) {
-                val printablePrefix = if (prefix != String.EMPTY) {
-                    " $prefix $prefixEnd"
-                } else {
-                    " "
-                }
-                node.value.let { value ->
-                    val nodeValue = Variable.parse(value.toString())
-                    node.name.let { name ->
-                        if (name != String.EMPTY) {
-                            log.v("Configuration variable:$printablePrefix$name -> $nodeValue")
-                        }
-                    }
-                }
-            }
-            node.children.forEach { child ->
-                var nextPrefix = prefix
-                if (nextPrefix != String.EMPTY && !nextPrefix.endsWith(prefixEnd)) {
-                    nextPrefix += " $prefixEnd"
-                }
-                nextPrefix += node.name
-                printVariableNode(child, nextPrefix)
-            }
-        }
     }
 }
