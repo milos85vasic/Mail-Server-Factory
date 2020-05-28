@@ -1,3 +1,5 @@
+maillog_file=/var/log/postfix.log
+
 queue_directory = /var/spool/postfix
 
 command_directory = /usr/sbin
@@ -20,28 +22,26 @@ inet_protocols = ipv4
 
 mydestination = $myhostname, localhost.$mydomain, $mydomain
 
-virtual_mailbox_domains = {{SERVER.DOMAINS}}
-
-virtual_mailbox_base = /usr/local/vmail
+virtual_mailbox_domains = pgsql:/etc/postfix/virtual-mailbox-domains.cf
 
 virtual_alias_maps = pgsql:/etc/postfix/virtual-alias-maps.cf, pgsql:/etc/postfix/email2email.cf
 
-# TODO:
-# virtual_mailbox_maps = pgsql:/path
+virtual_mailbox_maps = pgsql:/etc/postfix/virtual-mailbox-maps.cf
 
-# TODO: Provide real account and group IDs via Postgres
-virtual_uid_maps = pgsql:/path
-virtual_gid_maps = pgsql:/path
+virtual_mailbox_base = /usr/local/vmail
+
+virtual_uid_maps = static:5000
+virtual_gid_maps = static:5000
 
 unknown_local_recipient_reject_code = 550
 
 mynetworks_style = host
 
 # TODO: alias_maps = pgsql:/path
-alias_maps = hash:/etc/aliases
+# alias_maps = hash:/etc/aliases # TODO: To be removed
 
 # TODO: alias_database = pgsql:/path
-alias_database = hash:/etc/aliases
+# alias_database = hash:/etc/aliases # TODO: To be removed
 
 recipient_delimiter = +
 
@@ -83,8 +83,9 @@ sample_directory = /usr/share/doc/postfix-2.10.1/samples
 
 readme_directory = /usr/share/doc/postfix-2.10.1/README_FILES
 
+default_database_type = pgsql
+
 # TODO:
-# default_database_type = pgsql
 # canonical_maps = pgsql:/path
 
 # TODO:
@@ -105,8 +106,7 @@ append_at_myorigin = no
 append_dot_mydomain = no
 
 # Any address whose fully qualified hostname matches the domain portion is stripped down to just the domain name:
-# TODO:
-# masquerade_domains = {{SERVER.DOMAIN}}
+masquerade_domains = {{SERVER.DOMAIN}}
 
 # TODO:
 # body_checks = regexp:/etc/postfix/re_body_checks
@@ -118,8 +118,8 @@ virtual_transport = dovecot
 smtpd_recipient_restrictions =
     permit_sasl_authenticated
     permit_mynetworks
-    # TODO: Replace 'imap.example.com' with proper host address
-    check_policy_service inet:imap.example.com:12340
+    # TODO: Replace 'imap.example.com' with proper host address -- Connect with Dovecot
+    # check_policy_service inet:imap.example.com:12340
     reject_unverified_recipient
     reject_unauth_destination
     reject_non_fqdn_recipient
@@ -146,17 +146,19 @@ smtpd_helo_required = yes
 
 smtpd_client_message_rate_limit = 5
 
+# TODO:
 # SASL:
-smtpd_sasl_type = dovecot
-smtpd_sasl_auth_enable = yes
+# smtpd_sasl_type = dovecot
+# smtpd_sasl_auth_enable = yes
 # TODO: Path ---> proto.10-master.conf, service auth { ... inet_listener !!!
-smtpd_sasl_path = private/auth
-smtpd_tls_auth_only = yes
-smtpd_sasl_security_options = noanonymous
-smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
+# smtpd_sasl_path = private/auth
+# smtpd_tls_auth_only = yes
+# smtpd_sasl_security_options = noanonymous
+# smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 
+# TODO:
 # TLS:
-smtp_use_tls = yes
+# smtp_use_tls = yes
 # TODO: Points to the file containing your server's private key
 # smtpd_tls_key_file = /etc/postfix/private.pem
 # TODO: Points to the file containing your server's signed certificate
@@ -166,6 +168,7 @@ smtp_use_tls = yes
 # TODO: Points to a directory of files each containing a public certificate for a Certificate Authority you trust
 # smtpd_tls_CApath = /etc/postfix/certs/
 
+# TODO:
 # Content filtering:
 # TODO: Pass to ClamAV instance (proper IP instead of loopback)
 # content_filter = chkmsg:[127.0.0.1]:10025
@@ -176,5 +179,3 @@ address_verify_negative_refresh_time = 3h
 address_verify_positive_expire_time = 31d
 address_verify_positive_refresh_time = 7d
 unverified_recipient_reject_code = 577
-
-

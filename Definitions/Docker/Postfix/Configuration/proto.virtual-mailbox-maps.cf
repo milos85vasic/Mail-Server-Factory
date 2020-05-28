@@ -3,4 +3,4 @@ password = {{DB.DB_PASSWORD}}
 hosts = {{SERVER.POSTFIX.DBHOST}}
 port = {{DB.DB_PORT}}
 dbname = {{SERVER.POSTFIX.DBNAME}}
-query = SELECT email FROM mail_view_users WHERE email='%s'
+query = SELECT 1 FROM mail_view_users WHERE email='%s'

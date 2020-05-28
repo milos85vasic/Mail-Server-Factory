@@ -1,4 +1,12 @@
 {
+  "variables": {
+    "SERVER": {
+      "POSTFIX": {
+        "DBHOST": "127.0.0.1",
+        "DBNAME": "postfix_service"
+      }
+    }
+  },
   "software": [
     {
       "name": "Mail server stack: Postfix",
@@ -16,14 +24,15 @@
           {
             "type": "build",
             "value": "{{DOCKER.DOCKER_HOME}}/Postfix:postfix_service:1.0"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/Postfix"
           }
         ]
       },
       "commentedOut": [
-        {
-          "type": "stack",
-          "value": "{{DOCKER.DOCKER_HOME}}/Postfix"
-        }
+
       ]
     }
   ]

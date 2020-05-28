@@ -130,7 +130,16 @@ data class VariableNode(
         nodes.forEach { node ->
             if (node.children.isNotEmpty()) {
                 if (node.name != String.EMPTY) {
-                    children.add(node)
+                    var added = false
+                    children.forEach { child ->
+                        if (child.name == node.name) {
+                            child.children.addAll(node.children)
+                            added = true
+                        }
+                    }
+                    if (!added) {
+                        children.add(node)
+                    }
                 } else {
                     children.addAll(node.children)
                 }

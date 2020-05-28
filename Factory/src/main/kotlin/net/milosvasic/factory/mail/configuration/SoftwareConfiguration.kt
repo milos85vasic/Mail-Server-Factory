@@ -1,16 +1,18 @@
 package net.milosvasic.factory.mail.configuration
 
-import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.obtain.ObtainParametrized
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.factory.InstallationStepFactories
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.validation.Validator
 import java.io.File
 
 data class SoftwareConfiguration(
         var configuration: String = String.EMPTY,
+        var variables: VariableNode? = null,
         val software: MutableList<SoftwareConfigurationItem> = mutableListOf(),
         val includes: MutableList<String> = mutableListOf()
 ) : ObtainParametrized<String, Map<String, List<InstallationStep<*>>>> {
@@ -23,10 +25,15 @@ data class SoftwareConfiguration(
             Validator.Arguments.validateSingle(param)
             val configurationName = param[0]
             val configurationFile = File(configurationName)
+            log.v("Configuration file: ${configurationFile.absolutePath}")
             if (configurationFile.exists()) {
 
                 val json = configurationFile.readText()
-                val gson = Gson()
+                val gsonBuilder = GsonBuilder()
+                val variablesDeserializer = VariableNode.getDeserializer()
+                gsonBuilder.registerTypeAdapter(VariableNode::class.java, variablesDeserializer)
+                val gson = gsonBuilder.create()
+
                 val instance = gson.fromJson(json, SoftwareConfiguration::class.java)
                 instance.configuration = configurationName
                 val included = mutableListOf<SoftwareConfiguration>()
@@ -36,6 +43,7 @@ data class SoftwareConfiguration(
                 included.forEach { config ->
                     instance.merge(config)
                 }
+                // TODO: Handle vars.
                 return instance
             } else {
 
@@ -71,6 +79,13 @@ data class SoftwareConfiguration(
 
     fun merge(configuration: SoftwareConfiguration) {
 
+        configuration.variables?.let { toAppend ->
+            if (variables == null) {
+                variables = toAppend
+            } else {
+                variables?.append(toAppend)
+            }
+        }
         software.addAll(configuration.software)
         includes.addAll(configuration.includes)
     }

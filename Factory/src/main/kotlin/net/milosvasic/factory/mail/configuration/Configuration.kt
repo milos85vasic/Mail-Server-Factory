@@ -16,7 +16,7 @@ class Configuration(
         includes: MutableList<String>?,
         software: MutableList<String>?,
         containers: MutableList<String>?,
-        variables: VariableNode?
+        variables: VariableNode? = null
 
 ) : ConfigurationInclude(
 
@@ -87,6 +87,18 @@ class Configuration(
         }
         configuration.containers?.let {
             containers?.addAll(it)
+        }
+    }
+
+    fun mergeVariables(variables: VariableNode?) {
+        variables?.let { toAppend ->
+            if (this.variables == null) {
+                this.variables = toAppend
+            } else {
+                toAppend.children.forEach { child ->
+                    this.variables?.append(child)
+                }
+            }
         }
     }
 
