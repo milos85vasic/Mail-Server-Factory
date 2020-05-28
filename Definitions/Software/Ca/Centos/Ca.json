@@ -47,15 +47,7 @@
           },
           {
             "type": "command",
-            "value": "export EASYRSA_PASSIN='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}'"
-          },
-          {
-            "type": "command",
-            "value": "export EASYRSA_PASSOUT='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}'"
-          },
-          {
-            "type": "command",
-            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && printf \"\n\r\" | ./easyrsa build-ca"
+            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && export EASYRSA_PASSIN='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}' && export EASYRSA_PASSOUT='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}' && echo 'Finish' | ./easyrsa build-ca"
           }
         ]
       }
