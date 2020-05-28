@@ -1,7 +1,6 @@
 #!/bin/sh
 
-echo "Starting Postfix on `hostname`"
+echo "Starting Postfix on `hostname`" > /var/log/postfix.log
 
-rsyslogd
-postfix start && postfix check
-tail -f /var/log/maillog
+postfix start && postfix check > /var/log/postfix.log
+tail -f /var/log/postfix.log
