@@ -133,7 +133,9 @@ data class VariableNode(
                     var added = false
                     children.forEach { child ->
                         if (child.name == node.name) {
-                            child.children.addAll(node.children)
+                            node.children.forEach { nodeChild ->
+                                child.append(nodeChild)
+                            }
                             added = true
                         }
                     }
