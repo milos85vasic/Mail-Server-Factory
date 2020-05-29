@@ -22,6 +22,10 @@
             "value": "{{DOCKER.DOCKER_HOME}}/Postfix/Database"
           },
           {
+            "type": "certificate",
+            "value": "{{SERVER.HOSTNAME}}"
+          },
+          {
             "type": "build",
             "value": "{{DOCKER.DOCKER_HOME}}/Postfix:postfix_service:1.0"
           },
