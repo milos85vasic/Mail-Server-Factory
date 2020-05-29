@@ -96,8 +96,12 @@ object Commands {
 
         var fullName = name
         val extension = ".key"
+        val prefix = "private."
         if (!fullName.endsWith(extension)) {
             fullName += extension
+        }
+        if (!fullName.startsWith(prefix)) {
+            fullName = prefix + fullName
         }
         return "$openssl genrsa -out $path${File.separator}$fullName"
     }
