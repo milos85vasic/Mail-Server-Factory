@@ -31,6 +31,14 @@
           },
           {
             "type": "command",
+            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && ./clean-all"
+          },
+          {
+            "type": "command",
+            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && source ./vars"
+          },
+          {
+            "type": "command",
             "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && ./pkitool --initca"
           },
           {
