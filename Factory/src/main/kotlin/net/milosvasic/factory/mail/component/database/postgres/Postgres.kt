@@ -4,7 +4,6 @@ import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.database.Database
 import net.milosvasic.factory.mail.component.database.DatabaseConnection
 import net.milosvasic.factory.mail.component.database.Type
-import net.milosvasic.factory.mail.component.database.command.DatabaseSqlCommand
 import net.milosvasic.factory.mail.component.installer.recipe.registration.MainRecipeRegistrar
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep

@@ -3,6 +3,7 @@ package net.milosvasic.factory.mail.component.installer.recipe.registration
 import net.milosvasic.factory.mail.component.installer.recipe.*
 import net.milosvasic.factory.mail.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
+import net.milosvasic.factory.mail.component.installer.step.certificate.Certificate
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.database.DatabaseStep
@@ -42,6 +43,12 @@ class MainRecipeRegistrar : ProcessingRecipesRegistration {
                         DeployRecipe::class
                 )
                 return true
+            }
+            Certificate::class -> {
+                flow.registerRecipe(
+                        Certificate::class,
+                        CertificateRecipe::class
+                )
             }
             DatabaseStep::class -> {
                 flow.registerRecipe(
