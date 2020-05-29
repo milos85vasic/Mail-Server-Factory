@@ -3,6 +3,7 @@ package net.milosvasic.factory.mail.terminal.command
 import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.localhost
 import net.milosvasic.factory.mail.remote.Remote
+import java.io.File
 
 object Commands {
 
@@ -20,6 +21,7 @@ object Commands {
     private const val chmod = "chmod -R"
     private const val chgrp = "chgrp -R"
     private const val chown = "chown -R"
+    private const val openssl = "openssl"
     private const val tarCompress = "tar -cjf"
     private const val tarDecompress = "tar -xvf"
 
@@ -89,4 +91,14 @@ object Commands {
     fun setHostName(hostname: String) = "hostnamectl set-hostname $hostname"
 
     fun cat(what: String) = "cat $what"
+
+    fun generatePrivateKey(path: String, name: String): String {
+
+        var fullName = name
+        val extension = ".key"
+        if (!fullName.endsWith(extension)) {
+            fullName += extension
+        }
+        return "$openssl genrsa -out $path${File.separator}$fullName"
+    }
 }
