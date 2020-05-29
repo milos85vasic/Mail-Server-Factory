@@ -1,4 +1,11 @@
 {
+  "variables": {
+    "SERVER": {
+      "CERTIFICATION": {
+        "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca"
+      }
+    }
+  },
   "includes": [
     "Definitions/Mail_Server/Docker/Database.json",
     "Definitions/Mail_Server/Docker/Postfix.json",
