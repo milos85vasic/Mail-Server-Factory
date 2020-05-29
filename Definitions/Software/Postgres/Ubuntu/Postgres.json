@@ -3,7 +3,7 @@
     {
       "name": "Postgres",
       "installationSteps": {
-        "CentOS": [
+        "Ubuntu": [
           {
             "type": "skipCondition",
             "value": "psql --version"
