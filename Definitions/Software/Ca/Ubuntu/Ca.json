@@ -26,12 +26,12 @@
             "value": "ln -s /usr/share/easy-rsa/* {{SERVER.SERVER_HOME}}/Server/Ca"
           },
           {
-            "type": "command",
-            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && ./pkitool --initca"
-          },
-          {
             "type": "deploy",
             "value": "Definitions/Software/Ca/Configuration:{{SERVER.SERVER_HOME}}/Server/Ca"
+          },
+          {
+            "type": "command",
+            "value": "cd {{SERVER.SERVER_HOME}}/Server/Ca && ./pkitool --initca"
           },
           {
             "type": "command",
