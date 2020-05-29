@@ -106,7 +106,11 @@ class Configuration(
     fun getVariableParsed(key: String): Any? {
 
         variables?.let { it ->
-            return it.get(key)
+            val value = it.get(key)
+            if (value is String) {
+                return Variable.parse(value)
+            }
+            return value
         }
         return null
     }

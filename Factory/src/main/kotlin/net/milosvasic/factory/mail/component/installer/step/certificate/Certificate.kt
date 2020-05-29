@@ -18,7 +18,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
             val ctxCertification = VariableContext.Certification.context
             val key = "$ctxServer$ctxSeparator$ctxCertification$ctxSeparator$keyHome"
             val configuration = ConfigurationManager.getConfiguration()
-            val path = Variable.parse("${configuration.getVariableParsed(key)}") // TODO: Improve parsing!
+            val path = configuration.getVariableParsed(key) as String
 
             return CommandFlow()
                     .width(conn)
