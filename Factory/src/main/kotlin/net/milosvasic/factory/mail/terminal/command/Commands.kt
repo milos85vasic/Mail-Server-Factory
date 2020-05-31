@@ -110,7 +110,9 @@ object Commands {
         val organisation = "{{SERVER.CERTIFICATION.ORGANISATION}}"
         var params = "/C=$country/ST=$province/L=$city/O=$organisation/OU=$department/CN=$organisation"
         params = Variable.parse(params).replace(" ", "\\ ")
-        return "$cmd $path${File.separator}$keyName -out $path${File.separator}$requestKey -subj $params"
+        val reqKey = "$path${File.separator}$requestKey"
+        val verify = "openssl req -in $reqKey -noout -subject"
+        return "$cmd $path${File.separator}$keyName -out $reqKey -subj $params && $verify"
     }
 
     fun getPrivateKyName(name: String): String {
