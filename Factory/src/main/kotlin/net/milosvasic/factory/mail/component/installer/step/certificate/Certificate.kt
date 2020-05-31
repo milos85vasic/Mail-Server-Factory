@@ -6,8 +6,6 @@ import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.command.Commands
 import net.milosvasic.factory.mail.terminal.command.MkdirCommand
-import net.milosvasic.factory.mail.terminal.command.TestCommand
-import java.io.File
 
 class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
 
