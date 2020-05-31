@@ -101,14 +101,15 @@ object Commands {
 
     fun generateRequestKey(path: String, keyName: String, reqName: String): String {
 
-        val cmd = "$openssl req -new -key"
         val requestKey = getRequestKeyName(reqName)
+        val cmd = "$openssl req -new -key"
+        val hostname = "{{SERVER.HOSTNAME}}"
         val city = "{{SERVER.CERTIFICATION.CITY}}"
         val country = "{{SERVER.CERTIFICATION.COUNTRY}}"
         val province = "{{SERVER.CERTIFICATION.PROVINCE}}"
         val department = "{{SERVER.CERTIFICATION.DEPARTMENT}}"
         val organisation = "{{SERVER.CERTIFICATION.ORGANISATION}}"
-        var params = "/C=$country/ST=$province/L=$city/O=$organisation/OU=$department/CN=$organisation"
+        var params = "/C=$country/ST=$province/L=$city/O=$organisation/OU=$department/CN=$hostname"
         params = Variable.parse(params).replace(" ", "\\ ")
         val reqKey = "$path${File.separator}$requestKey"
         val verify = "openssl req -in $reqKey -noout -subject"
