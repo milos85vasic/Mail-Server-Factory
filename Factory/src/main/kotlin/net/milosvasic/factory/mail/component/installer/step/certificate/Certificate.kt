@@ -17,6 +17,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
 
         connection?.let { conn ->
 
+            val hostname = conn.getRemoteOS().getHostname()
             val keyHome = VariableKey.CERTIFICATES.key
             val ctxServer = VariableContext.Server.context
             val ctxSeparator = VariableNode.contextSeparator
@@ -32,6 +33,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
                     .perform(MkdirCommand(path))
                     .perform(GeneratePrivateKeyCommand(path, name))
                     .perform(GenerateRequestKeyCommand(path, Commands.getPrivateKyName(name), name))
+                    .perform(ImportRequestKeyCommand(path, Commands.getRequestKeyName(name), hostname))
                     .perform(ChmodCommand(path, perm))
         }
         throw IllegalArgumentException("No proper connection provided")

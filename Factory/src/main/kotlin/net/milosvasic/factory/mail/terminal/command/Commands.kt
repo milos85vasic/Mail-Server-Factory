@@ -116,6 +116,13 @@ object Commands {
         return "$cmd $path${File.separator}$keyName -out $reqKey -subj $params && $verify"
     }
 
+    fun importRequestKey(path: String, requestKey: String, name: String): String {
+
+        val key = "$path${File.separator}$requestKey"
+        val cmd = "cd {{SERVER.CERTIFICATION.HOME}} && ./easyrsa import-req $key $name"
+        return Variable.parse(cmd)
+    }
+
     fun getPrivateKyName(name: String): String {
         var fullName = name
         val extension = ".key"
@@ -129,7 +136,7 @@ object Commands {
         return fullName
     }
 
-    private fun getRequestKeyName(reqName: String): String {
+    fun getRequestKeyName(reqName: String): String {
         var fullName = reqName
         val extension = ".req"
         val prefix = "request."
