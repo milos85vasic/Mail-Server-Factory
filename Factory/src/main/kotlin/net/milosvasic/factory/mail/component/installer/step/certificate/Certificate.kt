@@ -12,10 +12,7 @@ import net.milosvasic.factory.mail.execution.flow.implementation.InstallationSte
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.security.Permission
 import net.milosvasic.factory.mail.security.Permissions
-import net.milosvasic.factory.mail.terminal.command.ChmodCommand
-import net.milosvasic.factory.mail.terminal.command.Commands
-import net.milosvasic.factory.mail.terminal.command.MkdirCommand
-import net.milosvasic.factory.mail.terminal.command.TestCommand
+import net.milosvasic.factory.mail.terminal.command.*
 import java.io.File
 
 class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
@@ -38,23 +35,35 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
             val sep = File.separator
             val certificateExtension = ".crt"
             val issued = "${sep}pki${sep}issued$sep"
-            val verificationPath = "{{SERVER.CERTIFICATION.HOME}}$issued$hostname$certificateExtension"
-            val verificationCommand = TestCommand(Variable.parse(verificationPath))
+            val certHome = "{{SERVER.CERTIFICATION.HOME}}"
+            val certificates = "{{SERVER.CERTIFICATION.CERTIFICATES}}"
+            val linkingPath = Variable.parse("$certificates$issued$hostname$certificateExtension")
+            val verificationPath = Variable.parse("$certHome$issued$hostname$certificateExtension")
+            val verificationCommand = TestCommand(verificationPath)
+
+            val genPrivate = GeneratePrivateKeyCommand(path, name)
+            val genRequest = GenerateRequestKeyCommand(path, Commands.getPrivateKyName(name), name)
+            val impRequest = ImportRequestKeyCommand(path, Commands.getRequestKeyName(name), hostname)
+            val sign = SignRequestKeyCommand(hostname)
+            val chmod = ChmodCommand(path, perm)
+            val link = LinkCommand(verificationPath, linkingPath)
 
             val toolkit = Toolkit(conn)
             val checkFlow = InstallationStepFlow(toolkit)
                     .registerRecipe(SkipCondition::class, ConditionRecipe::class)
                     .registerRecipe(CommandInstallationStep::class, CommandInstallationStepRecipe::class)
                     .width(SkipCondition(verificationCommand))
-                    .width(CommandInstallationStep(GeneratePrivateKeyCommand(path, name)))
-                    .width(CommandInstallationStep(GenerateRequestKeyCommand(path, Commands.getPrivateKyName(name), name)))
-                    .width(CommandInstallationStep(ImportRequestKeyCommand(path, Commands.getRequestKeyName(name), hostname)))
-                    .width(CommandInstallationStep(SignRequestKeyCommand(hostname)))
-                    .width(CommandInstallationStep(ChmodCommand(path, perm)))
+                    .width(CommandInstallationStep(genPrivate))
+                    .width(CommandInstallationStep(genRequest))
+                    .width(CommandInstallationStep(impRequest))
+                    .width(CommandInstallationStep(sign))
+                    .width(CommandInstallationStep(link))
+                    .width(CommandInstallationStep(chmod))
 
             val completionFlow = CommandFlow()
                     .width(conn)
                     .perform(verificationCommand)
+                    .perform(TestCommand(linkingPath))
 
             return CommandFlow()
                     .width(conn)

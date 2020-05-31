@@ -18,6 +18,7 @@ object Commands {
     const val tarExtension = ".tar.gz"
 
     private const val find = "find "
+    private const val link = "ln -s"
     private const val mkdir = "mkdir -p"
     private const val chmod = "chmod -R"
     private const val chgrp = "chgrp -R"
@@ -157,4 +158,6 @@ object Commands {
         }
         return fullName
     }
+
+    fun link(what: String, where: String) = "$link $what $where"
 }
