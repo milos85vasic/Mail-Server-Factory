@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.terminal.command
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.configuration.Variable
 import net.milosvasic.factory.mail.localhost
 import net.milosvasic.factory.mail.remote.Remote
 import java.io.File
@@ -94,6 +95,25 @@ object Commands {
 
     fun generatePrivateKey(path: String, name: String): String {
 
+        val keyName = getPrivateKyName(name)
+        return "$openssl genrsa -out $path${File.separator}$keyName"
+    }
+
+    fun generateRequestKey(path: String, keyName: String, reqName: String): String {
+
+        val cmd = "$openssl req -new -key"
+        val requestKey = getRequestKeyName(reqName)
+        val city = "{{SERVER.CERTIFICATION.CITY}}"
+        val country = "{{SERVER.CERTIFICATION.COUNTRY}}"
+        val province = "{{SERVER.CERTIFICATION.PROVINCE}}"
+        val department = "{{SERVER.CERTIFICATION.DEPARTMENT}}"
+        val organisation = "{{SERVER.CERTIFICATION.ORGANISATION}}"
+        var params = "/C=$country/ST=$province/L=$city/O=$organisation/OU=$department/CN=$organisation"
+        params = Variable.parse(params).replace(" ", "\\ ")
+        return "$cmd $path${File.separator}$keyName -out $path${File.separator}$requestKey -subj $params"
+    }
+
+    fun getPrivateKyName(name: String): String {
         var fullName = name
         val extension = ".key"
         val prefix = "private."
@@ -103,6 +123,19 @@ object Commands {
         if (!fullName.startsWith(prefix)) {
             fullName = prefix + fullName
         }
-        return "$openssl genrsa -out $path${File.separator}$fullName"
+        return fullName
+    }
+
+    private fun getRequestKeyName(reqName: String): String {
+        var fullName = reqName
+        val extension = ".req"
+        val prefix = "request."
+        if (!fullName.endsWith(extension)) {
+            fullName += extension
+        }
+        if (!fullName.startsWith(prefix)) {
+            fullName = prefix + fullName
+        }
+        return fullName
     }
 }

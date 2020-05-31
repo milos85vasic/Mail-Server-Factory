@@ -4,7 +4,10 @@ import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInsta
 import net.milosvasic.factory.mail.configuration.*
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.remote.ssh.SSH
+import net.milosvasic.factory.mail.terminal.command.Commands
 import net.milosvasic.factory.mail.terminal.command.MkdirCommand
+import net.milosvasic.factory.mail.terminal.command.TestCommand
+import java.io.File
 
 class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
 
@@ -25,6 +28,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
                     .width(conn)
                     .perform(MkdirCommand(path))
                     .perform(GeneratePrivateKeyCommand(path, name))
+                    .perform(GenerateRequestKeyCommand(path, Commands.getPrivateKyName(name), name))
         }
         throw IllegalArgumentException("No proper connection provided")
     }
