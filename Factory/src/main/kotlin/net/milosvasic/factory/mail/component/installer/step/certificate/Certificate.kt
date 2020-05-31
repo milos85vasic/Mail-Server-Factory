@@ -34,6 +34,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
                     .perform(GeneratePrivateKeyCommand(path, name))
                     .perform(GenerateRequestKeyCommand(path, Commands.getPrivateKyName(name), name))
                     .perform(ImportRequestKeyCommand(path, Commands.getRequestKeyName(name), hostname))
+                    .perform(SignRequestKeyCommand(hostname))
                     .perform(ChmodCommand(path, perm))
         }
         throw IllegalArgumentException("No proper connection provided")

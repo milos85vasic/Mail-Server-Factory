@@ -123,6 +123,12 @@ object Commands {
         return Variable.parse(cmd)
     }
 
+    fun signRequestKey(name: String): String {
+
+        val cmd = "cd {{SERVER.CERTIFICATION.HOME}} && echo 'yes' | ./easyrsa sign-req server $name"
+        return Variable.parse(cmd)
+    }
+
     fun getPrivateKyName(name: String): String {
         var fullName = name
         val extension = ".key"
