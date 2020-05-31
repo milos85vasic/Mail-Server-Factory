@@ -37,7 +37,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
             val issued = "${sep}pki${sep}issued$sep"
             val certHome = "{{SERVER.CERTIFICATION.HOME}}"
             val certificates = "{{SERVER.CERTIFICATION.CERTIFICATES}}"
-            val linkingPath = Variable.parse("$certificates$hostname$certificateExtension")
+            val linkingPath = Variable.parse("$certificates$sep$hostname$certificateExtension")
             val verificationPath = Variable.parse("$certHome$issued$hostname$certificateExtension")
             val verificationCommand = TestCommand(verificationPath)
 
