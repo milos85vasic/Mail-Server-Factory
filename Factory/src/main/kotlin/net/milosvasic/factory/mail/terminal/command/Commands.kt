@@ -125,7 +125,10 @@ object Commands {
 
     fun signRequestKey(name: String): String {
 
-        val cmd = "cd {{SERVER.CERTIFICATION.HOME}} && echo 'yes' | ./easyrsa sign-req server $name"
+        val passIn = "export EASYRSA_PASSIN='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}'"
+        val passOut = "export EASYRSA_PASSOUT='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}'"
+        val passwords = "$passIn && $passOut"
+        val cmd = "cd {{SERVER.CERTIFICATION.HOME}} && $passwords && echo 'yes' | ./easyrsa sign-req server $name"
         return Variable.parse(cmd)
     }
 
