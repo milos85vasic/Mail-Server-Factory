@@ -46,7 +46,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
             val impRequest = ImportRequestKeyCommand(path, Commands.getRequestKeyName(name), hostname)
             val sign = SignRequestKeyCommand(hostname)
             val chmod = ChmodCommand(path, perm)
-            val link = LinkCommand(verificationPath, linkingPath)
+            val copy = CpCommand(verificationPath, linkingPath)
             val pem = GeneratePEMCommand()
 
             val toolkit = Toolkit(conn)
@@ -58,7 +58,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
                     .width(CommandInstallationStep(genRequest))
                     .width(CommandInstallationStep(impRequest))
                     .width(CommandInstallationStep(sign))
-                    .width(CommandInstallationStep(link))
+                    .width(CommandInstallationStep(copy))
                     .width(CommandInstallationStep(pem))
                     .width(CommandInstallationStep(chmod))
 
