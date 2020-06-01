@@ -55,8 +55,7 @@ mail_spool_directory = /var/spool/mail/
 #mailbox_transport = lmtp:unix:/var/lib/imap/socket/lmtp
 #mailbox_transport = cyrus
 
-# TODO:
-# header_checks = regexp:/etc/postfix/header_checks
+header_checks = regexp:/etc/postfix/header_checks
 
 debug_peer_level = 2
 
@@ -157,12 +156,12 @@ smtpd_client_message_rate_limit = 5
 # smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 
 # TLS:
+tls_random_source = dev:/dev/urandom
 smtp_use_tls = yes
 smtpd_use_tls = yes
-smtpd_tls_key_file = {{SERVER.CERTIFICATION.CERTIFICATES}}/private.{{SERVER.HOSTNAME}}.key
-smtpd_tls_cert_file = {{SERVER.CERTIFICATION.CERTIFICATES}}/{{SERVER.HOSTNAME}}.crt
-smtpd_tls_CAfile = {{SERVER.CERTIFICATION.CERTIFICATES}}/cacert.pem
-tls_random_source = dev:/dev/urandom
+smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
+smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
+smtpd_tls_CAfile = /certificates/cacert.pem
 
 # TODO:
 # Content filtering:

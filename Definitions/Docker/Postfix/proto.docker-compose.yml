@@ -1,8 +1,8 @@
 version: "3.7"
 
 services:
-  postgres_database:
-    image: postfix_service:1.0
+  postfix_service:
+    build: .
     container_name: postfix_service
     hostname: postfix.{{SERVER.DOMAIN}}
     restart: always
@@ -10,10 +10,9 @@ services:
       - 25:25
       - 587:587
     volumes:
-      - {{SERVER.SERVER_HOME}}/Server/Postfix/Etc:/etc/postfix
+      - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Data:/var/lib/postfix
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Queue:/var/spool/postfix
       - {{SERVER.SERVER_HOME}}/Server/Postfix/VMail:/usr/local/vmail
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Mail:/var/spool/mail/
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Log:/var/log/
-      - {{SERVER.CERTIFICATION.CERTIFICATES}}:/etc/postfix/certs/

@@ -4,7 +4,7 @@ RUN yum update -y
 RUN yum --enablerepo=centosplus install -y postfix
 RUN yum install -y openssl
 RUN alternatives --set mta /usr/sbin/sendmail.postfix
-ADD Configuration /etc/postfix
+ADD Configuration/*.* /etc/postfix/
 RUN chgrp postfix /etc/postfix/*
 
 ADD Scripts/start.sh /start.sh
