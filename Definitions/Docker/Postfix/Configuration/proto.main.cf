@@ -158,7 +158,11 @@ smtpd_client_message_rate_limit = 5
 
 # TLS:
 smtp_use_tls = yes
-smtpd_tls_CApath = /etc/postfix/certs/
+smtpd_use_tls = yes
+smtpd_tls_key_file = {{SERVER.CERTIFICATION.CERTIFICATES}}/private.{{SERVER.HOSTNAME}}.key
+smtpd_tls_cert_file = {{SERVER.CERTIFICATION.CERTIFICATES}}/{{SERVER.HOSTNAME}}.crt
+smtpd_tls_CAfile = {{SERVER.CERTIFICATION.CERTIFICATES}}/cacert.pem
+tls_random_source = dev:/dev/urandom
 
 # TODO:
 # Content filtering:
