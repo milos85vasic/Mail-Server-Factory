@@ -130,7 +130,10 @@ object Commands {
 
         val subject = getSubject()
         val req = "req -subj $subject -new -x509 -extensions v3_ca -keyout $keyName -out $certName -days 3650"
-        return Variable.parse("cd {{SERVER.CERTIFICATION.HOME}} && $openssl $req")
+        val passIn = "-passin pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
+        val passOut = "-passout pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
+        val password = "$passIn $passOut"
+        return Variable.parse("cd {{SERVER.CERTIFICATION.CERTIFICATES}} && $openssl $req $password")
     }
 
     fun getPrivateKyName(name: String): String {
