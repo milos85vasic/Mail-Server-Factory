@@ -14,5 +14,5 @@ services:
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Data:/var/lib/postfix
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Queue:/var/spool/postfix
       - {{SERVER.SERVER_HOME}}/Server/Postfix/VMail:/usr/local/vmail
-      - {{SERVER.SERVER_HOME}}/Server/Postfix/Mail:/var/spool/mail/
-      - {{SERVER.SERVER_HOME}}/Server/Postfix/Log:/var/log/
+      - {{SERVER.SERVER_HOME}}/Server/Postfix/Mail:/var/spool/mail
+      - {{SERVER.SERVER_HOME}}/Server/Postfix/Log:/var/log
