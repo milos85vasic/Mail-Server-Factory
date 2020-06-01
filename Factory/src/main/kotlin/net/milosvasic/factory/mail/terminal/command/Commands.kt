@@ -102,16 +102,9 @@ object Commands {
 
     fun generateRequestKey(path: String, keyName: String, reqName: String): String {
 
+        val params = getSubject()
         val requestKey = getRequestKeyName(reqName)
         val cmd = "$openssl req -new -key"
-        val hostname = "{{SERVER.HOSTNAME}}"
-        val city = "{{SERVER.CERTIFICATION.CITY}}"
-        val country = "{{SERVER.CERTIFICATION.COUNTRY}}"
-        val province = "{{SERVER.CERTIFICATION.PROVINCE}}"
-        val department = "{{SERVER.CERTIFICATION.DEPARTMENT}}"
-        val organisation = "{{SERVER.CERTIFICATION.ORGANISATION}}"
-        var params = "/C=$country/ST=$province/L=$city/O=$organisation/OU=$department/CN=$hostname"
-        params = Variable.parse(params).replace(" ", "\\ ")
         val reqKey = "$path${File.separator}$requestKey"
         val verify = "openssl req -in $reqKey -noout -subject"
         return "$cmd $path${File.separator}$keyName -out $reqKey -subj $params && $verify"
@@ -131,6 +124,13 @@ object Commands {
         val passwords = "$passIn && $passOut"
         val cmd = "cd {{SERVER.CERTIFICATION.HOME}} && $passwords && echo 'yes' | ./easyrsa sign-req server $name"
         return Variable.parse(cmd)
+    }
+
+    fun generatePEM(keyName: String = "cakey.pem", certName: String = "cacert.pem"): String {
+
+        val subject = getSubject()
+        val req = "req -subj $subject -new -x509 -extensions v3_ca -keyout $keyName -out $certName -days 3650"
+        return Variable.parse("cd {{SERVER.CERTIFICATION.HOME}} && $openssl $req")
     }
 
     fun getPrivateKyName(name: String): String {
@@ -160,4 +160,17 @@ object Commands {
     }
 
     fun link(what: String, where: String) = "$link $what $where"
+
+    private fun getSubject(): String {
+
+        val hostname = "{{SERVER.HOSTNAME}}"
+        val city = "{{SERVER.CERTIFICATION.CITY}}"
+        val country = "{{SERVER.CERTIFICATION.COUNTRY}}"
+        val province = "{{SERVER.CERTIFICATION.PROVINCE}}"
+        val department = "{{SERVER.CERTIFICATION.DEPARTMENT}}"
+        val organisation = "{{SERVER.CERTIFICATION.ORGANISATION}}"
+        var subject = "/C=$country/ST=$province/L=$city/O=$organisation/OU=$department/CN=$hostname"
+        subject = Variable.parse(subject).replace(" ", "\\ ")
+        return subject
+    }
 }

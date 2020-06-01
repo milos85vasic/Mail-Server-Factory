@@ -30,7 +30,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
             val key = "$ctxServer$ctxSeparator$ctxCertification$ctxSeparator$keyHome"
             val configuration = ConfigurationManager.getConfiguration()
             val path = configuration.getVariableParsed(key) as String
-            val permission = Permissions(Permission.ALL, Permission.NONE, Permission.NONE)
+            val permission = Permissions(Permission(6), Permission.NONE, Permission.NONE)
             val perm = permission.obtain()
             val sep = File.separator
             val certificateExtension = ".crt"
@@ -47,6 +47,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
             val sign = SignRequestKeyCommand(hostname)
             val chmod = ChmodCommand(path, perm)
             val link = LinkCommand(verificationPath, linkingPath)
+            val pem = GeneratePEMCommand()
 
             val toolkit = Toolkit(conn)
             val checkFlow = InstallationStepFlow(toolkit)
@@ -58,6 +59,7 @@ class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
                     .width(CommandInstallationStep(impRequest))
                     .width(CommandInstallationStep(sign))
                     .width(CommandInstallationStep(link))
+                    .width(CommandInstallationStep(pem))
                     .width(CommandInstallationStep(chmod))
 
             val completionFlow = CommandFlow()
