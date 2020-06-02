@@ -18,6 +18,10 @@
             "value": "postfix_service"
           },
           {
+            "type": "command",
+            "value": "postfix status && postfix stop && systemctl disable postfix"
+          },
+          {
             "type": "portCheck",
             "value": "25, 587"
           },
