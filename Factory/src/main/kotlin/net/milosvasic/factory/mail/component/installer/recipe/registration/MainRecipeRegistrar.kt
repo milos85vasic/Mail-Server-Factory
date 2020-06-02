@@ -8,6 +8,7 @@ import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.database.DatabaseStep
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
+import net.milosvasic.factory.mail.component.installer.step.port.PortCheck
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipesRegistration
@@ -41,6 +42,13 @@ class MainRecipeRegistrar : ProcessingRecipesRegistration {
                 flow.registerRecipe(
                         Deploy::class,
                         DeployRecipe::class
+                )
+                return true
+            }
+            PortCheck::class -> {
+                flow.registerRecipe(
+                        PortCheck::class,
+                        PortCheckRecipe::class
                 )
                 return true
             }
