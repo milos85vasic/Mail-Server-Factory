@@ -64,6 +64,7 @@ open class Deploy(what: String, private val where: String) : RemoteOperationInst
         }
     }
 
+    @Throws(IllegalArgumentException::class)
     override fun getFlow(): CommandFlow {
 
         connection?.let { conn ->

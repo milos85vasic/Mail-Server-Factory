@@ -24,6 +24,7 @@ object Commands {
     private const val chgrp = "chgrp -R"
     private const val chown = "chown -R"
     private const val openssl = "openssl"
+    private const val netstat = "netstat"
     private const val tarCompress = "tar -cjf"
     private const val tarDecompress = "tar -xvf"
 
@@ -163,6 +164,8 @@ object Commands {
     }
 
     fun link(what: String, where: String) = "$link $what $where"
+
+    fun portCheck(port: Int) = "$netstat -tulpn | ${grep(":$port")} && false"
 
     private fun getSubject(): String {
 

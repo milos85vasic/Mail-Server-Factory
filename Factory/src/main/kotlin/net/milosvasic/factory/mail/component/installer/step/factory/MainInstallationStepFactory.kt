@@ -15,6 +15,8 @@ import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondit
 import net.milosvasic.factory.mail.component.installer.step.database.DatabaseStep
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.component.installer.step.deploy.DeployValidator
+import net.milosvasic.factory.mail.component.installer.step.port.PortCheck
+import net.milosvasic.factory.mail.component.installer.step.port.PortCheckValidator
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
@@ -84,6 +86,24 @@ class MainInstallationStepFactory : InstallationStepFactory {
                 } else {
 
                     throw IllegalArgumentException("Invalid deploy parameters")
+                }
+            }
+            InstallationStepType.PORT_CHECK.type -> {
+
+                val arg = definition.getValue()
+                val validator = PortCheckValidator()
+                if (validator.validate(arg)) {
+
+                    val split = arg.split(PortCheck.delimiter)
+                    val ports = mutableListOf<Int>()
+                    split.forEach {
+                        val port = it.trim().toInt()
+                        ports.add(port)
+                    }
+                    return PortCheck(ports)
+                } else {
+
+                    throw IllegalArgumentException("Invalid port check parameters")
                 }
             }
             InstallationStepType.DATABASE.type -> {
