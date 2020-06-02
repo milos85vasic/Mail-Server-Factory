@@ -10,6 +10,10 @@
             "value": "postgres_database"
           },
           {
+            "type": "portCheck",
+            "value": "{{DB.DB_PORT}}"
+          },
+          {
             "type": "deploy",
             "value": "Definitions/Docker/Postgres:{{DOCKER.DOCKER_HOME}}/Postgres"
           },
