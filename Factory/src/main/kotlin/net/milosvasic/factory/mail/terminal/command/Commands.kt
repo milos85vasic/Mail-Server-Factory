@@ -19,12 +19,12 @@ object Commands {
 
     private const val find = "find "
     private const val link = "ln -s"
+    private const val netstat = "ss"
     private const val mkdir = "mkdir -p"
     private const val chmod = "chmod -R"
     private const val chgrp = "chgrp -R"
     private const val chown = "chown -R"
     private const val openssl = "openssl"
-    private const val netstat = "netstat"
     private const val tarCompress = "tar -cjf"
     private const val tarDecompress = "tar -xvf"
 
@@ -165,7 +165,7 @@ object Commands {
 
     fun link(what: String, where: String) = "$link $what $where"
 
-    fun portCheck(port: Int) = "$netstat -tulpn | ${grep(":$port")} && false"
+    fun portCheck(port: Int) = "! $netstat -tulpn | ${grep(":$port")}"
 
     private fun getSubject(): String {
 

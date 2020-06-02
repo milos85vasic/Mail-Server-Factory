@@ -14,6 +14,10 @@
       "installationSteps": {
         "Docker": [
           {
+            "type": "conditionCheck",
+            "value": "postfix_service"
+          },
+          {
             "type": "portCheck",
             "value": "25, 587"
           },
@@ -32,6 +36,10 @@
           {
             "type": "stack",
             "value": "{{DOCKER.DOCKER_HOME}}/Postfix"
+          },
+          {
+            "type": "check",
+            "value": "postfix_service"
           }
         ]
       },

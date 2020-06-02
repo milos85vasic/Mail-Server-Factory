@@ -5,7 +5,7 @@ import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.remote.ssh.SSH
 import net.milosvasic.factory.mail.terminal.command.PortCheckCommand
 
-class PortCheck(private val ports: List<Int>) : RemoteOperationInstallationStep<SSH>() {
+data class PortCheck(private val ports: List<Int>) : RemoteOperationInstallationStep<SSH>() {
 
     companion object {
 
