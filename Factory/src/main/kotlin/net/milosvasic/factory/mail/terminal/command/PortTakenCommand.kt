@@ -2,4 +2,4 @@ package net.milosvasic.factory.mail.terminal.command
 
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 
-class PortCheckCommand(port: Int) : TerminalCommand(Commands.portCheck(port))
+class PortTakenCommand(port: Int) : TerminalCommand(Commands.portTaken(port))

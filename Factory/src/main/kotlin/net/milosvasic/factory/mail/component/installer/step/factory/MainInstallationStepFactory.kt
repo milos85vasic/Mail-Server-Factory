@@ -88,23 +88,15 @@ class MainInstallationStepFactory : InstallationStepFactory {
                     throw IllegalArgumentException("Invalid deploy parameters")
                 }
             }
-            InstallationStepType.PORT_CHECK.type -> {
+            InstallationStepType.PORT_REQUIRED.type -> {
 
                 val arg = definition.getValue()
-                val validator = PortCheckValidator()
-                if (validator.validate(arg)) {
+                return getPortCheck(arg, true)
+            }
+            InstallationStepType.PORT_TAKEN.type -> {
 
-                    val split = arg.split(PortCheck.delimiter)
-                    val ports = mutableListOf<Int>()
-                    split.forEach {
-                        val port = it.trim().toInt()
-                        ports.add(port)
-                    }
-                    return PortCheck(ports)
-                } else {
-
-                    throw IllegalArgumentException("Invalid port check parameters")
-                }
+                val arg = definition.getValue()
+                return getPortCheck(arg, false)
             }
             InstallationStepType.DATABASE.type -> {
 
@@ -120,5 +112,24 @@ class MainInstallationStepFactory : InstallationStepFactory {
             }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")
+    }
+
+    @Throws(IllegalArgumentException::class)
+    private fun getPortCheck(arg: String, isPortAvailable: Boolean): PortCheck {
+
+        val validator = PortCheckValidator()
+        if (validator.validate(arg)) {
+
+            val split = arg.split(PortCheck.delimiter)
+            val ports = mutableListOf<Int>()
+            split.forEach {
+                val port = it.trim().toInt()
+                ports.add(port)
+            }
+            return PortCheck(ports, isPortAvailable)
+        } else {
+
+            throw IllegalArgumentException("Invalid port check parameters")
+        }
     }
 }

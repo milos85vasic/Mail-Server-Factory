@@ -165,7 +165,9 @@ object Commands {
 
     fun link(what: String, where: String) = "$link $what $where"
 
-    fun portCheck(port: Int) = "! $netstat -tulpn | ${grep(":$port")}"
+    fun portAvailable(port: Int) = "! ${portTaken(port)}"
+
+    fun portTaken(port: Int) = "$netstat -tulpn | ${grep(":$port")}"
 
     private fun getSubject(): String {
 

@@ -10,7 +10,7 @@
             "value": "postgres_database"
           },
           {
-            "type": "portCheck",
+            "type": "portRequired",
             "value": "{{DB.DB_PORT}}"
           },
           {

@@ -22,7 +22,7 @@
             "value": "postfix status && postfix stop && systemctl disable postfix"
           },
           {
-            "type": "portCheck",
+            "type": "portRequired",
             "value": "25, 587"
           },
           {

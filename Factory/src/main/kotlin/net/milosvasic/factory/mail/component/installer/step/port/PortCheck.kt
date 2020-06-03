@@ -3,9 +3,14 @@ package net.milosvasic.factory.mail.component.installer.step.port
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.remote.ssh.SSH
-import net.milosvasic.factory.mail.terminal.command.PortCheckCommand
+import net.milosvasic.factory.mail.terminal.command.PortAvailableCommand
+import net.milosvasic.factory.mail.terminal.command.PortTakenCommand
 
-data class PortCheck(private val ports: List<Int>) : RemoteOperationInstallationStep<SSH>() {
+data class PortCheck(
+        private val ports: List<Int>,
+        private val isAvailable: Boolean
+
+) : RemoteOperationInstallationStep<SSH>() {
 
     companion object {
 
@@ -19,7 +24,11 @@ data class PortCheck(private val ports: List<Int>) : RemoteOperationInstallation
 
             val flow = CommandFlow().width(conn)
             ports.forEach {
-                flow.perform(PortCheckCommand(it))
+                if (isAvailable) {
+                    flow.perform(PortAvailableCommand(it))
+                } else {
+                    flow.perform(PortTakenCommand(it))
+                }
             }
             return flow
         }
