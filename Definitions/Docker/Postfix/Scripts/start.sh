@@ -3,7 +3,7 @@
 SERVICE_PORT=5432
 echo "Starting Postfix on `hostname`" > /var/log/postfix.start.log
 echo "Checking database port: $SERVICE_PORT" >> /var/log/postfix.start.log
-if nc -zv postgres_database ${SERVICE_PORT} | grep "Connected"
+if echo "^C" | telnet postgres_database ${SERVICE_PORT} | grep "Connected"
 then
     echo "Process is available at port: $SERVICE_PORT" >> /var/log/postfix.start.log
     postfix set-permissions >> /var/log/postfix.start.log
