@@ -6,9 +6,10 @@ enum class DockerInstallationStepType(
         val type: String
 ) {
 
-    UNKNOWN(InstallationStepType.UNKNOWN.type),
+    BUILD("build"),
     STACK("stack"),
-    BUILD("build");
+    NETWORK("network"),
+    UNKNOWN(InstallationStepType.UNKNOWN.type);
 
     companion object {
 

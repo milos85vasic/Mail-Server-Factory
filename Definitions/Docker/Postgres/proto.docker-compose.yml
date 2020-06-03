@@ -1,19 +1,25 @@
 version: "3.7"
 
 services:
-  postgres_database:
+  d:
     image: library/postgres:12
     container_name: postgres_database
-    hostname: postgres.{{SERVER.DOMAIN}}
+    hostname: database.{{SERVER.DOMAIN}}
     restart: always
     ports:
-    - {{DB.DB_PORT}}:5432
+      - {{DB.DB_PORT}}:5432
+    networks:
+      - postmaster_network
     environment:
       POSTGRES_USER: {{DB.DB_USER}}
       POSTGRES_PASSWORD: {{DB.DB_PASSWORD}}
       PGDATA: /Server/Postgres/Database
     volumes:
       - {{SERVER.SERVER_HOME}}/Server/Postgres/Database:/Server/Postgres/Database
+
+networks:
+  postmaster_network:
+    external: true
 
 
 
