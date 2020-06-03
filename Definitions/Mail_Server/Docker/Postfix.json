@@ -19,14 +19,14 @@
           },
           {
             "type": "command",
-            "value": "postfix status && postfix stop && systemctl disable postfix"
+            "value": "postfix status && postfix stop && systemctl disable postfix || true"
           },
           {
             "type": "portRequired",
             "value": "25, 587"
           },
           {
-            "type": "portTaken",
+            "type": "portCheck",
             "value": "{{DB.DB_PORT}}"
           },
           {

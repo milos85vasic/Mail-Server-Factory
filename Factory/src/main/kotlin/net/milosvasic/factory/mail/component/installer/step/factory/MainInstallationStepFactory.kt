@@ -93,7 +93,7 @@ class MainInstallationStepFactory : InstallationStepFactory {
                 val arg = definition.getValue()
                 return getPortCheck(arg, true)
             }
-            InstallationStepType.PORT_TAKEN.type -> {
+            InstallationStepType.PORT_CHECK.type -> {
 
                 val arg = definition.getValue()
                 return getPortCheck(arg, false)
