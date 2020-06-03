@@ -8,7 +8,12 @@ then
     postfix set-permissions >> /var/log/postfix.start.log
     postfix check >> /var/log/postfix.start.log
     postfix start >> /var/log/postfix.start.log
-    postfix status >> /var/log/postfix.start.log && tail -f /var/log/postfix.start.log
+    if postfix status >> /var/log/postfix.start.log
+    then
+        tail -f /var/log/postfix.start.log
+    else
+        exit 1
+    fi
 else
    echo "No process bound to port: {{DB.DB_PORT}}"
    exit 1
