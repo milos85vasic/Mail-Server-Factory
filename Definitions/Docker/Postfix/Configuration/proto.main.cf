@@ -132,10 +132,11 @@ smtpd_sender_restrictions =
     reject_unknown_sender_domain
 
 # TODO:
-smtpd_client_restrictions = permit_sasl_authenticated, reject
+smtpd_client_restrictions =
+    permit_sasl_authenticated
+    reject
 # smtpd_helo_restrictions
 # smtpd_sender_restrictions
-# smtpd_recipient_restrictions
 # smtpd_data_restrictions
 
 smtpd_delay_reject = no
