@@ -14,7 +14,7 @@ mydomain = {{SERVER.DOMAIN}}
 
 myorigin = $mydomain
 
-inet_interfaces = localhost
+inet_interfaces = all
 
 inet_protocols = ipv4
 
