@@ -1,6 +1,6 @@
 import smtplib, ssl
 
-port = 587
+port = 465
 smtp_server = "test1.dev.local"
 sender_email = "test1@dev.local"
 receiver_email = "test2@dev.local"

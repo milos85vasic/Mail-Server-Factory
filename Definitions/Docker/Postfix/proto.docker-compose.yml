@@ -9,6 +9,7 @@ services:
     ports:
       - 25:25
       - 587:587
+      - 465:465
     networks:
       - postmaster_network
     volumes:
