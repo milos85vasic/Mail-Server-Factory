@@ -1,7 +1,7 @@
 version: "3.7"
 
 services:
-  d:
+  postgres_database:
     image: library/postgres:12
     container_name: postgres_database
     hostname: database.{{SERVER.DOMAIN}}
