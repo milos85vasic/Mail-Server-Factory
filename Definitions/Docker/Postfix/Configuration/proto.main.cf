@@ -8,7 +8,7 @@ data_directory = /var/lib/postfix
 
 mail_owner = postfix
 
-myhostname = {{SERVER.HOSTNAME}}
+myhostname = postfix.{{SERVER.DOMAIN}}
 
 mydomain = {{SERVER.DOMAIN}}
 
