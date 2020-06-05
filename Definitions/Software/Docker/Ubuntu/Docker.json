@@ -31,7 +31,7 @@
           },
           {
             "type": "packages",
-            "value": "docker-ce, docker-ce-cli, containerd.io"
+            "value": "docker-ce, docker-ce-cli, containerd.io, telnet"
           },
           {
             "type": "command",
