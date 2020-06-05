@@ -21,6 +21,7 @@ object Commands {
     private const val find = "find "
     private const val link = "ln -s"
     private const val netstat = "ss"
+    private const val telnet = "telnet"
     private const val mkdir = "mkdir -p"
     private const val chmod = "chmod -R"
     private const val chgrp = "chgrp -R"
@@ -166,9 +167,9 @@ object Commands {
 
     fun link(what: String, where: String) = "$link $what $where"
 
-    fun portAvailable(port: Int) = "! ${portTaken(port)}"
+    fun portAvailable(port: Int) = "! $netstat -tulpn | ${grep(":$port")}"
 
-    fun portTaken(port: Int) = "$netstat -tulpn | ${grep(":$port")}"
+    fun portTaken(port: Int) = "${echo("^C")} | $telnet $localhost $port | grep \"Connected\""
 
     private fun getSubject(): String {
 
