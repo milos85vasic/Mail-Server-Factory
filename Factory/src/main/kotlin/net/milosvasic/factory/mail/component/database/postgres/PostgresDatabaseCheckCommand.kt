@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.database.postgres
 
-import net.milosvasic.factory.mail.component.database.DatabaseConnection
 import net.milosvasic.factory.mail.component.database.command.DatabaseCheckCommand
 
 class PostgresDatabaseCheckCommand(database: Postgres) : DatabaseCheckCommand(database) {

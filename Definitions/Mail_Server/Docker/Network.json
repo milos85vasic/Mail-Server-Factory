@@ -1,0 +1,24 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack: Network",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "skipCondition",
+            "value": "docker network ls | grep \"postmaster_network\""
+          },
+          {
+            "type": "network",
+            "value": "postmaster_network"
+          },
+          {
+            "type": "command",
+            "value": "docker network ls | grep \"postmaster_network\""
+          }
+        ]
+      }
+    }
+  ]
+}

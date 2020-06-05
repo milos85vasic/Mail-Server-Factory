@@ -1,6 +1,6 @@
 user = {{DB.DB_USER}}
 password = {{DB.DB_PASSWORD}}
-hosts = {{SERVER.POSTFIX.DBHOST}}
+hosts = postgres_database
 port = {{DB.DB_PORT}}
 dbname = {{SERVER.POSTFIX.DBNAME}}
 query = SELECT email FROM mail_view_users WHERE email='%s'

@@ -1,26 +1,34 @@
 package net.milosvasic.factory.mail.terminal.command
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.configuration.Variable
 import net.milosvasic.factory.mail.localhost
 import net.milosvasic.factory.mail.remote.Remote
+import java.io.File
 
 object Commands {
 
     const val rm = "rm"
     const val here = "."
     const val cp = "cp -R"
-    const val find = "find "
     const val ssh = "ssh -p"
     const val scp = "scp -P"
     const val uname = "uname"
-    const val mkdir = "mkdir -p"
-    const val chmod = "chmod -R"
-    const val chgrp = "chgrp -R"
-    const val chown = "chown -R"
+    const val sleep = "sleep"
     const val hostname = "hostname"
-    const val tarCompress = "tar -cjf"
-    const val tarDecompress = "tar -xvf"
     const val tarExtension = ".tar.gz"
+
+    private const val find = "find "
+    private const val link = "ln -s"
+    private const val netstat = "ss"
+    private const val telnet = "telnet"
+    private const val mkdir = "mkdir -p"
+    private const val chmod = "chmod -R"
+    private const val chgrp = "chgrp -R"
+    private const val chown = "chown -R"
+    private const val openssl = "openssl"
+    private const val tarCompress = "tar -cjf"
+    private const val tarDecompress = "tar -xvf"
 
     fun echo(what: String) = "echo '$what'"
 
@@ -38,7 +46,7 @@ object Commands {
 
     fun getApplicationInfo(application: String): String = "which $application"
 
-    fun reboot(rebootIn: Int = 2) = "( sleep $rebootIn ; reboot ) & "
+    fun reboot(rebootIn: Int = 2) = "( $sleep $rebootIn ; reboot ) & "
 
     fun grep(what: String) = "grep \"$what\""
 
@@ -88,4 +96,91 @@ object Commands {
     fun setHostName(hostname: String) = "hostnamectl set-hostname $hostname"
 
     fun cat(what: String) = "cat $what"
+
+    fun generatePrivateKey(path: String, name: String): String {
+
+        val keyName = getPrivateKyName(name)
+        return "$openssl genrsa -out $path${File.separator}$keyName"
+    }
+
+    fun generateRequestKey(path: String, keyName: String, reqName: String): String {
+
+        val params = getSubject()
+        val requestKey = getRequestKeyName(reqName)
+        val cmd = "$openssl req -new -key"
+        val reqKey = "$path${File.separator}$requestKey"
+        val verify = "openssl req -in $reqKey -noout -subject"
+        return "$cmd $path${File.separator}$keyName -out $reqKey -subj $params && $verify"
+    }
+
+    fun importRequestKey(path: String, requestKey: String, name: String): String {
+
+        val key = "$path${File.separator}$requestKey"
+        val cmd = "cd {{SERVER.CERTIFICATION.HOME}} && ./easyrsa import-req $key $name"
+        return Variable.parse(cmd)
+    }
+
+    fun signRequestKey(name: String): String {
+
+        val passIn = "export EASYRSA_PASSIN='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}'"
+        val passOut = "export EASYRSA_PASSOUT='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}'"
+        val passwords = "$passIn && $passOut"
+        val cmd = "cd {{SERVER.CERTIFICATION.HOME}} && $passwords && echo 'yes' | ./easyrsa sign-req server $name"
+        return Variable.parse(cmd)
+    }
+
+    fun generatePEM(keyName: String = "cakey.pem", certName: String = "cacert.pem"): String {
+
+        val subject = getSubject()
+        val req = "req -subj $subject -new -x509 -extensions v3_ca -keyout $keyName -out $certName -days 3650"
+        val passIn = "-passin pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
+        val passOut = "-passout pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
+        val password = "$passIn $passOut"
+        return Variable.parse("cd {{SERVER.CERTIFICATION.CERTIFICATES}} && $openssl $req $password")
+    }
+
+    fun getPrivateKyName(name: String): String {
+        var fullName = name
+        val extension = ".key"
+        val prefix = "private."
+        if (!fullName.endsWith(extension)) {
+            fullName += extension
+        }
+        if (!fullName.startsWith(prefix)) {
+            fullName = prefix + fullName
+        }
+        return fullName
+    }
+
+    fun getRequestKeyName(reqName: String): String {
+        var fullName = reqName
+        val extension = ".req"
+        val prefix = "request."
+        if (!fullName.endsWith(extension)) {
+            fullName += extension
+        }
+        if (!fullName.startsWith(prefix)) {
+            fullName = prefix + fullName
+        }
+        return fullName
+    }
+
+    fun link(what: String, where: String) = "$link $what $where"
+
+    fun portAvailable(port: Int) = "! $netstat -tulpn | ${grep(":$port")}"
+
+    fun portTaken(port: Int) = "${echo("^C")} | $telnet $localhost $port | grep \"Connected\""
+
+    private fun getSubject(): String {
+
+        val hostname = "{{SERVER.HOSTNAME}}"
+        val city = "{{SERVER.CERTIFICATION.CITY}}"
+        val country = "{{SERVER.CERTIFICATION.COUNTRY}}"
+        val province = "{{SERVER.CERTIFICATION.PROVINCE}}"
+        val department = "{{SERVER.CERTIFICATION.DEPARTMENT}}"
+        val organisation = "{{SERVER.CERTIFICATION.ORGANISATION}}"
+        var subject = "/C=$country/ST=$province/L=$city/O=$organisation/OU=$department/CN=$hostname"
+        subject = Variable.parse(subject).replace(" ", "\\ ")
+        return subject
+    }
 }

@@ -1,6 +1,6 @@
 import smtplib, ssl
 
-port = 25
+port = 465
 smtp_server = "test1.dev.local"
 sender_email = "test1@dev.local"
 receiver_email = "test2@dev.local"
@@ -12,5 +12,5 @@ with smtplib.SMTP(smtp_server, port) as server:
     server.ehlo()
     server.starttls(context=context)
     server.ehlo()
-    server.login(sender_email, password)
-    server.sendmail(sender_email, receiver_email, message)
+#     server.login(sender_email, password)
+#     server.sendmail(sender_email, receiver_email, message)

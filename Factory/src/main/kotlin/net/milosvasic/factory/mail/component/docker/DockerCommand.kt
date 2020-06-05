@@ -31,6 +31,16 @@ enum class DockerCommand : Obtain<String> {
     COMMIT {
         override fun obtain() = "commit"
     },
+    NETWORK {
+        override fun obtain() = "network"
+    },
+    CREATE {
+        override fun obtain() = "create"
+    },
+    NETWORK_CREATE {
+
+        override fun obtain() = "${DOCKER.obtain()} ${NETWORK.obtain()} ${CREATE.obtain()}"
+    },
     COMPOSE {
 
         @Throws(IllegalStateException::class)

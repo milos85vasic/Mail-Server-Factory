@@ -1,5 +1,3 @@
-maillog_file=/var/log/postfix.log
-
 queue_directory = /var/spool/postfix
 
 command_directory = /usr/sbin
@@ -10,13 +8,13 @@ data_directory = /var/lib/postfix
 
 mail_owner = postfix
 
-myhostname = {{SERVER.HOSTNAME}}
+myhostname = postfix.{{SERVER.DOMAIN}}
 
 mydomain = {{SERVER.DOMAIN}}
 
 myorigin = $mydomain
 
-inet_interfaces = localhost
+inet_interfaces = all
 
 inet_protocols = ipv4
 
@@ -55,8 +53,7 @@ mail_spool_directory = /var/spool/mail/
 #mailbox_transport = lmtp:unix:/var/lib/imap/socket/lmtp
 #mailbox_transport = cyrus
 
-# TODO:
-# header_checks = regexp:/etc/postfix/header_checks
+header_checks = regexp:/etc/postfix/header_checks
 
 debug_peer_level = 2
 
@@ -116,8 +113,8 @@ virtual_transport = dovecot
 
 # Anti-spam configuration:
 smtpd_recipient_restrictions =
-    permit_sasl_authenticated
     permit_mynetworks
+    permit_sasl_authenticated
     # TODO: Replace 'imap.example.com' with proper host address -- Connect with Dovecot
     # check_policy_service inet:imap.example.com:12340
     reject_unverified_recipient
@@ -135,10 +132,11 @@ smtpd_sender_restrictions =
     reject_unknown_sender_domain
 
 # TODO:
-# smtpd_client_restrictions
+smtpd_client_restrictions =
+    permit_sasl_authenticated
+    reject
 # smtpd_helo_restrictions
 # smtpd_sender_restrictions
-# smtpd_recipient_restrictions
 # smtpd_data_restrictions
 
 smtpd_delay_reject = no
@@ -148,25 +146,33 @@ smtpd_client_message_rate_limit = 5
 
 # TODO:
 # SASL:
-# smtpd_sasl_type = dovecot
-# smtpd_sasl_auth_enable = yes
-# TODO: Path ---> proto.10-master.conf, service auth { ... inet_listener !!!
-# smtpd_sasl_path = private/auth
-# smtpd_tls_auth_only = yes
-# smtpd_sasl_security_options = noanonymous
-# smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
+smtpd_sasl_type = dovecot
+smtpd_sasl_auth_enable = yes
+# TODO: Provide valid Dovecot inet path:
+# smtpd_sasl_path = inet:127.0.0.1:12345
+smtpd_sasl_path = private/auth
+smtpd_tls_auth_only = yes
+smtpd_sasl_security_options = noanonymous
+smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 
-# TODO:
+syslog_name = postfix/smtps
+
 # TLS:
-# smtp_use_tls = yes
-# TODO: Points to the file containing your server's private key
-# smtpd_tls_key_file = /etc/postfix/private.pem
-# TODO: Points to the file containing your server's signed certificate
-# smtpd_tls_cert_file = /etc/postfix/signed.pem
-# TODO: Points to the file containing the public certificates identifying Certificate Authorities you trust
-# smtpd_tls_CAfile = /etc/postfix/public.pem
-# TODO: Points to a directory of files each containing a public certificate for a Certificate Authority you trust
-# smtpd_tls_CApath = /etc/postfix/certs/
+tls_random_source = dev:/dev/urandom
+smtp_use_tls = yes
+smtpd_use_tls = yes
+smtpd_tls_loglevel = 1
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
+smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
+smtpd_tls_CAfile = /certificates/cacert.pem
+smtpd_tls_wrappermode = yes
+
+#Enforce TLSv1.3 or TLSv1.2
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
 
 # TODO:
 # Content filtering:

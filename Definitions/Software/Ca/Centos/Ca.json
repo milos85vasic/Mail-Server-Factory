@@ -1,0 +1,56 @@
+{
+  "variables": {
+    "SERVER": {
+      "CERTIFICATION": {
+        "COUNTRY": "{{SERVER.INFO.COUNTRY}}",
+        "PROVINCE": "{{SERVER.INFO.PROVINCE}}",
+        "CITY": "{{SERVER.INFO.CITY}}",
+        "ORGANISATION": "{{SERVER.INFO.ORGANISATION}}",
+        "EMAIL": "{{SERVER.INFO.EMAIL}}",
+        "DEPARTMENT": "{{SERVER.INFO.DEPARTMENT}}"
+      }
+    }
+  },
+  "software": [
+    {
+      "name": "Certification Authority",
+      "version": "1.0",
+      "installationSteps": {
+        "CentOS": [
+          {
+            "type": "skipCondition",
+            "value": "test -e {{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "packages",
+            "value": "epel-release, easy-rsa"
+          },
+          {
+            "type": "command",
+            "value": "mkdir -p {{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "command",
+            "value": "chmod 700 {{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "command",
+            "value": "ln -s /usr/share/easy-rsa/3/* {{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "command",
+            "value": "cd {{SERVER.CERTIFICATION.HOME}} && ./easyrsa init-pki"
+          },
+          {
+            "type": "deploy",
+            "value": "Definitions/Software/Ca/Configuration:{{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "command",
+            "value": "cd {{SERVER.CERTIFICATION.HOME}} && export EASYRSA_PASSIN='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}' && export EASYRSA_PASSOUT='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}' && echo 'Finish' | ./easyrsa build-ca"
+          }
+        ]
+      }
+    }
+  ]
+}

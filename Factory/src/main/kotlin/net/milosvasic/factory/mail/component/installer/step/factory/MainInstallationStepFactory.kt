@@ -2,6 +2,7 @@ package net.milosvasic.factory.mail.component.installer.step.factory
 
 import net.milosvasic.factory.mail.component.docker.step.DockerInstallationStepType
 import net.milosvasic.factory.mail.component.docker.step.dockerfile.Build
+import net.milosvasic.factory.mail.component.docker.step.network.Network
 import net.milosvasic.factory.mail.component.docker.step.stack.Check
 import net.milosvasic.factory.mail.component.docker.step.stack.SkipConditionCheck
 import net.milosvasic.factory.mail.component.docker.step.stack.Stack
@@ -9,11 +10,14 @@ import net.milosvasic.factory.mail.component.installer.step.CommandInstallationS
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
+import net.milosvasic.factory.mail.component.installer.step.certificate.Certificate
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.database.DatabaseStep
 import net.milosvasic.factory.mail.component.installer.step.deploy.Deploy
 import net.milosvasic.factory.mail.component.installer.step.deploy.DeployValidator
+import net.milosvasic.factory.mail.component.installer.step.port.PortCheck
+import net.milosvasic.factory.mail.component.installer.step.port.PortCheckValidator
 import net.milosvasic.factory.mail.component.installer.step.reboot.Reboot
 import net.milosvasic.factory.mail.component.packaging.item.Group
 import net.milosvasic.factory.mail.component.packaging.item.Package
@@ -67,6 +71,10 @@ class MainInstallationStepFactory : InstallationStepFactory {
 
                 return Check(definition.getValue())
             }
+            InstallationStepType.CERTIFICATE.type -> {
+
+                return Certificate(definition.getValue())
+            }
             InstallationStepType.DEPLOY.type -> {
 
                 val validator = DeployValidator()
@@ -81,6 +89,16 @@ class MainInstallationStepFactory : InstallationStepFactory {
                     throw IllegalArgumentException("Invalid deploy parameters")
                 }
             }
+            InstallationStepType.PORT_REQUIRED.type -> {
+
+                val arg = definition.getValue()
+                return getPortCheck(arg, true)
+            }
+            InstallationStepType.PORT_CHECK.type -> {
+
+                val arg = definition.getValue()
+                return getPortCheck(arg, false)
+            }
             InstallationStepType.DATABASE.type -> {
 
                 return DatabaseStep(definition.getValue())
@@ -89,11 +107,34 @@ class MainInstallationStepFactory : InstallationStepFactory {
 
                 return Stack(definition.getValue())
             }
+            DockerInstallationStepType.NETWORK.type -> {
+
+                return Network(definition.getValue())
+            }
             DockerInstallationStepType.BUILD.type -> {
 
                 return Build(definition.getValue())
             }
         }
         throw IllegalArgumentException("Unknown installation step type: ${definition.type}")
+    }
+
+    @Throws(IllegalArgumentException::class)
+    private fun getPortCheck(arg: String, isPortAvailable: Boolean): PortCheck {
+
+        val validator = PortCheckValidator()
+        if (validator.validate(arg)) {
+
+            val split = arg.split(PortCheck.delimiter)
+            val ports = mutableListOf<Int>()
+            split.forEach {
+                val port = it.trim().toInt()
+                ports.add(port)
+            }
+            return PortCheck(ports, isPortAvailable)
+        } else {
+
+            throw IllegalArgumentException("Invalid port check parameters")
+        }
     }
 }

@@ -1,0 +1,60 @@
+{
+  "software": [
+    {
+      "name": "Certification Authority",
+      "version": "1.0",
+      "installationSteps": {
+        "Ubuntu": [
+          {
+            "type": "skipCondition",
+            "value": "test -e {{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "command",
+            "value": "wget -P ~/ https://github.com/OpenVPN/easy-rsa/releases/download/v3.0.7/EasyRSA-3.0.7.tgz"
+          },
+          {
+            "type": "command",
+            "value": "mkdir -p {{SERVER.SERVER_HOME}}/Server/EasyRSA"
+          },
+          {
+            "type": "command",
+            "value": "tar -xvf EasyRSA-3.0.7.tgz -C {{SERVER.SERVER_HOME}}/Server/EasyRSA"
+          },
+          {
+            "type": "command",
+            "value": "rm EasyRSA-3.0.7.tgz"
+          },
+          {
+            "type": "command",
+            "value": "chmod -R 700 {{SERVER.SERVER_HOME}}/Server/EasyRSA"
+          },
+          {
+            "type": "command",
+            "value": "mkdir -p {{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "command",
+            "value": "ln -s {{SERVER.SERVER_HOME}}/Server/EasyRSA/EasyRSA-3.0.7/* {{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "deploy",
+            "value": "Definitions/Software/Ca/Configuration:{{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "command",
+            "value": "chmod -R 700 {{SERVER.CERTIFICATION.HOME}}"
+          },
+          {
+            "type": "command",
+            "value": "cd {{SERVER.CERTIFICATION.HOME}} && ./easyrsa init-pki"
+          },
+          {
+            "type": "command",
+            "value": "cd {{SERVER.CERTIFICATION.HOME}} && export EASYRSA_PASSIN='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}' && export EASYRSA_PASSOUT='pass:{{SERVER.CERTIFICATION.PASSPHRASE}}' && echo 'Finish' | ./easyrsa build-ca"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -5,7 +5,20 @@
       "DOMAINS": "dev.local, test.local",
       "HOSTNAME": "postmaster.dev.local",
       "SERVER_HOME": "/root",
-      "REBOOT_ALLOWED": true
+      "REBOOT_ALLOWED": true,
+
+      "INFO": {
+        "COUNTRY": "RS",
+        "PROVINCE": "Belgrade",
+        "CITY": "Belgrade",
+        "ORGANISATION": "Milos Vasic",
+        "EMAIL": "test@tdev.local",
+        "DEPARTMENT": "IT Department"
+      },
+
+      "CERTIFICATION": {
+        "PASSPHRASE": "Test12345@@@aaa"
+      }
     }
   }
 }

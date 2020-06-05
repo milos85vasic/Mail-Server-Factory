@@ -9,11 +9,12 @@
   "remote": {
     "port": 22,
     "user": "root",
-    "host": "192.168.100.102"
+    "host": "192.168.0.102"
   },
   "software": [
     "Definitions/Software/Docker",
-    "Definitions/Software/Postgres"
+    "Definitions/Software/Postgres",
+    "Definitions/Software/Ca"
   ],
   "containers": [
     "Definitions/Mail_Server"

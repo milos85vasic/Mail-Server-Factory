@@ -10,6 +10,9 @@ enum class InstallationStepType(val type: String) {
     DEPLOY("deploy"),
     DATABASE("database"),
     CONDITION("condition"),
+    PORT_CHECK("portCheck"),
+    PORT_REQUIRED("portRequired"),
+    CERTIFICATE("certificate"),
     SKIP_CONDITION("skipCondition"),
     CHECK("check"),
     CONDITION_CHECK("conditionCheck")
