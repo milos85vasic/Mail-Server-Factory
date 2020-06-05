@@ -161,10 +161,18 @@ syslog_name = postfix/smtps
 tls_random_source = dev:/dev/urandom
 smtp_use_tls = yes
 smtpd_use_tls = yes
+smtpd_tls_loglevel = 1
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
 smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
 smtpd_tls_CAfile = /certificates/cacert.pem
 smtpd_tls_wrappermode = yes
+
+#Enforce TLSv1.3 or TLSv1.2
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
+smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
 
 # TODO:
 # Content filtering:
