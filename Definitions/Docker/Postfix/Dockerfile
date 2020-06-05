@@ -8,7 +8,6 @@ ADD Configuration/*.* /etc/postfix/
 
 ADD Scripts/start.sh /start.sh
 
-EXPOSE 25
 EXPOSE 465
 EXPOSE 587
 

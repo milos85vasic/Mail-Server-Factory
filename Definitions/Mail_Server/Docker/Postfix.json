@@ -23,7 +23,7 @@
           },
           {
             "type": "portRequired",
-            "value": "25, 465, 587"
+            "value": "465, 587"
           },
           {
             "type": "portCheck",
@@ -48,6 +48,10 @@
           {
             "type": "check",
             "value": "postfix_service"
+          },
+          {
+            "type": "portCheck",
+            "value": "465, 587"
           }
         ]
       },

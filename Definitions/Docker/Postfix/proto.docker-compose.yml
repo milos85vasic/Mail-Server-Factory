@@ -7,7 +7,6 @@ services:
     hostname: postfix.{{SERVER.DOMAIN}}
     restart: always
     ports:
-      - 25:25
       - 587:587
       - 465:465
     networks:
