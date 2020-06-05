@@ -14,6 +14,7 @@ object Commands {
     const val ssh = "ssh -p"
     const val scp = "scp -P"
     const val uname = "uname"
+    const val sleep = "sleep"
     const val hostname = "hostname"
     const val tarExtension = ".tar.gz"
 
@@ -44,7 +45,7 @@ object Commands {
 
     fun getApplicationInfo(application: String): String = "which $application"
 
-    fun reboot(rebootIn: Int = 2) = "( sleep $rebootIn ; reboot ) & "
+    fun reboot(rebootIn: Int = 2) = "( $sleep $rebootIn ; reboot ) & "
 
     fun grep(what: String) = "grep \"$what\""
 

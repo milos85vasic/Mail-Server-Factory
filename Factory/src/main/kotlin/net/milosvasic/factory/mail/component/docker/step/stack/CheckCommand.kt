@@ -4,7 +4,7 @@ import net.milosvasic.factory.mail.component.docker.DockerCommand
 import net.milosvasic.factory.mail.terminal.TerminalCommand
 import net.milosvasic.factory.mail.terminal.command.Commands
 
-class CheckCommand(containerName: String) : TerminalCommand(
+class CheckCommand(containerName: String, waitFor: Int = 3) : TerminalCommand(
 
-        "${DockerCommand.DOCKER.obtain()} ${DockerCommand.PS.obtain()} -a --filter \"status=running\" | ${Commands.grep(containerName)}"
+        "${Commands.sleep} $waitFor && ${DockerCommand.DOCKER.obtain()} ${DockerCommand.PS.obtain()} -a --filter \"status=running\" | ${Commands.grep(containerName)}"
 )
