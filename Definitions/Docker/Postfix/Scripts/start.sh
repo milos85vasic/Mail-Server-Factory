@@ -12,7 +12,7 @@ then
     do
         if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
         then
-            echo "Postfix is listening ar port: $port" >> /var/log/postfix.start.log
+            echo "Postfix is listening at port: $port" >> /var/log/postfix.start.log
         else
             echo "Postfix is not bound to port: $port"
             exit 1
