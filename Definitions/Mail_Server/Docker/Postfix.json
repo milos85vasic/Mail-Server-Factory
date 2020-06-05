@@ -51,15 +51,11 @@
           },
           {
             "type": "portCheck",
-            "value": "465"
+            "value": "465, 587"
           }
         ]
       },
       "commentedOut": [
-        {
-          "type": "portCheck",
-          "value": "465, 587"
-        }
       ]
     }
   ]
