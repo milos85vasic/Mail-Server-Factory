@@ -14,6 +14,14 @@
             "value": "systemctl status dovecot && systemctl stop dovecot && systemctl disable dovecot || true"
           },
           {
+            "type": "portRequired",
+            "value": "110, 143, 993, 995"
+          },
+          {
+            "type": "portCheck",
+            "value": "{{DB.DB_PORT}}, 465, 587"
+          },
+          {
             "type": "deploy",
             "value": "Definitions/Docker/Dovecot:{{DOCKER.DOCKER_HOME}}/Dovecot"
           }
