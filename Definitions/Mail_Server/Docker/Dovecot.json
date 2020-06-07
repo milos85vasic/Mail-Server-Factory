@@ -6,6 +6,14 @@
       "installationSteps": {
         "Docker": [
           {
+            "type": "conditionCheck",
+            "value": "docker_service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl status dovecot && systemctl stop dovecot && systemctl disable dovecot || true"
+          },
+          {
             "type": "deploy",
             "value": "Definitions/Docker/Dovecot:{{DOCKER.DOCKER_HOME}}/Dovecot"
           }
