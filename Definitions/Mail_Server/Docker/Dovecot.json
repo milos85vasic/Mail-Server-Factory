@@ -15,7 +15,7 @@
         "Docker": [
           {
             "type": "conditionCheck",
-            "value": "docker_service"
+            "value": "dovecot_service"
           },
           {
             "type": "command",
