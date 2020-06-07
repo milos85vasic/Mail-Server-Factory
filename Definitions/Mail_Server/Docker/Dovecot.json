@@ -1,4 +1,12 @@
 {
+  "variables": {
+    "SERVER": {
+      "DOVECOT": {
+        "DBHOST": "127.0.0.1",
+        "DBNAME": "dovecot_service"
+      }
+    }
+  },
   "software": [
     {
       "name": "Mail server stack: Dovecot",
@@ -24,6 +32,18 @@
           {
             "type": "deploy",
             "value": "Definitions/Docker/Dovecot:{{DOCKER.DOCKER_HOME}}/Dovecot"
+          },
+          {
+            "type": "database",
+            "value": "{{DOCKER.DOCKER_HOME}}/Dovecot/Database"
+          },
+          {
+            "type": "certificate",
+            "value": "{{SERVER.HOSTNAME}}"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/Dovecot"
           }
         ]
       }

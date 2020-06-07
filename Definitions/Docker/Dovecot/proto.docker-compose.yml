@@ -1,0 +1,21 @@
+version: "3.7"
+
+services:
+  dovecot_service:
+    build: .
+    container_name: dovecot_service
+    hostname: dovecot.{{SERVER.DOMAIN}}
+    restart: always
+    ports:
+      - 110:110
+      - 143:143
+      - 993:993
+      - 995:995
+    networks:
+      - postmaster_network
+    volumes:
+      - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
+
+networks:
+  postmaster_network:
+    external: true
