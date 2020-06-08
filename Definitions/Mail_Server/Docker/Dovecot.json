@@ -3,7 +3,13 @@
     "SERVER": {
       "DOVECOT": {
         "DBHOST": "127.0.0.1",
-        "DBNAME": "dovecot_service"
+        "DBNAME": "dovecot_service",
+        "PORTS": {
+          "POP": "3110",
+          "IMAP": "3143",
+          "POP3S": "3995",
+          "IMAPS": "3993"
+        }
       }
     }
   },
@@ -23,7 +29,7 @@
           },
           {
             "type": "portRequired",
-            "value": "110, 143, 993, 995"
+            "value": "{{SERVER.DOVECOT.PORTS.POP}}, {{SERVER.DOVECOT.PORTS.IMAP}}, {{SERVER.DOVECOT.PORTS.POP3S}}, {{SERVER.DOVECOT.PORTS.IMAPS}}"
           },
           {
             "type": "portCheck",
