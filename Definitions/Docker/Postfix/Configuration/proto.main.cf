@@ -131,10 +131,11 @@ smtpd_sender_restrictions =
     reject_non_fqdn_sender
     reject_unknown_sender_domain
 
-# TODO:
 smtpd_client_restrictions =
     permit_sasl_authenticated
     reject
+
+# TODO:
 # smtpd_helo_restrictions
 # smtpd_sender_restrictions
 # smtpd_data_restrictions
@@ -144,12 +145,10 @@ smtpd_helo_required = yes
 
 smtpd_client_message_rate_limit = 5
 
-# TODO:
 # SASL:
 smtpd_sasl_type = dovecot
 smtpd_sasl_auth_enable = yes
-# TODO: Provide valid Dovecot inet path:
-# smtpd_sasl_path = inet:127.0.0.1:12345
+smtpd_sasl_path = inet:dovecot_service:12345
 smtpd_sasl_path = private/auth
 smtpd_tls_auth_only = yes
 smtpd_sasl_security_options = noanonymous
