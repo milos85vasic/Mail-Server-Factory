@@ -27,7 +27,7 @@
           },
           {
             "type": "portCheck",
-            "value": "{{DB.DB_PORT}}, 12345"
+            "value": "{{DB.DB_PORT}}"
           },
           {
             "type": "deploy",
