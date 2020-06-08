@@ -15,6 +15,7 @@ services:
       - postmaster_network
     volumes:
       - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
+      - {{SERVER.SERVER_HOME}}/Maildir:/Maildir
 
 networks:
   postmaster_network:
