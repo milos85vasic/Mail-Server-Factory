@@ -30,7 +30,7 @@ then
         fi
     done
 
-    tail -f /var/log/maillog
+    tail -f ${dovecotLog}
 else
     exit 1
 fi
