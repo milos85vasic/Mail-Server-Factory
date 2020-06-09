@@ -15,7 +15,7 @@ services:
       - postmaster_network
     volumes:
       - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
-      - {{SERVER.SERVER_HOME}}/Maildir:/Maildir
+      - {{SERVER.SERVER_HOME}}/Server/Dovecot/Maildir:/maildir
 
 networks:
   postmaster_network:
