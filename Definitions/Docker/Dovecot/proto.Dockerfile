@@ -7,6 +7,7 @@ RUN yum install -y openssl rsyslog telnet
 ADD Configuration /etc/dovecot
 ADD Utils /usr/local/bin
 ADD Scripts/start.sh /start.sh
+ADD Utils/quota-warning.sh /quota-warning.sh
 
 RUN groupadd -g 5000 vmail && useradd -g vmail -u 5000 vmail -d /home/vmail -m
 RUN chgrp vmail /etc/dovecot/dovecot.conf && chmod g+r /etc/dovecot/dovecot.conf

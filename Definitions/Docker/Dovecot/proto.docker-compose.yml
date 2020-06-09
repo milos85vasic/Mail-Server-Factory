@@ -17,6 +17,7 @@ services:
       - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Maildir:/maildir
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Log:/var/log
+      - {{SERVER.SERVER_HOME}}/Server/Dovecot/Masters:/etc/dovecot/masters
 
 networks:
   postmaster_network:

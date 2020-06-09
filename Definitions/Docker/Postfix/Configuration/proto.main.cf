@@ -113,8 +113,9 @@ mailbox_transport = lmtp:inet:dovecot_service:12346
 smtpd_recipient_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
-    warn_if_reject
-    check_policy_service inet:dovecot_service:12347
+    # TODO: https://red-elf.atlassian.net/browse/MSF-164
+    # warn_if_reject
+    # check_policy_service inet:dovecot_service:12347
     reject_unverified_recipient
     reject_unauth_destination
     reject_non_fqdn_recipient
