@@ -4,7 +4,9 @@
       "CERTIFICATION": {
         "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca",
         "CERTIFICATES": "{{SERVER.SERVER_HOME}}/Server/Certificates"
-      }
+      },
+
+      "MAILBOXES_CAPACITY": "30G"
     }
   },
   "includes": [
