@@ -2,6 +2,7 @@
 
 dbPort=5432
 dovecotSaslPort=12345
+dovecotLmtpPort=12346
 postfixLog=/var/log/postfix.start.log
 echo "Starting Postfix on `hostname`" > ${postfixLog}
 
@@ -20,6 +21,15 @@ then
     echo "Dovecot process is bound to port: $dovecotSaslPort" >> ${postfixLog}
 else
    echo "No process bound to port: $dovecotSaslPort" >> ${postfixLog}
+   exit 1
+fi
+
+echo "Checking Dovecot LMTP port: $dovecotLmtpPort" >> ${postfixLog}
+if echo "^C" | telnet dovecot_service ${dovecotLmtpPort} | grep "Connected"
+then
+    echo "Dovecot process is bound to port: $dovecotLmtpPort" >> ${postfixLog}
+else
+   echo "No process bound to port: $dovecotLmtpPort" >> ${postfixLog}
    exit 1
 fi
 

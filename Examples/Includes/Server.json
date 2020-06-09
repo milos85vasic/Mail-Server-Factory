@@ -18,7 +18,9 @@
 
       "CERTIFICATION": {
         "PASSPHRASE": "Test12345@@@aaa"
-      }
+      },
+
+      "POSTMASTER": "postmaster@dev.local"
     }
   }
 }

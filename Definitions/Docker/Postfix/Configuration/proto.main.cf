@@ -50,9 +50,6 @@ mail_spool_directory = /var/spool/mail/
 #mailbox_command = /some/where/procmail
 #mailbox_command = /some/where/procmail -a "$EXTENSION"
 
-#mailbox_transport = lmtp:unix:/var/lib/imap/socket/lmtp
-#mailbox_transport = cyrus
-
 header_checks = regexp:/etc/postfix/header_checks
 
 debug_peer_level = 2
@@ -109,7 +106,8 @@ masquerade_domains = {{SERVER.DOMAIN}}
 # body_checks = regexp:/etc/postfix/re_body_checks
 # body_checks_size_limit = 51200
 
-virtual_transport = dovecot
+virtual_transport = lmtp:inet:dovecot_service:12346
+mailbox_transport = lmtp:inet:dovecot_service:12346
 
 # Anti-spam configuration:
 smtpd_recipient_restrictions =
@@ -149,7 +147,6 @@ smtpd_client_message_rate_limit = 5
 smtpd_sasl_type = dovecot
 smtpd_sasl_auth_enable = yes
 smtpd_sasl_path = inet:dovecot_service:12345
-smtpd_sasl_path = private/auth
 smtpd_tls_auth_only = yes
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
