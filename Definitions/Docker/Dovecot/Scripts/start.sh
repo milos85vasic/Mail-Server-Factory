@@ -1,10 +1,36 @@
 #!/bin/sh
 
-echo "Starting Dovecot on `hostname`"
+dbPort=5432
+dovecotLog=/var/log/dovecot.start.log
+echo "Starting Dovecot on `hostname`" > ${dovecotLog}
+
+echo "Checking database port: $dbPort" >> ${dovecotLog}
+if echo "^C" | telnet postgres_database ${dbPort} | grep "Connected"
+then
+    echo "Database process is bound to port: $dbPort" >> ${dovecotLog}
+else
+   echo "No process bound to port: $dbPort" >> ${dovecotLog}
+   exit 1
+fi
 
 chmod -R +r /run/dovecot
 chmod -R +w /run/dovecot
 
-rsyslogd
-dovecot
-tail -f /var/log/maillog
+if rsyslogd && dovecot >> ${dovecotLog}
+then
+
+    ports=(110 143 993 995)
+    for port in ${ports[@]}; do
+        if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
+        then
+            echo "Dovecot is listening on port: $port" >> ${dovecotLog}
+        else
+            echo "Dovecot is not bound to port: $port" >> ${dovecotLog}
+            exit 1
+        fi
+    done
+
+    tail -f /var/log/maillog
+else
+    exit 1
+fi
