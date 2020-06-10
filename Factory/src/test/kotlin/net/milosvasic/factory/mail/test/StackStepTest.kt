@@ -37,7 +37,7 @@ class StackStepTest : BaseTest() {
         factory.setConnectionProvider(connectionProvider)
 
         val callback = object : FlowCallback {
-            override fun onFinish(success: Boolean, message: String) {
+            override fun onFinish(success: Boolean) {
 
                 assert(success)
                 initialized = success

@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     val factory = ServerFactory(args.toList())
 
     val callback = object : FlowCallback {
-        override fun onFinish(success: Boolean, message: String) {
+        override fun onFinish(success: Boolean) {
 
             if (success) {
                 try {
