@@ -3,14 +3,15 @@ package net.milosvasic.factory.mail
 import net.milosvasic.factory.mail.common.Logger
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.logger.CompositeLogger
+import net.milosvasic.logger.FilesystemLogger
+import net.milosvasic.logger.SimpleLogger
 import kotlin.system.exitProcess
 
+const val tag = BuildInfo.NAME
 const val localhost = "127.0.0.1"
 val compositeLogger = CompositeLogger()
 
 val log = object : Logger {
-
-    private val tag = BuildInfo.NAME
 
     override fun v(message: String) = compositeLogger.v(tag, message)
 
@@ -54,11 +55,14 @@ fun fail(error: ERROR, vararg with: Any) {
 
 fun fail(e: Exception) {
 
-    if (e.message == null) {
-        fail(ERROR.FATAL_EXCEPTION, "Error: $e")
-    } else {
-        fail(ERROR.FATAL_EXCEPTION, e.message as String)
+    val error = ERROR.FATAL_EXCEPTION
+    var message = "Error: $e"
+    e.message?.let {
+       message = it
     }
+    compositeLogger.e(tag, e, FilesystemLogger::class)
+    compositeLogger.e(tag, message, SimpleLogger::class)
+    exitProcess(error.code)
 }
 
 val String.Companion.EMPTY: String
