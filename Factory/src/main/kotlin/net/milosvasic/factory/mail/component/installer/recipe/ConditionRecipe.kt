@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.installer.step.condition.ConditionOperation
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipConditionOperation

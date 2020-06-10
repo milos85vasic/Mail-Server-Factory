@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.installer.step
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Notifying
 import net.milosvasic.factory.mail.common.Subscription
 import net.milosvasic.factory.mail.common.busy.Busy

@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.execution.flow.implementation.initialization
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.initialization.InitializationOperation
 import net.milosvasic.factory.mail.common.initialization.Initializer

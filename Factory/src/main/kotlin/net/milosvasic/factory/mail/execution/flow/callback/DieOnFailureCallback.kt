@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.execution.flow.callback
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.factory.mail.fail
 import net.milosvasic.factory.mail.log

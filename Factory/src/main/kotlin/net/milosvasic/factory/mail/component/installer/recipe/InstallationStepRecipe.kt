@@ -1,13 +1,11 @@
 package net.milosvasic.factory.mail.component.installer.recipe
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.Toolkit
 import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.RemoteOperationInstallationStep
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
 import net.milosvasic.factory.mail.log
-import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.remote.ssh.SSH
 

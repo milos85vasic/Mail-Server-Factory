@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.docker.recipe
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.component.docker.step.dockerfile.Build
 import net.milosvasic.factory.mail.component.docker.step.dockerfile.BuildOperation
 import net.milosvasic.factory.mail.component.installer.recipe.InstallationStepRecipe

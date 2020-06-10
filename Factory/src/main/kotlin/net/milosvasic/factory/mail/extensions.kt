@@ -5,7 +5,6 @@ import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.logger.CompositeLogger
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
-import net.milosvasic.logger.SimpleLogger
 import kotlin.system.exitProcess
 
 const val tag = BuildInfo.NAME

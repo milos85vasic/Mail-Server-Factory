@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.execution.flow
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.CollectionWrapper
 import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.common.busy.Busy

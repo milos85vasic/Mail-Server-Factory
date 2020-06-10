@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.execution.flow.implementation
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Registration
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.obtain.Obtain
