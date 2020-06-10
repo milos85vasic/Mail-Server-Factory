@@ -67,19 +67,14 @@ class DeployStepTest : BaseTest() {
         }
 
         val flowCallback = object : FlowCallback {
-            override fun onFinish(success: Boolean, message: String) {
-
-                if (!success) {
-                    log.w(message)
-                }
+            override fun onFinish(success: Boolean) {
                 finished++
             }
         }
 
         val initFlowCallback = object : FlowCallback {
-            override fun onFinish(success: Boolean, message: String) {
-
-                flowCallback.onFinish(success, message)
+            override fun onFinish(success: Boolean) {
+                flowCallback.onFinish(success)
             }
         }
 
