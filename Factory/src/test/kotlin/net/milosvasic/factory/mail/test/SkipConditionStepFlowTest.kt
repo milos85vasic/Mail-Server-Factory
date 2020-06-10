@@ -51,7 +51,7 @@ open class SkipConditionStepFlowTest : BaseTest() {
 
         val flowCallback = object : FlowCallback {
 
-            override fun onFinish(success: Boolean, message: String) {
+            override fun onFinish(success: Boolean) {
                 if (success) {
                     finished++
                 } else {

@@ -7,13 +7,9 @@ import net.milosvasic.factory.mail.log
 
 open class DieOnFailureCallback : FlowCallback {
 
-    override fun onFinish(success: Boolean, message: String) {
+    override fun onFinish(success: Boolean) {
         if (!success) {
-            if (message != String.EMPTY) {
-                die(message)
-            } else {
-                die("Flow execution failed")
-            }
+            die("Flow execution failed")
         }
     }
 

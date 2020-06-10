@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.database
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Registration
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
@@ -24,7 +23,7 @@ object DatabaseManager :
     private val databases = mutableMapOf<Type, MutableMap<String, Database>>()
 
     private val initFlowCallback = object : FlowCallback {
-        override fun onFinish(success: Boolean, message: String) {
+        override fun onFinish(success: Boolean) {
 
             registration?.let {
 
@@ -43,11 +42,7 @@ object DatabaseManager :
                     log.i("$type database initialized: '$name'")
                 } else {
 
-                    if (message == String.EMPTY) {
-                        log.e("Database initialization failed for ${type.type} database")
-                    } else {
-                        log.e(message)
-                    }
+                    log.e("Database initialization failed for ${type.type} database")
                 }
                 val result = OperationResult(operation, success)
                 it.callback.onOperationPerformed(result)

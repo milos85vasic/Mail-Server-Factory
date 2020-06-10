@@ -32,10 +32,7 @@ abstract class InstallerAbstract(entryPoint: Connection) :
 
     private val flowCallback = object : FlowCallback {
 
-        override fun onFinish(success: Boolean, message: String) {
-            if (!success) {
-                log.e(message)
-            }
+        override fun onFinish(success: Boolean) {
             free(success)
         }
     }

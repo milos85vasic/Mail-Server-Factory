@@ -86,16 +86,5 @@ val String.Companion.EMPTY: String
 val String.Companion.LINE_BREAK: String
     get() = "\n"
 
-fun Exception.getMessage(): String {
-
-    var message = String.EMPTY
-    this::class.simpleName?.let {
-        message = it
-    }
-    this.message?.let {
-        message = it
-    }
-    return message
-}
 
 

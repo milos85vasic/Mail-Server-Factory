@@ -23,7 +23,6 @@ class ConditionRecipe : InstallationStepRecipe() {
                         if (result.operation.result) {
                             callback?.onFinish(
                                     result.success,
-                                    getErrorMessage(result),
                                     if (positive) {
                                         ConditionRecipeFlowProcessingData(fallThrough = true)
                                     } else {
@@ -33,7 +32,6 @@ class ConditionRecipe : InstallationStepRecipe() {
                         } else {
                             callback?.onFinish(
                                     result.success,
-                                    getErrorMessage(result),
                                     if (positive) {
                                         ConditionRecipeFlowProcessingData(fallThrough = false)
                                     } else {
@@ -45,7 +43,6 @@ class ConditionRecipe : InstallationStepRecipe() {
                         if (result.operation.result) {
                             callback?.onFinish(
                                     result.success,
-                                    getErrorMessage(result),
                                     if (positive) {
                                         ConditionRecipeFlowProcessingData(fallThrough = false)
                                     } else {
@@ -53,7 +50,7 @@ class ConditionRecipe : InstallationStepRecipe() {
                                     }
                             )
                         } else {
-                            callback?.onFinish(false, String.EMPTY)
+                            callback?.onFinish(false)
                         }
                     }
                     callback = null

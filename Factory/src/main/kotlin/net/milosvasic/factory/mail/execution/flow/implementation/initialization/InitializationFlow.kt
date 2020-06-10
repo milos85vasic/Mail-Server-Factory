@@ -10,7 +10,7 @@ import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
-import net.milosvasic.factory.mail.getMessage
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -63,17 +63,15 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
                     val handler = initializationHandlers[subject]
                     when (result.operation) {
                         is InitializationOperation -> {
-                            val message = if (result.success) {
-                                String.EMPTY
-                            } else {
-                                "Initialization failed for $subject"
+                            if (!result.success) {
+                                log.e("Initialization failed for $subject")
                             }
                             if (handler == null) {
                                 subject.unsubscribe(this)
                             } else {
                                 handler.onInitialization(subject, result.success)
                             }
-                            callback?.onFinish(result.success, message)
+                            callback?.onFinish(result.success)
                             callback = null
                         }
                         is TerminationOperation -> {
@@ -94,7 +92,8 @@ class InitializationFlow : FlowSimpleBuilder<Initializer, String>() {
                 } catch (e: Exception) {
 
                     subject.unsubscribe(operationCallback)
-                    callback.onFinish(false, e.getMessage())
+                    log.e(e)
+                    callback.onFinish(false)
                     this.callback = null
                 }
             }

@@ -29,11 +29,10 @@ abstract class PackageManager(entryPoint: Connection) :
 
     private val flowCallback = object : FlowCallback {
 
-        override fun onFinish(success: Boolean, message: String) {
+        override fun onFinish(success: Boolean) {
             if (success) {
                 onSuccessResult()
             } else {
-                log.e(message)
                 onFailedResult()
             }
         }

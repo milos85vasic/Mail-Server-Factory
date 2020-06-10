@@ -16,7 +16,7 @@ class DatabaseStepRecipe : InstallationStepRecipe() {
                     step?.let {
                         (it as DatabaseStep).unsubscribe(this)
                     }
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }

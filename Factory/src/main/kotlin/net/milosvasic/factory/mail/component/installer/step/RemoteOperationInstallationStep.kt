@@ -67,15 +67,11 @@ abstract class RemoteOperationInstallationStep<T : Connection> :
     }
 
     protected open fun getListener() = object : FlowCallback {
-        override fun onFinish(success: Boolean, message: String) {
+        override fun onFinish(success: Boolean) {
 
             if (!success) {
-                if (message != String.EMPTY) {
-                    log.e(message)
-                } else {
-                    val what = this@RemoteOperationInstallationStep::class.simpleName
-                    log.e("Remote operation installation step failed: $what")
-                }
+                val what = this@RemoteOperationInstallationStep::class.simpleName
+                log.e("Remote operation installation step failed: $what")
             }
             finish(success)
         }

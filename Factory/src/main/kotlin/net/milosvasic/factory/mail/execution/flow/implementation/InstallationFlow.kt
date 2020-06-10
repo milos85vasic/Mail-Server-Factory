@@ -10,7 +10,7 @@ import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
-import net.milosvasic.factory.mail.getMessage
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -47,12 +47,8 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
                     installer.unsubscribe(this)
                     when (result.operation) {
                         is InstallerOperation -> {
-                            val message = if (result.success) {
-                                String.EMPTY
-                            } else {
-                                "Installation failed for $subject"
-                            }
-                            callback?.onFinish(result.success, message)
+
+                            callback?.onFinish(result.success)
                             callback = null
                         }
                     }
@@ -68,7 +64,8 @@ class InstallationFlow(private val installer: InstallerAbstract) : FlowSimpleBui
                 } catch (e: BusyException) {
 
                     installer.unsubscribe(operationCallback)
-                    callback.onFinish(false, e.getMessage())
+                    log.e(e)
+                    callback.onFinish(false)
                     this.callback = null
                 }
             }

@@ -5,8 +5,8 @@ import net.milosvasic.factory.mail.common.initialization.Termination
 
 class TerminationCallback(private val termination: Termination) : DieOnFailureCallback() {
 
-    override fun onFinish(success: Boolean, message: String) {
-        super.onFinish(success, message)
+    override fun onFinish(success: Boolean) {
+        super.onFinish(success)
         if (success) {
             try {
                 termination.terminate()

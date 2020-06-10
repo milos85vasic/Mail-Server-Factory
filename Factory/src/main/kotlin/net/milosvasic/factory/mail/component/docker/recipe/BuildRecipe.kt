@@ -5,6 +5,7 @@ import net.milosvasic.factory.mail.component.docker.step.dockerfile.Build
 import net.milosvasic.factory.mail.component.docker.step.dockerfile.BuildOperation
 import net.milosvasic.factory.mail.component.installer.recipe.InstallationStepRecipe
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 
@@ -19,8 +20,10 @@ class BuildRecipe : InstallationStepRecipe() {
                         val step = s as Build
                         step.unsubscribe(this)
                     }
-                    val errMsg = getErrorMessage(result)
-                    callback?.onFinish(result.success, errMsg)
+                    if (!result.success) {
+                        log.e("Could not build Docker image")
+                    }
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }
@@ -53,11 +56,5 @@ class BuildRecipe : InstallationStepRecipe() {
 
             fail(e)
         }
-    }
-
-    override fun getErrorMessage(result: OperationResult) = if (result.success) {
-        String.EMPTY
-    } else {
-        "Could not build Docker image"
     }
 }

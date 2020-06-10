@@ -15,8 +15,8 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
 
     override val processingCallback: FlowProcessingCallback
         get() = object : FlowProcessingCallback {
-            override fun onFinish(success: Boolean, message: String, data: FlowProcessingData?) {
-                tryNextSubject(success, message, data)
+            override fun onFinish(success: Boolean, data: FlowProcessingData?) {
+                tryNextSubject(success, data)
             }
         }
 
@@ -61,12 +61,11 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
 
     protected open fun tryNextSubject(
             success: Boolean,
-            message: String,
             data: FlowProcessingData?
     ) {
         subjectsIterator?.let { sIterator ->
             if (!sIterator.hasNext()) {
-                finish(success, message)
+                finish(success)
             } else {
                 if (success) {
                     try {
@@ -77,7 +76,7 @@ abstract class FlowSimpleBuilder<T, D> : FlowBuilder<T, D, MutableList<Wrapper<T
                         finish(e)
                     }
                 } else {
-                    finish(false, message)
+                    finish(false)
                 }
             }
         }

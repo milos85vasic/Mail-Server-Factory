@@ -7,7 +7,7 @@ import net.milosvasic.factory.mail.execution.flow.FlowSimpleBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
-import net.milosvasic.factory.mail.getMessage
+import net.milosvasic.factory.mail.log
 
 class ObtainableFlow : FlowSimpleBuilder<Obtain<FlowBuilder<*, *, *>>, String>() {
 
@@ -40,9 +40,9 @@ class ObtainableFlow : FlowSimpleBuilder<Obtain<FlowBuilder<*, *, *>>, String>()
             private var callback: FlowProcessingCallback? = null
 
             private val flowCallback = object : FlowCallback {
-                override fun onFinish(success: Boolean, message: String) {
+                override fun onFinish(success: Boolean) {
 
-                    callback?.onFinish(success, message)
+                    callback?.onFinish(success)
                     callback = null
                 }
             }
@@ -55,11 +55,13 @@ class ObtainableFlow : FlowSimpleBuilder<Obtain<FlowBuilder<*, *, *>>, String>()
                             .run()
                 } catch (e: IllegalArgumentException) {
 
-                    callback.onFinish(false, e.getMessage())
+                    log.e(e)
+                    callback.onFinish(false)
                     this.callback = null
                 } catch (e: IllegalStateException) {
 
-                    callback.onFinish(false, e.getMessage())
+                    log.e(e)
+                    callback.onFinish(false)
                     this.callback = null
                 }
             }

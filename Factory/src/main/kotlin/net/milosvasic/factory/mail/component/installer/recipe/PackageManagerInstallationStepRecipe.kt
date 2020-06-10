@@ -14,7 +14,7 @@ class PackageManagerInstallationStepRecipe : InstallationStepRecipe() {
             when (result.operation) {
                 is PackageManagerOperation -> {
 
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }

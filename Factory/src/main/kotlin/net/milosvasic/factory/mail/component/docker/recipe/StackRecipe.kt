@@ -18,7 +18,7 @@ class StackRecipe : InstallationStepRecipe() {
                         val step = s as Stack
                         step.unsubscribe(this)
                     }
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }

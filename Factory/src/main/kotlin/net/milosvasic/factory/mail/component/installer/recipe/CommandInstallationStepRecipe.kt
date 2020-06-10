@@ -15,7 +15,7 @@ class CommandInstallationStepRecipe : InstallationStepRecipe() {
             toolkit?.connection?.unsubscribe(this)
             command?.let {
                 if (result.operation == it) {
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }
