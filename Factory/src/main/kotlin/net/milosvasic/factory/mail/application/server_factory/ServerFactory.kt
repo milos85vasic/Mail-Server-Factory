@@ -38,7 +38,7 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
 
     private val busy = Busy()
     private var configuration: Configuration? = null
-    private val terminators = mutableListOf<Termination>()
+    private val terminators = ConcurrentLinkedQueue<Termination>()
     private val terminationOperation = ServerFactoryTerminationOperation()
     private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()
     private val initializationOperation = ServerFactoryInitializationOperation()
