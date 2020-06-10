@@ -3,6 +3,7 @@ package net.milosvasic.factory.mail
 import net.milosvasic.factory.mail.common.Logger
 import net.milosvasic.factory.mail.error.ERROR
 import net.milosvasic.logger.CompositeLogger
+import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import net.milosvasic.logger.SimpleLogger
 import kotlin.system.exitProcess
@@ -25,11 +26,29 @@ val log = object : Logger {
 
     override fun w(message: String) = compositeLogger.w(tag, message)
 
-    override fun w(exception: Exception) = compositeLogger.w(tag, exception)
+    override fun w(exception: Exception) {
+
+        val message = getMessage(exception)
+        compositeLogger.w(tag, message, ConsoleLogger::class)
+        compositeLogger.w(tag, exception, FilesystemLogger::class)
+    }
 
     override fun e(message: String) = compositeLogger.e(tag, message)
 
-    override fun e(exception: Exception) = compositeLogger.e(tag, exception)
+    override fun e(exception: Exception) {
+
+        val message = getMessage(exception)
+        compositeLogger.e(tag, message, ConsoleLogger::class)
+        compositeLogger.e(tag, exception, FilesystemLogger::class)
+    }
+
+    private fun getMessage(exception: Exception): String {
+        var message = "Error: $exception"
+        exception.message?.let {
+            message = it
+        }
+        return message
+    }
 }
 
 fun fail(error: ERROR) {
@@ -55,13 +74,9 @@ fun fail(error: ERROR, vararg with: Any) {
 
 fun fail(e: Exception) {
 
+    log.e(e)
     val error = ERROR.FATAL_EXCEPTION
-    var message = "Error: $e"
-    e.message?.let {
-       message = it
-    }
-    compositeLogger.e(tag, e, FilesystemLogger::class)
-    compositeLogger.e(tag, message, SimpleLogger::class)
+    System.err.println(error.message)
     exitProcess(error.code)
 }
 
