@@ -13,7 +13,7 @@ import java.io.File
 
 fun main(args: Array<String>) {
 
-    initLogging(args)
+    initLogging()
     val factory = ServerFactory(args.toList())
 
     val callback = object : FlowCallback {
@@ -45,17 +45,8 @@ fun main(args: Array<String>) {
 
 }
 
-private fun initLogging(args: Array<String>) {
-    var debug = false
-    args.forEach {
-        if (!debug) {
-            debug = it == "--debug=true"
-        }
-    }
-    val console = ConsoleLogger(debug)
+private fun initLogging() {
+    val console = ConsoleLogger()
     val filesystem = FilesystemLogger(File("."))
     compositeLogger.addLoggers(console, filesystem)
-    if (debug) {
-        log.w("Debug mode is on")
-    }
 }
