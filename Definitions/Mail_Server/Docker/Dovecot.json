@@ -2,8 +2,6 @@
   "variables": {
     "SERVER": {
       "DOVECOT": {
-        "DBHOST": "127.0.0.1",
-        "DBNAME": "dovecot_service",
         "PORTS": {
           "POP": "3110",
           "IMAP": "3143",
@@ -38,10 +36,6 @@
           {
             "type": "deploy",
             "value": "Definitions/Docker/Dovecot:{{DOCKER.DOCKER_HOME}}/Dovecot"
-          },
-          {
-            "type": "database",
-            "value": "{{DOCKER.DOCKER_HOME}}/Dovecot/Database"
           },
           {
             "type": "certificate",
