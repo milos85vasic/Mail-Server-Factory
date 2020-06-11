@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.execution.flow.implementation.initialization.
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.validation.Validator
+import java.util.concurrent.ConcurrentHashMap
 
 object DatabaseManager :
         ObtainParametrized<DatabaseRequest, Database>,
@@ -20,7 +21,7 @@ object DatabaseManager :
     private val busy = Busy()
     private var registration: DatabaseRegistration? = null
     private val operation = DatabaseRegistrationOperation()
-    private val databases = mutableMapOf<Type, MutableMap<String, Database>>()
+    private val databases = ConcurrentHashMap<Type, MutableMap<String, Database>>()
 
     private val initFlowCallback = object : FlowCallback {
         override fun onFinish(success: Boolean) {
@@ -103,10 +104,21 @@ object DatabaseManager :
     override fun terminate() {
         busy()
         log.v("Shutting down: $this")
-        databases.keys.forEach { type ->
-            databases[type]?.keys?.forEach {name ->
-                unRegister(type, name)
+        val pairs = mutableListOf<Pair<Type, String>>()
+        val iterator = databases.keys.iterator()
+        while (iterator.hasNext()) {
+            val type = iterator.next()
+            val keyIterator = databases[type]?.keys?.iterator()
+            keyIterator?.let {
+                while (it.hasNext()) {
+                    val name = it.next()
+                    val pair = Pair(type, name)
+                    pairs.add(pair)
+                }
             }
+        }
+        pairs.forEach { pair ->
+            unRegister(pair.first, pair.second)
         }
         free()
     }
