@@ -15,6 +15,8 @@ fi
 
 chmod -R +r /run/dovecot
 chmod -R +w /run/dovecot
+chown -R vmail ./maildir
+chgrp -R vmail ./maildir
 
 if rsyslogd && dovecot >> ${dovecotLog}
 then
