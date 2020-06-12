@@ -33,7 +33,6 @@ else
    exit 1
 fi
 
-rsyslogd
 postfix set-permissions >> ${postfixLog}
 postfix check >> ${postfixLog}
 postfix start >> ${postfixLog}

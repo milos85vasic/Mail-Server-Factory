@@ -1,8 +1,8 @@
-FROM centos:centos7.7.1908
+FROM centos:centos8.1.1911
 
 RUN yum update -y
 RUN yum --enablerepo=centosplus install -y postfix
-RUN yum install -y openssl telnet rsyslogd
+RUN yum install -y openssl telnet
 RUN alternatives --set mta /usr/sbin/sendmail.postfix
 
 ADD Configuration/*.* /etc/postfix/
