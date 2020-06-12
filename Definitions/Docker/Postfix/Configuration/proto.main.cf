@@ -145,10 +145,12 @@ smtpd_helo_required = yes
 smtpd_client_message_rate_limit = 5
 
 # SASL:
+smtpd_tls_auth_only = yes
+smtpd_tls_req_ccert = yes
+smtpd_tls_security_level = encrypt
 smtpd_sasl_type = dovecot
 smtpd_sasl_auth_enable = yes
 smtpd_sasl_path = inet:dovecot_service:12345
-smtpd_tls_auth_only = yes
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 
