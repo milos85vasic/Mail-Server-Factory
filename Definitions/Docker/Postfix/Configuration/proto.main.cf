@@ -167,12 +167,6 @@ smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
 smtpd_tls_CAfile = /certificates/cacert.pem
 smtpd_tls_wrappermode = yes
 
-#Enforce TLSv1.3 or TLSv1.2
-smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
-smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
-smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
-smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1
-
 # TODO:
 # Content filtering:
 # TODO: Pass to ClamAV instance (proper IP instead of loopback)
