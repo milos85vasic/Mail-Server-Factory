@@ -155,21 +155,13 @@ broken_sasl_auth_clients = yes
 # smtpd_tls_req_ccert = yes
 
 # TLS:
-smtp_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
-smtp_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
-smtp_tls_CAfile = /certificates/cacert.pem
-smtp_tls_session_cache_database = btree:${data_directory}/smtpd_scache
-smtp_use_tls = yes
-
 smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
 smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
 smtpd_tls_CAfile = /certificates/cacert.pem
 smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 smtpd_use_tls = yes
 
-smtp_tls_loglevel = 2
 smtpd_tls_loglevel = 2
-smtp_tls_security_level = encrypt
 smtpd_tls_security_level = encrypt
 tls_random_source = dev:/dev/urandom
 
