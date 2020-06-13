@@ -2,7 +2,7 @@ FROM centos:centos7.7.1908
 
 RUN yum update -y
 RUN yum --enablerepo=centosplus install -y dovecot dovecot-pgsql dovecot-pigeonhole
-RUN yum install -y openssl rsyslog telnet
+RUN yum install -y openssl rsyslog telnet net-tools
 
 ADD Configuration /etc/dovecot
 ADD Utils /usr/local/bin
