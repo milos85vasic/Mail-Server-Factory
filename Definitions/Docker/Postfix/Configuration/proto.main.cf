@@ -144,23 +144,22 @@ smtpd_client_message_rate_limit = 5
 
 # SASL:
 smtpd_sasl_type = dovecot
+smtpd_sasl_auth_enable = yes
 smtpd_sasl_path = inet:dovecot_service:12345
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 broken_sasl_auth_clients = yes
 
-# TODO:
-# smtpd_tls_req_ccert = yes
-
 # TLS:
-smtp_use_tls = yes
 smtpd_use_tls = yes
+smtpd_tls_req_ccert = yes
+smtpd_tls_security_level = encrypt
 tls_random_source = dev:/dev/urandom
 smtpd_tls_session_cache_database = btree:/etc/postfix/smtpd_scache
 
+# smtpd_tls_CAfile = /certificates/cacert.pem
 smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
 smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
-# smtpd_tls_CAfile = /certificates/cacert.pem
 
 unverified_recipient_reject_code = 577
 address_verify_negative_expire_time = 3d
