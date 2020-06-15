@@ -143,7 +143,6 @@ smtpd_helo_required = yes
 smtpd_client_message_rate_limit = 5
 
 # SASL:
-smtpd_sasl_auth_enable = yes
 smtpd_sasl_type = dovecot
 smtpd_sasl_path = inet:dovecot_service:12345
 smtpd_sasl_security_options = noanonymous
@@ -151,19 +150,22 @@ smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 broken_sasl_auth_clients = yes
 
 # TODO:
-# smtpd_tls_auth_only = yes
 # smtpd_tls_req_ccert = yes
 
 # TLS:
-smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
-smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
-smtpd_tls_CAfile = /certificates/cacert.pem
-smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtp_use_tls = yes
 smtpd_use_tls = yes
-
 smtpd_tls_loglevel = 2
-smtpd_tls_security_level = encrypt
+smtpd_tls_auth_only = no
+smtpd_tls_received_header = yes
+smtp_tls_note_starttls_offer = yes
 tls_random_source = dev:/dev/urandom
+smtpd_tls_session_cache_timeout = 3600s
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+
+smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
+smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
+smtpd_tls_CAfile = /certificates/cacert.pem
 
 # TODO:
 # Content filtering:
