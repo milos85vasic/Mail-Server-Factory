@@ -161,7 +161,7 @@ smtpd_tls_received_header = yes
 smtp_tls_note_starttls_offer = yes
 tls_random_source = dev:/dev/urandom
 smtpd_tls_session_cache_timeout = 3600s
-smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_session_cache_database = btree:/etc/postfix/smtpd_scache
 
 smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
 smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
@@ -172,7 +172,7 @@ smtpd_tls_CAfile = /certificates/cacert.pem
 # TODO: Pass to ClamAV instance (proper IP instead of loopback)
 # content_filter = chkmsg:[127.0.0.1]:10025
 
-address_verify_map = btree:$data_directory/verify_cache
+address_verify_map = btree:/etc/postfix/verify_cache
 address_verify_negative_expire_time = 3d
 address_verify_negative_refresh_time = 3h
 address_verify_positive_expire_time = 31d
