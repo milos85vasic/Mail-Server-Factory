@@ -17,8 +17,9 @@ object Commands {
     const val sleep = "sleep"
     const val hostname = "hostname"
     const val tarExtension = ".tar.gz"
-
     private const val find = "find "
+
+    private const val cd = "cd"
     private const val link = "ln -s"
     private const val netstat = "ss"
     private const val telnet = "telnet"
@@ -97,6 +98,8 @@ object Commands {
 
     fun cat(what: String) = "cat $what"
 
+    fun openssl(command: String) = Variable.parse("$openssl $command")
+
     fun generatePrivateKey(path: String, name: String): String {
 
         val keyName = getPrivateKyName(name)
@@ -164,6 +167,8 @@ object Commands {
         }
         return fullName
     }
+
+    fun cd(where: String) = "$cd $where"
 
     fun link(what: String, where: String) = "$link $what $where"
 

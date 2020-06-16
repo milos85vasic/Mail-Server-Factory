@@ -25,10 +25,17 @@ class TlsCertificate(name: String) : Certificate(name) {
             val sep = File.separator
             val certificates = "{{SERVER.CERTIFICATION.CERTIFICATES}}"
             val certificatesPath = Variable.parse(certificates)
+            val passIn = "-passin pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
+            val passOut = "-passout pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
 
             val crtVerificationCommand = TestCommand("$certificatesPath$sep$hostname.crt")
             val keyVerificationCommand = TestCommand("$certificatesPath$sep$hostname.key")
             val caVerificationCommand = TestCommand("$certificatesPath${sep}ca-bundle.crt")
+            val installation = ConcatenateCommand(
+                    Commands.cd(certificatesPath),
+                    Commands.openssl("genrsa $passOut -aes128 2048 > $hostname.key"),
+                    Commands.openssl("rsa $passIn -in $hostname.key -out $hostname.key")
+            )
 
             val toolkit = Toolkit(conn)
             val checkFlow = InstallationStepFlow(toolkit)
@@ -44,6 +51,7 @@ class TlsCertificate(name: String) : Certificate(name) {
                     .perform(caVerificationCommand)
                     .perform(keyVerificationCommand)
                     .perform(crtVerificationCommand)
+                    .perform(installation)
 
             return CommandFlow()
                     .width(conn)
