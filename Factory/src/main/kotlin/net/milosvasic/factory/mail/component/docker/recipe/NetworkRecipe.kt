@@ -18,7 +18,7 @@ class NetworkRecipe : InstallationStepRecipe() {
                         val step = s as Network
                         step.unsubscribe(this)
                     }
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }

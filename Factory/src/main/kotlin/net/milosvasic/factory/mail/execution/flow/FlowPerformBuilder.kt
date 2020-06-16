@@ -19,12 +19,12 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
 
     override val processingCallback: FlowProcessingCallback
         get() = object : FlowProcessingCallback {
-            override fun onFinish(success: Boolean, message: String, data: FlowProcessingData?) {
+            override fun onFinish(success: Boolean, data: FlowProcessingData?) {
 
                 subjectsIterator?.let { sIterator ->
                     operationsIterator?.let { oIterator ->
                         if (!sIterator.hasNext() && !oIterator.hasNext()) {
-                            finish(success, message)
+                            finish(success)
                         } else {
                             if (success) {
                                 currentOperation = null
@@ -36,7 +36,7 @@ abstract class FlowPerformBuilder<T, M, D> : FlowBuilder<T, D, MutableMap<Wrappe
                                     finish(e)
                                 }
                             } else {
-                                finish(false, message)
+                                finish(false)
                             }
                         }
                     }

@@ -7,7 +7,6 @@ import net.milosvasic.factory.mail.component.packaging.item.Package
 import net.milosvasic.factory.mail.component.packaging.item.Packages
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.implementation.CommandFlow
-import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.remote.Connection
 import net.milosvasic.factory.mail.terminal.TerminalCommand
@@ -29,11 +28,10 @@ abstract class PackageManager(entryPoint: Connection) :
 
     private val flowCallback = object : FlowCallback {
 
-        override fun onFinish(success: Boolean, message: String) {
+        override fun onFinish(success: Boolean) {
             if (success) {
                 onSuccessResult()
             } else {
-                log.e(message)
                 onFailedResult()
             }
         }

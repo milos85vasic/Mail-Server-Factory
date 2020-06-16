@@ -29,23 +29,23 @@ class FlowConnectTestWithFailure : BaseTest() {
         fun getEcho(parent: Int) = EchoCommand("$echo $parent :: ${++count}")
 
         val commandFlowCallback = object : FlowCallback {
-            override fun onFinish(success: Boolean, message: String) {
+            override fun onFinish(success: Boolean) {
                 if (success) {
                     log.i("Command flow finished")
                     commandFlowExecuted++
                 } else {
-                    log.i(message)
+                    log.e("Command flow failed")
                     commandFlowFailed++
                 }
             }
         }
 
         val initializationFlowCallback = object : FlowCallback {
-            override fun onFinish(success: Boolean, message: String) {
+            override fun onFinish(success: Boolean) {
                 if (success) {
                     log.i("Initialization flow finished")
                 } else {
-                    log.e(message)
+                    log.e("Initialization flow failed")
                 }
                 assert(success)
                 initializationFlowExecuted++

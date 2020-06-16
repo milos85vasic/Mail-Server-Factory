@@ -38,7 +38,7 @@
             "value": "{{DOCKER.DOCKER_HOME}}/Postfix/Database"
           },
           {
-            "type": "certificate",
+            "type": "tlsCertificate",
             "value": "{{SERVER.HOSTNAME}}"
           },
           {

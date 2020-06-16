@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  dovecot_service:
+    build: .
+    container_name: dovecot_service
+    hostname: dovecot.{{SERVER.DOMAIN}}
+    restart: always
+    ports:
+      - {{SERVER.DOVECOT.PORTS.POP}}:110
+      - {{SERVER.DOVECOT.PORTS.IMAP}}:143
+      - {{SERVER.DOVECOT.PORTS.IMAPS}}:993
+      - {{SERVER.DOVECOT.PORTS.POP3S}}:995
+    networks:
+      - postmaster_network
+    volumes:
+      - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
+      - {{SERVER.SERVER_HOME}}/Server/Dovecot/Maildir:/maildir
+      - {{SERVER.SERVER_HOME}}/Server/Postfix/VMail:/usr/local/vmail
+      - {{SERVER.SERVER_HOME}}/Server/Dovecot/Masters:/etc/dovecot/masters
+
+networks:
+  postmaster_network:
+    external: true

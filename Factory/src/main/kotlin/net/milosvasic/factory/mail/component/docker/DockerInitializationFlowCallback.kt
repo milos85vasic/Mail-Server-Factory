@@ -5,8 +5,8 @@ import net.milosvasic.factory.mail.log
 
 class DockerInitializationFlowCallback : DieOnFailureCallback() {
 
-    override fun onFinish(success: Boolean, message: String) {
-        super.onFinish(success, message)
+    override fun onFinish(success: Boolean) {
+        super.onFinish(success)
         if (success) {
             log.i("Docker has been initialized")
         }

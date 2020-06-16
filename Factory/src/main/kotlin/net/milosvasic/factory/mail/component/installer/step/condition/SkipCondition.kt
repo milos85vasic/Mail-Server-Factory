@@ -33,8 +33,7 @@ open class SkipCondition(protected val command: TerminalCommand) : RemoteOperati
     override fun getOperation() = SkipConditionOperation(exception == null)
 
     override fun getListener() = object : FlowCallback {
-        override fun onFinish(success: Boolean, message: String) {
-
+        override fun onFinish(success: Boolean) {
             finish(success)
         }
     }

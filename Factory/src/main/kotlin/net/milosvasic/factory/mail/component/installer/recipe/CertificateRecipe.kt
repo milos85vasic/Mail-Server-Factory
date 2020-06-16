@@ -16,7 +16,7 @@ class CertificateRecipe : InstallationStepRecipe() {
                     step?.let {
                         (it as Certificate).unsubscribe(this)
                     }
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }

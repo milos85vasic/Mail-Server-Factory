@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.component.database
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.Registration
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
@@ -12,6 +11,7 @@ import net.milosvasic.factory.mail.execution.flow.implementation.initialization.
 import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.validation.Validator
+import java.util.concurrent.ConcurrentHashMap
 
 object DatabaseManager :
         ObtainParametrized<DatabaseRequest, Database>,
@@ -21,10 +21,10 @@ object DatabaseManager :
     private val busy = Busy()
     private var registration: DatabaseRegistration? = null
     private val operation = DatabaseRegistrationOperation()
-    private val databases = mutableMapOf<Type, MutableMap<String, Database>>()
+    private val databases = ConcurrentHashMap<Type, MutableMap<String, Database>>()
 
     private val initFlowCallback = object : FlowCallback {
-        override fun onFinish(success: Boolean, message: String) {
+        override fun onFinish(success: Boolean) {
 
             registration?.let {
 
@@ -43,11 +43,7 @@ object DatabaseManager :
                     log.i("$type database initialized: '$name'")
                 } else {
 
-                    if (message == String.EMPTY) {
-                        log.e("Database initialization failed for ${type.type} database")
-                    } else {
-                        log.e(message)
-                    }
+                    log.e("Database initialization failed for ${type.type} database")
                 }
                 val result = OperationResult(operation, success)
                 it.callback.onOperationPerformed(result)
@@ -108,10 +104,21 @@ object DatabaseManager :
     override fun terminate() {
         busy()
         log.v("Shutting down: $this")
-        databases.keys.forEach { type ->
-            databases[type]?.keys?.forEach {name ->
-                unRegister(type, name)
+        val pairs = mutableListOf<Pair<Type, String>>()
+        val iterator = databases.keys.iterator()
+        while (iterator.hasNext()) {
+            val type = iterator.next()
+            val keyIterator = databases[type]?.keys?.iterator()
+            keyIterator?.let {
+                while (it.hasNext()) {
+                    val name = it.next()
+                    val pair = Pair(type, name)
+                    pairs.add(pair)
+                }
             }
+        }
+        pairs.forEach { pair ->
+            unRegister(pair.first, pair.second)
         }
         free()
     }

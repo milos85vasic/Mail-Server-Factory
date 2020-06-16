@@ -1,4 +1,16 @@
 {
+  "variables": {
+    "SERVER": {
+      "DOVECOT": {
+        "PORTS": {
+          "POP": "3110",
+          "IMAP": "3143",
+          "POP3S": "3995",
+          "IMAPS": "3993"
+        }
+      }
+    }
+  },
   "software": [
     {
       "name": "Mail server stack: Dovecot",
@@ -6,8 +18,32 @@
       "installationSteps": {
         "Docker": [
           {
+            "type": "conditionCheck",
+            "value": "dovecot_service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl status dovecot && systemctl stop dovecot && systemctl disable dovecot || true"
+          },
+          {
+            "type": "portRequired",
+            "value": "{{SERVER.DOVECOT.PORTS.POP}}, {{SERVER.DOVECOT.PORTS.IMAP}}, {{SERVER.DOVECOT.PORTS.POP3S}}, {{SERVER.DOVECOT.PORTS.IMAPS}}"
+          },
+          {
+            "type": "portCheck",
+            "value": "{{DB.DB_PORT}}"
+          },
+          {
             "type": "deploy",
             "value": "Definitions/Docker/Dovecot:{{DOCKER.DOCKER_HOME}}/Dovecot"
+          },
+          {
+            "type": "tlsCertificate",
+            "value": "{{SERVER.HOSTNAME}}"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/Dovecot"
           }
         ]
       }

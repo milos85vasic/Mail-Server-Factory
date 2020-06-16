@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.execution.flow.implementation
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.DataHandler
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.execution.Executor
@@ -9,7 +8,7 @@ import net.milosvasic.factory.mail.execution.flow.FlowPerformBuilder
 import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.mail.execution.flow.processing.FlowProcessingCallback
 import net.milosvasic.factory.mail.execution.flow.processing.ProcessingRecipe
-import net.milosvasic.factory.mail.getMessage
+import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.operation.OperationResult
 import net.milosvasic.factory.mail.operation.OperationResultListener
 import net.milosvasic.factory.mail.operation.command.CommandConfiguration
@@ -66,16 +65,7 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
                     subject.unsubscribe(this)
                     val dataHandler = dataHandlers[operation]
                     dataHandler?.onData(result)
-                    val message = if (result.success) {
-                        String.EMPTY
-                    } else {
-                        if (result.operation is TerminalCommand) {
-                            "Command failed: ${result.operation.command}"
-                        } else {
-                            "Command failed: ${result.operation}"
-                        }
-                    }
-                    callback?.onFinish(result.success, message)
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }
@@ -88,7 +78,8 @@ class CommandFlow : FlowPerformBuilder<Executor<TerminalCommand>, TerminalComman
                 } catch (e: Exception) {
 
                     subject.unsubscribe(operationCallback)
-                    callback.onFinish(false, e.getMessage())
+                    log.e(e)
+                    callback.onFinish(false)
                     this.callback = null
                 }
             }

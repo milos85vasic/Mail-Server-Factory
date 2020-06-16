@@ -39,11 +39,8 @@ class PackageInstaller(entryPoint: Connection) :
     }
 
     val flowCallback = object : FlowCallback {
-        override fun onFinish(success: Boolean, message: String) {
+        override fun onFinish(success: Boolean) {
 
-            if (!success) {
-                log.e(message)
-            }
             if (manager == null) {
                 log.e("No package manager has been initialized")
             }

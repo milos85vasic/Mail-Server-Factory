@@ -59,11 +59,11 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
         }
 
         val commandFlowCallback = object : FlowCallback {
-            override fun onFinish(success: Boolean, message: String) {
+            override fun onFinish(success: Boolean) {
                 if (success) {
                     log.i("Command flow finished")
                 } else {
-                    log.e(message)
+                    log.e("Command flow failed")
                 }
                 assert(success)
                 commandFlowExecuted++
@@ -71,11 +71,11 @@ class FlowConnectObtainedFlowsTest : BaseTest() {
         }
 
         val initializationFlowCallback = object : FlowCallback {
-            override fun onFinish(success: Boolean, message: String) {
+            override fun onFinish(success: Boolean) {
                 if (success) {
                     log.i("Initialization flow finished")
                 } else {
-                    log.e(message)
+                    log.e("Initialization flow failed")
                 }
                 assert(success)
                 initializationFlowExecuted++

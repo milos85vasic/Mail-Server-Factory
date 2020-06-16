@@ -16,7 +16,7 @@ class RebootRecipe : InstallationStepRecipe() {
                     step?.let {
                         (it as Reboot).unsubscribe(this)
                     }
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }

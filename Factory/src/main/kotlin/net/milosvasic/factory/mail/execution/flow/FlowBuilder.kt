@@ -1,6 +1,5 @@
 package net.milosvasic.factory.mail.execution.flow
 
-import net.milosvasic.factory.mail.EMPTY
 import net.milosvasic.factory.mail.common.CollectionWrapper
 import net.milosvasic.factory.mail.common.Wrapper
 import net.milosvasic.factory.mail.common.busy.Busy
@@ -95,14 +94,14 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
         BusyDelegate.free(busy)
     }
 
-    protected fun finish(success: Boolean, message: String = String.EMPTY) {
+    protected fun finish(success: Boolean) {
         cleanupStates()
 
         fun finish(success: Boolean) {
             val iterator = callbacks.iterator()
             while (iterator.hasNext()) {
                 val callback = iterator.next()
-                callback.onFinish(success, message)
+                callback.onFinish(success)
             }
             free()
         }
@@ -115,7 +114,7 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
                 try {
                     nextFlow?.let {
                         val callback = object : FlowCallback {
-                            override fun onFinish(success: Boolean, message: String) {
+                            override fun onFinish(success: Boolean) {
                                 finish(true)
                             }
                         }
@@ -131,16 +130,9 @@ abstract class FlowBuilder<T, D, C> : Flow<T, D>, BusyDelegation {
     }
 
     protected fun finish(e: Exception) {
-        var message = String.EMPTY
-        e.message?.let {
-            message = it
-        }
-        if (message == String.EMPTY) {
-            e::class.simpleName?.let {
-                message = it
-            }
-        }
-        finish(false, message)
+
+        log.e(e)
+        finish(false)
     }
 
     protected open fun cleanupStates() {

@@ -17,8 +17,9 @@ object Commands {
     const val sleep = "sleep"
     const val hostname = "hostname"
     const val tarExtension = ".tar.gz"
-
     private const val find = "find "
+
+    private const val cd = "cd"
     private const val link = "ln -s"
     private const val netstat = "ss"
     private const val telnet = "telnet"
@@ -97,6 +98,8 @@ object Commands {
 
     fun cat(what: String) = "cat $what"
 
+    fun openssl(command: String) = Variable.parse("$openssl $command")
+
     fun generatePrivateKey(path: String, name: String): String {
 
         val keyName = getPrivateKyName(name)
@@ -105,7 +108,7 @@ object Commands {
 
     fun generateRequestKey(path: String, keyName: String, reqName: String): String {
 
-        val params = getSubject()
+        val params = getOpensslSubject()
         val requestKey = getRequestKeyName(reqName)
         val cmd = "$openssl req -new -key"
         val reqKey = "$path${File.separator}$requestKey"
@@ -131,7 +134,7 @@ object Commands {
 
     fun generatePEM(keyName: String = "cakey.pem", certName: String = "cacert.pem"): String {
 
-        val subject = getSubject()
+        val subject = getOpensslSubject()
         val req = "req -subj $subject -new -x509 -extensions v3_ca -keyout $keyName -out $certName -days 3650"
         val passIn = "-passin pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
         val passOut = "-passout pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
@@ -165,13 +168,15 @@ object Commands {
         return fullName
     }
 
+    fun cd(where: String) = "$cd $where"
+
     fun link(what: String, where: String) = "$link $what $where"
 
     fun portAvailable(port: Int) = "! $netstat -tulpn | ${grep(":$port")}"
 
     fun portTaken(port: Int) = "${echo("^C")} | $telnet $localhost $port | grep \"Connected\""
 
-    private fun getSubject(): String {
+    fun getOpensslSubject(): String {
 
         val hostname = "{{SERVER.HOSTNAME}}"
         val city = "{{SERVER.CERTIFICATION.CITY}}"

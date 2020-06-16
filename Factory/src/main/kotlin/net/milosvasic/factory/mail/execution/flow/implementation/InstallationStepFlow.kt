@@ -63,25 +63,25 @@ class InstallationStepFlow(private val toolkit: Toolkit) : FlowSimpleBuilder<Ins
         throw IllegalArgumentException("No processing recipe available for: ${subject::class.simpleName}")
     }
 
-    override fun tryNextSubject(success: Boolean, message: String, data: FlowProcessingData?) {
+    override fun tryNextSubject(success: Boolean, data: FlowProcessingData?) {
         when (data) {
             is ConditionRecipeFlowProcessingData -> {
                 if (success) {
                     if (data.fallThrough) {
-                        super.tryNextSubject(success, message, data)
+                        super.tryNextSubject(success, data)
                     } else {
-                        finish(true, message)
+                        finish(true)
                     }
                 } else {
                     if (data.fallThrough) {
-                        super.tryNextSubject(true, message, data)
+                        super.tryNextSubject(true, data)
                     } else {
-                        finish(true, message)
+                        finish(true)
                     }
                 }
             }
             else -> {
-                super.tryNextSubject(success, message, data)
+                super.tryNextSubject(success, data)
             }
         }
     }

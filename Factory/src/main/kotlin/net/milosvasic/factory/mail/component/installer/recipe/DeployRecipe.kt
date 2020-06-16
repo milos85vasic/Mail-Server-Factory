@@ -16,7 +16,7 @@ class DeployRecipe : InstallationStepRecipe() {
                     step?.let {
                         (it as Deploy).unsubscribe(this)
                     }
-                    callback?.onFinish(result.success, getErrorMessage(result))
+                    callback?.onFinish(result.success)
                     callback = null
                 }
             }

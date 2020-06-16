@@ -22,11 +22,8 @@ class InstallerTest : BaseTest() {
         installer.addSupportedPackageManager(stubPackageManager)
 
         val flowCallback = object : FlowCallback {
-            override fun onFinish(success: Boolean, message: String) {
+            override fun onFinish(success: Boolean) {
 
-                if (!success) {
-                    log.w(message)
-                }
                 initialized = success
             }
         }

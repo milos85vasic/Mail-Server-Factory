@@ -1,6 +1,7 @@
 package net.milosvasic.factory.mail.terminal
 
 import net.milosvasic.factory.mail.EMPTY
+import net.milosvasic.factory.mail.LINE_BREAK
 import net.milosvasic.factory.mail.common.busy.Busy
 import net.milosvasic.factory.mail.common.busy.BusyException
 import net.milosvasic.factory.mail.common.busy.BusyWorker
@@ -121,7 +122,7 @@ class Terminal : Executor<TerminalCommand> {
                 log.v("<<< $s")
             }
             if (obtainOutput) {
-                builder.append(s).append("\n")
+                builder.append(s).append(String.LINE_BREAK)
             }
             s = reader.readLine()
         }
