@@ -55,11 +55,11 @@ class TlsCertificate(name: String) : Certificate(name) {
                     .perform(caVerificationCommand)
                     .perform(keyVerificationCommand)
                     .perform(crtVerificationCommand)
-                    .perform(installation)
 
             return CommandFlow()
                     .width(conn)
                     .perform(TestCommand(certificatesPath))
+                    .perform(installation)
                     .connect(checkFlow)
                     .connect(completionFlow)
         }
