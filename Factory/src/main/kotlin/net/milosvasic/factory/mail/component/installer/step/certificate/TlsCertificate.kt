@@ -36,7 +36,9 @@ class TlsCertificate(name: String) : Certificate(name) {
                     Commands.cd(certificatesPath),
                     Commands.openssl("genrsa $passOut -aes128 2048 > $hostname.key"),
                     Commands.openssl("rsa $passIn -in $hostname.key -out $hostname.key"),
-                    Commands.openssl("req -subj $subject -utf8 -new -key $hostname.key -out $hostname.csr")
+                    Commands.openssl("req -subj $subject -utf8 -new -key $hostname.key -out $hostname.csr"),
+                    Commands.openssl("x509 -in $hostname.csr -out $hostname.crt -req -signkey $hostname.key -days 3650"),
+                    Commands.chmod("$hostname.key", permission600)
             )
 
             val toolkit = Toolkit(conn)
