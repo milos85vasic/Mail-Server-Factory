@@ -38,7 +38,7 @@
             "value": "Definitions/Docker/Dovecot:{{DOCKER.DOCKER_HOME}}/Dovecot"
           },
           {
-            "type": "certificate",
+            "type": "tlsCertificate",
             "value": "{{SERVER.HOSTNAME}}"
           },
           {

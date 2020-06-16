@@ -15,7 +15,7 @@ import net.milosvasic.factory.mail.security.Permissions
 import net.milosvasic.factory.mail.terminal.command.*
 import java.io.File
 
-class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
+open class Certificate(val name: String) : RemoteOperationInstallationStep<SSH>() {
 
     @Throws(IllegalArgumentException::class, IllegalStateException::class)
     override fun getFlow(): CommandFlow {

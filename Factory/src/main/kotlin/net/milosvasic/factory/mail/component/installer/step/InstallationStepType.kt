@@ -13,6 +13,7 @@ enum class InstallationStepType(val type: String) {
     PORT_CHECK("portCheck"),
     PORT_REQUIRED("portRequired"),
     CERTIFICATE("certificate"),
+    TLS_CERTIFICATE("tlsCertificate"),
     SKIP_CONDITION("skipCondition"),
     CHECK("check"),
     CONDITION_CHECK("conditionCheck")

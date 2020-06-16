@@ -11,6 +11,7 @@ import net.milosvasic.factory.mail.component.installer.step.InstallationStep
 import net.milosvasic.factory.mail.component.installer.step.InstallationStepType
 import net.milosvasic.factory.mail.component.installer.step.PackageManagerInstallationStep
 import net.milosvasic.factory.mail.component.installer.step.certificate.Certificate
+import net.milosvasic.factory.mail.component.installer.step.certificate.TlsCertificate
 import net.milosvasic.factory.mail.component.installer.step.condition.Condition
 import net.milosvasic.factory.mail.component.installer.step.condition.SkipCondition
 import net.milosvasic.factory.mail.component.installer.step.database.DatabaseStep
@@ -74,6 +75,10 @@ class MainInstallationStepFactory : InstallationStepFactory {
             InstallationStepType.CERTIFICATE.type -> {
 
                 return Certificate(definition.getValue())
+            }
+            InstallationStepType.TLS_CERTIFICATE.type -> {
+
+                return TlsCertificate(definition.getValue())
             }
             InstallationStepType.DEPLOY.type -> {
 
