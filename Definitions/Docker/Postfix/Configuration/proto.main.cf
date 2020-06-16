@@ -151,22 +151,23 @@ smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 broken_sasl_auth_clients = yes
 
 # TLS:
+smtp_tls_security_level = may
+smtpd_tls_security_level = may
+smtp_tls_CApath = /certificates
+smtp_tls_CAfile = /certificates/ca-bundle.crt
 smtpd_use_tls = yes
-smtpd_tls_req_ccert = yes
-smtpd_tls_security_level = encrypt
-tls_random_source = dev:/dev/urandom
-smtpd_tls_session_cache_database = btree:/etc/postfix/smtpd_scache
-
-# smtpd_tls_CAfile = /certificates/cacert.pem
-smtpd_tls_cert_file = /certificates/{{SERVER.HOSTNAME}}.crt
-smtpd_tls_key_file = /certificates/private.{{SERVER.HOSTNAME}}.key
+smtp_tls_mandatory_protocols = !SSLv2, !SSLv3
+smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3
+smtpd_tls_cert_file = /certificates/server2507.crt
+smtpd_tls_key_file = /certificates/server2507.key
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
 
 unverified_recipient_reject_code = 577
 address_verify_negative_expire_time = 3d
 address_verify_negative_refresh_time = 3h
 address_verify_positive_expire_time = 31d
 address_verify_positive_refresh_time = 7d
-address_verify_map = btree:/etc/postfix/verify_cache
+address_verify_map = btree:${data_directory}/verify_cache
 
 # TODO:
 # Content filtering:

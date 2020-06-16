@@ -1,4 +1,4 @@
-FROM centos:centos7.7.1908
+FROM centos:centos8.1.1911
 
 RUN yum update -y
 RUN yum --enablerepo=centosplus install -y postfix
