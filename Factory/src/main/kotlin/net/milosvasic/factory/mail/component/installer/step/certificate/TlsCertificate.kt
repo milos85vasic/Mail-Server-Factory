@@ -20,13 +20,14 @@ class TlsCertificate(name: String) : Certificate(name) {
 
         connection?.let { conn ->
 
-            val hostname = conn.getRemoteOS().getHostname()
-            val permission600 = Permissions(Permission(6), Permission.NONE, Permission.NONE).obtain()
             val sep = File.separator
+            val subject = Commands.getOpensslSubject()
+            val hostname = conn.getRemoteOS().getHostname()
             val certificates = "{{SERVER.CERTIFICATION.CERTIFICATES}}"
             val certificatesPath = Variable.parse(certificates)
             val passIn = "-passin pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
             val passOut = "-passout pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
+            val permission600 = Permissions(Permission(6), Permission.NONE, Permission.NONE).obtain()
 
             val crtVerificationCommand = TestCommand("$certificatesPath$sep$hostname.crt")
             val keyVerificationCommand = TestCommand("$certificatesPath$sep$hostname.key")
@@ -34,7 +35,8 @@ class TlsCertificate(name: String) : Certificate(name) {
             val installation = ConcatenateCommand(
                     Commands.cd(certificatesPath),
                     Commands.openssl("genrsa $passOut -aes128 2048 > $hostname.key"),
-                    Commands.openssl("rsa $passIn -in $hostname.key -out $hostname.key")
+                    Commands.openssl("rsa $passIn -in $hostname.key -out $hostname.key"),
+                    Commands.openssl("req -subj $subject -utf8 -new -key $hostname.key -out $hostname.csr")
             )
 
             val toolkit = Toolkit(conn)

@@ -108,7 +108,7 @@ object Commands {
 
     fun generateRequestKey(path: String, keyName: String, reqName: String): String {
 
-        val params = getSubject()
+        val params = getOpensslSubject()
         val requestKey = getRequestKeyName(reqName)
         val cmd = "$openssl req -new -key"
         val reqKey = "$path${File.separator}$requestKey"
@@ -134,7 +134,7 @@ object Commands {
 
     fun generatePEM(keyName: String = "cakey.pem", certName: String = "cacert.pem"): String {
 
-        val subject = getSubject()
+        val subject = getOpensslSubject()
         val req = "req -subj $subject -new -x509 -extensions v3_ca -keyout $keyName -out $certName -days 3650"
         val passIn = "-passin pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
         val passOut = "-passout pass:{{SERVER.CERTIFICATION.PASSPHRASE}}"
@@ -176,7 +176,7 @@ object Commands {
 
     fun portTaken(port: Int) = "${echo("^C")} | $telnet $localhost $port | grep \"Connected\""
 
-    private fun getSubject(): String {
+    fun getOpensslSubject(): String {
 
         val hostname = "{{SERVER.HOSTNAME}}"
         val city = "{{SERVER.CERTIFICATION.CITY}}"
