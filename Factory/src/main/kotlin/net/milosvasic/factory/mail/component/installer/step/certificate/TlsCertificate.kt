@@ -59,6 +59,7 @@ class TlsCertificate(name: String) : Certificate(name) {
 
             return CommandFlow()
                     .width(conn)
+                    .perform(TestCommand(certificatesPath))
                     .connect(checkFlow)
                     .connect(completionFlow)
         }
