@@ -3,7 +3,7 @@
     "SERVER": {
       "CERTIFICATION": {
         "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca",
-        "CERTIFICATES": "/etc/pki/tls/certs"
+        "CERTIFICATES": "/etc/ssl/certs"
       },
 
       "MAILBOXES_CAPACITY": "30G"
