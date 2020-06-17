@@ -17,6 +17,10 @@ chmod -R +r /run/dovecot
 chmod -R +w /run/dovecot
 chown -R vmail ./maildir
 chgrp -R vmail ./maildir
+chgrp -R vmail /usr/local/vmail
+chown -R vmail /usr/local/vmail
+chgrp -R vmail /etc/dovecot/masters
+chown -R vmail /etc/dovecot/masters
 
 if rsyslogd && dovecot >> ${dovecotLog}
 then
