@@ -18,6 +18,7 @@ services:
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Maildir:/maildir
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/VMail:/usr/local/vmail
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Masters:/etc/dovecot/masters
+      - {{SERVER.SERVER_HOME}}/Server/Dovecot/Log:/var/log/dovecot
 
 networks:
   postmaster_network:

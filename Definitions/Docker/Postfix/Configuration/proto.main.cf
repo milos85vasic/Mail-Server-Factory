@@ -75,8 +75,6 @@ setgid_group = postdrop
 
 html_directory = no
 
-manpage_directory = /usr/share/man
-
 default_database_type = pgsql
 
 # TODO:
@@ -113,7 +111,7 @@ mailbox_transport = lmtp:inet:dovecot_service:12346
 smtpd_recipient_restrictions =
     permit_mynetworks
     permit_sasl_authenticated
-    # TODO: https://red-elf.atlassian.net/browse/MSF-164
+    # TODO: MSF-164
     # warn_if_reject
     # check_policy_service inet:dovecot_service:12347
     reject_unverified_recipient
