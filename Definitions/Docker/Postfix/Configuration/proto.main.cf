@@ -1,5 +1,7 @@
 compatibility_level = 2
 
+maillog_file= /var/log/postfix/postfix.log
+
 queue_directory = /var/spool/postfix
 
 command_directory = /usr/sbin
