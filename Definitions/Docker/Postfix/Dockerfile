@@ -1,8 +1,8 @@
-FROM centos:centos8.1.1911
+FROM fedora:32
 
-RUN yum update -y
-RUN yum --enablerepo=centosplus install -y postfix
-RUN yum install -y postfix-pgsql openssl telnet net-tools
+RUN dnf update -y
+RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+RUN dnf install -y postfix postfix-pgsql openssl telnet net-tools
 RUN alternatives --set mta /usr/sbin/sendmail.postfix
 
 ADD Configuration/*.* /etc/postfix/

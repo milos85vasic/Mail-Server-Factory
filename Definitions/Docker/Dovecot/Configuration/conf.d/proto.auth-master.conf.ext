@@ -1,10 +1,8 @@
-passdb {
+# TODO: MSF-111:
+# passdb {
 
-  driver = passwd-file
-  master = yes
-  args = /etc/dovecot/masters/master-users
-
-  # Unless you're using PAM, you probably still want the destination user to
-  # be looked up from passdb that it really exists. pass=yes does that.
-  pass = yes
-}
+  # pass = yes
+  # master = yes
+  # driver = passwd-file
+  # args = /etc/dovecot/masters/master-users
+# }

@@ -17,10 +17,16 @@ chmod -R +r /run/dovecot
 chmod -R +w /run/dovecot
 chown -R vmail ./maildir
 chgrp -R vmail ./maildir
+chgrp -R vmail /usr/local/vmail
+chown -R vmail /usr/local/vmail
+chgrp -R vmail /etc/dovecot/masters
+chown -R vmail /etc/dovecot/masters
 
 if rsyslogd && dovecot >> ${dovecotLog}
 then
 
+    doveadm log errors >> ${dovecotLog}
+    dovecot log errors >> ${dovecotLog}
     ports=(110 143 993 995 12345 12346 12347 4190 2000)
     for port in ${ports[@]}; do
         if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"

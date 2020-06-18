@@ -32,6 +32,7 @@ class TlsCertificate(name: String) : Certificate(name) {
             val crtVerificationCommand = TestCommand("$certificatesPath$sep$hostname.crt")
             val keyVerificationCommand = TestCommand("$certificatesPath$sep$hostname.key")
             val caVerificationCommand = TestCommand("$certificatesPath${sep}ca-bundle.crt")
+
             val installation = ConcatenateCommand(
                     Commands.cd(certificatesPath),
                     Commands.openssl("genrsa $passOut -aes128 2048 > $hostname.key"),
@@ -42,13 +43,13 @@ class TlsCertificate(name: String) : Certificate(name) {
             )
 
             val toolkit = Toolkit(conn)
-            val checkFlow = InstallationStepFlow(toolkit)
+            val installationFlow = InstallationStepFlow(toolkit)
                     .registerRecipe(SkipCondition::class, ConditionRecipe::class)
                     .registerRecipe(CommandInstallationStep::class, CommandInstallationStepRecipe::class)
                     .width(CommandInstallationStep(caVerificationCommand))
                     .width(SkipCondition(crtVerificationCommand))
                     .width(SkipCondition(keyVerificationCommand))
-
+                    .width(CommandInstallationStep(installation))
 
             val completionFlow = CommandFlow()
                     .width(conn)
@@ -59,8 +60,7 @@ class TlsCertificate(name: String) : Certificate(name) {
             return CommandFlow()
                     .width(conn)
                     .perform(TestCommand(certificatesPath))
-                    .perform(installation)
-                    .connect(checkFlow)
+                    .connect(installationFlow)
                     .connect(completionFlow)
         }
         throw IllegalArgumentException("No proper connection provided")

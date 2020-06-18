@@ -1,8 +1,8 @@
-FROM centos:centos7.7.1908
+FROM fedora:32
 
-RUN yum update -y
-RUN yum --enablerepo=centosplus install -y dovecot dovecot-pgsql dovecot-pigeonhole
-RUN yum install -y openssl rsyslog telnet net-tools
+RUN dnf update -y
+RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
+RUN dnf install -y dovecot dovecot-pgsql dovecot-pigeonhole openssl rsyslog telnet net-tools
 
 ADD Configuration /etc/dovecot
 ADD Utils /usr/local/bin
