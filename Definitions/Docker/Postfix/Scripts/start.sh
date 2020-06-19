@@ -34,6 +34,7 @@ else
 fi
 
 postfix set-permissions >> ${postfixLog}
+newaliases
 postfix check >> ${postfixLog}
 postfix start >> ${postfixLog}
 if postfix status >> ${postfixLog}
