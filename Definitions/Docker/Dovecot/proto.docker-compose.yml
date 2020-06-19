@@ -7,7 +7,6 @@ services:
     hostname: dovecot.{{SERVER.DOMAIN}}
     restart: always
     ports:
-      - {{SERVER.DOVECOT.PORTS.IMAP}}:143
       - {{SERVER.DOVECOT.PORTS.IMAPS}}:993
     networks:
       - postmaster_network
