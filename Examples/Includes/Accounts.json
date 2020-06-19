@@ -1,0 +1,23 @@
+{
+  "accounts": [
+    {
+      "type": "email",
+      "name": "test1@dev.local",
+      "aliases": [
+        "test.primary@dev.local",
+        "001@dev.local"
+      ],
+      "password": "Test12345"
+    },
+    {
+      "type": "email",
+      "name": "test2@dev.local",
+      "password": "Test12345"
+    },
+    {
+      "type": "email",
+      "name": "test3@dev.local",
+      "password": "Test12345"
+    }
+  ]
+}

@@ -3,7 +3,8 @@
   "includes": [
     "Examples/Includes/Server.json",
     "Examples/Includes/Database.json",
-    "Examples/Includes/Docker.json"
+    "Examples/Includes/Docker.json",
+    "Examples/Includes/Accounts.json"
   ],
   "variables": {},
   "remote": {
