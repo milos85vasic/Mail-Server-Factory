@@ -40,7 +40,7 @@ postfix start >> ${postfixLog}
 if postfix status >> ${postfixLog}
 then
 
-    ports=(465)
+    ports=(465 587)
     for port in ${ports[@]}; do
         if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
         then
