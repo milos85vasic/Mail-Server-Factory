@@ -8,6 +8,7 @@ services:
     restart: always
     ports:
       - 465:465
+      - 587:587
     networks:
       - postmaster_network
     volumes:

@@ -39,11 +39,8 @@ unknown_local_recipient_reject_code = 550
 
 mynetworks_style = host
 
-# TODO: alias_maps = pgsql:/path
-# alias_maps = hash:/etc/aliases # TODO: To be removed
-
-# TODO: alias_database = pgsql:/path
-# alias_database = hash:/etc/aliases # TODO: To be removed
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
 
 recipient_delimiter = +
 

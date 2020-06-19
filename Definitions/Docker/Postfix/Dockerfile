@@ -11,5 +11,6 @@ ADD Scripts/start.sh /start.sh
 RUN groupadd -g 5000 vmail && useradd -g vmail -u 5000 vmail -d /home/vmail -m
 
 EXPOSE 465
+EXPOSE 587
 
 CMD sh start.sh
