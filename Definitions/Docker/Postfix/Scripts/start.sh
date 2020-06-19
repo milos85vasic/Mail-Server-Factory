@@ -4,7 +4,7 @@ dbPort=5432
 dovecotSaslPort=12345
 dovecotLmtpPort=12346
 postfixLog=/var/log/postfix.start.log
-echo "Starting Postfix on `hostname`" > ${postfixLog}
+echo "Starting Postfix" > ${postfixLog}
 
 echo "Checking database port: $dbPort" >> ${postfixLog}
 if echo "^C" | telnet postgres_database ${dbPort} | grep "Connected"

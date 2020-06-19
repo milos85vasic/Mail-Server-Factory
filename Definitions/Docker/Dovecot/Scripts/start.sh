@@ -2,7 +2,7 @@
 
 dbPort=5432
 dovecotLog=/var/log/dovecot.start.log
-echo "Starting Dovecot on `hostname`" > ${dovecotLog}
+echo "Starting Dovecot" > ${dovecotLog}
 
 echo "Checking database port: $dbPort" >> ${dovecotLog}
 if echo "^C" | telnet postgres_database ${dbPort} | grep "Connected"
