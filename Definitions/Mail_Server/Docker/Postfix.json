@@ -23,7 +23,7 @@
           },
           {
             "type": "portRequired",
-            "value": "465, 587"
+            "value": "465"
           },
           {
             "type": "portCheck",
@@ -51,7 +51,7 @@
           },
           {
             "type": "portCheck",
-            "value": "465, 587"
+            "value": "465"
           }
         ]
       },
