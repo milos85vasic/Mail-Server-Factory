@@ -27,7 +27,7 @@
           },
           {
             "type": "portRequired",
-            "value": "{{SERVER.DOVECOT.PORTS.POP}}, {{SERVER.DOVECOT.PORTS.IMAP}}, {{SERVER.DOVECOT.PORTS.POP3S}}, {{SERVER.DOVECOT.PORTS.IMAPS}}"
+            "value": "{{SERVER.DOVECOT.PORTS.IMAPS}}"
           },
           {
             "type": "portCheck",
