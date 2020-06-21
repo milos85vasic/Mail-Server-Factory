@@ -85,6 +85,9 @@ open class ServerFactory(val arguments: List<String> = listOf()) : Application, 
                 } catch (e: IllegalStateException) {
 
                     notifyInit(e)
+                } catch (e: RuntimeException) {
+
+                    notifyInit(e)
                 }
             } else {
 
