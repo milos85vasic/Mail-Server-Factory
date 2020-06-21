@@ -4,9 +4,9 @@ import java.util.concurrent.LinkedBlockingQueue
 
 open class ConfigurationInclude(
 
-        val includes: LinkedBlockingQueue<String>?,
-        val software: LinkedBlockingQueue<String>?,
-        val containers: LinkedBlockingQueue<String>?,
+        var includes: LinkedBlockingQueue<String>?,
+        var software: LinkedBlockingQueue<String>?,
+        var containers: LinkedBlockingQueue<String>?,
         var variables: VariableNode? = null
 ) {
 

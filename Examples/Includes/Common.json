@@ -5,7 +5,6 @@
     "Examples/Includes/Docker.json",
     "Examples/Includes/Accounts.json"
   ],
-  "variables": {},
   "software": [
     "Definitions/Software/Docker",
     "Definitions/Software/Postgres",

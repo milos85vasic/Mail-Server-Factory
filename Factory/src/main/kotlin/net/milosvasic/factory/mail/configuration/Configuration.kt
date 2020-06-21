@@ -54,9 +54,21 @@ class Configuration(
                 val gson = gsonBuilder.create()
                 try {
                     val configuration = gson.fromJson(configurationJson, Configuration::class.java)
+                    if (configuration.includes == null) {
+                        configuration.includes = LinkedBlockingQueue()
+                    }
+                    if (configuration.software == null) {
+                        configuration.software = LinkedBlockingQueue()
+                    }
+                    if (configuration.containers == null) {
+                        configuration.containers = LinkedBlockingQueue()
+                    }
+                    if (configuration.variables == null) {
+                        configuration.variables = VariableNode()
+                    }
                     val iterator = configuration.includes?.iterator()
                     iterator?.let {
-                        while (it.hasNext()){
+                        while (it.hasNext()) {
                             val include = it.next()
                             val includeFile = File(include)
                             val includedConfiguration = obtain(includeFile)
