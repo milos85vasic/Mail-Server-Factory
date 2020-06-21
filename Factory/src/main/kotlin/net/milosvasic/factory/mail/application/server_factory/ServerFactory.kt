@@ -34,7 +34,7 @@ import net.milosvasic.factory.mail.terminal.TerminalCommand
 import net.milosvasic.factory.mail.terminal.command.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
-open class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
+abstract class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
 
     private val busy = Busy()
     private var configuration: Configuration? = null
