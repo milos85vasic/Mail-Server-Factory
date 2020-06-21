@@ -1,10 +1,12 @@
 package net.milosvasic.factory.mail.configuration
 
+import java.util.concurrent.LinkedBlockingQueue
+
 open class ConfigurationInclude(
 
-        val includes: MutableList<String>?,
-        val software: MutableList<String>?,
-        val containers: MutableList<String>?,
+        val includes: LinkedBlockingQueue<String>?,
+        val software: LinkedBlockingQueue<String>?,
+        val containers: LinkedBlockingQueue<String>?,
         var variables: VariableNode? = null
 ) {
 

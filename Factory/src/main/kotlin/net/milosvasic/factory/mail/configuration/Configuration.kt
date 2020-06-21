@@ -8,14 +8,15 @@ import net.milosvasic.factory.mail.log
 import net.milosvasic.factory.mail.remote.Remote
 import net.milosvasic.factory.mail.validation.Validator
 import java.io.File
+import java.util.concurrent.LinkedBlockingQueue
 
 class Configuration(
         val name: String = String.EMPTY,
         val remote: Remote,
 
-        includes: MutableList<String>?,
-        software: MutableList<String>?,
-        containers: MutableList<String>?,
+        includes: LinkedBlockingQueue<String>?,
+        software: LinkedBlockingQueue<String>?,
+        containers: LinkedBlockingQueue<String>?,
         variables: VariableNode? = null
 
 ) : ConfigurationInclude(
@@ -53,10 +54,14 @@ class Configuration(
                 val gson = gsonBuilder.create()
                 try {
                     val configuration = gson.fromJson(configurationJson, Configuration::class.java)
-                    configuration.includes?.forEach { include ->
-                        val includeFile = File(include)
-                        val includedConfiguration = obtain(includeFile)
-                        configuration.merge(includedConfiguration)
+                    val iterator = configuration.includes?.iterator()
+                    iterator?.let {
+                        while (it.hasNext()){
+                            val include = it.next()
+                            val includeFile = File(include)
+                            val includedConfiguration = obtain(includeFile)
+                            configuration.merge(includedConfiguration)
+                        }
                     }
                     return configuration
 
