@@ -9,6 +9,7 @@ import net.milosvasic.factory.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.fail
 import net.milosvasic.factory.log
+import net.milosvasic.factory.mail.application.server_factory.MailServerFactory
 import net.milosvasic.factory.tag
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
