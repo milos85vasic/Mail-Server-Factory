@@ -5,12 +5,14 @@ import net.milosvasic.factory.component.installer.recipe.CommandInstallationStep
 import net.milosvasic.factory.component.installer.recipe.ConditionRecipe
 import net.milosvasic.factory.component.installer.step.CommandInstallationStep
 import net.milosvasic.factory.component.installer.step.condition.SkipCondition
-import net.milosvasic.factory.configuration.*
+import net.milosvasic.factory.configuration.Variable
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.execution.flow.implementation.InstallationStepFlow
 import net.milosvasic.factory.security.Permission
 import net.milosvasic.factory.security.Permissions
-import net.milosvasic.factory.terminal.command.*
+import net.milosvasic.factory.terminal.command.Commands
+import net.milosvasic.factory.terminal.command.ConcatenateCommand
+import net.milosvasic.factory.terminal.command.TestCommand
 import java.io.File
 
 class TlsCertificate(name: String) : Certificate(name) {
