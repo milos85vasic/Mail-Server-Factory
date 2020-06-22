@@ -30,6 +30,7 @@ import net.milosvasic.factory.os.HostNameDataHandler
 import net.milosvasic.factory.remote.Connection
 import net.milosvasic.factory.remote.ConnectionProvider
 import net.milosvasic.factory.remote.ssh.SSH
+import net.milosvasic.factory.tag
 import net.milosvasic.factory.terminal.TerminalCommand
 import net.milosvasic.factory.terminal.command.*
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -63,6 +64,7 @@ abstract class ServerFactory(val arguments: List<String> = listOf()) : Applicati
         val argumentsValidator = ArgumentsValidator()
         try {
             if (argumentsValidator.validate(arguments.toTypedArray())) {
+                tag = getLogTag()
                 val configurationFile = arguments[0]
                 try {
                     ConfigurationManager.setConfigurationPath(configurationFile)
@@ -233,6 +235,8 @@ abstract class ServerFactory(val arguments: List<String> = listOf()) : Applicati
     protected fun getConnection(): Connection {
         return connectionProvider.obtain()
     }
+
+    protected open fun getLogTag() = tag
 
     protected open fun instantiateDocker(ssh: Connection) = Docker(ssh)
 
