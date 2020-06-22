@@ -1,11 +1,11 @@
 @file:JvmName("Launcher")
 
-package net.milosvasic.factory.mail
+package net.milosvasic.factory
 
-import net.milosvasic.factory.mail.application.DefaultInitializationHandler
-import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
+import net.milosvasic.factory.application.DefaultInitializationHandler
+import net.milosvasic.factory.common.busy.BusyException
+import net.milosvasic.factory.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
