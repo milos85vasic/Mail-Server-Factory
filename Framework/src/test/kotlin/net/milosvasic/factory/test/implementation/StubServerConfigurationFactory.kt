@@ -15,4 +15,6 @@ class StubServerConfigurationFactory : ConfigurationFactory<StubConfiguration>()
 
         // Ignore.
     }
+
+    override fun validateConfiguration(configuration: StubConfiguration) = true
 }

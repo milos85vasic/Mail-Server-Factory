@@ -15,6 +15,8 @@ abstract class ConfigurationFactory<T : Configuration> : ObtainParametrized<File
 
     abstract fun onInstantiated(configuration: T)
 
+    abstract fun validateConfiguration(configuration: T): Boolean
+
     @Throws(IllegalArgumentException::class)
     override fun obtain(vararg param: File): T {
 
@@ -41,7 +43,9 @@ abstract class ConfigurationFactory<T : Configuration> : ObtainParametrized<File
                         configuration.merge(includedConfiguration)
                     }
                 }
-                return configuration
+                if (validateConfiguration(configuration)) {
+                    return configuration
+                }
 
             } catch (e: JsonParseException) {
 
@@ -54,6 +58,7 @@ abstract class ConfigurationFactory<T : Configuration> : ObtainParametrized<File
 
             throw IllegalArgumentException("File does not exist: ${configurationFile.absoluteFile}")
         }
+        throw IllegalArgumentException("Could not obtain configuration")
     }
 
     private fun postInstantiate(configuration: T) {

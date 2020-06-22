@@ -2,6 +2,8 @@ package net.milosvasic.factory.mail.configuration
 
 import com.google.gson.reflect.TypeToken
 import net.milosvasic.factory.configuration.ConfigurationFactory
+import net.milosvasic.factory.log
+import net.milosvasic.factory.mail.account.MailAccountValidator
 import java.lang.reflect.Type
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -17,5 +19,29 @@ class MailServerConfigurationFactory : ConfigurationFactory<MailServerConfigurat
         if (configuration.accounts == null) {
             configuration.accounts = LinkedBlockingQueue()
         }
+    }
+
+    override fun validateConfiguration(configuration: MailServerConfiguration): Boolean {
+
+        val validator = MailAccountValidator()
+        configuration.accounts?.forEach { account ->
+
+            try {
+                if (!validator.validate(account)) {
+
+                    log.e("Account is not valid: $account")
+                    return false
+                }
+            } catch (e: IllegalArgumentException) {
+
+                log.e(e)
+                return false
+            }
+        }
+        configuration.accounts?.forEach { account ->
+
+            log.v("Mail account to be created: $account")
+        }
+        return true
     }
 }
