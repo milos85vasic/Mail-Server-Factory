@@ -41,10 +41,10 @@ fun main(args: Array<String>) {
 
         fail(e)
     }
-
 }
 
 private fun initLogging() {
+    tag = BuildInfo.NAME
     val console = ConsoleLogger()
     val filesystem = FilesystemLogger(File("."))
     compositeLogger.addLoggers(console, filesystem)

@@ -7,7 +7,7 @@ import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import kotlin.system.exitProcess
 
-const val tag = BuildInfo.NAME
+var tag = BuildInfo.NAME
 const val localhost = "127.0.0.1"
 val compositeLogger = CompositeLogger()
 
