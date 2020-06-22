@@ -1,4 +1,4 @@
-package net.milosvasic.factory
+package net.milosvasic.factory.mail
 
 import net.milosvasic.factory.application.server_factory.ServerFactory
 

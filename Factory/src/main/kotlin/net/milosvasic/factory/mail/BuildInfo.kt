@@ -1,4 +1,4 @@
-package net.milosvasic.factory
+package net.milosvasic.factory.mail
 
 object BuildInfo {
 
