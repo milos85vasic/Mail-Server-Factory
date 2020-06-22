@@ -13,6 +13,7 @@ object ConfigurationManager : Initialization {
     private val busy = Busy()
     private var configurationPath = String.EMPTY
     private var configuration: Configuration? = null
+    private var configurationFactory: ConfigurationFactory<*>? = null
     private val softwareConfigurations = mutableListOf<SoftwareConfiguration>()
     private val containersConfigurations = mutableListOf<SoftwareConfiguration>()
 
@@ -21,7 +22,11 @@ object ConfigurationManager : Initialization {
         checkInitialized()
         BusyWorker.busy(busy)
         val file = File(configurationPath)
-        configuration = Configuration.obtain(file)
+        if (configurationFactory == null) {
+
+            throw IllegalStateException("Configuration factory was not provided")
+        }
+        configuration = configurationFactory?.obtain(file)
         configuration?.let { config ->
             config.software?.forEach {
                 val path = Configuration.getConfigurationFilePath(it)
@@ -38,6 +43,10 @@ object ConfigurationManager : Initialization {
                 containersConfigurations.add(containerConfiguration)
             }
             printVariableNode(config.variables)
+        }
+        if (configuration == null) {
+
+            throw IllegalStateException("Configuration was not initialised")
         }
         BusyWorker.free(busy)
     }
@@ -68,6 +77,13 @@ object ConfigurationManager : Initialization {
         if (validator.validate(path)) {
             configurationPath = path
         }
+    }
+
+    @Synchronized
+    @Throws(IllegalArgumentException::class, IllegalStateException::class)
+    fun setConfigurationFactory(factory: ConfigurationFactory<*>) {
+        checkInitialized()
+        configurationFactory = factory
     }
 
     @Synchronized

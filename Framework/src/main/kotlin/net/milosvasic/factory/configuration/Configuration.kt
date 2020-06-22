@@ -1,16 +1,11 @@
 package net.milosvasic.factory.configuration
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParseException
 import net.milosvasic.factory.EMPTY
-import net.milosvasic.factory.common.obtain.ObtainParametrized
-import net.milosvasic.factory.log
 import net.milosvasic.factory.remote.Remote
-import net.milosvasic.factory.validation.Validator
 import java.io.File
 import java.util.concurrent.LinkedBlockingQueue
 
-class Configuration(
+abstract class Configuration(
         val name: String = String.EMPTY,
         val remote: Remote,
 
@@ -27,7 +22,7 @@ class Configuration(
         variables
 ) {
 
-    companion object : ObtainParametrized<File, Configuration> {
+    companion object {
 
         fun getConfigurationFilePath(path: String): String {
 
@@ -37,57 +32,6 @@ class Configuration(
                 fullPath += "${File.separator}$defaultConfigurationFile"
             }
             return fullPath
-        }
-
-        @Throws(IllegalArgumentException::class)
-        override fun obtain(vararg param: File): Configuration {
-
-            Validator.Arguments.validateSingle(param)
-            val configurationFile = param[0]
-            if (configurationFile.exists()) {
-
-                log.v("Configuration file: ${configurationFile.absolutePath}")
-                val configurationJson = configurationFile.readText()
-                val variablesDeserializer = VariableNode.getDeserializer()
-                val gsonBuilder = GsonBuilder()
-                gsonBuilder.registerTypeAdapter(VariableNode::class.java, variablesDeserializer)
-                val gson = gsonBuilder.create()
-                try {
-                    val configuration = gson.fromJson(configurationJson, Configuration::class.java)
-                    if (configuration.includes == null) {
-                        configuration.includes = LinkedBlockingQueue()
-                    }
-                    if (configuration.software == null) {
-                        configuration.software = LinkedBlockingQueue()
-                    }
-                    if (configuration.containers == null) {
-                        configuration.containers = LinkedBlockingQueue()
-                    }
-                    if (configuration.variables == null) {
-                        configuration.variables = VariableNode()
-                    }
-                    val iterator = configuration.includes?.iterator()
-                    iterator?.let {
-                        while (it.hasNext()) {
-                            val include = it.next()
-                            val includeFile = File(include)
-                            val includedConfiguration = obtain(includeFile)
-                            configuration.merge(includedConfiguration)
-                        }
-                    }
-                    return configuration
-
-                } catch (e: JsonParseException) {
-
-                    throw IllegalArgumentException("Unable to parse JSON: ${e.message}")
-                } catch (e: IllegalArgumentException) {
-
-                    throw IllegalArgumentException("Unable to parse JSON: ${e.message}")
-                }
-            } else {
-
-                throw IllegalArgumentException("File does not exist: ${configurationFile.absoluteFile}")
-            }
         }
     }
 

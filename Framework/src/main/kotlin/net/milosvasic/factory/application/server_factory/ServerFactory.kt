@@ -66,6 +66,7 @@ abstract class ServerFactory(val arguments: List<String> = listOf()) : Applicati
                 val configurationFile = arguments[0]
                 try {
                     ConfigurationManager.setConfigurationPath(configurationFile)
+                    ConfigurationManager.setConfigurationFactory(getConfigurationFactory())
                     ConfigurationManager.initialize()
 
                     configuration = ConfigurationManager.getConfiguration()
@@ -225,6 +226,8 @@ abstract class ServerFactory(val arguments: List<String> = listOf()) : Applicati
     fun setConnectionProvider(provider: ConnectionProvider) {
         connectionProvider = provider
     }
+
+    protected abstract fun getConfigurationFactory(): ConfigurationFactory<*>
 
     @Throws(IllegalArgumentException::class)
     protected fun getConnection(): Connection {
