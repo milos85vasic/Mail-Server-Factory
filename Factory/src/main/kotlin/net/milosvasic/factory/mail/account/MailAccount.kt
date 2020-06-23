@@ -24,6 +24,8 @@ class MailAccount(
         return mutableListOf()
     }
 
+    fun print() = "$name :: ${getCredentials().value}"
+
     override fun getCredentials() = Password(credentials, getPasswordStrength())
 
     override fun toString(): String {

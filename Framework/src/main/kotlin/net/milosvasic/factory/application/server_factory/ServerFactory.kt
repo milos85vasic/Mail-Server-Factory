@@ -37,8 +37,9 @@ import java.util.concurrent.ConcurrentLinkedQueue
 
 abstract class ServerFactory(val arguments: List<String> = listOf()) : Application, BusyDelegation {
 
+    protected var configuration: Configuration? = null
+
     private val busy = Busy()
-    private var configuration: Configuration? = null
     private val terminators = ConcurrentLinkedQueue<Termination>()
     private val terminationOperation = ServerFactoryTerminationOperation()
     private val subscribers = ConcurrentLinkedQueue<OperationResultListener>()

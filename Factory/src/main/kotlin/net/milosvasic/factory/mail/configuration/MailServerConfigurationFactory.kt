@@ -38,10 +38,6 @@ class MailServerConfigurationFactory : ConfigurationFactory<MailServerConfigurat
                 return false
             }
         }
-        configuration.accounts?.forEach { account ->
-
-            log.v("Mail account to be created: $account")
-        }
         return true
     }
 }
