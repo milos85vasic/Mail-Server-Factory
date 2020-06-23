@@ -13,41 +13,41 @@ class PasswordValidator(private val strength: PasswordStrength) : Validation<Pas
         Validator.Arguments.validateSingle(what)
         val password = what[0].value
 
-        val `a digit must occur at least once` = "(?=.*[0-9])"
-        val `a lower case letter must occur at least once` = "(?=.*[a-z])"
-        val `an upper case letter must occur at least once` = "(?=.*[A-Z])"
-        val `a special character must occur at least once` = "(?=.*[@#$%])"
-        val `no whitespace allowed in the entire string` = "(?=\\S+$)"
-        val `length of password from minimum 8 letters to maximum 16 letters` = "{8,16}"
-        val `length of password from minimum 10 letters to maximum 16 letters` = "{10,16}"
+        val digits = "(?=.*[0-9])"
+        val noWhiteSpace = "(?=\\S+$)"
+        val passwordLengthLong = "{10,16}"
+        val passwordLengthMedium = "{8,16}"
+        val lowercaseLetters = "(?=.*[a-z])"
+        val uppercaseLetters = "(?=.*[A-Z])"
+        val specialCharacters = "(?=.*[@#$%])"
 
         val weak = StringBuilder("(")
-                .append(`a digit must occur at least once`)
-                .append(`a lower case letter must occur at least once`)
-                .append(`no whitespace allowed in the entire string`)
+                .append(digits)
+                .append(lowercaseLetters)
+                .append(noWhiteSpace)
                 .append(".")
-                .append(`length of password from minimum 8 letters to maximum 16 letters`)
+                .append(passwordLengthMedium)
                 .append(")")
                 .toString()
 
         val medium = StringBuilder("(")
-                .append(`a digit must occur at least once`)
-                .append(`a lower case letter must occur at least once`)
-                .append(`no whitespace allowed in the entire string`)
-                .append(`an upper case letter must occur at least once`)
+                .append(digits)
+                .append(lowercaseLetters)
+                .append(noWhiteSpace)
+                .append(uppercaseLetters)
                 .append(".")
-                .append(`length of password from minimum 8 letters to maximum 16 letters`)
+                .append(passwordLengthMedium)
                 .append(")")
                 .toString()
 
         val strong = StringBuilder("(")
-                .append(`a digit must occur at least once`)
-                .append(`a lower case letter must occur at least once`)
-                .append(`no whitespace allowed in the entire string`)
-                .append(`an upper case letter must occur at least once`)
-                .append(`a special character must occur at least once`)
+                .append(digits)
+                .append(lowercaseLetters)
+                .append(noWhiteSpace)
+                .append(uppercaseLetters)
+                .append(specialCharacters)
                 .append(".")
-                .append(`length of password from minimum 10 letters to maximum 16 letters`)
+                .append(passwordLengthLong)
                 .append(")")
                 .toString()
 
