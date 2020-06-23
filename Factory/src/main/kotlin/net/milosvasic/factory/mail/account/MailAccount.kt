@@ -24,7 +24,26 @@ class MailAccount(
         return mutableListOf()
     }
 
-    fun print() = "$name :: ${getCredentials().value}"
+    fun print(): String {
+
+        var suffix = ""
+        val aliases = getAliases()
+        if (aliases.isNotEmpty()) {
+            aliases.forEachIndexed { index, alias ->
+                if (index == 0) {
+                    suffix += ", aliases = [ "
+                }
+                suffix += alias
+                if (index != aliases.lastIndex) {
+                    suffix += ", "
+                }
+                if (index == aliases.lastIndex) {
+                    suffix += " ]"
+                }
+            }
+        }
+        return "$name :: ${getCredentials().value}$suffix"
+    }
 
     override fun getCredentials() = Password(credentials, getPasswordStrength())
 
