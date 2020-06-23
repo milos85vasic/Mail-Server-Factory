@@ -2,6 +2,7 @@ package net.milosvasic.factory.configuration
 
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonParseException
+import com.google.gson.JsonSyntaxException
 import net.milosvasic.factory.common.obtain.ObtainParametrized
 import net.milosvasic.factory.log
 import net.milosvasic.factory.validation.Validator
@@ -49,9 +50,11 @@ abstract class ConfigurationFactory<T : Configuration> : ObtainParametrized<File
 
             } catch (e: JsonParseException) {
 
+                log.e(e)
                 throw IllegalArgumentException("Unable to parse JSON: ${e.message}")
-            } catch (e: IllegalArgumentException) {
+            } catch (e: JsonSyntaxException) {
 
+                log.e(e)
                 throw IllegalArgumentException("Unable to parse JSON: ${e.message}")
             }
         } else {
