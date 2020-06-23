@@ -1,1 +1,1 @@
-include ':Framework', ':Factory', ':Logger:Logger'
+include ':Core:Framework', ':Logger:Logger', ':Factory'
