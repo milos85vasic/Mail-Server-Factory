@@ -1,6 +1,8 @@
 package net.milosvasic.factory.mail.account
 
 import net.milosvasic.factory.account.Account
+import net.milosvasic.factory.account.credentials.password.Password
+import net.milosvasic.factory.account.credentials.password.PasswordStrength
 
 class MailAccount(
 
@@ -22,7 +24,15 @@ class MailAccount(
         return mutableListOf()
     }
 
+    override fun getCredentials() = Password(credentials, getPasswordStrength())
+
     override fun toString(): String {
         return "MailAccount(${printAccount()}, aliases=$aliases)"
+    }
+
+    private fun getPasswordStrength() : PasswordStrength {
+
+        // TODO:
+        return PasswordStrength.WEAK
     }
 }
