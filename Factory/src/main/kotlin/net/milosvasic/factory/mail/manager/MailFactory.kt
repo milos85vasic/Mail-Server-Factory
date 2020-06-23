@@ -1,16 +1,15 @@
 package net.milosvasic.factory.mail.manager
 
-import net.milosvasic.factory.component.Toolkit
-import net.milosvasic.factory.execution.flow.callback.DieOnFailureCallback
-import net.milosvasic.factory.execution.flow.implementation.InstallationStepFlow
+import net.milosvasic.factory.execution.flow.implementation.CommandFlow
+import net.milosvasic.factory.remote.Connection
+import net.milosvasic.factory.terminal.command.EchoCommand
 
-class MailFactory(private val toolkit: Toolkit) {
+class MailFactory(private val connection: Connection) {
 
-    fun getMailCreationFlow(): InstallationStepFlow {
+    fun getMailCreationFlow(): CommandFlow {
 
-        val dieCallback = DieOnFailureCallback()
-        return InstallationStepFlow(toolkit)
-
-                .onFinish(dieCallback)
+        return CommandFlow()
+                .width(connection)
+                .perform(EchoCommand("We are about to create email accounts"))
     }
 }
