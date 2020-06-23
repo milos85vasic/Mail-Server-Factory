@@ -361,7 +361,8 @@ abstract class ServerFactory(val arguments: List<String> = listOf()) : Applicati
         var hostname = String.EMPTY
         configuration?.let {
 
-            val key = "${VariableContext.Server.context}${VariableNode.contextSeparator}${VariableKey.HOSTNAME.key}"
+            val sep = VariableNode.contextSeparator
+            val key = "${VariableContext.Server.context}$sep${VariableKey.HOSTNAME.key}"
             it.getVariableParsed(key)?.let { hName ->
                 hostname = hName as String
             }

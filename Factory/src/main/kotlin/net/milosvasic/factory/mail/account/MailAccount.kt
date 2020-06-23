@@ -30,9 +30,5 @@ class MailAccount(
         return "MailAccount(${printAccount()}, aliases=$aliases)"
     }
 
-    private fun getPasswordStrength() : PasswordStrength {
-
-        // TODO:
-        return PasswordStrength.UNSAFE
-    }
+    private fun getPasswordStrength() = PasswordStrength.UNSAFE
 }
