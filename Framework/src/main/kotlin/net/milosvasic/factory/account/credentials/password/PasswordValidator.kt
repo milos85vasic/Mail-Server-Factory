@@ -2,7 +2,6 @@ package net.milosvasic.factory.account.credentials.password
 
 import net.milosvasic.factory.common.Validation
 import net.milosvasic.factory.validation.Validator
-import java.lang.StringBuilder
 import java.util.regex.Pattern
 
 class PasswordValidator(private val strength: PasswordStrength) : Validation<Password> {
