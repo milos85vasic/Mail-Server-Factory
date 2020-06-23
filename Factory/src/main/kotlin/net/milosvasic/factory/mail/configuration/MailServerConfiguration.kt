@@ -2,6 +2,7 @@ package net.milosvasic.factory.mail.configuration
 
 import net.milosvasic.factory.EMPTY
 import net.milosvasic.factory.configuration.Configuration
+import net.milosvasic.factory.configuration.ConfigurationInclude
 import net.milosvasic.factory.configuration.VariableNode
 import net.milosvasic.factory.mail.account.MailAccount
 import net.milosvasic.factory.remote.Remote
@@ -20,4 +21,14 @@ class MailServerConfiguration(
 ) : Configuration(
 
         name, remote, includes, software, containers, variables
-)
+) {
+
+    override fun merge(configuration: Configuration) {
+        super.merge(configuration)
+        if (configuration is MailServerConfiguration) {
+            configuration.accounts?.let {
+                accounts?.addAll(it)
+            }
+        }
+    }
+}

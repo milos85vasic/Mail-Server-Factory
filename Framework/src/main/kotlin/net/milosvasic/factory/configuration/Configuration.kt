@@ -35,7 +35,7 @@ abstract class Configuration(
         }
     }
 
-    fun merge(configuration: ConfigurationInclude) {
+    open fun merge(configuration: Configuration) {
 
         configuration.includes?.let {
             includes?.addAll(it)
