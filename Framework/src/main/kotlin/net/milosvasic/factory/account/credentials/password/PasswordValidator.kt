@@ -19,6 +19,7 @@ class PasswordValidator(private val strength: PasswordStrength) : Validation<Pas
         val `a special character must occur at least once` = "(?=.*[@#$%])"
         val `no whitespace allowed in the entire string` = "(?=\\S+$)"
         val `length of password from minimum 8 letters to maximum 16 letters` = "{8,16}"
+        val `length of password from minimum 10 letters to maximum 16 letters` = "{10,16}"
 
         val weak = StringBuilder("(")
                 .append(`a digit must occur at least once`)
@@ -29,8 +30,26 @@ class PasswordValidator(private val strength: PasswordStrength) : Validation<Pas
                 .append(")")
                 .toString()
 
-        val medium = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})$"
-        val strong = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\\^&\\*])(?=.{8,})$"
+        val medium = StringBuilder("(")
+                .append(`a digit must occur at least once`)
+                .append(`a lower case letter must occur at least once`)
+                .append(`no whitespace allowed in the entire string`)
+                .append(`an upper case letter must occur at least once`)
+                .append(".")
+                .append(`length of password from minimum 8 letters to maximum 16 letters`)
+                .append(")")
+                .toString()
+
+        val strong = StringBuilder("(")
+                .append(`a digit must occur at least once`)
+                .append(`a lower case letter must occur at least once`)
+                .append(`no whitespace allowed in the entire string`)
+                .append(`an upper case letter must occur at least once`)
+                .append(`a special character must occur at least once`)
+                .append(".")
+                .append(`length of password from minimum 10 letters to maximum 16 letters`)
+                .append(")")
+                .toString()
 
         val parameters = mutableListOf<String>()
         when {

@@ -30,5 +30,5 @@ class MailAccount(
         return "MailAccount(${printAccount()}, aliases=$aliases)"
     }
 
-    private fun getPasswordStrength() = PasswordStrength.WEAK
+    private fun getPasswordStrength() = PasswordStrength.MEDIUM
 }
