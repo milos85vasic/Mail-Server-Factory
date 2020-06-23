@@ -17,13 +17,13 @@ class PasswordValidator(private val strength: PasswordStrength) : Validation<Pas
 
         val parameters = mutableListOf<String>()
         when {
-            strength.value == 1 -> {
+            strength.value == PasswordStrength.WEAK.value -> {
                 parameters.add(weak)
             }
-            strength.value == 2 -> {
+            strength.value == PasswordStrength.MEDIUM.value -> {
                 parameters.add(medium)
             }
-            strength.value >= 3 -> {
+            strength.value >= PasswordStrength.STRONG.value -> {
                 parameters.add(medium)
                 parameters.add(strong)
             }

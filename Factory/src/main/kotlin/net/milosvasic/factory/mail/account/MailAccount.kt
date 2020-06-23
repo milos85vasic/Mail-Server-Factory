@@ -33,6 +33,6 @@ class MailAccount(
     private fun getPasswordStrength() : PasswordStrength {
 
         // TODO:
-        return PasswordStrength.WEAK
+        return PasswordStrength.UNSAFE
     }
 }
