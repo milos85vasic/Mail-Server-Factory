@@ -2,11 +2,15 @@
 
 package net.milosvasic.factory.mail
 
-import net.milosvasic.factory.mail.application.DefaultInitializationHandler
-import net.milosvasic.factory.mail.application.server_factory.ServerFactory
-import net.milosvasic.factory.mail.common.busy.BusyException
-import net.milosvasic.factory.mail.execution.flow.callback.FlowCallback
-import net.milosvasic.factory.mail.execution.flow.implementation.initialization.InitializationFlow
+import net.milosvasic.factory.application.DefaultInitializationHandler
+import net.milosvasic.factory.common.busy.BusyException
+import net.milosvasic.factory.compositeLogger
+import net.milosvasic.factory.execution.flow.callback.FlowCallback
+import net.milosvasic.factory.execution.flow.implementation.initialization.InitializationFlow
+import net.milosvasic.factory.fail
+import net.milosvasic.factory.log
+import net.milosvasic.factory.mail.application.server_factory.MailServerFactory
+import net.milosvasic.factory.tag
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
@@ -14,7 +18,7 @@ import java.io.File
 fun main(args: Array<String>) {
 
     initLogging()
-    val factory = ServerFactory(args.toList())
+    val factory = MailServerFactory(args.toList())
 
     val callback = object : FlowCallback {
         override fun onFinish(success: Boolean) {
@@ -42,10 +46,10 @@ fun main(args: Array<String>) {
 
         fail(e)
     }
-
 }
 
 private fun initLogging() {
+    tag = BuildInfo.NAME
     val console = ConsoleLogger()
     val filesystem = FilesystemLogger(File("."))
     compositeLogger.addLoggers(console, filesystem)
