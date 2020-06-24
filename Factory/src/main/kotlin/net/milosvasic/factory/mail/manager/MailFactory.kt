@@ -1,9 +1,9 @@
 package net.milosvasic.factory.mail.manager
 
 import net.milosvasic.factory.common.obtain.Obtain
-import net.milosvasic.factory.component.database.DatabaseManager
 import net.milosvasic.factory.component.database.DatabaseRequest
 import net.milosvasic.factory.component.database.Type
+import net.milosvasic.factory.component.database.manager.DatabaseManager
 import net.milosvasic.factory.component.database.postgres.Postgres
 import net.milosvasic.factory.component.database.postgres.PostgresInsertCommand
 import net.milosvasic.factory.configuration.ConfigurationManager
