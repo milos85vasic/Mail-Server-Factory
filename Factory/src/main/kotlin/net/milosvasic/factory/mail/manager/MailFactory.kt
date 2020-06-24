@@ -34,8 +34,9 @@ class MailFactory(private val connection: Connection) {
 
                         val email = account.name
                         val domain = email.substring(email.indexOf("@") + 1)
+                        val manager = DatabaseManager.instantiate()
                         val dbRequest = DatabaseRequest(Type.Postgres, "postfix_service")
-                        val database = DatabaseManager.obtain(dbRequest)
+                        val database = manager?.obtain(dbRequest)
                         if (database is Postgres) {
 
                             return PostgresInsertCommand(
@@ -46,7 +47,7 @@ class MailFactory(private val connection: Connection) {
                             )
                         } else {
 
-                            throw IllegalArgumentException("Postgres database required")
+                            throw IllegalArgumentException("Postgres database required: $database")
                         }
                     }
                 }
