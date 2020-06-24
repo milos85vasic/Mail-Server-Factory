@@ -10,6 +10,7 @@ class MailFactory(private val connection: Connection) {
 
         return CommandFlow()
                 .width(connection)
+
                 .perform(EchoCommand("We are about to create email accounts"))
     }
 }
