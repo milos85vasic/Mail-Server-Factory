@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.manager
 
+import net.milosvasic.factory.common.obtain.Obtain
 import net.milosvasic.factory.component.database.DatabaseManager
 import net.milosvasic.factory.component.database.DatabaseRequest
 import net.milosvasic.factory.component.database.Type
@@ -9,6 +10,7 @@ import net.milosvasic.factory.configuration.ConfigurationManager
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.configuration.MailServerConfiguration
 import net.milosvasic.factory.remote.Connection
+import net.milosvasic.factory.terminal.TerminalCommand
 import net.milosvasic.factory.terminal.command.EchoCommand
 
 class MailFactory(private val connection: Connection) {
@@ -26,23 +28,30 @@ class MailFactory(private val connection: Connection) {
 
             configuration.accounts?.forEach { account ->
 
-                val email = account.name
-                val domain = email.substring(email.indexOf("@") + 1)
-                val dbRequest = DatabaseRequest(Type.Postgres, "postfix_service")
-                val database = DatabaseManager.obtain(dbRequest)
-                if (database is Postgres) {
+                val commandObtain = object : Obtain<TerminalCommand> {
 
-                    val command = PostgresInsertCommand(
-                            database,
-                            "postfix_service.public.mail_virtual_domains",
-                            "id, name",
-                            "DEFAULT, '$domain'"
-                    )
-                    flow.perform(command)
-                } else {
+                    override fun obtain(): TerminalCommand {
 
-                    throw IllegalArgumentException("Postgres database required")
+                        val email = account.name
+                        val domain = email.substring(email.indexOf("@") + 1)
+                        val dbRequest = DatabaseRequest(Type.Postgres, "postfix_service")
+                        val database = DatabaseManager.obtain(dbRequest)
+                        if (database is Postgres) {
+
+                            return PostgresInsertCommand(
+                                    database,
+                                    "postfix_service.public.mail_virtual_domains",
+                                    "id, name",
+                                    "DEFAULT, '$domain'"
+                            )
+                        } else {
+
+                            throw IllegalArgumentException("Postgres database required")
+                        }
+                    }
                 }
+
+                flow.perform(commandObtain)
             }
         } else {
 
