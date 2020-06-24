@@ -28,6 +28,7 @@ class MailServerFactory(arguments: List<String> = listOf()) : ServerFactory(argu
         super.run()
     }
 
+    @Throws(IllegalStateException::class, IllegalArgumentException::class)
     override fun getTerminationFlow(connection: Connection): FlowBuilder<*, *, *> {
 
         val mailFactory = MailFactory(connection)
