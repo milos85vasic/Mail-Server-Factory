@@ -50,7 +50,7 @@ class MailFactory(private val connection: Connection) {
 
                         if (dbName == null || dbName == String.EMPTY) {
 
-                            throw IllegalStateException("No variable data available for: $dbNameKey")
+                            throw IllegalStateException("No data available for system variable: $dbNameKey")
                         }
 
                         val dbRequest = DatabaseRequest(Type.Postgres, dbName as String)
