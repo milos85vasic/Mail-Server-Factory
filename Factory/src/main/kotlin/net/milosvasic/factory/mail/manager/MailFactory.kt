@@ -35,6 +35,7 @@ class MailFactory(private val connection: Connection) {
                         val email = account.name
                         val domain = email.substring(email.indexOf("@") + 1)
                         val manager = DatabaseManager.instantiate()
+                        // val dbName = configuration.getVariableParsed()
                         val dbRequest = DatabaseRequest(Type.Postgres, "postfix_service")
                         val database = manager?.obtain(dbRequest)
                         if (database is Postgres) {
