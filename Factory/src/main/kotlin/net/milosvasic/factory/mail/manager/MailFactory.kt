@@ -41,7 +41,7 @@ class MailFactory(private val connection: Connection) {
 
                             return PostgresInsertCommand(
                                     database,
-                                    "postfix_service.public.mail_virtual_domains",
+                                    "mail_virtual_domains",
                                     "id, name",
                                     "DEFAULT, '$domain'"
                             )
