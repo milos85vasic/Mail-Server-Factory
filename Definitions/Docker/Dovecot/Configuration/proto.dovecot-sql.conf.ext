@@ -1,5 +1,5 @@
 driver = pgsql
-connect = host=postgres_database port=5432 dbname={{SERVER.POSTFIX.DBNAME}} user={{DB.DB_USER}} password={{DB.DB_PASSWORD}}
+connect = host=postgres_database port=5432 dbname={{SERVER.POSTFIX.DB_NAME}} user={{DB.DB_USER}} password={{DB.DB_PASSWORD}}
 default_pass_scheme = PLAIN
 password_query = SELECT email as user, password FROM mail_view_users WHERE email='%u';
 

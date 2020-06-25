@@ -2,8 +2,8 @@
   "variables": {
     "SERVER": {
       "POSTFIX": {
-        "DBHOST": "127.0.0.1",
-        "DBNAME": "postfix_service"
+        "DB_HOST": "127.0.0.1",
+        "DB_NAME": "postfix_service"
       }
     }
   },

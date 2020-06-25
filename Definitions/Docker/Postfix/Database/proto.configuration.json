@@ -1,10 +1,10 @@
 {
   "TYPE": "Postgres",
-  "HOST": "{{SERVER.POSTFIX.DBHOST}}",
+  "HOST": "{{SERVER.POSTFIX.DB_HOST}}",
   "PORT": "{{DB.DB_PORT}}",
   "USER": "{{DB.DB_USER}}",
   "PASSWORD": "{{DB.DB_PASSWORD}}",
-  "NAME": "{{SERVER.POSTFIX.DBNAME}}",
+  "NAME": "{{SERVER.POSTFIX.DB_NAME}}",
   "SQL": [
     "init.sql"
   ]
