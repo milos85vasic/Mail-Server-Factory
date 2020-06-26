@@ -8,9 +8,7 @@ import net.milosvasic.factory.component.database.manager.DatabaseManager
 import net.milosvasic.factory.component.database.postgres.Postgres
 import net.milosvasic.factory.component.database.postgres.PostgresInsertCommand
 import net.milosvasic.factory.configuration.ConfigurationManager
-import net.milosvasic.factory.configuration.variable.Context
-import net.milosvasic.factory.configuration.variable.Key
-import net.milosvasic.factory.configuration.variable.Node
+import net.milosvasic.factory.configuration.variable.*
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.configuration.MailServerConfiguration
 import net.milosvasic.factory.remote.Connection
@@ -37,23 +35,23 @@ class MailFactory(private val connection: Connection) {
                     @Throws(IllegalStateException::class)
                     override fun obtain(): TerminalCommand {
 
-                        val keyDbName = Key.DbName.key
-                        val serverCtx = Context.Server.context
-                        val postfixCtx = Context.Postfix.context
-                        val sep = Node.contextSeparator
-                        val dbNameKey = "$serverCtx$sep$postfixCtx$sep$keyDbName"
+                        val path = PathBuilder()
+                                .addContext(Context.Server)
+                                .addContext(Context.Postfix)
+                                .setKey(Key.DbName)
+                                .build()
 
                         val email = account.name
                         val domain = email.substring(email.indexOf("@") + 1)
                         val manager = DatabaseManager.instantiate()
-                        val dbName = configuration.getVariableParsed(dbNameKey)
+                        val dbName = Variable.get(path)
 
-                        if (dbName == null || dbName == String.EMPTY) {
+                        if (dbName == String.EMPTY) {
 
-                            throw IllegalStateException("No data available for system variable: $dbNameKey")
+                            throw IllegalStateException("No data available for system variable: ${path.getPath()}")
                         }
 
-                        val dbRequest = DatabaseRequest(Type.Postgres, dbName as String)
+                        val dbRequest = DatabaseRequest(Type.Postgres, dbName)
                         val database = manager?.obtain(dbRequest)
                         if (database is Postgres) {
 
