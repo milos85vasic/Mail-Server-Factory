@@ -8,9 +8,9 @@ import net.milosvasic.factory.component.database.manager.DatabaseManager
 import net.milosvasic.factory.component.database.postgres.Postgres
 import net.milosvasic.factory.component.database.postgres.PostgresInsertCommand
 import net.milosvasic.factory.configuration.ConfigurationManager
-import net.milosvasic.factory.configuration.VariableContext
-import net.milosvasic.factory.configuration.VariableKey
-import net.milosvasic.factory.configuration.VariableNode
+import net.milosvasic.factory.configuration.variable.Context
+import net.milosvasic.factory.configuration.variable.Key
+import net.milosvasic.factory.configuration.variable.Node
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
 import net.milosvasic.factory.mail.configuration.MailServerConfiguration
 import net.milosvasic.factory.remote.Connection
@@ -37,10 +37,10 @@ class MailFactory(private val connection: Connection) {
                     @Throws(IllegalStateException::class)
                     override fun obtain(): TerminalCommand {
 
-                        val keyDbName = VariableKey.DbName.key
-                        val serverCtx = VariableContext.Server.context
-                        val postfixCtx = VariableContext.Postfix.context
-                        val sep = VariableNode.contextSeparator
+                        val keyDbName = Key.DbName.key
+                        val serverCtx = Context.Server.context
+                        val postfixCtx = Context.Postfix.context
+                        val sep = Node.contextSeparator
                         val dbNameKey = "$serverCtx$sep$postfixCtx$sep$keyDbName"
 
                         val email = account.name
