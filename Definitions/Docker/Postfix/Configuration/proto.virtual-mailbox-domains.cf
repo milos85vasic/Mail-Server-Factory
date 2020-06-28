@@ -1,5 +1,5 @@
 user = {{DB.DB_USER}}
 password = {{DB.DB_PASSWORD}}
-hosts = postgres_database
+hosts = {{SERVICE.DATABASE.NAME}}
 dbname = {{DB.DB_DIRECTORY}}
 query = SELECT 1 FROM {{DB.TABLE_DOMAINS}} WHERE name='%s'

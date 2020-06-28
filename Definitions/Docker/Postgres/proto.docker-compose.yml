@@ -1,9 +1,9 @@
 version: "3.7"
 
 services:
-  postgres_database:
+  {{SERVICE.DATABASE.NAME}}:
     image: library/postgres:12
-    container_name: postgres_database
+    container_name: {{SERVICE.DATABASE.NAME}}
     hostname: database.{{SERVER.DOMAIN}}
     restart: always
     ports:

@@ -7,7 +7,7 @@
         "Docker": [
           {
             "type": "conditionCheck",
-            "value": "postgres_database"
+            "value": "{{SERVICE.DATABASE.NAME}}"
           },
           {
             "type": "portRequired",
@@ -23,7 +23,7 @@
           },
           {
             "type": "check",
-            "value": "postgres_database"
+            "value": "{{SERVICE.DATABASE.NAME}}"
           },
           {
             "type": "command",
@@ -39,7 +39,7 @@
           },
           {
             "type": "check",
-            "value": "postgres_database"
+            "value": "{{SERVICE.DATABASE.NAME}}"
           }
         ]
       }

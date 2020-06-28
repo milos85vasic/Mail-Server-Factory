@@ -7,7 +7,7 @@ postfixLog=/var/log/postfix.start.log
 echo "Starting Postfix" > ${postfixLog}
 
 echo "Checking database port: $dbPort" >> ${postfixLog}
-if echo "^C" | telnet postgres_database ${dbPort} | grep "Connected"
+if echo "^C" | telnet {{SERVICE.DATABASE.NAME}} ${dbPort} | grep "Connected"
 then
     echo "Database process is bound to port: $dbPort" >> ${postfixLog}
 else

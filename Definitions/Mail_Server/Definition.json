@@ -7,6 +7,11 @@
       },
       "MAILBOXES_CAPACITY": "30G"
     },
+    "SERVICE": {
+      "DATABASE": {
+        "NAME": "postmaster_db"
+      }
+    },
     "DB": {
       "TYPE": "Postgres",
       "HOST": "127.0.0.1",
