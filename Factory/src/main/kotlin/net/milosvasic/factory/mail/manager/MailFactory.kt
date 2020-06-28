@@ -39,9 +39,9 @@ class MailFactory(private val connection: Connection) {
                     override fun obtain(): TerminalCommand {
 
                         val path = PathBuilder()
-                                .addContext(Context.Server)
-                                .addContext(Context.Postfix)
-                                .setKey(Key.DbName)
+                                .addContext(Context.Service)
+                                .addContext(Context.Database)
+                                .setKey(Key.Name)
                                 .build()
 
                         val email = account.name
