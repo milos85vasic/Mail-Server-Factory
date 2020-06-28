@@ -1,10 +1,10 @@
 {
   "TYPE": "{{DB.TYPE}}",
-  "HOST": "{{SERVER.POSTFIX.DB_HOST}}",
+  "HOST": "{{DB.HOST}}",
   "PORT": "{{DB.DB_PORT}}",
   "USER": "{{DB.DB_USER}}",
   "PASSWORD": "{{DB.DB_PASSWORD}}",
-  "NAME": "{{SERVER.POSTFIX.DB_NAME}}",
+  "NAME": "{{DB.DB_DIRECTORY}}",
   "SQL": [
     "init.sql"
   ]

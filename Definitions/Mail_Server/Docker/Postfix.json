@@ -1,12 +1,4 @@
 {
-  "variables": {
-    "SERVER": {
-      "POSTFIX": {
-        "DB_HOST": "127.0.0.1",
-        "DB_NAME": "postfix_service"
-      }
-    }
-  },
   "software": [
     {
       "name": "Mail server stack: Postfix",

@@ -9,6 +9,8 @@
     },
     "DB": {
       "TYPE": "Postgres",
+      "HOST": "127.0.0.1",
+      "DB_DIRECTORY": "mail_directory",
       "VIEW_USERS": "mail_view_users",
       "TABLE_USERS": "mail_virtual_users",
       "VIEW_ALIASES": "mail_view_aliases",
