@@ -58,9 +58,16 @@ class MailFactory(private val connection: Connection) {
                         val database = manager?.obtain(dbRequest)
                         if (database is Postgres) {
 
+                            val tablePath = PathBuilder()
+                                    .addContext(Context.Database)
+                                    .setKey(Key.TableDomains)
+                                    .build()
+
+                            val table = Variable.get(tablePath)
+
                             return PostgresInsertCommand(
                                     database,
-                                    "mail_virtual_domains",
+                                    table,
                                     "id, name",
                                     "DEFAULT, '$domain'"
                             )

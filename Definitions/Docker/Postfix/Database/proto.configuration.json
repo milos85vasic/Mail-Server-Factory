@@ -1,5 +1,5 @@
 {
-  "TYPE": "Postgres",
+  "TYPE": "{{DB.TYPE}}",
   "HOST": "{{SERVER.POSTFIX.DB_HOST}}",
   "PORT": "{{DB.DB_PORT}}",
   "USER": "{{DB.DB_USER}}",

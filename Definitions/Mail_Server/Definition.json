@@ -5,8 +5,13 @@
         "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca",
         "CERTIFICATES": "/etc/ssl/certs"
       },
-
       "MAILBOXES_CAPACITY": "30G"
+    },
+    "DB": {
+      "TYPE": "Postgres",
+      "TABLE_DOMAINS": "mail_virtual_domains",
+      "TABLE_USERS": "mail_virtual_users",
+      "TABLE_ALIASES": "mail_virtual_aliases"
     }
   },
   "includes": [

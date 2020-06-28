@@ -2,4 +2,4 @@ user = {{DB.DB_USER}}
 password = {{DB.DB_PASSWORD}}
 hosts = postgres_database
 dbname = {{SERVER.POSTFIX.DB_NAME}}
-query = SELECT 1 FROM mail_virtual_domains WHERE name='%s'
+query = SELECT 1 FROM {{DB.TABLE_DOMAINS}} WHERE name='%s'

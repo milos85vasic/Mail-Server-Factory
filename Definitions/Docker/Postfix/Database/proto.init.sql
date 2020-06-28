@@ -1,0 +1,34 @@
+CREATE TABLE IF NOT EXISTS {{DB.TABLE_DOMAINS}}
+(
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS {{DB.TABLE_USERS}}
+(
+    id        SERIAL PRIMARY KEY,
+    domain_id INT          NOT NULL,
+    "user"    VARCHAR(40)  NOT NULL,
+    password  VARCHAR(128) NOT NULL,
+    CONSTRAINT UNIQUE_EMAIL UNIQUE (domain_id, "user"),
+    FOREIGN KEY (domain_id) REFERENCES {{DB.TABLE_DOMAINS}} (id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS {{DB.TABLE_ALIASES}}
+(
+    id          SERIAL PRIMARY KEY,
+    domain_id   INT         NOT NULL,
+    source      VARCHAR(40) NOT NULL,
+    destination VARCHAR(80) NOT NULL,
+    FOREIGN KEY (domain_id) REFERENCES {{DB.TABLE_DOMAINS}} (id) ON DELETE CASCADE
+);
+
+CREATE VIEW mail_view_users AS
+SELECT CONCAT({{DB.TABLE_USERS}}.user, '@', {{DB.TABLE_DOMAINS}}.name) AS email, {{DB.TABLE_USERS}}.password
+FROM {{DB.TABLE_USERS}}
+         LEFT JOIN {{DB.TABLE_DOMAINS}} ON {{DB.TABLE_USERS}}.domain_id = {{DB.TABLE_DOMAINS}}.id;
+
+CREATE VIEW mail_view_aliases AS
+SELECT CONCAT({{DB.TABLE_ALIASES}}.source, '@', {{DB.TABLE_DOMAINS}}.name) AS email, destination
+FROM {{DB.TABLE_ALIASES}}
+         LEFT JOIN {{DB.TABLE_DOMAINS}} ON {{DB.TABLE_ALIASES}}.domain_id = {{DB.TABLE_DOMAINS}}.id;
