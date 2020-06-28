@@ -16,7 +16,7 @@ else
 fi
 
 echo "Checking Dovecot SASL port: $dovecotSaslPort" >> ${postfixLog}
-if echo "^C" | telnet dovecot_service ${dovecotSaslPort} | grep "Connected"
+if echo "^C" | telnet {{SERVICE.MAIL_RECEIVE.NAME}} ${dovecotSaslPort} | grep "Connected"
 then
     echo "Dovecot process is bound to port: $dovecotSaslPort" >> ${postfixLog}
 else
@@ -25,7 +25,7 @@ else
 fi
 
 echo "Checking Dovecot LMTP port: $dovecotLmtpPort" >> ${postfixLog}
-if echo "^C" | telnet dovecot_service ${dovecotLmtpPort} | grep "Connected"
+if echo "^C" | telnet {{SERVICE.MAIL_RECEIVE.NAME}} ${dovecotLmtpPort} | grep "Connected"
 then
     echo "Dovecot process is bound to port: $dovecotLmtpPort" >> ${postfixLog}
 else

@@ -7,7 +7,7 @@
         "Docker": [
           {
             "type": "conditionCheck",
-            "value": "postfix_service"
+            "value": "{{SERVICE.MAIL_SEND.NAME}}"
           },
           {
             "type": "command",
@@ -39,7 +39,7 @@
           },
           {
             "type": "check",
-            "value": "postfix_service"
+            "value": "{{SERVICE.MAIL_SEND.NAME}}"
           },
           {
             "type": "portCheck",

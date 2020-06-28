@@ -1,10 +1,10 @@
 version: "3.7"
 
 services:
-  dovecot_service:
+  {{SERVICE.MAIL_RECEIVE.NAME}}:
     build: .
-    container_name: dovecot_service
-    hostname: dovecot.{{SERVER.DOMAIN}}
+    container_name: {{SERVICE.MAIL_RECEIVE.NAME}}
+    hostname: {{SERVICE.MAIL_RECEIVE.NAME}}.{{SERVER.DOMAIN}}
     restart: always
     ports:
       - {{SERVER.DOVECOT.PORTS.IMAPS}}:993

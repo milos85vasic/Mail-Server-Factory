@@ -10,6 +10,12 @@
     "SERVICE": {
       "DATABASE": {
         "NAME": "postmaster_db"
+      },
+      "MAIL_SEND": {
+        "NAME": "postmaster_send"
+      },
+      "MAIL_RECEIVE": {
+        "NAME": "postmaster_receive"
       }
     },
     "DB": {

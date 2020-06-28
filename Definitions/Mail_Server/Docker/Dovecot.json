@@ -19,7 +19,7 @@
         "Docker": [
           {
             "type": "conditionCheck",
-            "value": "dovecot_service"
+            "value": "{{SERVICE.MAIL_RECEIVE.NAME}}"
           },
           {
             "type": "command",
@@ -47,7 +47,7 @@
           },
           {
             "type": "check",
-            "value": "dovecot_service"
+            "value": "{{SERVICE.MAIL_RECEIVE.NAME}}"
           },
           {
             "type": "portCheck",
