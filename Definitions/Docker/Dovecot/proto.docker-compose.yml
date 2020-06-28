@@ -9,7 +9,7 @@ services:
     ports:
       - {{SERVER.DOVECOT.PORTS.IMAPS}}:993
     networks:
-      - postmaster_network
+      - {{SERVICE.NETWORK.NAME}}
     volumes:
       - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Maildir:/maildir
@@ -18,5 +18,5 @@ services:
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Log:/var/log/dovecot
 
 networks:
-  postmaster_network:
+  {{SERVICE.NETWORK.NAME}}:
     external: true

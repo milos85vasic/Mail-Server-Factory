@@ -9,7 +9,7 @@ services:
     ports:
       - 465:465
     networks:
-      - postmaster_network
+      - {{SERVICE.NETWORK.NAME}}
     volumes:
       - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Data:/var/lib/postfix
@@ -19,5 +19,5 @@ services:
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Log:/var/log/postfix
 
 networks:
-  postmaster_network:
+  {{SERVICE.NETWORK.NAME}}:
     external: true

@@ -16,6 +16,9 @@
       },
       "MAIL_RECEIVE": {
         "NAME": "postmaster_receive"
+      },
+      "NETWORK": {
+        "NAME": "postmaster_network"
       }
     },
     "DB": {
