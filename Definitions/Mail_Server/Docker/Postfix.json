@@ -19,7 +19,7 @@
           },
           {
             "type": "portCheck",
-            "value": "{{DB.DB_PORT}}"
+            "value": "{{DB.PORT_EXPOSED}}"
           },
           {
             "type": "deploy",

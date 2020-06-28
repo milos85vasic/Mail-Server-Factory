@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dbPort=5432
+dbPort={{DB.PORT}}
 dovecotLog=/var/log/dovecot.start.log
 echo "Starting Dovecot" > ${dovecotLog}
 

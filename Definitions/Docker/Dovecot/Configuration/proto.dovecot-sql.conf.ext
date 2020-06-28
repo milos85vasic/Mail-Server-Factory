@@ -1,5 +1,5 @@
 driver = pgsql
-connect = host={{SERVICE.DATABASE.NAME}} port=5432 dbname={{DB.DB_DIRECTORY}} user={{DB.DB_USER}} password={{DB.DB_PASSWORD}}
+connect = host={{SERVICE.DATABASE.NAME}} port={{DB.PORT}} dbname={{DB.DB_DIRECTORY}} user={{DB.DB_USER}} password={{DB.DB_PASSWORD}}
 default_pass_scheme = PLAIN
 password_query = SELECT email as user, password FROM {{DB.VIEW_USERS}} WHERE email='%u';
 

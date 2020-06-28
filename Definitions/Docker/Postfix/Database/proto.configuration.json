@@ -1,7 +1,7 @@
 {
   "TYPE": "{{DB.TYPE}}",
   "HOST": "{{DB.HOST}}",
-  "PORT": "{{DB.DB_PORT}}",
+  "PORT": "{{DB.PORT_EXPOSED}}",
   "USER": "{{DB.DB_USER}}",
   "PASSWORD": "{{DB.DB_PASSWORD}}",
   "NAME": "{{DB.DB_DIRECTORY}}",
