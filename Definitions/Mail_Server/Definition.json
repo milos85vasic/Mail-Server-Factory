@@ -11,12 +11,12 @@
       "TYPE": "Postgres",
       "HOST": "127.0.0.1",
       "DB_DIRECTORY": "mail_directory",
-      "VIEW_USERS": "mail_view_users",
+      "TABLE_DOMAINS": "mail_virtual_domains",
       "TABLE_USERS": "mail_virtual_users",
-      "VIEW_ALIASES": "mail_view_aliases",
       "TABLE_ALIASES": "mail_virtual_aliases",
       "VIEW_DOMAINS": "mail_view_domains",
-      "TABLE_DOMAINS": "mail_virtual_domains"
+      "VIEW_USERS": "mail_view_users",
+      "VIEW_ALIASES": "mail_view_aliases"
     }
   },
   "includes": [
