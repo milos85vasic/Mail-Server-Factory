@@ -1,8 +1,10 @@
 {
   "variables": {
-    "DB": {
-      "DB_USER": "postgres",
-      "DB_PASSWORD": "Postgres123"
+    "SERVICE": {
+      "DATABASE": {
+        "DB_USER": "postgres",
+        "DB_PASSWORD": "Postgres123"
+      }
     }
   }
 }
