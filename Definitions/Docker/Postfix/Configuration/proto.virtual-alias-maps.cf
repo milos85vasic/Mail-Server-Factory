@@ -2,4 +2,4 @@ user = {{DB.DB_USER}}
 password = {{DB.DB_PASSWORD}}
 hosts = postgres_database
 dbname = {{SERVER.POSTFIX.DB_NAME}}
-query = SELECT destination FROM mail_view_aliases WHERE email='%s'
+query = SELECT destination FROM {{DB.VIEW_ALIASES}} WHERE email='%s'
