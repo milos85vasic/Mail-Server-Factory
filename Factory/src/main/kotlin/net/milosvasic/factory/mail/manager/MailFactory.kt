@@ -59,6 +59,7 @@ class MailFactory(private val connection: Connection) {
                         if (database is Postgres) {
 
                             val tablePath = PathBuilder()
+                                    .addContext(Context.Service)
                                     .addContext(Context.Database)
                                     .setKey(Key.TableDomains)
                                     .build()

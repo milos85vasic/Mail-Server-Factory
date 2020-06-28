@@ -11,7 +11,7 @@
           },
           {
             "type": "portRequired",
-            "value": "{{DB.PORT_EXPOSED}}"
+            "value": "{{SERVICE.DATABASE.PORT_EXPOSED}}"
           },
           {
             "type": "deploy",

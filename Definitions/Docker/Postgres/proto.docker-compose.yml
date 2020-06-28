@@ -7,12 +7,12 @@ services:
     hostname: database.{{SERVER.DOMAIN}}
     restart: always
     ports:
-      - {{DB.PORT_EXPOSED}}:{{DB.PORT}}
+      - {{SERVICE.DATABASE.PORT_EXPOSED}}:{{SERVICE.DATABASE.PORT}}
     networks:
       - {{SERVICE.NETWORK.NAME}}
     environment:
-      POSTGRES_USER: {{DB.DB_USER}}
-      POSTGRES_PASSWORD: {{DB.DB_PASSWORD}}
+      POSTGRES_USER: {{SERVICE.DATABASE.DB_USER}}
+      POSTGRES_PASSWORD: {{SERVICE.DATABASE.DB_PASSWORD}}
       PGDATA: /Server/Postgres/Database
     volumes:
       - {{SERVER.SERVER_HOME}}/Server/Postgres/Database:/Server/Postgres/Database
