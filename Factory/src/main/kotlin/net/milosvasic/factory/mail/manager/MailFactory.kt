@@ -9,7 +9,6 @@ import net.milosvasic.factory.component.database.postgres.Postgres
 import net.milosvasic.factory.component.database.postgres.PostgresInsertCommand
 import net.milosvasic.factory.configuration.ConfigurationManager
 import net.milosvasic.factory.configuration.variable.Context
-import net.milosvasic.factory.configuration.variable.Key
 import net.milosvasic.factory.configuration.variable.PathBuilder
 import net.milosvasic.factory.configuration.variable.Variable
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
