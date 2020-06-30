@@ -27,7 +27,7 @@
           },
           {
             "type": "portRequired",
-            "value": "{{SERVER.DOVECOT.PORTS.IMAPS}}"
+            "value": "{{SERVICE.MAIL_SEND.PORTS.PORT_EXPOSED_IMAPS}}"
           },
           {
             "type": "portCheck",
@@ -51,7 +51,7 @@
           },
           {
             "type": "portCheck",
-            "value": "{{SERVER.DOVECOT.PORTS.IMAPS}}"
+            "value": "{{SERVICE.MAIL_SEND.PORTS.PORT_EXPOSED_IMAPS}}"
           }
         ]
       }

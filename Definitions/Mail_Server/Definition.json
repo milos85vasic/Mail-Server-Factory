@@ -23,7 +23,13 @@
         "VIEW_ALIASES": "mail_view_aliases"
       },
       "MAIL_SEND": {
-        "NAME": "postmaster_send"
+        "NAME": "postmaster_send",
+        "PORTS": {
+          "PORT_EXPOSED_IMAP": "3143",
+          "PORT_EXPOSED_IMAPS": "3993",
+          "PORT_EXPOSED_POP": "3110",
+          "PORT_EXPOSED_POP3S": "3995"
+        }
       },
       "MAIL_RECEIVE": {
         "NAME": "postmaster_receive"
