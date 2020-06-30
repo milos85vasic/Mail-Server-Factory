@@ -1,16 +1,4 @@
 {
-  "variables": {
-    "SERVER": {
-      "DOVECOT": {
-        "PORTS": {
-          "POP": "3110",
-          "IMAP": "3143",
-          "POP3S": "3995",
-          "IMAPS": "3993"
-        }
-      }
-    }
-  },
   "software": [
     {
       "name": "Mail server stack: Dovecot",
