@@ -2,8 +2,8 @@
   "variables": {
     "SERVICE": {
       "DATABASE": {
-        "DB_USER": "postgres",
-        "DB_PASSWORD": "Postgres123"
+        "USER": "postgres",
+        "PASSWORD": "Postgres123"
       }
     }
   }

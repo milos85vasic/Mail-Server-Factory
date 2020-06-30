@@ -18,6 +18,8 @@ import net.milosvasic.factory.remote.Connection
 import net.milosvasic.factory.terminal.TerminalCommand
 import net.milosvasic.factory.terminal.command.EchoCommand
 
+typealias MKey = net.milosvasic.factory.mail.configuration.variable.Key
+
 class MailFactory(private val connection: Connection) {
 
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
@@ -41,7 +43,7 @@ class MailFactory(private val connection: Connection) {
                         val path = PathBuilder()
                                 .addContext(Context.Service)
                                 .addContext(Context.Database)
-                                .setKey(Key.DbDirectory)
+                                .setKey(MKey.DbDirectory)
                                 .build()
 
                         val email = account.name
@@ -61,7 +63,7 @@ class MailFactory(private val connection: Connection) {
                             val tablePath = PathBuilder()
                                     .addContext(Context.Service)
                                     .addContext(Context.Database)
-                                    .setKey(Key.TableDomains)
+                                    .setKey(MKey.TableDomains)
                                     .build()
 
                             val table = Variable.get(tablePath)

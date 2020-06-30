@@ -11,8 +11,8 @@ services:
     networks:
       - {{SERVICE.NETWORK.NAME}}
     environment:
-      POSTGRES_USER: {{SERVICE.DATABASE.DB_USER}}
-      POSTGRES_PASSWORD: {{SERVICE.DATABASE.DB_PASSWORD}}
+      POSTGRES_USER: {{SERVICE.DATABASE.USER}}
+      POSTGRES_PASSWORD: {{SERVICE.DATABASE.PASSWORD}}
       PGDATA: /Server/Postgres/Database
     volumes:
       - {{SERVER.SERVER_HOME}}/Server/Postgres/Database:/Server/Postgres/Database
