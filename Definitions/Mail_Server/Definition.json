@@ -4,8 +4,7 @@
       "CERTIFICATION": {
         "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca",
         "CERTIFICATES": "/etc/ssl/certs"
-      },
-      "MAILBOXES_CAPACITY": "30G"
+      }
     },
     "SERVICE": {
       "DATABASE": {
@@ -34,7 +33,8 @@
         }
       },
       "MAIL_RECEIVE": {
-        "NAME": "postmaster_receive"
+        "NAME": "postmaster_receive",
+        "MAILBOXES_CAPACITY": "30G"
       },
       "NETWORK": {
         "NAME": "postmaster_network"
