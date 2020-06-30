@@ -41,7 +41,7 @@ class MailFactory(private val connection: Connection) {
                         val path = PathBuilder()
                                 .addContext(Context.Service)
                                 .addContext(Context.Database)
-                                .setKey(Key.Name)
+                                .setKey(Key.DbDirectory)
                                 .build()
 
                         val email = account.name
