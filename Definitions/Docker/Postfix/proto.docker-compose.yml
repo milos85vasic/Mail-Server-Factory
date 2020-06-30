@@ -1,15 +1,15 @@
 version: "3.7"
 
 services:
-  postfix_service:
+  {{SERVICE.MAIL_SEND.NAME}}:
     build: .
-    container_name: postfix_service
-    hostname: postfix.{{SERVER.DOMAIN}}
+    container_name: {{SERVICE.MAIL_SEND.NAME}}
+    hostname: {{SERVICE.MAIL_SEND.NAME}}.{{SERVER.DOMAIN}}
     restart: always
     ports:
       - 465:465
     networks:
-      - postmaster_network
+      - {{SERVICE.NETWORK.NAME}}
     volumes:
       - {{SERVER.CERTIFICATION.CERTIFICATES}}:/certificates
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Data:/var/lib/postfix
@@ -19,5 +19,5 @@ services:
       - {{SERVER.SERVER_HOME}}/Server/Postfix/Log:/var/log/postfix
 
 networks:
-  postmaster_network:
+  {{SERVICE.NETWORK.NAME}}:
     external: true

@@ -1,8 +1,8 @@
 driver = pgsql
-connect = host=postgres_database port=5432 dbname={{SERVER.POSTFIX.DB_NAME}} user={{DB.DB_USER}} password={{DB.DB_PASSWORD}}
+connect = host={{SERVICE.DATABASE.NAME}} port={{SERVICE.DATABASE.PORTS.PORT}} dbname={{SERVICE.DATABASE.DB_DIRECTORY}} user={{SERVICE.DATABASE.USER}} password={{SERVICE.DATABASE.PASSWORD}}
 default_pass_scheme = PLAIN
-password_query = SELECT email as user, password FROM mail_view_users WHERE email='%u';
+password_query = SELECT email as user, password FROM {{SERVICE.DATABASE.VIEW_USERS}} WHERE email='%u';
 
 # TODO:
-# user_query = SELECT home, uid, gid FROM mail_view_users WHERE userid = '%n' AND domain = '%d'
+# user_query = SELECT home, uid, gid FROM {{SERVICE.DATABASE.VIEW_USERS}} WHERE userid = '%n' AND domain = '%d'
 # iterate_query = SELECT username AS user FROM users

@@ -4,9 +4,41 @@
       "CERTIFICATION": {
         "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca",
         "CERTIFICATES": "/etc/ssl/certs"
+      }
+    },
+    "SERVICE": {
+      "DATABASE": {
+        "NAME": "postmaster_db",
+        "PORTS": {
+          "PORT": "5432",
+          "PORT_EXPOSED": "35432"
+        },
+        "TYPE": "Postgres",
+        "HOST": "127.0.0.1",
+        "DB_DIRECTORY": "mail_directory",
+        "TABLE_DOMAINS": "mail_virtual_domains",
+        "TABLE_USERS": "mail_virtual_users",
+        "TABLE_ALIASES": "mail_virtual_aliases",
+        "VIEW_DOMAINS": "mail_view_domains",
+        "VIEW_USERS": "mail_view_users",
+        "VIEW_ALIASES": "mail_view_aliases"
       },
-
-      "MAILBOXES_CAPACITY": "30G"
+      "MAIL_SEND": {
+        "NAME": "postmaster_send",
+        "PORTS": {
+          "PORT_EXPOSED_IMAP": "3143",
+          "PORT_EXPOSED_IMAPS": "3993",
+          "PORT_EXPOSED_POP": "3110",
+          "PORT_EXPOSED_POP3S": "3995"
+        }
+      },
+      "MAIL_RECEIVE": {
+        "NAME": "postmaster_receive",
+        "MAILBOXES_CAPACITY": "30G"
+      },
+      "NETWORK": {
+        "NAME": "postmaster_network"
+      }
     }
   },
   "includes": [

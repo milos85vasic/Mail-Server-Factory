@@ -1,16 +1,4 @@
 {
-  "variables": {
-    "SERVER": {
-      "DOVECOT": {
-        "PORTS": {
-          "POP": "3110",
-          "IMAP": "3143",
-          "POP3S": "3995",
-          "IMAPS": "3993"
-        }
-      }
-    }
-  },
   "software": [
     {
       "name": "Mail server stack: Dovecot",
@@ -19,7 +7,7 @@
         "Docker": [
           {
             "type": "conditionCheck",
-            "value": "dovecot_service"
+            "value": "{{SERVICE.MAIL_RECEIVE.NAME}}"
           },
           {
             "type": "command",
@@ -27,11 +15,11 @@
           },
           {
             "type": "portRequired",
-            "value": "{{SERVER.DOVECOT.PORTS.IMAPS}}"
+            "value": "{{SERVICE.MAIL_SEND.PORTS.PORT_EXPOSED_IMAPS}}"
           },
           {
             "type": "portCheck",
-            "value": "{{DB.DB_PORT}}"
+            "value": "{{SERVICE.DATABASE.PORTS.PORT_EXPOSED}}"
           },
           {
             "type": "deploy",
@@ -47,11 +35,11 @@
           },
           {
             "type": "check",
-            "value": "dovecot_service"
+            "value": "{{SERVICE.MAIL_RECEIVE.NAME}}"
           },
           {
             "type": "portCheck",
-            "value": "{{SERVER.DOVECOT.PORTS.IMAPS}}"
+            "value": "{{SERVICE.MAIL_SEND.PORTS.PORT_EXPOSED_IMAPS}}"
           }
         ]
       }

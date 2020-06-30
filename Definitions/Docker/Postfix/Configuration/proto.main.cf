@@ -104,8 +104,8 @@ masquerade_domains = {{SERVER.DOMAIN}}
 # body_checks = regexp:/etc/postfix/re_body_checks
 # body_checks_size_limit = 51200
 
-virtual_transport = lmtp:inet:dovecot_service:12346
-mailbox_transport = lmtp:inet:dovecot_service:12346
+virtual_transport = lmtp:inet:{{SERVICE.MAIL_RECEIVE.NAME}}:12346
+mailbox_transport = lmtp:inet:{{SERVICE.MAIL_RECEIVE.NAME}}:12346
 
 # Anti-spam configuration:
 smtpd_recipient_restrictions =
@@ -113,7 +113,7 @@ smtpd_recipient_restrictions =
     permit_sasl_authenticated
     # TODO: MSF-164
     # warn_if_reject
-    # check_policy_service inet:dovecot_service:12347
+    # check_policy_service inet:{{SERVICE.MAIL_RECEIVE.NAME}}:12347
     reject_unverified_recipient
     reject_unauth_destination
     reject_non_fqdn_recipient
@@ -143,7 +143,7 @@ smtpd_client_message_rate_limit = 5
 # SASL:
 smtpd_sasl_type = dovecot
 smtpd_sasl_auth_enable = yes
-smtpd_sasl_path = inet:dovecot_service:12345
+smtpd_sasl_path = inet:{{SERVICE.MAIL_RECEIVE.NAME}}:12345
 smtpd_sasl_security_options = noanonymous
 smtpd_sasl_tls_security_options = $smtpd_sasl_security_options
 broken_sasl_auth_clients = yes

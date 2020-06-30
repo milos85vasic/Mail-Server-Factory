@@ -9,7 +9,6 @@ import net.milosvasic.factory.component.database.postgres.Postgres
 import net.milosvasic.factory.component.database.postgres.PostgresInsertCommand
 import net.milosvasic.factory.configuration.ConfigurationManager
 import net.milosvasic.factory.configuration.variable.Context
-import net.milosvasic.factory.configuration.variable.Key
 import net.milosvasic.factory.configuration.variable.PathBuilder
 import net.milosvasic.factory.configuration.variable.Variable
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
@@ -17,6 +16,8 @@ import net.milosvasic.factory.mail.configuration.MailServerConfiguration
 import net.milosvasic.factory.remote.Connection
 import net.milosvasic.factory.terminal.TerminalCommand
 import net.milosvasic.factory.terminal.command.EchoCommand
+
+typealias MKey = net.milosvasic.factory.mail.configuration.variable.Key
 
 class MailFactory(private val connection: Connection) {
 
@@ -39,9 +40,9 @@ class MailFactory(private val connection: Connection) {
                     override fun obtain(): TerminalCommand {
 
                         val path = PathBuilder()
-                                .addContext(Context.Server)
-                                .addContext(Context.Postfix)
-                                .setKey(Key.DbName)
+                                .addContext(Context.Service)
+                                .addContext(Context.Database)
+                                .setKey(MKey.DbDirectory)
                                 .build()
 
                         val email = account.name
@@ -58,9 +59,17 @@ class MailFactory(private val connection: Connection) {
                         val database = manager?.obtain(dbRequest)
                         if (database is Postgres) {
 
+                            val tablePath = PathBuilder()
+                                    .addContext(Context.Service)
+                                    .addContext(Context.Database)
+                                    .setKey(MKey.TableDomains)
+                                    .build()
+
+                            val table = Variable.get(tablePath)
+
                             return PostgresInsertCommand(
                                     database,
-                                    "mail_virtual_domains",
+                                    table,
                                     "id, name",
                                     "DEFAULT, '$domain'"
                             )

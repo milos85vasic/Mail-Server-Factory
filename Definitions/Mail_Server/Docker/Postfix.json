@@ -1,12 +1,4 @@
 {
-  "variables": {
-    "SERVER": {
-      "POSTFIX": {
-        "DB_HOST": "127.0.0.1",
-        "DB_NAME": "postfix_service"
-      }
-    }
-  },
   "software": [
     {
       "name": "Mail server stack: Postfix",
@@ -15,7 +7,7 @@
         "Docker": [
           {
             "type": "conditionCheck",
-            "value": "postfix_service"
+            "value": "{{SERVICE.MAIL_SEND.NAME}}"
           },
           {
             "type": "command",
@@ -27,7 +19,7 @@
           },
           {
             "type": "portCheck",
-            "value": "{{DB.DB_PORT}}"
+            "value": "{{SERVICE.DATABASE.PORTS.PORT_EXPOSED}}"
           },
           {
             "type": "deploy",
@@ -47,7 +39,7 @@
           },
           {
             "type": "check",
-            "value": "postfix_service"
+            "value": "{{SERVICE.MAIL_SEND.NAME}}"
           },
           {
             "type": "portCheck",

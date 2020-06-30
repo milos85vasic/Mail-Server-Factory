@@ -1,13 +1,13 @@
 #!/bin/sh
 
-dbPort=5432
+dbPort={{SERVICE.DATABASE.PORTS.PORT}}
 dovecotSaslPort=12345
 dovecotLmtpPort=12346
 postfixLog=/var/log/postfix.start.log
 echo "Starting Postfix" > ${postfixLog}
 
 echo "Checking database port: $dbPort" >> ${postfixLog}
-if echo "^C" | telnet postgres_database ${dbPort} | grep "Connected"
+if echo "^C" | telnet {{SERVICE.DATABASE.NAME}} ${dbPort} | grep "Connected"
 then
     echo "Database process is bound to port: $dbPort" >> ${postfixLog}
 else
@@ -16,7 +16,7 @@ else
 fi
 
 echo "Checking Dovecot SASL port: $dovecotSaslPort" >> ${postfixLog}
-if echo "^C" | telnet dovecot_service ${dovecotSaslPort} | grep "Connected"
+if echo "^C" | telnet {{SERVICE.MAIL_RECEIVE.NAME}} ${dovecotSaslPort} | grep "Connected"
 then
     echo "Dovecot process is bound to port: $dovecotSaslPort" >> ${postfixLog}
 else
@@ -25,7 +25,7 @@ else
 fi
 
 echo "Checking Dovecot LMTP port: $dovecotLmtpPort" >> ${postfixLog}
-if echo "^C" | telnet dovecot_service ${dovecotLmtpPort} | grep "Connected"
+if echo "^C" | telnet {{SERVICE.MAIL_RECEIVE.NAME}} ${dovecotLmtpPort} | grep "Connected"
 then
     echo "Dovecot process is bound to port: $dovecotLmtpPort" >> ${postfixLog}
 else
