@@ -1,6 +1,6 @@
 #!/bin/sh
 
-dbPort={{SERVICE.DATABASE.PORT}}
+dbPort={{SERVICE.DATABASE.PORTS.PORT}}
 dovecotSaslPort=12345
 dovecotLmtpPort=12346
 postfixLog=/var/log/postfix.start.log

@@ -10,8 +10,10 @@
     "SERVICE": {
       "DATABASE": {
         "NAME": "postmaster_db",
-        "PORT": "5432",
-        "PORT_EXPOSED": "35432",
+        "PORTS": {
+          "PORT": "5432",
+          "PORT_EXPOSED": "35432"
+        },
         "TYPE": "Postgres",
         "HOST": "127.0.0.1",
         "DB_DIRECTORY": "mail_directory",

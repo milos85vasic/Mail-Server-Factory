@@ -7,7 +7,7 @@ services:
     hostname: database.{{SERVER.DOMAIN}}
     restart: always
     ports:
-      - {{SERVICE.DATABASE.PORT_EXPOSED}}:{{SERVICE.DATABASE.PORT}}
+      - {{SERVICE.DATABASE.PORTS.PORT_EXPOSED}}:{{SERVICE.DATABASE.PORTS.PORT}}
     networks:
       - {{SERVICE.NETWORK.NAME}}
     environment:
