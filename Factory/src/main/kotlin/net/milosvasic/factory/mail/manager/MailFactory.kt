@@ -86,7 +86,7 @@ class MailFactory(private val connection: Connection) {
                 return PostgresInsertCommand(
                         database,
                         tableUsers,
-                        "id, domain_id, \"user\", password",
+                        "id, domain_id, account, password",
                         "DEFAULT, ($selectDomainIdCmd), '$address', '${account.getCredentials().value}'"
                 )
             } else {
