@@ -11,7 +11,6 @@ import net.milosvasic.factory.component.database.postgres.PostgresInsertCommand
 import net.milosvasic.factory.component.database.postgres.PostgresSelectCommand
 import net.milosvasic.factory.configuration.ConfigurationManager
 import net.milosvasic.factory.configuration.variable.Context
-import net.milosvasic.factory.configuration.variable.Path
 import net.milosvasic.factory.configuration.variable.PathBuilder
 import net.milosvasic.factory.configuration.variable.Variable
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
@@ -40,6 +39,10 @@ class MailFactory(private val connection: Connection) {
                 flow
                         .perform(getInsertDomainCommand(account))
                         .perform(getInsertAccountCommand(account))
+
+                account.getAliases().forEach { alias ->
+                    flow.perform(getInsertAliasCommand(account.name, alias))
+                }
             }
         } else {
 
@@ -65,13 +68,7 @@ class MailFactory(private val connection: Connection) {
                         .setKey(MKey.TableDomains)
                         .build()
 
-                val tableUsersPath = PathBuilder()
-                        .addContext(Context.Service)
-                        .addContext(Context.Database)
-                        .setKey(MKey.TableUsers)
-                        .build()
-
-                val tableUsers = Variable.get(tableUsersPath)
+                val tableUsers = getTableUsers()
                 val tableDomains = Variable.get(tableDomainsPath)
 
                 val selectDomainId = PostgresSelectCommand(
@@ -128,6 +125,42 @@ class MailFactory(private val connection: Connection) {
         }
     }
 
+    private fun getInsertAliasCommand(email: String, alias: String) = object : Obtain<TerminalCommand> {
+
+        @Throws(IllegalStateException::class)
+        override fun obtain(): TerminalCommand {
+
+            val domain = email.substring(email.indexOf("@") + 1)
+            val address = email.substring(0, email.indexOf("@"))
+
+            val database = getDatabase()
+            if (database is Postgres) {
+
+                val tableAliases = getTableAliases()
+                val tableDomains = getTableDomains()
+
+                val selectDomainId = PostgresSelectCommand(
+                        database,
+                        tableDomains,
+                        "id",
+                        "name",
+                        domain
+                )
+
+                val selectDomainIdCmd = selectDomainId.getSelectStatement()
+                return PostgresInsertCommand(
+                        database,
+                        tableAliases,
+                        "id, domain_id, source, destination",
+                        "DEFAULT, ($selectDomainIdCmd), '$address', '$alias'"
+                )
+            } else {
+
+                throw IllegalArgumentException("Postgres database required: $database")
+            }
+        }
+    }
+
     @Throws(IllegalStateException::class)
     private fun getDatabaseName(): String {
 
@@ -154,5 +187,41 @@ class MailFactory(private val connection: Connection) {
         val request = getDatabaseRequest()
         val manager = DatabaseManager.instantiate()
         return manager?.obtain(request)
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun getTableUsers(): String {
+
+        val tableUsersPath = PathBuilder()
+                .addContext(Context.Service)
+                .addContext(Context.Database)
+                .setKey(MKey.TableUsers)
+                .build()
+
+        return Variable.get(tableUsersPath)
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun getTableDomains(): String {
+
+        val tableDomainsPath = PathBuilder()
+                .addContext(Context.Service)
+                .addContext(Context.Database)
+                .setKey(MKey.TableAliases)
+                .build()
+
+        return Variable.get(tableDomainsPath)
+    }
+
+    @Throws(IllegalStateException::class)
+    private fun getTableAliases(): String {
+
+        val tableAliasesPath = PathBuilder()
+                .addContext(Context.Service)
+                .addContext(Context.Database)
+                .setKey(MKey.TableAliases)
+                .build()
+
+        return Variable.get(tableAliasesPath)
     }
 }
