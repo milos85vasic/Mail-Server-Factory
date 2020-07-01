@@ -207,7 +207,7 @@ class MailFactory(private val connection: Connection) {
         val tableDomainsPath = PathBuilder()
                 .addContext(Context.Service)
                 .addContext(Context.Database)
-                .setKey(MKey.TableAliases)
+                .setKey(MKey.TableDomains)
                 .build()
 
         return Variable.get(tableDomainsPath)
