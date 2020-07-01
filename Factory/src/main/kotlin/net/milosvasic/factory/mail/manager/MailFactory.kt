@@ -12,6 +12,7 @@ import net.milosvasic.factory.configuration.variable.Context
 import net.milosvasic.factory.configuration.variable.PathBuilder
 import net.milosvasic.factory.configuration.variable.Variable
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
+import net.milosvasic.factory.mail.account.MailAccount
 import net.milosvasic.factory.mail.configuration.MailServerConfiguration
 import net.milosvasic.factory.remote.Connection
 import net.milosvasic.factory.terminal.TerminalCommand
@@ -24,8 +25,7 @@ class MailFactory(private val connection: Connection) {
     @Throws(IllegalStateException::class, IllegalArgumentException::class)
     fun getMailCreationFlow(): CommandFlow {
 
-
-        val flow =  CommandFlow()
+        val flow = CommandFlow()
                 .width(connection)
                 .perform(EchoCommand("We are about to create email accounts"))
 
@@ -34,58 +34,68 @@ class MailFactory(private val connection: Connection) {
 
             configuration.accounts?.forEach { account ->
 
-                val commandObtain = object : Obtain<TerminalCommand> {
-
-                    @Throws(IllegalStateException::class)
-                    override fun obtain(): TerminalCommand {
-
-                        val path = PathBuilder()
-                                .addContext(Context.Service)
-                                .addContext(Context.Database)
-                                .setKey(MKey.DbDirectory)
-                                .build()
-
-                        val email = account.name
-                        val domain = email.substring(email.indexOf("@") + 1)
-                        val manager = DatabaseManager.instantiate()
-                        val dbName = Variable.get(path)
-
-                        if (dbName == String.EMPTY) {
-
-                            throw IllegalStateException("No data available for system variable: ${path.getPath()}")
-                        }
-
-                        val dbRequest = DatabaseRequest(Type.Postgres, dbName)
-                        val database = manager?.obtain(dbRequest)
-                        if (database is Postgres) {
-
-                            val tablePath = PathBuilder()
-                                    .addContext(Context.Service)
-                                    .addContext(Context.Database)
-                                    .setKey(MKey.TableDomains)
-                                    .build()
-
-                            val table = Variable.get(tablePath)
-
-                            return PostgresInsertCommand(
-                                    database,
-                                    table,
-                                    "id, name",
-                                    "DEFAULT, '$domain'"
-                            )
-                        } else {
-
-                            throw IllegalArgumentException("Postgres database required: $database")
-                        }
-                    }
-                }
-
-                flow.perform(commandObtain)
+                flow
+                        .perform(getInsertDomainCommand(account))
+                        .perform(getInsertAccountCommand(account))
             }
         } else {
 
             throw IllegalArgumentException("Unsupported configuration type: ${configuration::class.simpleName}")
         }
         return flow
+    }
+
+    private fun getInsertAccountCommand(account: MailAccount) = object : Obtain<TerminalCommand> {
+
+        override fun obtain(): TerminalCommand {
+
+            return EchoCommand("TBD.")
+        }
+    }
+
+    private fun getInsertDomainCommand(account: MailAccount) = object : Obtain<TerminalCommand> {
+
+        @Throws(IllegalStateException::class)
+        override fun obtain(): TerminalCommand {
+
+            val path = PathBuilder()
+                    .addContext(Context.Service)
+                    .addContext(Context.Database)
+                    .setKey(MKey.DbDirectory)
+                    .build()
+
+            val email = account.name
+            val domain = email.substring(email.indexOf("@") + 1)
+            val manager = DatabaseManager.instantiate()
+            val dbName = Variable.get(path)
+
+            if (dbName == String.EMPTY) {
+
+                throw IllegalStateException("No data available for system variable: ${path.getPath()}")
+            }
+
+            val dbRequest = DatabaseRequest(Type.Postgres, dbName)
+            val database = manager?.obtain(dbRequest)
+            if (database is Postgres) {
+
+                val tablePath = PathBuilder()
+                        .addContext(Context.Service)
+                        .addContext(Context.Database)
+                        .setKey(MKey.TableDomains)
+                        .build()
+
+                val table = Variable.get(tablePath)
+
+                return PostgresInsertCommand(
+                        database,
+                        table,
+                        "id, name",
+                        "DEFAULT, '$domain'"
+                )
+            } else {
+
+                throw IllegalArgumentException("Postgres database required: $database")
+            }
+        }
     }
 }
