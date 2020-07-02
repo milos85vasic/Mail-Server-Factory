@@ -5,8 +5,8 @@
       "name": "test1@dev.local",
       "credentials": "Test12345",
       "aliases": [
-        "test.primary@dev.local",
-        "001@dev.local"
+        "redirect1@dev.local",
+        "redirect2@dev.local"
       ]
     },
     {
@@ -17,6 +17,16 @@
     {
       "type": "email",
       "name": "test3@dev.local",
+      "credentials": "Test12345"
+    },
+    {
+      "type": "email",
+      "name": "redirect1@dev.local",
+      "credentials": "Test12345"
+    },
+    {
+      "type": "email",
+      "name": "redirect2@dev.local",
       "credentials": "Test12345"
     }
   ]
