@@ -43,6 +43,9 @@ class MailFactory(private val connection: Connection) {
                 account.getAliases().forEach { alias ->
                     flow.perform(getInsertAliasCommand(account.name, alias))
                 }
+
+                val verification = MailAccountVerificationCommand(account)
+                flow.perform(verification)
             }
         } else {
 
