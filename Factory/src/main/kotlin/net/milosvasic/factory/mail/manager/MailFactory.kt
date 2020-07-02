@@ -9,8 +9,10 @@ import net.milosvasic.factory.component.database.manager.DatabaseManager
 import net.milosvasic.factory.component.database.postgres.Postgres
 import net.milosvasic.factory.component.database.postgres.PostgresInsertCommand
 import net.milosvasic.factory.component.database.postgres.PostgresSelectCommand
+import net.milosvasic.factory.component.docker.connection.DockerServiceConnection
 import net.milosvasic.factory.configuration.ConfigurationManager
 import net.milosvasic.factory.configuration.variable.Context
+import net.milosvasic.factory.configuration.variable.Key
 import net.milosvasic.factory.configuration.variable.PathBuilder
 import net.milosvasic.factory.configuration.variable.Variable
 import net.milosvasic.factory.execution.flow.implementation.CommandFlow
@@ -21,6 +23,7 @@ import net.milosvasic.factory.terminal.TerminalCommand
 import net.milosvasic.factory.terminal.command.EchoCommand
 
 typealias MKey = net.milosvasic.factory.mail.configuration.variable.Key
+typealias MContext = net.milosvasic.factory.mail.configuration.variable.Context
 
 class MailFactory(private val connection: Connection) {
 
@@ -30,6 +33,17 @@ class MailFactory(private val connection: Connection) {
         val flow = CommandFlow()
                 .width(connection)
                 .perform(EchoCommand("We are about to create email accounts"))
+
+        val path = PathBuilder()
+                .addContext(Context.Service)
+                .addContext(MContext.ServiceMailReceive)
+                .setKey(Key.Name)
+                .build()
+
+        val dockerService = Variable.get(path)
+
+        val dockerConnection = DockerServiceConnection(dockerService, connection.getRemote())
+        val verificationFlow = CommandFlow().width(dockerConnection)
 
         val configuration = ConfigurationManager.getConfiguration()
         if (configuration is MailServerConfiguration) {
@@ -45,13 +59,13 @@ class MailFactory(private val connection: Connection) {
                 }
 
                 val verification = MailAccountVerificationCommand(account)
-                flow.perform(verification)
+                verificationFlow.perform(verification)
             }
         } else {
 
             throw IllegalArgumentException("Unsupported configuration type: ${configuration::class.simpleName}")
         }
-        return flow
+        return flow.connect(verificationFlow)
     }
 
     private fun getInsertAccountCommand(account: MailAccount) = object : Obtain<TerminalCommand> {
