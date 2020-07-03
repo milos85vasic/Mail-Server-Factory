@@ -51,6 +51,7 @@ then
         fi
     done
 
+    sh /logrotate.sh &
     tail -f ${postfixLog}
 else
     exit 1
