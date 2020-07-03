@@ -35,7 +35,6 @@ fi
 
 postfix set-permissions >> ${postfixLog}
 newaliases
-sleep 604800; sh /logrotate.sh &
 postfix check >> ${postfixLog}
 postfix start >> ${postfixLog}
 if postfix status >> ${postfixLog}
@@ -52,6 +51,7 @@ then
         fi
     done
 
+    sh /logrotate.sh &
     tail -f ${postfixLog}
 else
     exit 1
