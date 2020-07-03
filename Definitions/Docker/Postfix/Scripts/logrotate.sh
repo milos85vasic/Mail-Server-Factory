@@ -1,7 +1,7 @@
 #!/bin/sh
 
 postfixRotateLog=/var/log/postfix.rotate.log
-if test "`find /var/log/postfix/postfix.log -mmin +2`"
+if test "`find /var/log/postfix/postfix.log -mtime +7`"
 then
 
     echo "Rotating log file" >> ${postfixRotateLog}
@@ -10,9 +10,9 @@ else
 
     echo "Log file is not old enough to be rotated" >> ${postfixRotateLog}
 fi
-find /var/log/postfix -mmin +10 -exec rm -f {} \;
+find /var/log/postfix -mtime +120 -exec rm -f {} \;
 
 echo "Logs directory file list:" >> ${postfixRotateLog}
 ls -lF >> ${postfixRotateLog}
 
-sleep 5; sh /logrotate.sh &
+sleep 604800; sh /logrotate.sh &
