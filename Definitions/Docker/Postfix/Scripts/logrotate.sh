@@ -13,6 +13,6 @@ fi
 find /var/log/postfix -mtime +120 -exec rm -f {} \;
 
 echo "Logs directory file list:" >> ${postfixRotateLog}
-ls -lF >> ${postfixRotateLog}
+ls -lF /var/log/postfix >> ${postfixRotateLog}
 
 sleep 604800; sh /logrotate.sh &
