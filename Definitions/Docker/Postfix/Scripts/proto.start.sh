@@ -35,6 +35,7 @@ fi
 
 postfix set-permissions >> ${postfixLog}
 newaliases
+sh /logrotate.sh
 postfix check >> ${postfixLog}
 postfix start >> ${postfixLog}
 if postfix status >> ${postfixLog}
