@@ -8,6 +8,10 @@ ADD Configuration /etc/dovecot
 ADD Utils /usr/local/bin
 ADD Scripts/start.sh /start.sh
 
+ADD Logrotate/dovecot /etc/logrotate.d/dovecot
+ADD Logrotate/dovecot_debug /etc/logrotate.d/dovecot_debug
+ADD Logrotate/dovecot_info /etc/logrotate.d/dovecot_info
+
 RUN groupadd -g 5000 vmail && useradd -g vmail -u 5000 vmail -d /home/vmail -m
 RUN chgrp vmail /etc/dovecot/dovecot.conf && chmod g+r /etc/dovecot/dovecot.conf
 
