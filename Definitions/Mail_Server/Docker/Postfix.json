@@ -47,11 +47,11 @@
           },
           {
             "type": "command",
-            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Postfix/sendmail.postfix.service /etc/systemd/system/sendmail.postfix.service"
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Postfix/sendmail.service /etc/systemd/system/sendmail.service"
           },
           {
             "type": "command",
-            "value": "systemctl enable sendmail.postfix.service"
+            "value": "systemctl enable sendmail.service"
           },
           {
             "type": "reboot",
