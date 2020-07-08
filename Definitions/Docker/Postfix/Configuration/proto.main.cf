@@ -78,9 +78,6 @@ default_database_type = pgsql
 # canonical_maps = pgsql:/path
 
 # TODO:
-# transport_maps = pgsql:/path
-
-# TODO:
 # relocated_maps = pgsql:/path
 
 # Set to 100MB:
