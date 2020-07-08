@@ -3,6 +3,8 @@ connect = host={{SERVICE.DATABASE.NAME}} port={{SERVICE.DATABASE.PORTS.PORT}} db
 default_pass_scheme = PLAIN
 password_query = SELECT email as user, password FROM {{SERVICE.DATABASE.VIEW_USERS}} WHERE email='%u';
 
-# TODO:
+# TODO: MSF-200
 # user_query = SELECT home, uid, gid FROM {{SERVICE.DATABASE.VIEW_USERS}} WHERE userid = '%n' AND domain = '%d'
-# iterate_query = SELECT username AS user FROM users
+
+# TODO: MSF-200 - Re-enable once ticket implemented
+# iterate_query = SELECT email AS user FROM {{SERVICE.DATABASE.VIEW_USERS}}

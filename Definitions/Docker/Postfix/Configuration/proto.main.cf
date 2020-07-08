@@ -74,13 +74,10 @@ html_directory = no
 
 default_database_type = pgsql
 
-# TODO:
+# TODO: MSF-201
 # canonical_maps = pgsql:/path
 
-# TODO:
-# transport_maps = pgsql:/path
-
-# TODO:
+# TODO: MSF-202
 # relocated_maps = pgsql:/path
 
 # Set to 100MB:
