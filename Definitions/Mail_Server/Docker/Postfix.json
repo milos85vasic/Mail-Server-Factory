@@ -44,6 +44,26 @@
           {
             "type": "portCheck",
             "value": "465"
+          },
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Postfix/sendmail.postfix.service /etc/systemd/system/sendmail.postfix.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable sendmail.postfix.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.MAIL_SEND.NAME}}"
+          },
+          {
+            "type": "portCheck",
+            "value": "465"
           }
         ]
       },
