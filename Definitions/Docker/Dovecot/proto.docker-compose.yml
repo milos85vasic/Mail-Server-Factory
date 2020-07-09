@@ -16,6 +16,7 @@ services:
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/VMail:/usr/local/vmail
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Masters:/etc/dovecot/masters
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Log:/var/log/dovecot
+      - {{SERVER.SERVER_HOME}}/Server/Dovecot/Sieve:/sieve
 
 networks:
   {{SERVICE.NETWORK.NAME}}:
