@@ -14,6 +14,7 @@ ADD Logrotate/dovecot_info /etc/logrotate.d/dovecot_info
 
 RUN mkdir /etc/dovecot/sieve
 ADD Sieve/.dovecot.sieve /etc/dovecot/sieve/.dovecot.sieve
+RUN sievec /etc/dovecot/sieve/.dovecot.sieve
 
 RUN groupadd -g 5000 vmail && useradd -g vmail -u 5000 vmail -d /home/vmail -m
 RUN chgrp vmail /etc/dovecot/dovecot.conf && chmod g+r /etc/dovecot/dovecot.conf
