@@ -6,5 +6,4 @@ password_query = SELECT email as user, password FROM {{SERVICE.DATABASE.VIEW_USE
 # TODO: MSF-200
 # user_query = SELECT home, uid, gid FROM {{SERVICE.DATABASE.VIEW_USERS}} WHERE userid = '%n' AND domain = '%d'
 
-# TODO: MSF-200 - Re-enable once ticket implemented
-# iterate_query = SELECT email AS user FROM {{SERVICE.DATABASE.VIEW_USERS}}
+iterate_query = SELECT email AS user FROM {{SERVICE.DATABASE.VIEW_USERS}}

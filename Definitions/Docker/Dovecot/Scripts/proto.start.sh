@@ -38,6 +38,16 @@ then
         fi
     done
 
+    boxes=(Unclassified Spam Unscanned Quarantine Misc Archive)
+    for box in ${boxes[@]}; do
+        if doveadm mailbox create -s INBOX/${box} -A
+        then
+            echo "Mailbox created: INBOX/$box" >> ${dovecotLog}
+        else
+            echo "Mailbox creation failed: INBOX/$box" >> ${dovecotLog}
+            exit 1
+        fi
+    done
     tail -f ${dovecotLog}
 else
     exit 1

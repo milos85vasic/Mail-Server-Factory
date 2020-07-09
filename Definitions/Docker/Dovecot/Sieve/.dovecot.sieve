@@ -1,6 +1,7 @@
 require "spamtestplus";
 require "virustest";
 require "fileinto";
+require "mailbox";
 require "relational";
 require "comparator-i;ascii-numeric";
 
@@ -8,13 +9,13 @@ require "comparator-i;ascii-numeric";
  * file it in a special folder.
  */
 if spamtest :value "eq" :comparator "i;ascii-numeric" "0" {
-  fileinto "Unclassified";
+  fileinto :create "INBOX.Unclassified";
 
 /* If the spamtest score (in the range 1-10) is larger than or equal to 3,
  * file it into the spam folder:
  */
 } elsif spamtest :value "ge" :comparator "i;ascii-numeric" "3" {
-  fileinto "Spam";
+  fileinto :create "INBOX.Spam";
 
 /* For more fine-grained score evaluation, the :percent tag can be used. The
  * following rule discards all messages with a percent score
@@ -26,12 +27,12 @@ if spamtest :value "eq" :comparator "i;ascii-numeric" "0" {
 
 /* Not scanned ? */
 if virustest :value "eq" :comparator "i;ascii-numeric" "0" {
-  fileinto "Unscanned";
+  fileinto :create "INBOX.Unscanned";
 
 /* Infected with high probability (value range in 1-5) */
 } if virustest :value "eq" :comparator "i;ascii-numeric" "4" {
   /* Quarantine it in special folder (still somewhat dangerous) */
-  fileinto "Quarantine";
+  fileinto :create "INBOX.Quarantine";
 
 /* Definitely infected */
 } elsif virustest :value "eq" :comparator "i;ascii-numeric" "5" {
