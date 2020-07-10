@@ -6,6 +6,8 @@ RUN dnf install -y clamd amavis perl-Digest-SHA1 perl-IO-stringy telnet net-tool
 
 ADD Configuration/Clamd /etc/clamd.d
 ADD Configuration/Amavisd /etc/amavisd
+ADD Scripts/do_clam.sh /do_clam.sh
+ADD Scripts/start.sh /start.sh
 
 RUN mkdir /target
 RUN touch /var/log/clamd.scan
