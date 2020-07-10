@@ -11,10 +11,10 @@ services:
     networks:
       - {{SERVICE.NETWORK.NAME}}
     volumes:
-      - {{SERVER.SERVER_HOME}}/Server/Clamav/Log:/var/log
+      - {{SERVER.SERVER_HOME}}/Server/ClamAV/Log:/var/log
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/VMail:/target/vmail
       - {{SERVER.SERVER_HOME}}/Server/Dovecot/Maildir:/target/maildir
-      - {{SERVER.SERVER_HOME}}/Server/Clamav/Definitions:/var/lib/clamav
+      - {{SERVER.SERVER_HOME}}/Server/ClamAV/Definitions:/var/lib/clamav
 
 networks:
   {{SERVICE.NETWORK.NAME}}:

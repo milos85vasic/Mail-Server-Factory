@@ -1,0 +1,28 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack: ClamAV",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "conditionCheck",
+            "value": "{{SERVICE.ANTI_VIRUS.NAME}}"
+          },
+          {
+            "type": "deploy",
+            "value": "Definitions/Docker/AntiVirus:{{DOCKER.DOCKER_HOME}}/ClamAV"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/ClamAV"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.ANTI_VIRUS.NAME}}"
+          }
+        ]
+      }
+    }
+  ]
+}
