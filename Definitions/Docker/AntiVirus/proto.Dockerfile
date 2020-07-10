@@ -5,3 +5,4 @@ RUN dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-re
 RUN dnf install -y clamd amavis perl-Digest-SHA1 perl-IO-stringy telnet net-tools
 
 ADD Configuration/Clamd /etc/clamd.d
+ADD Configuration/Amavisd /etc/amavisd
