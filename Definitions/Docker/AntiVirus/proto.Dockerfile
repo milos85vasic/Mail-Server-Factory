@@ -10,9 +10,5 @@ ADD Scripts/do_clam.sh /do_clam.sh
 ADD Scripts/start.sh /start.sh
 
 RUN mkdir /target
-RUN touch /var/log/clamd.scan
-RUN chgrp clamscan /var/log/clamd.scan
-RUN chown clamscan /var/log/clamd.scan
-RUN chgrp clamscan /etc/clamd.d/scan.conf
 
 CMD sh start.sh
