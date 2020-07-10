@@ -36,6 +36,9 @@
         "NAME": "postmaster_receive",
         "MAILBOXES_CAPACITY": "30G"
       },
+      "ANTI_VIRUS": {
+        "NAME": "postmaster_antivirus"
+      },
       "NETWORK": {
         "NAME": "postmaster_network"
       }
