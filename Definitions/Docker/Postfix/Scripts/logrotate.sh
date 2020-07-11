@@ -4,7 +4,7 @@ postfixRotateLog=/var/log/postfix.rotate.log
 
 if test "`find /var/log/postfix/postfix.log -mtime +7`"
 then
-    echo "Rotating log file" >> ${postfixRotateLog}
+    echo "Rotating log file" > ${postfixRotateLog}
     postfix logrotate
 
     find /var/log/postfix -mtime +120 -exec rm -f {} \;

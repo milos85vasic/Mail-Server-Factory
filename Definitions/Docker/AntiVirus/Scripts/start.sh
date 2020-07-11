@@ -7,4 +7,4 @@ chgrp clamscan /etc/clamd.d/scan.conf
 
 sh /do_clam.sh
 
-tail -f /var/log/clamd.scan
+tail -f /var/log/clamd.run.log
