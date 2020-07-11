@@ -6,9 +6,9 @@ services:
     container_name: {{SERVICE.ANTI_VIRUS.NAME}}
     hostname: {{SERVICE.ANTI_VIRUS.NAME}}.{{SERVER.DOMAIN}}
     restart: always
-# TODO:
-#    ports:
-#      - __SERVICE.ANTI_VIRUS.PORTS.PORT_EXPOSED_IMAPS__:993
+ TODO:
+    ports:
+      - {{SERVICE.ANTI_VIRUS.PORTS.PORT_EXPOSED}}:{{SERVICE.ANTI_VIRUS.PORTS.PORT}}
     networks:
       - {{SERVICE.NETWORK.NAME}}
     volumes:

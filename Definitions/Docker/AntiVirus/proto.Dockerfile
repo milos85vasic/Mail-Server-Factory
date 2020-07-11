@@ -11,4 +11,6 @@ ADD Scripts/start.sh /start.sh
 
 RUN mkdir /target
 
+EXPOSE {{SERVICE.ANTI_VIRUS.PORTS.PORT}}
+
 CMD sh start.sh

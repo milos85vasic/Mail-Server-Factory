@@ -37,7 +37,11 @@
         "MAILBOXES_CAPACITY": "30G"
       },
       "ANTI_VIRUS": {
-        "NAME": "postmaster_antivirus"
+        "NAME": "postmaster_antivirus",
+        "PORTS": {
+          "PORT": "10024",
+          "PORT_EXPOSED": "10024"
+        }
       },
       "NETWORK": {
         "NAME": "postmaster_network"
