@@ -38,7 +38,7 @@ then
         fi
     done
 
-    tail -f ${dovecotLog}
+    tail -F ${dovecotLog}
 else
     exit 1
 fi

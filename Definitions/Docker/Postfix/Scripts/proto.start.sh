@@ -52,7 +52,7 @@ then
     done
 
     sh /logrotate.sh &
-    tail -f ${postfixLog}
+    tail -F ${postfixLog}
 else
     exit 1
 fi
