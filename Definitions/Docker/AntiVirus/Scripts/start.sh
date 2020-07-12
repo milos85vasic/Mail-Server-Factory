@@ -8,6 +8,11 @@ chgrp clamscan /etc/clamd.d/scan.conf
 clamLog=/var/log/clamd.run.log
 echo "ClamAV starting: `date`" > ${clamLog}
 sh /do_clam.sh ${clamLog} &
-amavisd
+if amavisd >> ${clamLog}
+then
 
-tail -F ${clamLog}
+    tail -F ${clamLog}
+else
+
+    echo "Amavis not started" >> ${clamLog}
+fi
