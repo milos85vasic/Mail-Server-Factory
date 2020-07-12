@@ -26,16 +26,18 @@
       "MAIL_SEND": {
         "NAME": "postmaster_send",
         "PORTS": {
-          "PORT_ANTI_VIRUS": 10025,
+          "PORT_ANTI_VIRUS": 10025
+        }
+      },
+      "MAIL_RECEIVE": {
+        "NAME": "postmaster_receive",
+        "MAILBOXES_CAPACITY": "30G",
+        "PORTS": {
           "PORT_EXPOSED_IMAP": 3143,
           "PORT_EXPOSED_IMAPS": 3993,
           "PORT_EXPOSED_POP": 3110,
           "PORT_EXPOSED_POP3S": 3995
         }
-      },
-      "MAIL_RECEIVE": {
-        "NAME": "postmaster_receive",
-        "MAILBOXES_CAPACITY": "30G"
       },
       "ANTI_VIRUS": {
         "NAME": "postmaster_antivirus",

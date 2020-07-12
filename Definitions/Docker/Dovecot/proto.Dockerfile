@@ -20,6 +20,6 @@ RUN groupadd -g 5000 vmail && useradd -g vmail -u 5000 vmail -d /home/vmail -m
 RUN chgrp vmail /etc/dovecot/dovecot.conf && chmod g+r /etc/dovecot/dovecot.conf
 RUN chgrp -R vmail /etc/dovecot/sieve && chmod -R 750 /etc/dovecot/sieve
 
-EXPOSE {{SERVICE.MAIL_SEND.PORTS.PORT_EXPOSED_IMAPS}}
+EXPOSE {{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}
 
 CMD sh start.sh

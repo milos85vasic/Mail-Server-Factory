@@ -15,7 +15,7 @@
           },
           {
             "type": "portRequired",
-            "value": "{{SERVICE.MAIL_SEND.PORTS.PORT_EXPOSED_IMAPS}}"
+            "value": "{{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}"
           },
           {
             "type": "portCheck",
@@ -39,7 +39,7 @@
           },
           {
             "type": "portCheck",
-            "value": "{{SERVICE.MAIL_SEND.PORTS.PORT_EXPOSED_IMAPS}}"
+            "value": "{{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}"
           }
         ]
       }
