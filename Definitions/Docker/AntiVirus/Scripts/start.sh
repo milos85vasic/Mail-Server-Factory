@@ -18,6 +18,7 @@ chmod 600 ${amavisLog}
 if amavisd >> ${antivirusStackLog}
 then
 
+    netstat -tulpn | grep LISTEN >> ${antivirusStackLog}
     tail -F ${antivirusStackLog}
 else
 
