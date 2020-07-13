@@ -46,7 +46,8 @@
         }
       },
       "NETWORK": {
-        "NAME": "postmaster_network"
+        "NAME": "postmaster_network",
+        "SUBNET": "172.18.0.0/16"
       }
     }
   },

@@ -11,7 +11,7 @@
           },
           {
             "type": "network",
-            "value": "{{SERVICE.NETWORK.NAME}}"
+            "value": "{{SERVICE.NETWORK.NAME}}:{{SERVICE.NETWORK.SUBNET}}"
           },
           {
             "type": "command",
