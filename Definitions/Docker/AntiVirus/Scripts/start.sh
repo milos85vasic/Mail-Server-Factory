@@ -12,7 +12,7 @@ sh /do_clam.sh ${antivirusStackLog} &
 amavisLog=/var/log/amavis.log
 touch ${amavisLog}
 chown amavis ${amavisLog}
-chmod 750 ${amavisLog}
+chmod 600 ${amavisLog}
 
 if amavisd >> ${antivirusStackLog}
 then
