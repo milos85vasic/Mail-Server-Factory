@@ -7,6 +7,7 @@ chgrp clamscan /etc/clamd.d/scan.conf
 
 antivirusStackLog=/var/log/antivirus.stack.log
 echo "Antivirus stack starting: `date`" > ${antivirusStackLog}
+chmod 600 ${antivirusStackLog}
 sh /do_clam.sh ${antivirusStackLog} &
 
 amavisLog=/var/log/amavis.log
