@@ -5,14 +5,20 @@ chgrp clamscan /var/log/clamd.scan
 chown clamscan /var/log/clamd.scan
 chgrp clamscan /etc/clamd.d/scan.conf
 
-clamLog=/var/log/clamd.run.log
-echo "ClamAV starting: `date`" > ${clamLog}
-sh /do_clam.sh ${clamLog} &
-if amavisd >> ${clamLog}
+antivirusStackLog=/var/log/antivirus.stack.log
+echo "Antivirus stack starting: `date`" > ${antivirusStackLog}
+sh /do_clam.sh ${antivirusStackLog} &
+
+amavisLog=/var/log/amavis.log
+touch ${amavisLog}
+chown amavis ${amavisLog}
+chmod 750 ${amavisLog}
+
+if amavisd >> ${antivirusStackLog}
 then
 
-    tail -F ${clamLog}
+    tail -F ${antivirusStackLog}
 else
 
-    echo "Amavis not started" >> ${clamLog}
+    echo "Amavis not started" >> ${antivirusStackLog}
 fi
