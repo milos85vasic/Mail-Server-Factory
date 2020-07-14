@@ -18,7 +18,17 @@ chmod 600 ${amavisLog}
 if amavisd >> ${antivirusStackLog}
 then
 
-    netstat -tulpn | grep LISTEN >> ${antivirusStackLog}
+    ports=({{SERVICE.ANTI_VIRUS.PORTS.PORT}})
+    for port in ${ports[@]}; do
+        if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
+        then
+            echo "Amavis is listening on port: $port" >> ${postfixLog}
+        else
+            echo "Amavis is not bound to port: $port" >> ${postfixLog}
+            exit 1
+        fi
+    done
+
     tail -F ${antivirusStackLog}
 else
 
