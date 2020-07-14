@@ -11,6 +11,7 @@ then
     touch ${amavisLog}
     chown amavis ${amavisLog}
     chmod 600 ${amavisLog}
+    amavisd reload && amavisd
 
     find ${logsDir}/ -name "*_$amavisLog" -mtime +120 -exec rm -f {} \;
     echo "Logs directory file list:" >> ${amavisRotateLog}
