@@ -22,13 +22,14 @@ then
     for port in ${ports[@]}; do
         if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
         then
-            echo "Amavis is listening on port: $port" >> ${postfixLog}
+            echo "Amavis is listening on port: $port" >> ${antivirusStackLog}
         else
-            echo "Amavis is not bound to port: $port" >> ${postfixLog}
+            echo "Amavis is not bound to port: $port" >> ${antivirusStackLog}
             exit 1
         fi
     done
 
+    sh /logrotate.sh ${amavisLog} &
     tail -F ${antivirusStackLog}
 else
 
