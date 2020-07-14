@@ -29,7 +29,7 @@ then
         fi
     done
 
-    sh /logrotate.sh ${amavisLog} &
+    sh /clean_log.sh ${amavisLog} &
     tail -F ${antivirusStackLog}
 else
 
