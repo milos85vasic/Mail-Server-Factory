@@ -9,7 +9,7 @@ RUN rm -f /etc/amavisd/amavisd.conf
 ADD Configuration/Amavisd /etc
 ADD Scripts/do_clam.sh /do_clam.sh
 ADD Scripts/start.sh /start.sh
-ADD Scripts/clean_amavis_log.sh /clean_amavis_log.sh
+ADD Scripts/logrotate.sh /logrotate.sh
 
 RUN mkdir /target
 
