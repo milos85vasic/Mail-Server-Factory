@@ -38,6 +38,7 @@ then
         fi
     done
 
+    sh /logrotate.sh &
     tail -F ${dovecotLog}
 else
     exit 1

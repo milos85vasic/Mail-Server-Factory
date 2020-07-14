@@ -7,10 +7,7 @@ RUN dnf install -y dovecot dovecot-pgsql dovecot-pigeonhole openssl telnet net-t
 ADD Configuration /etc/dovecot
 ADD Utils /usr/local/bin
 ADD Scripts/start.sh /start.sh
-
-ADD Logrotate/dovecot /etc/logrotate.d/dovecot
-ADD Logrotate/dovecot_debug /etc/logrotate.d/dovecot_debug
-ADD Logrotate/dovecot_info /etc/logrotate.d/dovecot_info
+ADD Scripts/logrotate.sh /logrotate.sh
 
 RUN mkdir /etc/dovecot/sieve
 ADD Sieve/.dovecot.sieve /etc/dovecot/sieve/.dovecot.sieve
