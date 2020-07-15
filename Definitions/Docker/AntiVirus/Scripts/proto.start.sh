@@ -3,7 +3,11 @@
 touch /var/log/clamd.scan
 chgrp clamscan /var/log/clamd.scan
 chown clamscan /var/log/clamd.scan
+chmod 600 /var/log/clamd.scan
+
+chown clamscan /etc/clamd.d/scan.conf
 chgrp clamscan /etc/clamd.d/scan.conf
+chmod 600 /etc/clamd.d/scan.conf
 
 antivirusStackLog=/var/log/antivirus.stack.log
 echo "Antivirus stack starting: `date`" > ${antivirusStackLog}
