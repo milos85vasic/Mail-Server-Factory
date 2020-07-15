@@ -41,6 +41,7 @@ smtp-amavis unix -    -    n    -    2 smtp
   -o disable_dns_lookups=yes
 0.0.0.0:{{SERVICE.MAIL_SEND.PORTS.PORT_ANTI_VIRUS}} inet n    -    n    -    - smtpd
   -o content_filter=
+  -o mynetworks=127.0.0.0/8,{{SERVICE.NETWORK.SUBNET}}
   -o local_recipient_maps=
   -o relay_recipient_maps=
   -o smtpd_restriction_classes=
