@@ -18,13 +18,12 @@ echo "Log initialized: `date`" > ${dovecotInfoLog}
 cp ${dovecotDebugLog} "${logs}/$(($(date +%s%N)/1000000))_$debugLogFile"
 echo "Log initialized: `date`" > ${dovecotDebugLog}
 
-find ${logs} -name "*_$logFile" -mmin +5 -exec rm -f {} \; >> ${dovecotLog}
-find ${logs} -name "*_$infoLogFile" -mmin +5 -exec rm -f {} \; >> ${dovecotInfoLog}
-find ${logs} -name "*_$debugLogFile" -mmin +5 -exec rm -f {} \; >> ${dovecotDebugLog}
+find ${logs} -name "*_$logFile" -mtime +120 -exec rm -f {} \; >> ${dovecotLog}
+find ${logs} -name "*_$infoLogFile" -mtime +120 -exec rm -f {} \; >> ${dovecotInfoLog}
+find ${logs} -name "*_$debugLogFile" -mtime +120 -exec rm -f {} \; >> ${dovecotDebugLog}
 
 echo "Beginning of log file:" >> ${dovecotLog}
 echo "Beginning of log file:" >> ${dovecotInfoLog}
 echo "Beginning of log file:" >> ${dovecotDebugLog}
 
-sleep 60; sh /logrotate.sh &
-# sleep 604800; sh /logrotate.sh &
+sleep 604800; sh /logrotate.sh &
