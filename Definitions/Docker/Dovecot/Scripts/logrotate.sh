@@ -2,8 +2,8 @@
 
 logs=/var/log/dovecot
 logFile=dovecot.log
-infoLogFile=dovecot-info.log
-debugLogFile=dovecot-debug.log
+infoLogFile=dovecot.info.log
+debugLogFile=dovecot.debug.log
 
 dovecotLog="$logs/$logFile"
 dovecotInfoLog="$logs/$infoLogFile"
