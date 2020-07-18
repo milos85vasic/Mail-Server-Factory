@@ -1,0 +1,44 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack: ClamAV",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "conditionCheck",
+            "value": "{{SERVICE.ANTI_VIRUS.NAME}}"
+          },
+          {
+            "type": "deploy",
+            "value": "Definitions/Docker/AntiVirus:{{DOCKER.DOCKER_HOME}}/ClamAV"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/ClamAV"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.ANTI_VIRUS.NAME}}"
+          },
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/ClamAV/antivirus.service /etc/systemd/system/antivirus.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable antivirus.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.ANTI_VIRUS.NAME}}"
+          }
+        ]
+      }
+    }
+  ]
+}

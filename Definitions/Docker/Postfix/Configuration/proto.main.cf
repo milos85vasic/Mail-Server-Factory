@@ -12,7 +12,7 @@ data_directory = /var/lib/postfix
 
 mail_owner = postfix
 
-myhostname = postfix.{{SERVER.DOMAIN}}
+myhostname = {{SERVICE.MAIL_SEND.NAME}}.{{SERVER.DOMAIN}}
 
 mydomain = {{SERVER.DOMAIN}}
 
@@ -164,7 +164,5 @@ address_verify_positive_expire_time = 31d
 address_verify_positive_refresh_time = 7d
 address_verify_map = btree:${data_directory}/verify_cache
 
-# TODO:
 # Content filtering:
-# TODO: Pass to ClamAV instance (proper IP instead of loopback)
-# content_filter = chkmsg:[127.0.0.1]:10025
+content_filter = smtp-amavis:[{{SERVICE.ANTI_VIRUS.NAME}}]:{{SERVICE.ANTI_VIRUS.PORTS.PORT}}

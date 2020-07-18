@@ -10,8 +10,8 @@
       "DATABASE": {
         "NAME": "postmaster_db",
         "PORTS": {
-          "PORT": "5432",
-          "PORT_EXPOSED": "35432"
+          "PORT": 5432,
+          "PORT_EXPOSED": 35432
         },
         "TYPE": "Postgres",
         "HOST": "127.0.0.1",
@@ -26,24 +26,35 @@
       "MAIL_SEND": {
         "NAME": "postmaster_send",
         "PORTS": {
-          "PORT_EXPOSED_IMAP": "3143",
-          "PORT_EXPOSED_IMAPS": "3993",
-          "PORT_EXPOSED_POP": "3110",
-          "PORT_EXPOSED_POP3S": "3995"
+          "PORT_ANTI_VIRUS": 10025
         }
       },
       "MAIL_RECEIVE": {
         "NAME": "postmaster_receive",
-        "MAILBOXES_CAPACITY": "30G"
+        "MAILBOXES_CAPACITY": "30G",
+        "PORTS": {
+          "PORT_EXPOSED_IMAP": 3143,
+          "PORT_EXPOSED_IMAPS": 3993,
+          "PORT_EXPOSED_POP": 3110,
+          "PORT_EXPOSED_POP3S": 3995
+        }
+      },
+      "ANTI_VIRUS": {
+        "NAME": "postmaster_antivirus",
+        "PORTS": {
+          "PORT": 10024
+        }
       },
       "NETWORK": {
-        "NAME": "postmaster_network"
+        "NAME": "postmaster_network",
+        "SUBNET": "172.18.0.0/16"
       }
     }
   },
   "includes": [
     "Definitions/Mail_Server/Docker/Network.json",
     "Definitions/Mail_Server/Docker/Database.json",
+    "Definitions/Mail_Server/Docker/AntiVirus.json",
     "Definitions/Mail_Server/Docker/Dovecot.json",
     "Definitions/Mail_Server/Docker/Postfix.json"
   ]

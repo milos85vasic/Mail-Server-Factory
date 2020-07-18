@@ -1,8 +1,10 @@
 #!/bin/sh
 
-dbPort={{SERVICE.DATABASE.PORTS.PORT}}
 dovecotSaslPort=12345
 dovecotLmtpPort=12346
+dbPort={{SERVICE.DATABASE.PORTS.PORT}}
+antivirusPort={{SERVICE.ANTI_VIRUS.PORTS.PORT}}
+
 postfixLog=/var/log/postfix.start.log
 echo "Starting Postfix" > ${postfixLog}
 
@@ -12,6 +14,15 @@ then
     echo "Database process is bound to port: $dbPort" >> ${postfixLog}
 else
    echo "No process bound to port: $dbPort" >> ${postfixLog}
+   exit 1
+fi
+
+echo "Checking AntiVirus scanner service port: $antivirusPort" >> ${postfixLog}
+if echo "^C" | telnet {{SERVICE.ANTI_VIRUS.NAME}} ${antivirusPort} | grep "Connected"
+then
+    echo "AntiVirus scanner service is bound to port: $antivirusPort" >> ${postfixLog}
+else
+   echo "No AntiVirus scanner service bound to port: $antivirusPort" >> ${postfixLog}
    exit 1
 fi
 
@@ -40,7 +51,7 @@ postfix start >> ${postfixLog}
 if postfix status >> ${postfixLog}
 then
 
-    ports=(465 587)
+    ports=(465 587 {{SERVICE.MAIL_SEND.PORTS.PORT_ANTI_VIRUS}})
     for port in ${ports[@]}; do
         if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
         then
@@ -52,7 +63,7 @@ then
     done
 
     sh /logrotate.sh &
-    tail -f ${postfixLog}
+    tail -F ${postfixLog}
 else
     exit 1
 fi

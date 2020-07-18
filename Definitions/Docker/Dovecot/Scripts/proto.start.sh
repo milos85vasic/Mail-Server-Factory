@@ -22,7 +22,7 @@ chown -R vmail /usr/local/vmail
 chgrp -R vmail /etc/dovecot/masters
 chown -R vmail /etc/dovecot/masters
 
-if rsyslogd && dovecot >> ${dovecotLog}
+if dovecot >> ${dovecotLog}
 then
 
     doveadm log errors >> ${dovecotLog}
@@ -38,7 +38,8 @@ then
         fi
     done
 
-    tail -f ${dovecotLog}
+    sh /logrotate.sh &
+    tail -F ${dovecotLog}
 else
     exit 1
 fi

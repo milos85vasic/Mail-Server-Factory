@@ -7,7 +7,7 @@ services:
     hostname: {{SERVICE.MAIL_RECEIVE.NAME}}.{{SERVER.DOMAIN}}
     restart: always
     ports:
-      - {{SERVICE.MAIL_SEND.PORTS.PORT_EXPOSED_IMAPS}}:993
+      - {{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}:993
     networks:
       - {{SERVICE.NETWORK.NAME}}
     volumes:
