@@ -20,6 +20,22 @@
           {
             "type": "check",
             "value": "{{SERVICE.ANTI_VIRUS.NAME}}"
+          },
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/ClamAV/antivirus.service /etc/systemd/system/antivirus.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable antivirus.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.ANTI_VIRUS.NAME}}"
           }
         ]
       }
