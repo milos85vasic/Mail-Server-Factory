@@ -6,10 +6,6 @@
       "installationSteps": {
         "Docker": [
           {
-            "type": "reboot",
-            "value": "120"
-          },
-          {
             "type": "conditionCheck",
             "value": "{{SERVICE.MAIL_SEND.NAME}}"
           },
