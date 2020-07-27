@@ -53,7 +53,8 @@
   },
   "includes": [
     "Definitions/Mail_Server/Docker/Network.json",
-    "Definitions/Mail_Server/Docker/Database.json",
+    "Definitions/Mail_Server/Docker/Databases/Relational.json",
+    "Definitions/Mail_Server/Docker/Databases/In_Memory.json",
     "Definitions/Mail_Server/Docker/AntiVirus.json",
     "Definitions/Mail_Server/Docker/Dovecot.json",
     "Definitions/Mail_Server/Docker/Postfix.json"
