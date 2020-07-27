@@ -23,6 +23,13 @@
         "VIEW_USERS": "mail_view_users",
         "VIEW_ALIASES": "mail_view_aliases"
       },
+      "MEMORY_DATABASE": {
+        "NAME": "postmaster_mem_db",
+        "PORTS": {
+          "PORT": 6379,
+          "PORT_EXPOSED": 36379
+        }
+      },
       "MAIL_SEND": {
         "NAME": "postmaster_send",
         "PORTS": {

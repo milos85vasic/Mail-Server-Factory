@@ -7,11 +7,11 @@
         "Docker": [
           {
             "type": "conditionCheck",
-            "value": "{{SERVICE.DATABASE.NAME}}"
+            "value": "{{SERVICE.MEMORY_DATABASE.NAME}}"
           },
           {
             "type": "portRequired",
-            "value": "{{SERVICE.DATABASE.PORTS.PORT_EXPOSED}}"
+            "value": "{{SERVICE.MEMORY_DATABASE.PORTS.PORT_EXPOSED}}"
           },
           {
             "type": "deploy",
@@ -23,7 +23,7 @@
           },
           {
             "type": "check",
-            "value": "{{SERVICE.DATABASE.NAME}}"
+            "value": "{{SERVICE.MEMORY_DATABASE.NAME}}"
           },
           {
             "type": "command",
@@ -39,7 +39,7 @@
           },
           {
             "type": "check",
-            "value": "{{SERVICE.DATABASE.NAME}}"
+            "value": "{{SERVICE.MEMORY_DATABASE.NAME}}"
           }
         ]
       }
