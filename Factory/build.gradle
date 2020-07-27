@@ -1,23 +1,28 @@
 import java.util.concurrent.TimeUnit
 
 buildscript {
+
     repositories {
+
         google()
         mavenCentral()
         jcenter()
     }
 
     dependencies {
+
         classpath "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
 }
 
 apply plugin: 'kotlin'
-apply plugin: 'java'
 apply plugin: 'application'
 
+String clazz = "net.milosvasic.factory.mail.Launcher"
+
 repositories {
+
     google()
     mavenCentral()
     jcenter()
@@ -31,26 +36,30 @@ dependencies {
 }
 
 application {
-    mainClassName = "net.milosvasic.factory.Launcher"
+
+    mainClassName = clazz
 }
 
 jar {
     manifest {
-        attributes "Main-Class": application.mainClassName
+        attributes "Main-Class": clazz
     }
 
     from {
+
         configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
     }
 }
 
 test {
+
     useJUnitPlatform()
 }
 
 sourceSets.main.java.srcDirs += 'src/main/kotlin'
 
 task cleanupLogs {
+
     try {
         Runtime.getRuntime().exec("$projectDir/cleanup_logs.sh").waitFor(5, TimeUnit.SECONDS)
     } catch (Exception e) {
