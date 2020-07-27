@@ -1,0 +1,11 @@
+[Unit]
+Description=Redis database running on Docker
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+ExecStart={{DOCKER.DOCKER_HOME}}/Definitions/Redis/start.sh
+
+[Install]
+WantedBy=multi-user.target
