@@ -8,7 +8,8 @@ RUN dnf update -y && \
     dnf install -y git cmake make curl telnet net-tools iputils && \
     dnf groupinstall -y "Development Tools" && \
     cd /opt; git clone http://luajit.org/git/luajit-2.0.git; cd luajit-2.0; make && make install; cd / && \
-    cd /opt; mkdir hyperscan; cd hyperscan; git clone git://github.com/intel/hyperscan; mkdir build; cd build; cmake ../hyperscan; make; cd / && \
+    # TODO:
+    # cd /opt; mkdir hyperscan; cd hyperscan; git clone git://github.com/intel/hyperscan; mkdir build; cd build; cmake ../hyperscan; cmake --build .; cd / && \
     curl https://rspamd.com/rpm-stable/centos-8/rspamd.repo > /etc/yum.repos.d/rspamd.repo && \
     rpm --import https://rspamd.com/rpm-stable/gpg.key && \
     dnf install -y rspamd
