@@ -28,7 +28,9 @@
         "PORTS": {
           "PORT": 6379,
           "PORT_EXPOSED": 36379
-        }
+        },
+        "TYPE": "Redis",
+        "HOST": "127.0.0.1"
       },
       "MAIL_SEND": {
         "NAME": "postmaster_send",

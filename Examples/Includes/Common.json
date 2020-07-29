@@ -8,6 +8,7 @@
   "software": [
     "Definitions/Software/Docker",
     "Definitions/Software/Postgres",
+    "Definitions/Software/Redis",
     "Definitions/Software/Ca"
   ],
   "containers": [

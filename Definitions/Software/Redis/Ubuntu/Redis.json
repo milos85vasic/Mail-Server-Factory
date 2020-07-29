@@ -1,0 +1,23 @@
+{
+  "software": [
+    {
+      "name": "Redis",
+      "installationSteps": {
+        "Ubuntu": [
+          {
+            "type": "skipCondition",
+            "value": "redis-cli --version"
+          },
+          {
+            "type": "packages",
+            "value": "redis-tools"
+          },
+          {
+            "type": "command",
+            "value": "redis-cli --version"
+          }
+        ]
+      }
+    }
+  ]
+}

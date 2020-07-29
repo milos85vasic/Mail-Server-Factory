@@ -27,6 +27,10 @@
           },
           {
             "type": "command",
+            "value": "redis-cli -h {{SERVICE.MEMORY_DATABASE.HOST}} -p {{SERVICE.MEMORY_DATABASE.PORTS.PORT_EXPOSED}} ping"
+          },
+          {
+            "type": "command",
             "value": "ln -s {{DOCKER.DOCKER_HOME}}/Redis/database.redis.service /etc/systemd/system/database.redis.service"
           },
           {
@@ -40,6 +44,10 @@
           {
             "type": "check",
             "value": "{{SERVICE.MEMORY_DATABASE.NAME}}"
+          },
+          {
+            "type": "command",
+            "value": "redis-cli -h {{SERVICE.MEMORY_DATABASE.HOST}} -p {{SERVICE.MEMORY_DATABASE.PORTS.PORT_EXPOSED}} ping"
           }
         ]
       }
