@@ -54,6 +54,12 @@
           "PORT": 10024
         }
       },
+      "ANTI_SPAM": {
+        "NAME": "postmaster_antispam",
+        "PORTS": {
+          "PORT": 11332
+        }
+      },
       "NETWORK": {
         "NAME": "postmaster_network",
         "SUBNET": "172.18.0.0/16"
@@ -65,6 +71,7 @@
     "Definitions/Mail_Server/Docker/Databases/Relational.json",
     "Definitions/Mail_Server/Docker/Databases/In_Memory.json",
     "Definitions/Mail_Server/Docker/AntiVirus.json",
+    "Definitions/Mail_Server/Docker/AntiSpam.json",
     "Definitions/Mail_Server/Docker/Dovecot.json",
     "Definitions/Mail_Server/Docker/Postfix.json"
   ]
