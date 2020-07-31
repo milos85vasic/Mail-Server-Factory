@@ -1,5 +1,7 @@
 #!/bin/sh
 
-logFile="/var/log/rspamd.start.log"
-echo "Rspamd OK" > ${logFile}
-tail ${logFile}
+# logFile="rspamd_start.log"
+# echo "Rspamd OK" > ${logFile}
+# tail -F ${logFile}
+
+echo "Starting"
