@@ -9,10 +9,11 @@ RUN dnf update -y && \
     dnf install -y git cmake make gcc-c++ boost ragel libnet curl telnet net-tools iputils && \
     dnf groupinstall -y "Development Tools" && \
     cd /opt; git clone http://luajit.org/git/luajit-2.0.git; cd luajit-2.0; make && make install; cd / && \
-    # TODO: Hyperscan
+    rpm -Uvh http://repo.openfusion.net/centos7-x86_64/openfusion-release-0.7-1.of.el7.noarch.rpm && \
+    dnf install -y hyperscan hyperscan-devel
     curl https://rspamd.com/rpm-stable/centos-8/rspamd.repo > /etc/yum.repos.d/rspamd.repo && \
-    rpm --import https://rspamd.com/rpm-stable/gpg.key && \
-    #    dnf install -y rspamd
+    rpm --import https://rspamd.com/rpm-stable/gpg.key
+    dnf install -y rspamd
 
 # TODO:
 #ADD Configuration/Clamd /etc/clamd.d
