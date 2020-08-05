@@ -10,9 +10,9 @@ RUN dnf update -y && \
     dnf groupinstall -y "Development Tools" && \
     cd /opt; git clone http://luajit.org/git/luajit-2.0.git; cd luajit-2.0; make && make install; cd / && \
     rpm -Uvh http://repo.openfusion.net/centos7-x86_64/openfusion-release-0.7-1.of.el7.noarch.rpm && \
-    dnf install -y hyperscan hyperscan-devel
+    dnf install -y hyperscan hyperscan-devel && \
     curl https://rspamd.com/rpm-stable/centos-8/rspamd.repo > /etc/yum.repos.d/rspamd.repo && \
-    rpm --import https://rspamd.com/rpm-stable/gpg.key
+    rpm --import https://rspamd.com/rpm-stable/gpg.key && \
     dnf install -y rspamd
 
 # TODO:
