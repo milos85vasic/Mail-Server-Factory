@@ -15,15 +15,9 @@ RUN dnf update -y && \
     rpm --import https://rspamd.com/rpm-stable/gpg.key && \
     dnf install -y rspamd
 
-# TODO:
-#ADD Configuration/Clamd /etc/clamd.d
-#ADD Scripts/do_clam.sh /do_clam.sh
+
 ADD Scripts/start.sh /start.sh
-#ADD Scripts/logrotate.sh /logrotate.sh
 
-# TODO:
-# EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PORT}}
+EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PORT}}
 
-# TODO:
-# CMD sh start.sh
-ENTRYPOINT ["tail", "-f", "/dev/null"]
+CMD sh start.sh
