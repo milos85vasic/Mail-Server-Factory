@@ -19,6 +19,7 @@ RUN dnf update -y && \
 ADD Scripts/start.sh /start.sh
 ADD Configuration/worker-normal.inc /etc/rspamd/local.d/worker-normal.inc
 
-EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PORT}}
+EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PROXY}}
+EXPOSE {{SERVICE.ANTI_SPAM.PORTS.WORKER}}
 
 CMD sh start.sh
