@@ -57,7 +57,7 @@
       "ANTI_SPAM": {
         "NAME": "postmaster_antispam",
         "PORTS": {
-          "PORT": 11332
+          "PORT": 11333
         }
       },
       "NETWORK": {
