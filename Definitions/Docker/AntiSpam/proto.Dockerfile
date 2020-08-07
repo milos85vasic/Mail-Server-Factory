@@ -15,10 +15,11 @@ RUN dnf update -y && \
     rpm --import https://rspamd.com/rpm-stable/gpg.key && \
     dnf install -y rspamd
 
-
 ADD Scripts/start.sh /start.sh
+ADD Configuration/worker-proxy.inc /etc/rspamd/local.d/worker-proxy.inc
 ADD Configuration/worker-normal.inc /etc/rspamd/local.d/worker-normal.inc
 ADD Configuration/classifier-bayes.conf /etc/rspamd/local.d/classifier-bayes.conf
+ADD Configuration/milter_headers.conf /etc/rspamd/local.d/milter_headers.conf
 
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PROXY}}
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.WORKER}}
