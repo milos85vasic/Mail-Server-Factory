@@ -58,7 +58,9 @@
         "NAME": "postmaster_antispam",
         "PORTS": {
           "PROXY": 11332,
-          "WORKER": 11333
+          "WORKER": 11333,
+          "WEBUI": 11334,
+          "WEBUI_EXPOSED": 11334
         }
       },
       "NETWORK": {

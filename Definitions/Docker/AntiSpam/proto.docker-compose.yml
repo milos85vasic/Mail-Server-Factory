@@ -6,6 +6,8 @@ services:
     container_name: {{SERVICE.ANTI_SPAM.NAME}}
     hostname: {{SERVICE.ANTI_SPAM.NAME}}.{{SERVER.DOMAIN}}
     restart: always
+    ports:
+        - {{SERVICE.ANTI_SPAM.PORTS.WEBUI_EXPOSED}}:{{SERVICE.ANTI_SPAM.PORTS.WEBUI}}
     networks:
       - {{SERVICE.NETWORK.NAME}}
 # TODO:

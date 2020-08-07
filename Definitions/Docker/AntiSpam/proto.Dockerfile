@@ -23,5 +23,6 @@ ADD Configuration/milter_headers.conf /etc/rspamd/local.d/milter_headers.conf
 
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PROXY}}
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.WORKER}}
+EXPOSE {{SERVICE.ANTI_SPAM.PORTS.WEBUI}}
 
 CMD sh start.sh
