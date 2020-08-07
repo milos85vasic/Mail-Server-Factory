@@ -18,6 +18,7 @@ RUN dnf update -y && \
 
 ADD Scripts/start.sh /start.sh
 ADD Configuration/worker-normal.inc /etc/rspamd/local.d/worker-normal.inc
+ADD Configuration/classifier-bayes.conf /etc/rspamd/local.d/classifier-bayes.conf
 
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PROXY}}
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.WORKER}}
