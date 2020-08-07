@@ -21,6 +21,13 @@
       },
 
       "POSTMASTER": "postmaster@dev.local"
+    },
+    "SERVICE": {
+      "ANTI_SPAM": {
+        "WEBUI": {
+          "PASSWORD": "Test12345"
+        }
+      }
     }
   }
 }
