@@ -10,12 +10,8 @@ services:
         - {{SERVICE.ANTI_SPAM.PORTS.WEBUI_EXPOSED}}:{{SERVICE.ANTI_SPAM.PORTS.WEBUI}}
     networks:
       - {{SERVICE.NETWORK.NAME}}
-# TODO:
-#    volumes:
-#      - {{SERVER.SERVER_HOME}}/Server/ClamAV/Log:/var/log
-#      - {{SERVER.SERVER_HOME}}/Server/Dovecot/VMail:/target/vmail
-#      - {{SERVER.SERVER_HOME}}/Server/Dovecot/Maildir:/target/maildir
-#      - {{SERVER.SERVER_HOME}}/Server/ClamAV/Definitions:/var/lib/clamav
+    volumes:
+      - {{SERVER.SERVER_HOME}}/Server/Rspamd/Log:/var/log
 
 networks:
   {{SERVICE.NETWORK.NAME}}:
