@@ -16,6 +16,7 @@ RUN dnf update -y && \
     dnf install -y rspamd
 
 ADD Scripts/start.sh /start.sh
+ADD Scripts/logrotate.sh /logrotate.sh
 ADD Configuration/worker-proxy.inc /etc/rspamd/local.d/worker-proxy.inc
 ADD Configuration/worker-normal.inc /etc/rspamd/local.d/worker-normal.inc
 ADD Configuration/classifier-bayes.conf /etc/rspamd/local.d/classifier-bayes.conf
