@@ -1,4 +1,4 @@
-level = "debug";
+level = "warning";
 filename = /var/log/rspamd.log;
 log_format =<<EOD
 id: <$mid>,$if_qid{ qid: <$>,}$if_ip{ ip: $,}$if_user{ user: $,}$if_smtp_from{ from: <$>,}
