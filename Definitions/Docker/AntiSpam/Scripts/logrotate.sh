@@ -1,6 +1,6 @@
 #!/bin/sh
 
-logs=/var/log/
+logs=/var/log
 logFile=rspamd.log
 rspamdLog="$logs/$logFile"
 
