@@ -23,6 +23,8 @@ ADD Configuration/classifier-bayes.conf /etc/rspamd/local.d/classifier-bayes.con
 ADD Configuration/milter_headers.conf /etc/rspamd/local.d/milter_headers.conf
 ADD Configuration/logging.inc /etc/rspamd/local.d/logging.inc
 
+RUN mkdir /var/run/rspamd
+
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PROXY}}
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.WORKER}}
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.WEBUI}}
