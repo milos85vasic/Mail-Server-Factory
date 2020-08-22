@@ -25,7 +25,8 @@ ADD Configuration/worker-controller.inc /etc/rspamd/local.d/worker-controller.in
 ADD Configuration/logging.inc /etc/rspamd/local.d/logging.inc
 
 RUN mkdir /var/run/rspamd
-RUN echo "password = \"$(rspamadm pw --encrypt -p {{SERVICE.ANTI_SPAM.WEBUI.PASSWORD}})\";" >> /etc/rspamd/local.d/worker-controller.inc
+RUN printf "password = \"$(rspamadm pw --encrypt -p {{SERVICE.ANTI_SPAM.WEBUI.PASSWORD}})\";\n" >> /etc/rspamd/local.d/worker-controller.inc
+RUN printf "enable_password = \"$(rspamadm pw --encrypt -p {{SERVICE.ANTI_SPAM.WEBUI.PASSWORD}})\";\n" >> /etc/rspamd/local.d/worker-controller.inc
 
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.PROXY}}
 EXPOSE {{SERVICE.ANTI_SPAM.PORTS.WORKER}}
