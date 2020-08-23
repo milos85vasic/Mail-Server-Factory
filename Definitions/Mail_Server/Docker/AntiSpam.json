@@ -10,6 +10,10 @@
             "value": "{{SERVICE.ANTI_SPAM.NAME}}"
           },
           {
+            "type": "portRequired",
+            "value": "{{SERVICE.ANTI_SPAM.PORTS.WEBUI_EXPOSED}}"
+          },
+          {
             "type": "deploy",
             "value": "Definitions/Docker/AntiSpam:{{DOCKER.DOCKER_HOME}}/Rspamd"
           },
