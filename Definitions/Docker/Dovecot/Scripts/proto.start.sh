@@ -29,7 +29,7 @@ then
     dovecot log errors >> ${dovecotLog}
     ports=(110 143 993 995 12345 12346 12347 4190 2000)
     for port in ${ports[@]}; do
-        if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
+        if echo "^C" | telnet 127.0.0.1 "${port}" | grep "Connected"
         then
             echo "Dovecot is listening on port: $port" >> ${dovecotLog}
         else

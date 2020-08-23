@@ -24,7 +24,7 @@ then
 
     ports=({{SERVICE.ANTI_VIRUS.PORTS.PORT}})
     for port in ${ports[@]}; do
-        if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
+        if echo "^C" | telnet 127.0.0.1 "${port}" | grep "Connected"
         then
             echo "Amavis is listening on port: $port" >> ${antivirusStackLog}
         else

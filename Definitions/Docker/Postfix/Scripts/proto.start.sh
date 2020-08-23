@@ -53,7 +53,7 @@ then
 
     ports=(465 587 {{SERVICE.MAIL_SEND.PORTS.PORT_ANTI_VIRUS}})
     for port in ${ports[@]}; do
-        if echo "^C" | telnet 127.0.0.1 ${port} | grep "Connected"
+        if echo "^C" | telnet 127.0.0.1 "${port}" | grep "Connected"
         then
             echo "Postfix is listening on port: $port" >> ${postfixLog}
         else
