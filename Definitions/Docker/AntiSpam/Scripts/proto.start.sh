@@ -7,6 +7,9 @@ sh /logrotate.sh &
 chown -R _rspamd /var/run/rspamd
 chgrp -R _rspamd /var/run/rspamd
 
+chown -R _rspamd /var/lib/rspamd
+chgrp -R _rspamd /var/lib/rspamd
+
 if rspamd -u _rspamd -g _rspamd
 then
 
