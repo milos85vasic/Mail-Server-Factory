@@ -12,6 +12,7 @@ services:
       - {{SERVICE.NETWORK.NAME}}
     volumes:
       - {{SERVER.SERVER_HOME}}/Server/Rspamd/Log:/var/log
+      - {{SERVER.SERVER_HOME}}/Server/Rspamd/Lib:/var/lib/rspamd
 
 networks:
   {{SERVICE.NETWORK.NAME}}:
