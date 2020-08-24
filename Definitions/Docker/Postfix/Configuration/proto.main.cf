@@ -166,3 +166,10 @@ address_verify_map = btree:${data_directory}/verify_cache
 
 # Content filtering:
 content_filter = smtp-amavis:[{{SERVICE.ANTI_VIRUS.NAME}}]:{{SERVICE.ANTI_VIRUS.PORTS.PORT}}
+
+# Anti-Spam configuration:
+milter_protocol = 6
+milter_mail_macros = i {mail_addr} {client_addr} {client_name} {auth_authen}
+milter_default_action = accept
+smtpd_milters = inet:{{SERVICE.ANTI_SPAM.NAME}}:{{SERVICE.ANTI_SPAM.PORTS.PROXY}}
+non_smtpd_milters = inet:{{SERVICE.ANTI_SPAM.NAME}}:{{SERVICE.ANTI_SPAM.PORTS.PROXY}}
