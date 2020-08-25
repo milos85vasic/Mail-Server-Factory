@@ -1,6 +1,0 @@
-{
-  "includes": [
-    "Definitions/Software/Ca/Centos/Ca.json",
-    "Definitions/Software/Ca/Ubuntu/Ca.json"
-  ]
-}

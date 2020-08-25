@@ -1,1 +1,0 @@
-bind_socket = "0.0.0.0:{{SERVICE.ANTI_SPAM.PORTS.PROXY}}";
