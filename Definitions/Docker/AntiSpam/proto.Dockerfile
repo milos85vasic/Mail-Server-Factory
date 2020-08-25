@@ -23,7 +23,9 @@ ADD Configuration/classifier-bayes.conf /etc/rspamd/local.d/classifier-bayes.con
 ADD Configuration/milter_headers.conf /etc/rspamd/local.d/milter_headers.conf
 ADD Configuration/worker-controller.inc /etc/rspamd/local.d/worker-controller.inc
 ADD Configuration/logging.inc /etc/rspamd/local.d/logging.inc
+ADD Configuration/dkim_signing.conf /etc/rspamd/local.d/dkim_signing.conf
 
+RUN cp /etc/rspamd/local.d/dkim_signing.conf /etc/rspamd/local.d/arc.conf
 RUN mkdir /var/run/rspamd
 RUN printf "password = \"$(rspamadm pw --encrypt -p {{SERVICE.ANTI_SPAM.WEBUI.PASSWORD}})\";\n" >> /etc/rspamd/local.d/worker-controller.inc
 RUN printf "enable_password = \"$(rspamadm pw --encrypt -p {{SERVICE.ANTI_SPAM.WEBUI.PASSWORD}})\";\n" >> /etc/rspamd/local.d/worker-controller.inc
