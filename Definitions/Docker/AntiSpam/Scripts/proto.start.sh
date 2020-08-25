@@ -7,15 +7,21 @@ sh /logrotate.sh &
 chown -R _rspamd /var/run/rspamd
 chgrp -R _rspamd /var/run/rspamd
 
-if ! test /var/lib/rspamd/dkim/
+if test -e /var/lib/rspamd/dkim/
 then
+
+  echo "$(date) DKIM directory exists" >> ${logFile}
+else
 
   echo "$(date) Initializing DKIM directory" >> ${logFile}
-  mkdir /var/lib/rspamd/dkim/
+  mkdir -p /var/lib/rspamd/dkim/
 fi
 
-if ! test /var/lib/rspamd/dkim/mail.key
+if test -e /var/lib/rspamd/dkim/mail.key
 then
+
+  echo "$(date) DKIM keys are available" >> ${logFile}
+else
 
   echo "$(date) Initializing DKIM keys" >> ${logFile}
   rspamadm dkim_keygen -b 2048 -s mail -k /var/lib/rspamd/dkim/mail.key | tee -a  /var/lib/rspamd/dkim/mail.pub
