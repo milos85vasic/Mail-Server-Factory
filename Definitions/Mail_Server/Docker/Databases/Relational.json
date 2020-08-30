@@ -1,0 +1,48 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack: Relational database",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "conditionCheck",
+            "value": "{{SERVICE.DATABASE.NAME}}"
+          },
+          {
+            "type": "portRequired",
+            "value": "{{SERVICE.DATABASE.PORTS.PORT_EXPOSED}}"
+          },
+          {
+            "type": "deploy",
+            "value": "Definitions/Docker/Postgres:{{DOCKER.DOCKER_HOME}}/Postgres"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/Postgres"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.DATABASE.NAME}}"
+          },
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Postgres/database.postgres.service /etc/systemd/system/database.postgres.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable database.postgres.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.DATABASE.NAME}}"
+          }
+        ]
+      }
+    }
+  ]
+}

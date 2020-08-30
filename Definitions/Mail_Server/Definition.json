@@ -23,6 +23,15 @@
         "VIEW_USERS": "mail_view_users",
         "VIEW_ALIASES": "mail_view_aliases"
       },
+      "MEMORY_DATABASE": {
+        "NAME": "postmaster_mem_db",
+        "PORTS": {
+          "PORT": 6379,
+          "PORT_EXPOSED": 36379
+        },
+        "TYPE": "Redis",
+        "HOST": "127.0.0.1"
+      },
       "MAIL_SEND": {
         "NAME": "postmaster_send",
         "PORTS": {
@@ -45,6 +54,15 @@
           "PORT": 10024
         }
       },
+      "ANTI_SPAM": {
+        "NAME": "postmaster_antispam",
+        "PORTS": {
+          "PROXY": 11332,
+          "WORKER": 11333,
+          "WEBUI": 11334,
+          "WEBUI_EXPOSED": 11334
+        }
+      },
       "NETWORK": {
         "NAME": "postmaster_network",
         "SUBNET": "172.18.0.0/16"
@@ -53,8 +71,10 @@
   },
   "includes": [
     "Definitions/Mail_Server/Docker/Network.json",
-    "Definitions/Mail_Server/Docker/Database.json",
+    "Definitions/Mail_Server/Docker/Databases/Relational.json",
+    "Definitions/Mail_Server/Docker/Databases/In_Memory.json",
     "Definitions/Mail_Server/Docker/AntiVirus.json",
+    "Definitions/Mail_Server/Docker/AntiSpam.json",
     "Definitions/Mail_Server/Docker/Dovecot.json",
     "Definitions/Mail_Server/Docker/Postfix.json"
   ]
