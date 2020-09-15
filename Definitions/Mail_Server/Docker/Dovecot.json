@@ -40,6 +40,27 @@
           {
             "type": "portCheck",
             "value": "{{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}"
+          },
+
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Dovecot/receivemail.service /etc/systemd/system/receivemail.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable receivemail.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.MAIL_RECEIVE.NAME}}"
+          },
+          {
+            "type": "portCheck",
+            "value": "{{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}"
           }
         ]
       }
