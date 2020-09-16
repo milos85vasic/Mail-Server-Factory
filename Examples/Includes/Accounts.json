@@ -1,6 +1,15 @@
 {
   "accounts": [
     {
+      "type": "postmaster",
+      "name": "postmaster@dev.local",
+      "credentials": "Test24680",
+      "aliases": [
+        "pos.alias.1@dev.local",
+        "pos.alias.2@dev.local"
+      ]
+    },
+    {
       "type": "email",
       "name": "test1@dev.local",
       "credentials": "Test12345",

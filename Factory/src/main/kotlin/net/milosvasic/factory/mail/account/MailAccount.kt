@@ -4,7 +4,7 @@ import net.milosvasic.factory.account.Account
 import net.milosvasic.factory.account.credentials.password.Password
 import net.milosvasic.factory.account.credentials.password.PasswordStrength
 
-class MailAccount(
+open class MailAccount(
 
         name: String,
         credentials: String,
