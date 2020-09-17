@@ -4,5 +4,11 @@
     "Examples/Includes/Database.json",
     "Examples/Includes/Docker.json",
     "Examples/Includes/Accounts.json"
+  ],
+  "software": [
+    "Examples/Software/Dummy"
+  ],
+  "containers": [
+    "Examples/Containers/Dummy"
   ]
 }
