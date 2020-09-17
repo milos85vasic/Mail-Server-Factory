@@ -1,0 +1,16 @@
+{
+  "software": [
+    {
+      "name": "Dummy",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Ubuntu": [
+          {
+            "type": "command",
+            "value": "echo \"Hello from Mail Server Factory!\""
+          }
+        ]
+      }
+    }
+  ]
+}

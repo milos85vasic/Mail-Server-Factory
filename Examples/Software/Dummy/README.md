@@ -1,0 +1,3 @@
+# Example software configuration
+
+Tbd.

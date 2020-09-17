@@ -22,6 +22,18 @@ class MailServerConfiguration(
         name, remote, includes, software, containers, variables
 ) {
 
+    override fun getDefaultSoftware(): List<String> {
+
+        val defaultSoftware = mutableListOf<String>()
+        defaultSoftware.addAll(super.getDefaultSoftware())
+        val items = listOf(
+                "Definitions/Software/Postgres",
+                "Definitions/Software/Redis",
+                "Definitions/Software/Ca"
+        )
+        defaultSoftware.addAll(items)
+        return defaultSoftware
+    }
     override fun merge(configuration: Configuration) {
         super.merge(configuration)
         if (configuration is MailServerConfiguration) {

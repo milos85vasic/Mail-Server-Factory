@@ -6,10 +6,7 @@
     "Examples/Includes/Accounts.json"
   ],
   "software": [
-    "Definitions/Software/Docker",
-    "Definitions/Software/Postgres",
-    "Definitions/Software/Redis",
-    "Definitions/Software/Ca"
+    "Examples/Software/Dummy"
   ],
   "containers": [
     "Definitions/Mail_Server"

@@ -1,0 +1,6 @@
+{
+  "includes": [
+    "Examples/Software/Dummy/Centos/Dummy.json",
+    "Examples/Software/Dummy/Ubuntu/Dummy.json"
+  ]
+}
