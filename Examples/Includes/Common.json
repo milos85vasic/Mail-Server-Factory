@@ -9,6 +9,6 @@
     "Examples/Software/Dummy"
   ],
   "containers": [
-    "Definitions/Mail_Server"
+    "Examples/Containers/Dummy"
   ]
 }

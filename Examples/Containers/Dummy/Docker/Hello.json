@@ -1,0 +1,16 @@
+{
+  "software": [
+    {
+      "name": "Hello",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "command",
+            "value": "echo \"Hello!\""
+          }
+        ]
+      }
+    }
+  ]
+}

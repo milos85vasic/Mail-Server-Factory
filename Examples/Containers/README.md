@@ -1,0 +1,3 @@
+# Example containers configuration
+
+Tbd.

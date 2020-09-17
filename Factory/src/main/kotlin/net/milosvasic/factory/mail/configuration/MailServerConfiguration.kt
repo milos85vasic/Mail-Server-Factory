@@ -34,6 +34,16 @@ class MailServerConfiguration(
         defaultSoftware.addAll(items)
         return defaultSoftware
     }
+
+    override fun getDefaultContainers(): List<String> {
+
+        val defaultContainers = mutableListOf<String>()
+        defaultContainers.addAll(super.getDefaultContainers())
+        val items = listOf("Definitions/Mail_Server")
+        defaultContainers.addAll(items)
+        return defaultContainers
+    }
+
     override fun merge(configuration: Configuration) {
         super.merge(configuration)
         if (configuration is MailServerConfiguration) {
