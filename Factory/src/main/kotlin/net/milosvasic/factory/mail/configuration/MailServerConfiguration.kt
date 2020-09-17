@@ -26,7 +26,7 @@ class MailServerConfiguration(
 
         val defaultSoftware = mutableListOf<String>()
         defaultSoftware.addAll(super.getDefaultSoftware())
-        val items = listOf(
+        val items = listOf( // TODO: Make sure that this is dynamic
                 "Definitions/Software/Postgres",
                 "Definitions/Software/Redis",
                 "Definitions/Software/Ca"
@@ -39,7 +39,7 @@ class MailServerConfiguration(
 
         val defaultContainers = mutableListOf<String>()
         defaultContainers.addAll(super.getDefaultContainers())
-        val items = listOf("Definitions/Mail_Server")
+        val items = listOf("Definitions/Mail_Server") // TODO: Make sure that this is dynamic
         defaultContainers.addAll(items)
         return defaultContainers
     }
