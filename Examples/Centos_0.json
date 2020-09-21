@@ -1,7 +1,7 @@
 {
   "name": "Mail server configuration",
   "includes": [
-    "Examples/Includes/Common.json"
+    "Includes/Common.json"
   ],
   "remote": {
     "port": 22,

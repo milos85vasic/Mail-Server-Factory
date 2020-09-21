@@ -1,8 +1,8 @@
 {
   "includes": [
-    "Examples/Includes/Server.json",
-    "Examples/Includes/Database.json",
-    "Examples/Includes/Docker.json",
-    "Examples/Includes/Accounts.json"
+    "Server.json",
+    "Database.json",
+    "Docker.json",
+    "Accounts.json"
   ]
 }

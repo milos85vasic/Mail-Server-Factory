@@ -15,34 +15,13 @@ class MailServerConfiguration(
         software: LinkedBlockingQueue<String>?,
         containers: LinkedBlockingQueue<String>?,
         variables: Node? = null,
+        enabled: Boolean? = null,
         var accounts: LinkedBlockingQueue<MailAccount>?
 
 ) : Configuration(
 
-        name, remote, includes, software, containers, variables
+        name, remote, includes, software, containers, variables, enabled
 ) {
-
-    override fun getDefaultSoftware(): List<String> {
-
-        val defaultSoftware = mutableListOf<String>()
-        defaultSoftware.addAll(super.getDefaultSoftware())
-        val items = listOf( // TODO: Make sure that this is dynamic
-                "Definitions/Software/Postgres",
-                "Definitions/Software/Redis",
-                "Definitions/Software/Ca"
-        )
-        defaultSoftware.addAll(items)
-        return defaultSoftware
-    }
-
-    override fun getDefaultContainers(): List<String> {
-
-        val defaultContainers = mutableListOf<String>()
-        defaultContainers.addAll(super.getDefaultContainers())
-        val items = listOf("Definitions/Mail_Server") // TODO: Make sure that this is dynamic
-        defaultContainers.addAll(items)
-        return defaultContainers
-    }
 
     override fun merge(configuration: Configuration) {
         super.merge(configuration)
