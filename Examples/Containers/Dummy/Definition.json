@@ -1,6 +1,0 @@
-{
-  "enabled": false,
-  "includes": [
-    "Examples/Containers/Dummy/Docker/Hello.json"
-  ]
-}

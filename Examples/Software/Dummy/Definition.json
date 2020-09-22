@@ -1,7 +1,0 @@
-{
-  "enabled": false,
-  "includes": [
-    "Centos/Dummy.json",
-    "Ubuntu/Dummy.json"
-  ]
-}
