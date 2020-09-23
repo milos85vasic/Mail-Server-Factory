@@ -15,11 +15,12 @@ class MailServerConfiguration(
         software: LinkedBlockingQueue<String>?,
         containers: LinkedBlockingQueue<String>?,
         variables: Node? = null,
+        enabled: Boolean? = null,
         var accounts: LinkedBlockingQueue<MailAccount>?
 
 ) : Configuration(
 
-        name, remote, includes, software, containers, variables
+        name, remote, includes, software, containers, variables, enabled
 ) {
 
     override fun merge(configuration: Configuration) {

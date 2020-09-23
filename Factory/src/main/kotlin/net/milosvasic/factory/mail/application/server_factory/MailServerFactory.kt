@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.application.server_factory
 
+import net.milosvasic.factory.account.AccountType
 import net.milosvasic.factory.application.server_factory.ServerFactory
 import net.milosvasic.factory.execution.flow.FlowBuilder
 import net.milosvasic.factory.execution.flow.callback.TerminationCallback
@@ -18,7 +19,12 @@ class MailServerFactory(arguments: List<String> = listOf()) : ServerFactory(argu
             if (it is MailServerConfiguration) {
                 it.accounts?.forEach { account ->
 
-                    log.v("Mail account to be created: ${account.print()}")
+                    val suffix = if (account.getAccountType() == AccountType.POSTMASTER) {
+                        " ( * )"
+                    } else {
+                        ""
+                    }
+                    log.v("Mail account to be created: ${account.print()}$suffix")
                 }
             } else {
 
