@@ -1,9 +1,6 @@
 [submodule "Logger"]
 	path = Logger
 	url = https://github.com/milos85vasic/Logger.git
-[submodule "Utils"]
-	path = Utils
-	url = https://github.com/milos85vasic/Mail-Server-Factory-Utils.git
 [submodule "Core"]
 	path = Core
 	url = git@github.com:milos85vasic/Server-Factory.git
