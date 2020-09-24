@@ -11,14 +11,14 @@ if test -e build.gradle && test -e Factory; then
       gradle wrapper
     fi
 
-    gradlew clean && gradlew install
+    ./gradlew clean && ./gradlew install
   fi
 fi
 
 if test Factory/Release/Factory.jar; then
 
-  sudo cp -f Factory/Release/Factory.jar /usr/bin/ &&
-    cp -f factory.sh /usr/bin/
+  sudo cp -f Factory/Release/Factory.jar /usr/local/bin &&
+    cp -f factory.sh /usr/local/bin
 else
 
   echo "No Factory.jar found"
