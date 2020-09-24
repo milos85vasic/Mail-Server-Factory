@@ -1,7 +1,6 @@
 #!/bin/sh
 
-if which java
-then
+if which java; then
 
   factoryType=$1
   configuration=$2
