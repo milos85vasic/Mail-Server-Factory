@@ -1,16 +1,24 @@
 #!/bin/sh
 
-if test -e build.gradle && test -e Factory
-then
+if test -e build.gradle && test -e Factory; then
 
-  ./gradlew install
+  if which gradle; then
+    if test -e gradlew; then
+
+      echo "Gradle wrapper is available"
+    else
+
+      gradle wrapper
+    fi
+
+    gradlew clean && gradlew install
+  fi
 fi
 
-if test Factory/Release/Factory.jar
-then
+if test Factory/Release/Factory.jar; then
 
-  sudo cp -f Factory/Release/Factory.jar /usr/bin/ && \
-  cp -f factory.sh /usr/bin/
+  sudo cp -f Factory/Release/Factory.jar /usr/bin/ &&
+    cp -f factory.sh /usr/bin/
 else
 
   echo "No Factory.jar found"
