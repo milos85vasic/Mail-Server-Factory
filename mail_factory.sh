@@ -1,11 +1,11 @@
 #!/bin/sh
 
-factoryScript=Factory/Mail/factory.sh
-if test -e "$factoryScript"; then
+script="factory_mail.sh"
+if test -e "$script"; then
 
-  $factoryScript "$1"
+  ./$script "mail" "$1"
 else
 
-  echo "No factory.sh found at: $(pwd)/$factoryScript"
+  echo "No $script found at: $(pwd)"
   exit 1
 fi
