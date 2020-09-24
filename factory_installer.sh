@@ -19,8 +19,8 @@ fi
 if test Factory/Release/Factory.jar; then
 
   factoryPath="/usr/local/bin/Factory/$factoryType"
-  sudo mkdir -p "$factoryPath" && \
-  cp -f Factory/Release/Factory.jar "$factoryPath" && \
+  sudo mkdir -p "$factoryPath" &&
+    cp -f Factory/Release/Factory.jar "$factoryPath" &&
     cp -f factory.sh "$factoryPath"
 else
 
