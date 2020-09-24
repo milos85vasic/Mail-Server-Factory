@@ -73,6 +73,15 @@ task install {
     doLast {
 
         println "Installing Mail Server Factory"
+        delete fileTree('Release') {
+
+            include '**/*.jar'
+        }
+        copy {
+
+            from "build/libs/Factory.jar"
+            into "Release"
+        }
     }
 }
 
