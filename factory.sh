@@ -4,12 +4,14 @@ if which java; then
 
   factoryType=$1
   configuration=$2
+  factoryPath="/usr/local/bin"
+
   if test -e Factory.jar; then
 
-    java -jar "factory_$factoryType.jar" "$configuration"
+    java -jar "$factoryPath/factory_$factoryType.jar" "$configuration"
   else
 
-    echo "No factory jar found at: $(pwd)"
+    echo "No $factoryType factory jar found at: $factoryPath"
     exit 1
   fi
 else
