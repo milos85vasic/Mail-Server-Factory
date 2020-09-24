@@ -67,4 +67,14 @@ task cleanupLogs {
     }
 }
 
+task install {
+
+    dependsOn assemble
+    doLast {
+
+        println "Installing Mail Server Factory"
+    }
+}
+
 build.finalizedBy(cleanupLogs)
+
