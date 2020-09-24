@@ -2,10 +2,11 @@
 
 if which java; then
 
+  factoryType=$1
   configuration=$2
   if test -e Factory.jar; then
 
-    java -jar ./Factory.jar "$configuration"
+    java -jar "./factory_$factoryType.jar" "$configuration"
   else
 
     echo "No factory jar found at: $(pwd)"
