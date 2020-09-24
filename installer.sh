@@ -3,10 +3,11 @@
 installerScript=factory_installer.sh
 if test -e "$installerScript"; then
 
-  if ./$installerScript "Mail"; then
+  if ./$installerScript "mail"; then
 
     factoryPath="/usr/local/bin"
-    sudo cp -f factory.sh "$factoryPath"
+    sudo cp -f factory.sh "$factoryPath" &&
+      cp -f mail_factory.sh "$factoryPath"
   else
 
     echo "Installation failed"
