@@ -9,7 +9,7 @@ fi
 if test Factory/Release/Factory.jar
 then
 
-  cp -f Factory/Release/Factory.jar /usr/bin/
+  sudo cp -f Factory/Release/Factory.jar /usr/bin/ && \
   cp -f factory.sh /usr/bin/
 else
 
