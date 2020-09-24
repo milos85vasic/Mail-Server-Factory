@@ -10,9 +10,10 @@ if test -e "$installerScript"; then
   else
 
     echo "Installation failed"
-    exit 2
+    exit 1
   fi
 else
 
   echo "No $installerScript found at: $(pwd)"
+  exit 1
 fi
