@@ -1,12 +1,10 @@
 #!/bin/sh
 
-if which java
-then
+factoryScript=Factory/Mail/factory.sh
+if test -e "$factoryScript"; then
 
-  configuration=$1
-  java -jar Factory.jar "$configuration"
+  $factoryScript "Mail" "$1"
 else
 
-  echo "No Java installation available. Please install Java and try again."
-  exit 1
+  echo "No factory.sh found at: $(pwd)/$factoryScript"
 fi
