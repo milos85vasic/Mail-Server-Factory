@@ -1,6 +1,6 @@
 @file:JvmName("Launcher")
 
-package net.milosvasic.factory.mail
+package net.milosvasic.factory.mail.application
 
 import net.milosvasic.factory.application.DefaultInitializationHandler
 import net.milosvasic.factory.common.busy.BusyException

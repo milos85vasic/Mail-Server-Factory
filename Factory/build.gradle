@@ -17,9 +17,6 @@ buildscript {
 }
 
 apply plugin: 'kotlin'
-apply plugin: 'application'
-
-String clazz = "net.milosvasic.factory.mail.Launcher"
 
 repositories {
 
@@ -30,25 +27,9 @@ repositories {
 
 dependencies {
 
-    implementation project(":Core:Framework")
+    api project(":Core:Framework")
 
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
-}
-
-application {
-
-    mainClassName = clazz
-}
-
-jar {
-    manifest {
-        attributes "Main-Class": clazz
-    }
-
-    from {
-
-        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
-    }
 }
 
 test {
@@ -57,33 +38,4 @@ test {
 }
 
 sourceSets.main.java.srcDirs += 'src/main/kotlin'
-
-task cleanupLogs {
-
-    try {
-        Runtime.getRuntime().exec("$projectDir/cleanup_logs.sh").waitFor(5, TimeUnit.SECONDS)
-    } catch (Exception e) {
-        System.err.println("Error: ${e.getMessage()}")
-    }
-}
-
-task install {
-
-    dependsOn assemble
-    doLast {
-
-        println "Installing Mail Server Factory"
-        delete fileTree("Release") {
-
-            include "**/*.jar"
-        }
-        copy {
-
-            from "build/libs/Factory.jar"
-            into "Release"
-        }
-    }
-}
-
-build.finalizedBy(cleanupLogs)
 
