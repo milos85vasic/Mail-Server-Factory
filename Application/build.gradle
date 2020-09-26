@@ -80,7 +80,7 @@ task install {
         copy {
 
             from "build/libs/Application.jar"
-            into "Release/Factory.jst"
+            into "Release"
         }
     }
 }

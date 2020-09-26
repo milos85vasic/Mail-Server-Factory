@@ -16,13 +16,13 @@ if test -e build.gradle && test -e Factory; then
   fi
 fi
 
-if test Factory/Release/Factory.jar; then
+if test Factory/Release/Application.jar; then
 
   factoryPath="/usr/local/bin"
-  sudo cp -f Factory/Release/Factory.jar "$factoryPath/factory_$factoryType.jar" &&
+  sudo cp -f Factory/Release/Application.jar "$factoryPath/factory_$factoryType.jar" &&
     cp -f factory.sh "$factoryPath/factory_$factoryType.sh"
 else
 
-  echo "No Factory.jar found"
+  echo "No Application.jar found"
   exit 1
 fi
