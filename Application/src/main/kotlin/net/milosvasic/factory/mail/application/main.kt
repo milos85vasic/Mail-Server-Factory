@@ -49,6 +49,7 @@ fun main(args: Array<String>) {
 }
 
 private fun initLogging() {
+
     tag = BuildInfo.NAME
     val console = ConsoleLogger()
     val filesystem = FilesystemLogger(File("."))
