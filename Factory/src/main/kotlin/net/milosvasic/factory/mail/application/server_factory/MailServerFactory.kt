@@ -25,7 +25,7 @@ class MailServerFactory(builder: ServerFactoryBuilder) : ServerFactory(builder) 
                     } else {
                         ""
                     }
-                    log.v("Mail account to be created: ${account.print()}$suffix")
+                    log.d("Mail account to be created: ${account.print()}$suffix")
                 }
             } else {
 
