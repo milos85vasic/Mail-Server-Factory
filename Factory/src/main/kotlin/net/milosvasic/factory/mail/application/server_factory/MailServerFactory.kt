@@ -2,6 +2,7 @@ package net.milosvasic.factory.mail.application.server_factory
 
 import net.milosvasic.factory.account.AccountType
 import net.milosvasic.factory.application.server_factory.ServerFactory
+import net.milosvasic.factory.application.server_factory.ServerFactoryBuilder
 import net.milosvasic.factory.execution.flow.FlowBuilder
 import net.milosvasic.factory.execution.flow.callback.TerminationCallback
 import net.milosvasic.factory.log
@@ -11,7 +12,7 @@ import net.milosvasic.factory.mail.configuration.MailServerConfigurationFactory
 import net.milosvasic.factory.mail.manager.MailFactory
 import net.milosvasic.factory.remote.Connection
 
-class MailServerFactory(arguments: List<String> = listOf()) : ServerFactory(arguments) {
+class MailServerFactory(builder: ServerFactoryBuilder) : ServerFactory(builder) {
 
     @Throws(IllegalStateException::class)
     override fun run() {
