@@ -2,8 +2,7 @@
   "variables": {
     "SERVER": {
       "CERTIFICATION": {
-        "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca",
-        "CERTIFICATES": "/etc/ssl/certs"
+        "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca"
       }
     },
     "SERVICE": {
