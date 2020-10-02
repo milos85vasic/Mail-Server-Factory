@@ -2,7 +2,14 @@
   "variables": {
     "SERVER": {
       "CERTIFICATION": {
-        "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca"
+        "HOME": "{{SERVER.SERVER_HOME}}/Server/Ca",
+        "COUNTRY": "{{SERVER.INFO.COUNTRY}}",
+        "PROVINCE": "{{SERVER.INFO.PROVINCE}}",
+        "CITY": "{{SERVER.INFO.CITY}}",
+        "ORGANISATION": "{{SERVER.INFO.ORGANISATION}}",
+        "EMAIL": "{{SERVER.INFO.EMAIL}}",
+        "DEPARTMENT": "{{SERVER.INFO.DEPARTMENT}}",
+        "CERTIFICATES": "/etc/ssl/certs"
       }
     },
     "SERVICE": {
