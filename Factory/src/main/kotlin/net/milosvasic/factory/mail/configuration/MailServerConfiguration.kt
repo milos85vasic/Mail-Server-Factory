@@ -25,8 +25,10 @@ class MailServerConfiguration(
         name, remote, includes, software, containers, variables, overrides, enabled
 ) {
 
+    @Throws(IllegalArgumentException::class)
     override fun merge(configuration: Configuration) {
         super.merge(configuration)
+
         if (configuration is MailServerConfiguration) {
             configuration.accounts?.let {
                 accounts?.addAll(it)
