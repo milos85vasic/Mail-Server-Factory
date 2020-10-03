@@ -2,6 +2,7 @@ package net.milosvasic.factory.mail.configuration
 
 import net.milosvasic.factory.EMPTY
 import net.milosvasic.factory.configuration.Configuration
+import net.milosvasic.factory.configuration.SoftwareConfiguration
 import net.milosvasic.factory.configuration.variable.Node
 import net.milosvasic.factory.mail.account.MailAccount
 import net.milosvasic.factory.remote.Remote
@@ -15,12 +16,13 @@ class MailServerConfiguration(
         software: LinkedBlockingQueue<String>?,
         containers: LinkedBlockingQueue<String>?,
         variables: Node? = null,
+        overrides: MutableMap<String, MutableMap<String, SoftwareConfiguration>>?,
         enabled: Boolean? = null,
         var accounts: LinkedBlockingQueue<MailAccount>?
 
 ) : Configuration(
 
-        name, remote, includes, software, containers, variables, enabled
+        name, remote, includes, software, containers, variables, overrides, enabled
 ) {
 
     override fun merge(configuration: Configuration) {
