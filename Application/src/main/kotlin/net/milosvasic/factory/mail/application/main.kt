@@ -42,7 +42,7 @@ fun main(args: Array<String>) {
                         }
                     } else {
 
-                        fail(ERROR.FATAL_EXCEPTION)
+                        fail(ERROR.INITIALIZATION_FAILURE)
                     }
                 }
             }
