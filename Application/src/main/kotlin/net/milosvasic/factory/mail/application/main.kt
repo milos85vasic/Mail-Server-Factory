@@ -7,6 +7,7 @@ import net.milosvasic.factory.application.DefaultInitializationHandler
 import net.milosvasic.factory.application.server_factory.ServerFactoryBuilder
 import net.milosvasic.factory.common.busy.BusyException
 import net.milosvasic.factory.configuration.recipe.FileConfigurationRecipe
+import net.milosvasic.factory.error.ERROR
 import net.milosvasic.factory.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.application.server_factory.MailServerFactory
@@ -39,6 +40,9 @@ fun main(args: Array<String>) {
                         } catch (e: IllegalStateException) {
                             fail(e)
                         }
+                    } else {
+
+                        fail(ERROR.FATAL_EXCEPTION)
                     }
                 }
             }
