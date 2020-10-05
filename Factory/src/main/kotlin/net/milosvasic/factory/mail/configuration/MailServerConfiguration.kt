@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue
 
 class MailServerConfiguration(
 
+        definition: Definition? = null,
         name: String = String.EMPTY,
         remote: Remote,
         uses: LinkedBlockingQueue<String>?,
@@ -24,7 +25,7 @@ class MailServerConfiguration(
 
 ) : Configuration(
 
-        name, remote, uses, includes, software, containers, variables, overrides, enabled
+        definition, name, remote, uses, includes, software, containers, variables, overrides, enabled
 ) {
 
     @Throws(IllegalArgumentException::class)
