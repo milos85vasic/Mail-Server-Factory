@@ -1,5 +1,5 @@
 {
-  "name": "Mail server configuration",
+  "name": "Centos 7 configuration",
   "includes": [
     "Includes/Common.json"
   ],

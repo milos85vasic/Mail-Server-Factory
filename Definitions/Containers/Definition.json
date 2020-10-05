@@ -1,4 +1,10 @@
 {
+  "definition": {
+    "group": "milosvasic.net",
+    "type": "stack",
+    "version": "1.0.0",
+    "name": "mail_server"
+  },
   "variables": {
     "SERVER": {
       "CERTIFICATION": {

@@ -1,5 +1,5 @@
 {
-  "name": "Mail server configuration",
+  "name": "Ubuntu 18 configuration",
   "includes": [
     "Includes/Common.json"
   ],
