@@ -1,4 +1,10 @@
 {
+  "repositories": [
+    {
+      "type": "TODO: To be implemented",
+      "address": "TODO: To be implemented"
+    }
+  ],
   "uses": [
     "stack/milosvasic.net/mail_server:1.0.0"
   ]
