@@ -6,6 +6,6 @@
     }
   ],
   "uses": [
-    "stack/milosvasic.net/mail_server:1.0.0"
+    "stack/main/mail_server:1.0.0"
   ]
 }
