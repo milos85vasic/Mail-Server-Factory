@@ -21,11 +21,12 @@ class MailServerConfiguration(
         variables: Node? = null,
         overrides: MutableMap<String, MutableMap<String, SoftwareConfiguration>>?,
         enabled: Boolean? = null,
+        docker: LinkedBlockingQueue<String>?,
         var accounts: LinkedBlockingQueue<MailAccount>?
 
 ) : Configuration(
 
-        definition, name, remote, uses, includes, software, containers, variables, overrides, enabled
+        definition, name, remote, uses, includes, software, containers, variables, overrides, enabled, docker
 ) {
 
     @Throws(IllegalArgumentException::class)
