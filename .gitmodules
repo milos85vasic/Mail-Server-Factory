@@ -7,3 +7,9 @@
 [submodule "Variables"]
 	path = Variables
 	url = git@github.com:milos85vasic/Global-Variables.git
+[submodule "Definitions/main/Stacks"]
+	path = Definitions/main/Stacks
+	url = git@github.com:milos85vasic/Server-Factory-Stack-Definitions.git
+[submodule "Definitions/main/Software"]
+	path = Definitions/main/Software
+	url = git@github.com:milos85vasic/Server-Factory-Software-Definitions.git
