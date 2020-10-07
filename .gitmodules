@@ -13,3 +13,6 @@
 [submodule "Definitions/main/Software"]
 	path = Definitions/main/Software
 	url = git@github.com:milos85vasic/Server-Factory-Software-Definitions.git
+[submodule "Definitions/main/Docker"]
+	path = Definitions/main/Docker
+	url = git@github.com:milos85vasic/Server-Factory-Docker-Definitions.git
