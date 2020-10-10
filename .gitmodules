@@ -13,3 +13,6 @@
 [submodule "Definitions/main/software"]
 	path = Definitions/main/software
 	url = git@github.com:milos85vasic/Server-Factory-Software-Definitions.git
+[submodule "Definitions/main/stacks"]
+	path = Definitions/main/stacks
+	url = git@github.com:milos85vasic/Server-Factory-Stack-Definitions.git
