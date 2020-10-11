@@ -6,6 +6,6 @@
     }
   ],
   "uses": [
-    "main/stack/mail_server:1.0.0"
+    "main/stacks/mail_server:1.0.0"
   ]
 }
