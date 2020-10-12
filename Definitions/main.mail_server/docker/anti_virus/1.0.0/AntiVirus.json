@@ -11,7 +11,7 @@
           },
           {
             "type": "deploy",
-            "value": "main/docker/anti_virus:1.0.0@:{{DOCKER.DOCKER_HOME}}/ClamAV"
+            "value": "main.mail_server/docker/anti_virus:1.0.0@:{{DOCKER.DOCKER_HOME}}/ClamAV"
           },
           {
             "type": "stack",

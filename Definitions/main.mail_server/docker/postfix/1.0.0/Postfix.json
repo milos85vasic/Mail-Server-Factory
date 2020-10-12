@@ -23,7 +23,7 @@
           },
           {
             "type": "deploy",
-            "value": "main/docker/postfix:1.0.0@:{{DOCKER.DOCKER_HOME}}/Postfix"
+            "value": "main.mail_server/docker/postfix:1.0.0@:{{DOCKER.DOCKER_HOME}}/Postfix"
           },
           {
             "type": "database",
