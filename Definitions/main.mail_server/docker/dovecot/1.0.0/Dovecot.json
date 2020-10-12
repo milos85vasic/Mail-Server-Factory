@@ -1,0 +1,69 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack: Dovecot",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "conditionCheck",
+            "value": "{{SERVICE.MAIL_RECEIVE.NAME}}"
+          },
+          {
+            "type": "command",
+            "value": "systemctl status dovecot && systemctl stop dovecot && systemctl disable dovecot || true"
+          },
+          {
+            "type": "portRequired",
+            "value": "{{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}"
+          },
+          {
+            "type": "portCheck",
+            "value": "{{SERVICE.DATABASE.PORTS.PORT_EXPOSED}}"
+          },
+          {
+            "type": "deploy",
+            "value": "main/docker/dovecot:1.0.0@:{{DOCKER.DOCKER_HOME}}/Dovecot"
+          },
+          {
+            "type": "tlsCertificate",
+            "value": "{{SERVER.HOSTNAME}}"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/Dovecot"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.MAIL_RECEIVE.NAME}}"
+          },
+          {
+            "type": "portCheck",
+            "value": "{{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}"
+          },
+
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Dovecot/receivemail.service /etc/systemd/system/receivemail.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable receivemail.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.MAIL_RECEIVE.NAME}}"
+          },
+          {
+            "type": "portCheck",
+            "value": "{{SERVICE.MAIL_RECEIVE.PORTS.PORT_EXPOSED_IMAPS}}"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack: Rspamd",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "conditionCheck",
+            "value": "{{SERVICE.ANTI_SPAM.NAME}}"
+          },
+          {
+            "type": "portRequired",
+            "value": "{{SERVICE.ANTI_SPAM.PORTS.WEBUI_EXPOSED}}"
+          },
+          {
+            "type": "deploy",
+            "value": "main/docker/anti_spam:1.0.0@:{{DOCKER.DOCKER_HOME}}/Rspamd"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/Rspamd"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.ANTI_SPAM.NAME}}"
+          },
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Rspamd/antispam.service /etc/systemd/system/antispam.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable antispam.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.ANTI_SPAM.NAME}}"
+          }
+        ]
+      }
+    }
+  ]
+}

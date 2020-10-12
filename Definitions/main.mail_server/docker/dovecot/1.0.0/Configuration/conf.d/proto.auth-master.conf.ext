@@ -1,0 +1,8 @@
+# TODO: MSF-111:
+# passdb {
+
+  # pass = yes
+  # master = yes
+  # driver = passwd-file
+  # args = /etc/dovecot/masters/master-users
+# }

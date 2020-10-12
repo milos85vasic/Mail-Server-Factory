@@ -1,0 +1,17 @@
+passdb {
+
+  driver = sql
+  args = /etc/dovecot/dovecot-sql.conf.ext
+}
+
+userdb {
+    driver = static
+    args = uid=5000 gid=5000 allow_all_users=yes
+}
+
+# TODO: MSF-200
+# userdb {
+#
+#   driver = sql
+#   args = /etc/dovecot/dovecot-sql.conf.ext
+# }

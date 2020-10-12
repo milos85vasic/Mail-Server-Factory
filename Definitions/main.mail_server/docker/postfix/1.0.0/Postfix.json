@@ -1,0 +1,72 @@
+{
+  "software": [
+    {
+      "name": "Mail server stack: Postfix",
+      "version": "1.0.0",
+      "installationSteps": {
+        "Docker": [
+          {
+            "type": "conditionCheck",
+            "value": "{{SERVICE.MAIL_SEND.NAME}}"
+          },
+          {
+            "type": "command",
+            "value": "postfix status && postfix stop && systemctl disable postfix || true"
+          },
+          {
+            "type": "portRequired",
+            "value": "465"
+          },
+          {
+            "type": "portCheck",
+            "value": "{{SERVICE.DATABASE.PORTS.PORT_EXPOSED}}"
+          },
+          {
+            "type": "deploy",
+            "value": "main/docker/postfix:1.0.0@:{{DOCKER.DOCKER_HOME}}/Postfix"
+          },
+          {
+            "type": "database",
+            "value": "{{DOCKER.DOCKER_HOME}}/Postfix/Database"
+          },
+          {
+            "type": "tlsCertificate",
+            "value": "{{SERVER.HOSTNAME}}"
+          },
+          {
+            "type": "stack",
+            "value": "{{DOCKER.DOCKER_HOME}}/Postfix"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.MAIL_SEND.NAME}}"
+          },
+          {
+            "type": "portCheck",
+            "value": "465"
+          },
+          {
+            "type": "command",
+            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Postfix/sendmail.service /etc/systemd/system/sendmail.service"
+          },
+          {
+            "type": "command",
+            "value": "systemctl enable sendmail.service"
+          },
+          {
+            "type": "reboot",
+            "value": "120"
+          },
+          {
+            "type": "check",
+            "value": "{{SERVICE.MAIL_SEND.NAME}}"
+          },
+          {
+            "type": "portCheck",
+            "value": "465"
+          }
+        ]
+      }
+    }
+  ]
+}

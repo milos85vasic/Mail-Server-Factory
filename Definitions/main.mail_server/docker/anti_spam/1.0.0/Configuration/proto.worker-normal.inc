@@ -1,0 +1,1 @@
+bind_socket = "*:{{SERVICE.ANTI_SPAM.PORTS.WORKER}}";
