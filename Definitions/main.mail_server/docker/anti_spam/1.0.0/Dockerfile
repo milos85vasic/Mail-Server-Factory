@@ -15,7 +15,7 @@ ENV MEM_DB "$MEM_DB"
 ENV MEM_DB_PORT "$MEM_DB_PORT"
 
 RUN dnf update -y && \
-    dnf install -y findutils && \
+    dnf install -y findutils bind-utils && \
     dnf clean all && \
     dnf install -y --nogpgcheck https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf install -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-8.noarch.rpm && \
@@ -31,6 +31,7 @@ RUN dnf update -y && \
 
 ADD Scripts/start.sh /start.sh
 ADD Scripts/getip.sh /getip.sh
+ADD Scripts/update.sh /update.sh
 ADD Scripts/logrotate.sh /logrotate.sh
 ADD Configuration/worker-proxy.inc /etc/rspamd/local.d/worker-proxy.inc
 ADD Configuration/worker-normal.inc /etc/rspamd/local.d/worker-normal.inc
@@ -46,16 +47,13 @@ RUN cp /etc/rspamd/local.d/dkim_signing.conf /etc/rspamd/local.d/arc.conf && \
     printf "password = \"$(rspamadm pw --encrypt -p ${WEBUI_PASS})\";\n" >> \
     /etc/rspamd/local.d/worker-controller.inc && \
     printf "enable_password = \"$(rspamadm pw --encrypt -p ${WEBUI_PASS})\";\n" >> \
-    /etc/rspamd/local.d/worker-controller.inc && \
-    wget -P /var/lib/rspamd https://rspamd.com/rspamd_statistics/bayes.ham.sqlite && \
-    wget -P /var/lib/rspamd https://rspamd.com/rspamd_statistics/bayes.spam.sqlite && \
-    chown _rspamd._rspamd /var/lib/rspamd/*sqlite && \
-    rspamadm statconvert --spam-db /var/lib/rspamd/bayes.spam.sqlite --symbol-spam BAYES_SPAM \
-    --ham-db /var/lib/rspamd/bayes.ham.sqlite --symbol-ham BAYES_HAM -h \
-    `/getip.sh "${MEM_DB}"`:"${MEM_DB_PORT}"
+    /etc/rspamd/local.d/worker-controller.inc
 
 EXPOSE $PROXY_PORT
 EXPOSE $WORKER_PORT
 EXPOSE $WEBUI_PORT
 
-CMD sh start.sh "${PROXY_PORT}" "${WORKER_PORT}" "${WEBUI_PORT}" "${WEBUI_PASS}"
+CMD logFile="rspamd.start.log" && \
+    sh start.sh "${PROXY_PORT}" "${WORKER_PORT}" "${WEBUI_PORT}" "${WEBUI_PASS}" "${logFile}" && \
+    sh update.sh "${MEM_DB}" "${MEM_DB_PORT}" && \
+    tail -F "${logFile}"
