@@ -1,6 +1,6 @@
 #!/bin/sh
 
-logFile=$5
+logFile="rspamd.start.log"
 echo "Rspamd START: $(date)" > "${logFile}"
 sh /logrotate.sh &
 
@@ -35,6 +35,8 @@ if rspamd -u _rspamd -g _rspamd; then
   workerPort=$2
   webUiPort=$3
   webUiPassword=$4
+  memDb=$5
+  memDbPort=$6
 
   echo "PARAMETERS: proxyPort=${proxyPort}, workerPort=${workerPort}, webUiPort=${webUiPort}" >> "${logFile}"
   echo "PARAMETERS: webUiPassword=${webUiPassword}" >> "${logFile}"
@@ -51,6 +53,8 @@ if rspamd -u _rspamd -g _rspamd; then
   done
 
   rspamc stat -P "${webUiPassword}" >> "${logFile}"
+  sleep 60; sh /update.sh "${memDb}" "${memDbPort}" &
+  tail -F "${logFile}"
 else
 
   echo "Rspamd not started" >> "${logFile}"

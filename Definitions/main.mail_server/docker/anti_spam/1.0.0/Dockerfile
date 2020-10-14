@@ -53,7 +53,4 @@ EXPOSE $PROXY_PORT
 EXPOSE $WORKER_PORT
 EXPOSE $WEBUI_PORT
 
-CMD logFile="rspamd.start.log" && \
-    sh start.sh "${PROXY_PORT}" "${WORKER_PORT}" "${WEBUI_PORT}" "${WEBUI_PASS}" "${logFile}" && \
-    sh update.sh "${MEM_DB}" "${MEM_DB_PORT}" && \
-    tail -F "${logFile}"
+CMD sh start.sh "${PROXY_PORT}" "${WORKER_PORT}" "${WEBUI_PORT}" "${WEBUI_PASS}" "${MEM_DB}" "${MEM_DB_PORT}"
