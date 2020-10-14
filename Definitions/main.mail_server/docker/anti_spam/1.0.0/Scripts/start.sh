@@ -53,7 +53,7 @@ if rspamd -u _rspamd -g _rspamd; then
   done
 
   rspamc stat -P "${webUiPassword}" >> "${logFile}"
-  sleep 60; sh /update.sh "${memDb}" "${memDbPort}" &
+  sleep 120; sh /update.sh "${memDb}" "${memDbPort}" &
   tail -F "${logFile}"
 else
 
