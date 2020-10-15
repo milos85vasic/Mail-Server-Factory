@@ -28,6 +28,19 @@ fun main(args: Array<String>) {
 
             val recipe = FileConfigurationRecipe(file)
             val builder = ServerFactoryBuilder().setRecipe(recipe)
+            args.forEach { arg ->
+
+                val argumentInstallationLocation = Argument.INSTALLATION_LOCATION.get()
+                if (arg.startsWith(argumentInstallationLocation)) {
+
+                    val installationLocation = arg.trim().replace(argumentInstallationLocation, "")
+                    if (installationLocation.isNotEmpty()) {
+
+                        builder.setInstallationLocation(installationLocation)
+                    }
+                    log.i("Installation location: ${builder.getInstallationLocation()}")
+                }
+            }
             val factory = MailServerFactory(builder)
 
             val callback = object : FlowCallback {

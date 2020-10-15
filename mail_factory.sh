@@ -1,7 +1,7 @@
 #!/bin/sh
 
 script="factory_mail.sh"
-factoryPath="/usr/local/bin"
+factoryPath="$(sh mail_factory_path.sh)"
 
 if test -e "$factoryPath/$script"; then
 
