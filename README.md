@@ -6,7 +6,7 @@ Instantiate, configure mail server and distribute configuration.
 
 # Compatibility
 
-Mail Server Factory works on the following operating systems:
+Mail Server Factory works on the following target installation operating systems:
 
 - Centos 7 and above
 - Ubuntu Desktop 18 and above 
