@@ -48,6 +48,10 @@
           },
           {
             "type": "command",
+            "value": "setenforce 0"
+          },
+          {
+            "type": "command",
             "value": "systemctl enable receivemail.service"
           },
           {
