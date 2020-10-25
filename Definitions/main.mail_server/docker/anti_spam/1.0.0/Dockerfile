@@ -14,10 +14,9 @@ ENV WEBUI_PASS "$WEBUI_PASS"
 ENV MEM_DB "$MEM_DB"
 ENV MEM_DB_PORT "$MEM_DB_PORT"
 
-RUN dnf clean all -y && \
-    dnf update -y && \
+RUN dnf update -y && \
+    dnf clean all -y && \
     dnf install -y findutils bind-utils && \
-    dnf clean all && \
     dnf install -y --nogpgcheck https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && \
     dnf install -y --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm https://download1.rpmfusion.org/nonfree/el/rpmfusion-nonfree-release-8.noarch.rpm && \
     dnf install -y python3 libpcap && \

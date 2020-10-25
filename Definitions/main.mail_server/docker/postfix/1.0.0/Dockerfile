@@ -14,10 +14,9 @@ ENV AV_PORT "$AV_PORT"
 ENV AV_PORT_MAIL_SEND "$AV_PORT_MAIL_SEND"
 ENV SERVICE_RECEIVE "$SERVICE_RECEIVE"
 
-RUN dnf clean all -y && \
-    dnf update -y && \
+RUN dnf update -y && \
+    dnf clean all -y && \
     dnf install findutils -y && \
-    dnf clean all && \
     dnf install -y https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm \
     https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm && \
     dnf install -y postfix postfix-pgsql openssl telnet net-tools iputils && \
