@@ -3,7 +3,6 @@
     "Uses.json",
     "Server.json",
     "Database.json",
-    "Docker.json",
     "Accounts.json"
   ]
 }
