@@ -8,7 +8,7 @@ Instantiate, configure mail server and distribute configuration.
 
 Mail Server Factory works on the following target installation operating systems:
 
-- Centos 6, 7 and 8
+- Centos 7 and 8
 - Ubuntu Desktop 18 and 20 
 
 # Specifications
