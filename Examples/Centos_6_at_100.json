@@ -1,0 +1,11 @@
+{
+  "name": "Centos 6 configuration",
+  "includes": [
+    "Includes/Common.json"
+  ],
+  "remote": {
+    "port": 22,
+    "user": "root",
+    "host": "192.168.100.104"
+  }
+}
