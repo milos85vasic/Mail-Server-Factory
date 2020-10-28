@@ -31,7 +31,7 @@
           },
           {
             "type": "command",
-            "value": "setenforce 0"
+            "value": "sh {{SERVER.SERVER_HOME}}/Utils/setenforce.sh"
           },
           {
             "type": "command",
