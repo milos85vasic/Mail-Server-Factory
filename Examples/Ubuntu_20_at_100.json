@@ -1,11 +1,11 @@
 {
-  "name": "Ubuntu 18 configuration",
+  "name": "Ubuntu 20 configuration",
   "includes": [
     "Includes/Common.json"
   ],
   "remote": {
     "port": 22,
     "user": "root",
-    "host": "192.168.0.102"
+    "host": "192.168.100.104"
   }
 }
