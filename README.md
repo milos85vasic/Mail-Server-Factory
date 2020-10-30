@@ -25,7 +25,7 @@ $ Tbd.
 
 # Hot to use
 
-TBD.
+Tbd.
 
 # Running tests
 
