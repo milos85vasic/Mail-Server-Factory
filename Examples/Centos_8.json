@@ -6,6 +6,6 @@
   "remote": {
     "port": 22,
     "user": "root",
-    "host": "192.168.0.103"
+    "host": "centos8.dev.local"
   }
 }
