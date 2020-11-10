@@ -39,7 +39,7 @@
           },
           {
             "type": "reboot",
-            "value": "120"
+            "value": "240"
           },
           {
             "type": "check",
