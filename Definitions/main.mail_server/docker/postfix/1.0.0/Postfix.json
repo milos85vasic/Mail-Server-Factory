@@ -47,7 +47,7 @@
           },
           {
             "type": "command",
-            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Postfix/sendmail.service /etc/systemd/system/sendmail.service"
+            "value": "ln {{DOCKER.DOCKER_HOME}}/Postfix/sendmail.service /etc/systemd/system/sendmail.service"
           },
           {
             "type": "command",

@@ -23,7 +23,7 @@
           },
           {
             "type": "command",
-            "value": "ln -s {{DOCKER.DOCKER_HOME}}/ClamAV/antivirus.service /etc/systemd/system/antivirus.service"
+            "value": "ln {{DOCKER.DOCKER_HOME}}/ClamAV/antivirus.service /etc/systemd/system/antivirus.service"
           },
           {
             "type": "command",

@@ -27,7 +27,7 @@
           },
           {
             "type": "command",
-            "value": "ln -s {{DOCKER.DOCKER_HOME}}/Rspamd/antispam.service /etc/systemd/system/antispam.service"
+            "value": "ln {{DOCKER.DOCKER_HOME}}/Rspamd/antispam.service /etc/systemd/system/antispam.service"
           },
           {
             "type": "command",
