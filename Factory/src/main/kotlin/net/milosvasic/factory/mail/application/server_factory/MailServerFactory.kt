@@ -46,5 +46,5 @@ class MailServerFactory(builder: ServerFactoryBuilder) : ServerFactory(builder) 
 
     override fun getConfigurationFactory() = MailServerConfigurationFactory()
 
-    override fun getLogTag() = BuildInfo.NAME.replace("-", " ")
+    override fun getLogTag() = BuildInfo.versionName.replace("-", " ")
 }
