@@ -24,7 +24,12 @@ import javax.imageio.ImageIO
 
 fun main(args: Array<String>) {
 
-    initLogging()
+    tag = BuildInfo.versionName
+    val consoleLogger = ConsoleLogger()
+    val here = File(FILE_LOCATION_HERE)
+    val filesystemLogger = FilesystemLogger(here)
+    compositeLogger.addLoggers(consoleLogger, filesystemLogger)
+
     try {
 
         val hostOS = OperatingSystem.getHostOperatingSystem()
@@ -55,6 +60,11 @@ fun main(args: Array<String>) {
         Validator.Arguments.validateNotEmpty(args)
         val file = File(args[0])
         if (file.exists()) {
+
+            val lofFilenameSuffix = file.name.replace(file.extension, "").replace(".", "") +
+                    "_" + System.currentTimeMillis()
+
+            filesystemLogger.setFilenameSuffix(lofFilenameSuffix)
 
             val recipe = FileConfigurationRecipe(file)
             val builder = ServerFactoryBuilder().setRecipe(recipe)
@@ -112,13 +122,4 @@ fun main(args: Array<String>) {
 
         fail(e)
     }
-}
-
-private fun initLogging() {
-
-    tag = BuildInfo.versionName
-    val console = ConsoleLogger()
-    val here = File(FILE_LOCATION_HERE)
-    val filesystem = FilesystemLogger(here)
-    compositeLogger.addLoggers(console, filesystem)
 }
