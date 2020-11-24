@@ -58,15 +58,6 @@ test {
 
 sourceSets.main.java.srcDirs += 'src/main/kotlin'
 
-task cleanupLogs {
-
-    try {
-        Runtime.getRuntime().exec("$projectDir/cleanup_logs.sh").waitFor(5, TimeUnit.SECONDS)
-    } catch (Exception e) {
-        System.err.println("Error: ${e.getMessage()}")
-    }
-}
-
 task install {
 
     dependsOn assemble
@@ -84,6 +75,4 @@ task install {
         }
     }
 }
-
-build.finalizedBy(cleanupLogs)
 
