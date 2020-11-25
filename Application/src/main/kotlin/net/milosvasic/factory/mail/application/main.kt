@@ -41,7 +41,6 @@ fun main(args: Array<String>) {
             System.setProperty("apple.awt.application.name", BuildInfo.printName())
             val app = Application.getApplication()
             app.dockIconImage = icon
-            // app.dockMenu.label = BuildInfo.versionName
         }
     } catch (e: IllegalArgumentException) {
 
