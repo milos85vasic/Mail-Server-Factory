@@ -57,6 +57,8 @@ test {
 }
 
 sourceSets.main.java.srcDirs += 'src/main/kotlin'
+sourceSets.main.java.srcDirs += 'src/os/macos/kotlin'
+sourceSets.main.java.srcDirs += 'src/os/default/kotlin'
 
 task install {
 
