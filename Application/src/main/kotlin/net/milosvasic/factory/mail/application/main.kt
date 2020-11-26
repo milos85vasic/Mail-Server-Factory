@@ -2,7 +2,6 @@
 
 package net.milosvasic.factory.mail.application
 
-import com.apple.eawt.Application
 import net.milosvasic.factory.*
 import net.milosvasic.factory.application.DefaultInitializationHandler
 import net.milosvasic.factory.application.server_factory.ServerFactoryBuilder
@@ -12,6 +11,7 @@ import net.milosvasic.factory.error.ERROR
 import net.milosvasic.factory.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.application.server_factory.MailServerFactory
+import net.milosvasic.factory.main.application.OSInit
 import net.milosvasic.factory.platform.OperatingSystem
 import net.milosvasic.factory.platform.Platform
 import net.milosvasic.factory.validation.Validator
@@ -32,16 +32,7 @@ fun main(args: Array<String>) {
 
     try {
 
-        val hostOS = OperatingSystem.getHostOperatingSystem()
-        val iconResourceName = "assets/Logo.png"
-        val iconResource = hostOS::class.java.classLoader.getResourceAsStream(iconResourceName)
-        val icon = ImageIO.read(iconResource)
-        if (hostOS.getPlatform() == Platform.MAC_OS) {
-
-            System.setProperty("apple.awt.application.name", BuildInfo.printName())
-            val app = Application.getApplication()
-            app.dockIconImage = icon
-        }
+        OSInit.run()
     } catch (e: IllegalArgumentException) {
 
         fail(e)
