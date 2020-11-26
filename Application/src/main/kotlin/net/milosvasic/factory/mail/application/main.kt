@@ -11,16 +11,12 @@ import net.milosvasic.factory.error.ERROR
 import net.milosvasic.factory.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.application.server_factory.MailServerFactory
-import net.milosvasic.factory.mail.application.OSInit
-import net.milosvasic.factory.platform.OperatingSystem
-import net.milosvasic.factory.platform.Platform
 import net.milosvasic.factory.validation.Validator
 import net.milosvasic.factory.validation.parameters.ArgumentsExpectedException
 import net.milosvasic.logger.ConsoleLogger
 import net.milosvasic.logger.FilesystemLogger
 import java.io.File
 import java.io.IOException
-import javax.imageio.ImageIO
 
 fun main(args: Array<String>) {
 
