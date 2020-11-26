@@ -11,7 +11,7 @@ import net.milosvasic.factory.error.ERROR
 import net.milosvasic.factory.execution.flow.callback.FlowCallback
 import net.milosvasic.factory.execution.flow.implementation.initialization.InitializationFlow
 import net.milosvasic.factory.mail.application.server_factory.MailServerFactory
-import net.milosvasic.factory.main.application.OSInit
+import net.milosvasic.factory.mail.application.OSInit
 import net.milosvasic.factory.platform.OperatingSystem
 import net.milosvasic.factory.platform.Platform
 import net.milosvasic.factory.validation.Validator

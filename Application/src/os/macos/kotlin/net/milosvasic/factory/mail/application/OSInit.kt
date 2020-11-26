@@ -1,4 +1,4 @@
-package net.milosvasic.factory.main.application
+package net.milosvasic.factory.mail.application
 
 import com.apple.eawt.Application
 import net.milosvasic.factory.mail.application.BuildInfo
