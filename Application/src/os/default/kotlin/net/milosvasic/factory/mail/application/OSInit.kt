@@ -4,5 +4,5 @@ import net.milosvasic.factory.log
 
 object OSInit : Runnable {
 
-    override fun run() = log.v("Default OS initialized")
+    override fun run() = log.v("Starting")
 }
