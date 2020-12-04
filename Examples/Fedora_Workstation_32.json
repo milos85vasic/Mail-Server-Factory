@@ -3,6 +3,11 @@
   "includes": [
     "Includes/Common.json"
   ],
+  "variables": {
+    "SERVER": {
+      "HOSTNAME": "fedora32.local"
+    }
+  },
   "remote": {
     "port": 22,
     "user": "root",
