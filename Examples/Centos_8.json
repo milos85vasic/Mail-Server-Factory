@@ -10,7 +10,6 @@
   },
   "remote": {
     "port": 22,
-    "user": "root",
-    "host": "centos8.local"
+    "user": "root"
   }
 }

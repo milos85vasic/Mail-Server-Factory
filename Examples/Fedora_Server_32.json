@@ -10,7 +10,6 @@
   },
   "remote": {
     "port": 22,
-    "user": "root",
-    "host": "fedora32server.local"
+    "user": "root"
   }
 }
