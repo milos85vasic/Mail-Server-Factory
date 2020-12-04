@@ -6,6 +6,6 @@
   "remote": {
     "port": 22,
     "user": "root",
-    "host": "fedora32.server.dev.local"
+    "host": "fedora32server.local"
   }
 }

@@ -6,6 +6,6 @@
   "remote": {
     "port": 22,
     "user": "root",
-    "host": "ubuntu20.dev.local"
+    "host": "ubuntu20.local"
   }
 }
