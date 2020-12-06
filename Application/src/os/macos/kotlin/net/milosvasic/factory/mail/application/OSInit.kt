@@ -1,12 +1,10 @@
 package net.milosvasic.factory.mail.application
 
 import com.apple.eawt.Application
-import net.milosvasic.factory.mail.application.BuildInfo
 import net.milosvasic.factory.platform.OperatingSystem
 import net.milosvasic.factory.platform.Platform
 import java.io.IOException
 import javax.imageio.ImageIO
-import kotlin.jvm.Throws
 
 object OSInit : Runnable {
 
