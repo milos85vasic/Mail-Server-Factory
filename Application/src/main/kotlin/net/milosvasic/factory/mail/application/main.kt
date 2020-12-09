@@ -44,7 +44,7 @@ fun main(args: Array<String>) {
     }
     try {
 
-        Validator.Arguments.validateNotEmpty(args)
+        Validator.Arguments.validateNotEmpty(*args)
         val file = File(args[0])
         if (file.exists()) {
 
