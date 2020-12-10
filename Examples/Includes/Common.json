@@ -2,6 +2,7 @@
   "includes": [
     "Uses.json",
     "Server.json",
+    "Behavior.json",
     "Database.json",
     "Accounts.json"
   ]
