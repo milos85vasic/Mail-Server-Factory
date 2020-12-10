@@ -1,7 +1,7 @@
 {
   "variables": {
     "BEHAVIOR": {
-      "GET_IP": false
+      "GET_IP": true
     }
   }
 }
