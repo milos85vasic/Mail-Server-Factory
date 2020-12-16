@@ -3,6 +3,7 @@
 package net.milosvasic.factory.mail.application
 
 import net.milosvasic.factory.*
+import net.milosvasic.factory.application.Argument
 import net.milosvasic.factory.application.DefaultInitializationHandler
 import net.milosvasic.factory.application.server_factory.ServerFactoryBuilder
 import net.milosvasic.factory.common.busy.BusyException
