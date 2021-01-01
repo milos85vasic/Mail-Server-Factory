@@ -42,7 +42,13 @@ Tbd.
 
 # Cloning the project
 
-Tbd.
+The following command clones the project and initializes all Git submodules:
+
+```bash
+mkdir Factory && cd Factory
+git clone git@github.com:milos85vasic/Mail-Server-Factory.git .
+git submodule init && git submodule update
+```
 
 ## Git submodules
 
@@ -50,8 +56,8 @@ Tbd.
 
 # Running tests
 
-```
-$ ./gradlew test
+```bash
+./gradlew test
 ```
 
 ## Requirements
