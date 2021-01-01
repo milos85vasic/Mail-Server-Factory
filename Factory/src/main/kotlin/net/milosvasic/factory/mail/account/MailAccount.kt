@@ -1,5 +1,6 @@
 package net.milosvasic.factory.mail.account
 
+import net.milosvasic.factory.EMPTY
 import net.milosvasic.factory.account.Account
 import net.milosvasic.factory.account.credentials.password.Password
 import net.milosvasic.factory.account.credentials.password.PasswordStrength
@@ -26,7 +27,7 @@ class MailAccount(
 
     fun print(): String {
 
-        var suffix = ""
+        var suffix = String.EMPTY
         val aliases = getAliases()
         if (aliases.isNotEmpty()) {
             aliases.forEachIndexed { index, alias ->

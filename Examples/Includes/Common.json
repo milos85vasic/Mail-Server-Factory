@@ -1,8 +1,9 @@
 {
   "includes": [
+    "Uses.json",
     "Server.json",
+    "Behavior.json",
     "Database.json",
-    "Docker.json",
     "Accounts.json"
   ]
 }

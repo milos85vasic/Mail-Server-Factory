@@ -3,7 +3,6 @@
     "SERVER": {
       "DOMAIN": "dev.local",
       "DOMAINS": "dev.local, test.local",
-      "HOSTNAME": "postmaster.dev.local",
       "SERVER_HOME": "/root",
       "REBOOT_ALLOWED": true,
 
@@ -12,7 +11,7 @@
         "PROVINCE": "Belgrade",
         "CITY": "Belgrade",
         "ORGANISATION": "Milos Vasic",
-        "EMAIL": "test@tdev.local",
+        "EMAIL": "test@dev.local",
         "DEPARTMENT": "IT Department"
       },
 

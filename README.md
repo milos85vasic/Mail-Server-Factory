@@ -6,20 +6,26 @@ Instantiate, configure mail server and distribute configuration.
 
 # Compatibility
 
-Tbd.
+Mail Server Factory works on the following target installation operating systems:
+
+- Centos 7 and 8
+- Fedora Workstation 30 to 32
+- Fedora Server 30 to 32
+- Ubuntu Desktop 20
 
 # Specifications
 
 Tbd.
 
 # Web setup
+
 ```
 $ Tbd.
 ```
 
 # Hot to use
 
-TBD.
+Tbd.
 
 # Running tests
 

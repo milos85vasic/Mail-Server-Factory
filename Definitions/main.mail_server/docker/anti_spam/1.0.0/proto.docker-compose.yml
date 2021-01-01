@@ -1,0 +1,27 @@
+version: "3.7"
+
+services:
+  {{SERVICE.ANTI_SPAM.NAME}}:
+    build:
+      context: .
+      args:
+        - PROXY_PORT={{SERVICE.ANTI_SPAM.PORTS.PROXY}}
+        - WORKER_PORT={{SERVICE.ANTI_SPAM.PORTS.WORKER}}
+        - WEBUI_PORT={{SERVICE.ANTI_SPAM.PORTS.WEBUI}}
+        - WEBUI_PASS={{SERVICE.ANTI_SPAM.WEBUI.PASSWORD}}
+        - MEM_DB={{SERVICE.MEMORY_DATABASE.NAME}}
+        - MEM_DB_PORT={{SERVICE.MEMORY_DATABASE.PORTS.PORT}}
+    container_name: {{SERVICE.ANTI_SPAM.NAME}}
+    hostname: {{SERVICE.ANTI_SPAM.NAME}}.{{SERVER.DOMAIN}}
+    restart: always
+    ports:
+      - 127.0.0.1:{{SERVICE.ANTI_SPAM.PORTS.WEBUI_EXPOSED}}:{{SERVICE.ANTI_SPAM.PORTS.WEBUI}}
+    networks:
+      - {{SERVICE.NETWORK.NAME}}
+    volumes:
+      - {{SERVER.SERVER_HOME}}/Server/Rspamd/Log:/var/log
+      - {{SERVER.SERVER_HOME}}/Server/Rspamd/Lib:/var/lib/rspamd
+
+networks:
+  {{SERVICE.NETWORK.NAME}}:
+    external: true

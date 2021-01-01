@@ -1,0 +1,7 @@
+{
+  "variables": {
+    "BEHAVIOR": {
+      "GET_IP": true
+    }
+  }
+}

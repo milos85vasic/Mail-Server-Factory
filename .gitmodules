@@ -1,18 +1,18 @@
 [submodule "Logger"]
 	path = Logger
 	url = https://github.com/milos85vasic/Logger.git
-[submodule "Utils"]
-	path = Utils
-	url = https://github.com/milos85vasic/Mail-Server-Factory-Utils.git
 [submodule "Core"]
 	path = Core
 	url = git@github.com:milos85vasic/Server-Factory.git
 [submodule "Variables"]
 	path = Variables
 	url = git@github.com:milos85vasic/Global-Variables.git
-[submodule "Definitions/Software"]
-	path = Definitions/Software
-	url = git@github.com:milos85vasic/Server-Factory-Software-Definitions.git
-[submodule "Definitions/Docker"]
-	path = Definitions/Docker
+[submodule "Definitions/main/docker"]
+	path = Definitions/main/docker
 	url = git@github.com:milos85vasic/Server-Factory-Docker-Definitions.git
+[submodule "Definitions/main/software"]
+	path = Definitions/main/software
+	url = git@github.com:milos85vasic/Server-Factory-Software-Definitions.git
+[submodule "Definitions/main/stacks"]
+	path = Definitions/main/stacks
+	url = git@github.com:milos85vasic/Server-Factory-Stack-Definitions.git
