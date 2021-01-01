@@ -4,10 +4,11 @@
 
 Instantiate, configure and distribute mail server configuration.
 
-Mail Server Factory current version information: 
+Mail Server Factory version information: 
 
-- [Version](./version.txt)
-- [Version code](./version_code.txt).
+- [Current version](./version.txt)
+- [Current version code](./version_code.txt)
+- [Releases](./releases).
 
 # Compatibility
 
