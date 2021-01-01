@@ -39,6 +39,14 @@ $ Tbd.
 
 Tbd.
 
+# Cloning the project
+
+Tbd.
+
+## Git submodules
+
+Tbd.
+
 # Running tests
 
 ```
