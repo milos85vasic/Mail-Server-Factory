@@ -28,7 +28,7 @@ if test -e "$installerScript"; then
   if "$installerScript" "mail" "$factoryPath"; then
 
     sudo cp -f Core/Utils/factory.sh "$factoryPath" &&
-      cp -f mail_factory.sh "$factoryPath"
+      cp -f mail_factory "$factoryPath"
   else
 
     echo "Installation failed"
