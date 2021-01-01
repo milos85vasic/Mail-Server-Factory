@@ -8,7 +8,7 @@ Mail Server Factory version information:
 
 - [Current version](./version.txt)
 - [Current version code](./version_code.txt)
-- [Releases](./releases).
+- [Releases](https://github.com/milos85vasic/Mail-Server-Factory/releases).
 
 # Compatibility
 
