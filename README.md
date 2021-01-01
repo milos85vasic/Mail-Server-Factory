@@ -58,6 +58,9 @@ To build the project cd into the directory where you have cloned the code and ex
 gradle wrapper
 ./gradlew assemble
 ```
+
+Note: To be able to execute [Gradle](https://gradle.org/) commands, [Gradle](https://gradle.org/) must be installed on your system.
+
 ## Running tests
 
 To execute project tests cd into the directory where you have cloned the code and execute:
@@ -65,6 +68,8 @@ To execute project tests cd into the directory where you have cloned the code an
 ```bash
 ./gradlew test
 ```
+
+Note: In order to be able to pass tests [Docker](https://www.docker.com/) must be installed on your system.
 
 ## Git submodules
 
