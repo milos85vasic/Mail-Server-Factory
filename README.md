@@ -4,7 +4,7 @@
 
 Instantiate, configure and distribute mail server configuration.
 
-Mail Server Factory version information: 
+Mail Server Factory version information:
 
 - [Current version](./version.txt)
 - [Current version code](./version_code.txt)
@@ -30,7 +30,8 @@ Installed mail server will be delivered with the following technology stack:
 - [Redis](https://redis.io/) as in-memory database for [Rspamd](https://www.rspamd.com/) service
 - [ClamAV](https://www.clamav.net/) for the anti-virus service.
 
-Note: Mail server will use self-signed certificates for encrypting the communication. For this purpose proper CA will be configured on the server.
+Note: Mail server will use self-signed certificates for encrypting the communication. For this purpose proper CA will be
+configured on the server.
 
 # Web setup
 
@@ -61,7 +62,8 @@ gradle wrapper
 ./gradlew assemble
 ```
 
-Note: To be able to execute [Gradle](https://gradle.org/) commands, [Gradle](https://gradle.org/) must be installed on your system.
+Note: To be able to execute [Gradle](https://gradle.org/) commands, [Gradle](https://gradle.org/) must be installed on
+your system.
 
 ## Running tests
 
@@ -75,7 +77,7 @@ Note: In order to be able to pass tests [Docker](https://www.docker.com/) must b
 
 ## Git submodules
 
-Tbd.
+Complete list of Git submodules used by project can be found [here](./.gitmodules).
 
 ## Requirements
 
