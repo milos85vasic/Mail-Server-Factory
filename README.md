@@ -57,17 +57,18 @@ To build the project cd into the directory where you have cloned the code and ex
 ```bash
 gradlew wrapper
 ./gradlew assemble
-````
+```
+## Running tests
 
-## Git submodules
-
-Tbd.
-
-# Running tests
+To execute project tests cd into the directory where you have cloned the code and execute:
 
 ```bash
 ./gradlew test
 ```
+
+## Git submodules
+
+Tbd.
 
 ## Requirements
 
