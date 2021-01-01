@@ -13,9 +13,9 @@ Information about Mail Server Factory:
 
 Mail Server Factory works on the following target installation operating systems:
 
-- Centos 7 and 8
-- Fedora Workstation 30 to 33
-- Fedora Server 30 to 33
+- CentOS Server 7 and 8
+- Fedora Server versions: 30 to 33
+- Fedora Workstation versions: 30 to 33
 - Ubuntu Desktop 20
 
 # Specifications
