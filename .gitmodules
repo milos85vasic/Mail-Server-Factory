@@ -4,9 +4,6 @@
 [submodule "Core"]
 	path = Core
 	url = git@github.com:milos85vasic/Server-Factory.git
-[submodule "Variables"]
-	path = Variables
-	url = git@github.com:milos85vasic/Global-Variables.git
 [submodule "Definitions/main/docker"]
 	path = Definitions/main/docker
 	url = git@github.com:milos85vasic/Server-Factory-Docker-Definitions.git
