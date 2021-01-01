@@ -10,6 +10,10 @@ Mail Server Factory version information:
 - [Current version code](./version_code.txt)
 - [Releases](https://github.com/milos85vasic/Mail-Server-Factory/releases).
 
+# About
+
+Tbd.
+
 # Compatibility
 
 Mail Server Factory works on the following target installation operating systems:
