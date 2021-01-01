@@ -55,7 +55,7 @@ git submodule init && git submodule update
 To build the project cd into the directory where you have cloned the code and execute:
 
 ```bash
-gradlew wrapper
+gradle wrapper
 ./gradlew assemble
 ```
 ## Running tests
