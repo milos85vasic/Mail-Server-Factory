@@ -23,7 +23,7 @@ Mail Server Factory works on the following target installation operating systems
 
 Installed mail server will be delivered with the following technology stack:
 
-- [Docker](https://www.docker.com/) running all stack services containers
+- [Docker](https://www.docker.com/) for running all stack services containers
 - [PostgreSQL](https://www.postgresql.org/) for the main database
 - [Dovecot](https://www.dovecot.org/) and [Postfix](http://www.postfix.org/) as the main mail services
 - [Rspamd](https://www.rspamd.com/) for the anti-spam service
