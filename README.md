@@ -20,7 +20,13 @@ Mail Server Factory works on the following target installation operating systems
 
 # Specifications
 
-Tbd.
+Installed mail server will be delivered with the following technology stack:
+
+- PostgreSQL for main database
+- Dovecot and Postfix as main mail services
+- Rspamd for anti-spam
+- Redis as in-memory database for Rspamd
+- ClamAV for anti-virus.
 
 # Web setup
 
