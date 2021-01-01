@@ -2,7 +2,7 @@
 
 # Mail Server Factory
 
-Instantiate, configure and distribute mail server configuration.
+Setup and run your own mail server.
 
 Mail Server Factory version information:
 
