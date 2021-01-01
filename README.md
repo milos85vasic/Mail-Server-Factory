@@ -79,6 +79,14 @@ Note: In order to be able to pass tests [Docker](https://www.docker.com/) must b
 
 Complete list of Git submodules used by project can be found [here](./.gitmodules).
 
-## Requirements
+# System requirements
+
+Tbd.
+
+## Project development system requirements
+
+Tbd.
+
+## Mail Server Factory system requirements
 
 Tbd.
