@@ -2,10 +2,12 @@
 
 # Mail Server Factory
 
-Instantiate, configure mail server and distribute configuration.
+Instantiate, configure and distribute mail server configuration.
 
-See the [current version](./version.txt) and
-[version code](./version_code.txt).
+Information about Mail Server Factory: 
+
+- [current version](./version.txt) and
+- [version code](./version_code.txt).
 
 # Compatibility
 
