@@ -50,6 +50,15 @@ git clone git@github.com:milos85vasic/Mail-Server-Factory.git .
 git submodule init && git submodule update
 ```
 
+## Building the project
+
+To build the project cd into the directory where you have cloned the code and execute:
+
+```bash
+gradlew wrapper
+./gradlew assemble
+````
+
 ## Git submodules
 
 Tbd.
